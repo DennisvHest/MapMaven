@@ -1,0 +1,19 @@
+﻿@page "/"
+
+<MudDataGrid Items="@Elements">
+    <Columns>
+        <Column T="MapInfo" Field="SongName" Title="Name" />
+    </Columns>
+</MudDataGrid>
+
+@code {
+    [Inject]
+    protected BeatSaberDataService BeatSaberDataService { get; set; }
+
+    private IEnumerable<MapInfo> Elements = new List<MapInfo>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        Elements = await BeatSaberDataService.GetAllMapInfo();
+    }
+}
