@@ -1,19 +1,13 @@
 ﻿@page "/"
 
-<MudDataGrid Items="@Elements">
-    <Columns>
-        <Column T="MapInfo" Field="SongName" Title="Name" />
-    </Columns>
-</MudDataGrid>
-
-@code {
-    [Inject]
-    protected BeatSaberDataService BeatSaberDataService { get; set; }
-
-    private IEnumerable<MapInfo> Elements = new List<MapInfo>();
-
-    protected override async Task OnInitializedAsync()
-    {
-        Elements = await BeatSaberDataService.GetAllMapInfo();
-    }
-}
+<MudTable Items="@Maps" Height="calc(100% - 52px)" Class="full-height">
+    <HeaderContent>
+        <MudTh>Name</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Name">@context.SongName</MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager />
+    </PagerContent>
+</MudTable>

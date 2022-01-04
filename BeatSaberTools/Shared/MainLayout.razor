@@ -5,11 +5,8 @@
 <MudSnackbarProvider />
 
 <MudLayout>
-    <MudDrawer Open="true" Elevation="1">
-    </MudDrawer>
-    <MudMainContent>
-        <MudContainer MaxWidth="MaxWidth.Medium">
-            @Body
-        </MudContainer>
+    <SideNav></SideNav>
+    <MudMainContent Class="pa-0">
+        @Body
     </MudMainContent>
 </MudLayout>

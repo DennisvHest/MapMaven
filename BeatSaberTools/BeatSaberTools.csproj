@@ -59,6 +59,14 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <None Remove="Pages\MapBrowser.razor.css" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Include="Pages\MapBrowser.razor.css" />
+	</ItemGroup>
+
+	<ItemGroup>
 	  <PackageReference Include="MudBlazor" Version="6.0.4" />
 	</ItemGroup>
 
