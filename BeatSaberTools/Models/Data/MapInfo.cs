@@ -6,5 +6,13 @@ namespace BeatSaberTools.Models.Data
     {
         [JsonPropertyName("_songName")]
         public string SongName { get; set; }
+
+        public Map ToMap()
+        {
+            return new Map
+            {
+                Name = SongName
+            };
+        }
     }
 }

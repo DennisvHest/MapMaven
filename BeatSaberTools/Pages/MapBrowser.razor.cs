@@ -1,20 +1,35 @@
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
-using BeatSaberTools.Models.Data;
 using BeatSaberTools.Services;
+using BeatSaberTools.Models;
+using System;
 
 namespace BeatSaberTools.Pages
 {
     public partial class MapBrowser
     {
         [Inject]
+        protected MapService MapService { get; set; }
+
+        [Inject]
         protected BeatSaberDataService BeatSaberDataService { get; set; }
 
-        private IEnumerable<MapInfo> Maps = new List<MapInfo>();
-        protected override async Task OnInitializedAsync()
+        private IEnumerable<Map> Maps = new List<Map>();
+        private bool LoadingMapInfo = false;
+
+        protected override void OnInitialized()
         {
-            Maps = await BeatSaberDataService.GetAllMapInfo();
+            MapService.Maps.Subscribe(maps =>
+            {
+                Maps = maps;
+                StateHasChanged();
+            });
+
+            BeatSaberDataService.LoadingMapInfo.Subscribe(loading =>
+            {
+                LoadingMapInfo = loading;
+                StateHasChanged();
+            });
         }
     }
 }

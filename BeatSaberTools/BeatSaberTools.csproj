@@ -68,6 +68,9 @@
 
 	<ItemGroup>
 	  <PackageReference Include="MudBlazor" Version="6.0.4" />
+	  <PackageReference Include="System.Reactive" Version="4.4.1">
+	    <Aliases></Aliases>
+	  </PackageReference>
 	</ItemGroup>
 
 </Project>

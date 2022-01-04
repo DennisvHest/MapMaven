@@ -10,3 +10,13 @@
         @Body
     </MudMainContent>
 </MudLayout>
+
+@code {
+    [Inject]
+    protected BeatSaberDataService BeatSaberDataService { get; set; }
+
+    protected override void OnInitialized()
+    {
+        BeatSaberDataService.LoadAllMapInfo();
+    }
+}

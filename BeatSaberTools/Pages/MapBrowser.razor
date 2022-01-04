@@ -1,11 +1,11 @@
 ﻿@page "/"
 
-<MudTable Items="@Maps" Height="calc(100% - 52px)" Class="full-height">
+<MudTable Items="@Maps" Height="calc(100% - 52px)" Class="full-height" Loading="LoadingMapInfo">
     <HeaderContent>
         <MudTh>Name</MudTh>
     </HeaderContent>
     <RowTemplate>
-        <MudTd DataLabel="Name">@context.SongName</MudTd>
+        <MudTd DataLabel="Name">@context.Name</MudTd>
     </RowTemplate>
     <PagerContent>
         <MudTablePager />

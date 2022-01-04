@@ -24,6 +24,7 @@ namespace BeatSaberTools
 			builder.Services.AddMudServices();
 
 			builder.Services.AddSingleton<BeatSaberDataService>();
+			builder.Services.AddSingleton<MapService>();
 
 			return builder.Build();
 		}
