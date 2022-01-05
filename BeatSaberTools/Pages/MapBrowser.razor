@@ -1,11 +1,17 @@
 ﻿@page "/"
 
-<MudTable Items="@Maps" Height="calc(100% - 52px)" Class="full-height" Loading="LoadingMapInfo">
+<MudTable Items="Maps"
+          Height="calc(100% - 52px)"
+          Class="full-height background-transparent"
+          Loading="LoadingMapInfo"
+          FixedHeader="true"
+          RowStyle="height: 88px">
     <HeaderContent>
+        <MudTh></MudTh>
         <MudTh>Name</MudTh>
     </HeaderContent>
     <RowTemplate>
-        <MudTd DataLabel="Name">@context.Name</MudTd>
+        <MapBrowserRow Map="context"></MapBrowserRow>
     </RowTemplate>
     <PagerContent>
         <MudTablePager />

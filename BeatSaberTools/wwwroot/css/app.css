@@ -2,6 +2,10 @@
     height: 100%;
 }
 
+.background-transparent {
+    background: transparent;
+}
+
 /* MudBlazor overrides */
 .mud-main-content {
     height: 100vh;

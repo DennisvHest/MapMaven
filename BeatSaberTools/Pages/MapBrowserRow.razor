@@ -1,0 +1,7 @@
+﻿<MudTd Style="width: 50px">
+    @if (!string.IsNullOrEmpty(CoverImageDataUrl))
+    {
+        <img class="cover-image" src="@CoverImageDataUrl" />
+    }
+</MudTd>
+<MudTd DataLabel="Name">@Map.Name</MudTd>
