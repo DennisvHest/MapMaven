@@ -18,6 +18,8 @@ namespace BeatSaberTools.Pages
         private IEnumerable<Map> Maps = new List<Map>();
         private bool LoadingMapInfo = false;
 
+        private string SearchString = "";
+
         protected override void OnInitialized()
         {
             MapService.Maps.Subscribe(maps =>
@@ -31,6 +33,16 @@ namespace BeatSaberTools.Pages
                 LoadingMapInfo = loading;
                 StateHasChanged();
             });
+        }
+
+        private bool Filter(Map map)
+        {
+            if (string.IsNullOrWhiteSpace(SearchString))
+                return true;
+
+            var searchString = SearchString.Trim();
+
+            return $"{map.Name} {map.SongAuthorName} {map.MapAuthorName}".Contains(searchString, StringComparison.OrdinalIgnoreCase);
         }
     }
 }

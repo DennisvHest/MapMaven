@@ -1,14 +1,30 @@
 ﻿@page "/"
 
 <MudTable Items="Maps"
-          Height="calc(100% - 52px)"
+          Height="calc(100% - 116px)"
           Class="full-height background-transparent"
           Loading="LoadingMapInfo"
+          Filter="Filter"
           FixedHeader="true"
           RowStyle="height: 88px">
+    <ToolBarContent>
+        <MudSpacer />
+        <MudTextField @bind-Value="SearchString" Immediate="true" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+    </ToolBarContent>
     <HeaderContent>
         <MudTh></MudTh>
-        <MudTh>Name</MudTh>
+        <MudTh>
+            <MudTableSortLabel SortBy="new Func<Map, object>(x => x.Name)">Name</MudTableSortLabel>
+        </MudTh>
+        <MudTh>
+            <MudTableSortLabel SortBy="new Func<Map, object>(x => x.SongAuthorName)">Song Author</MudTableSortLabel>
+        </MudTh>
+        <MudTh>
+            <MudTableSortLabel SortBy="new Func<Map, object>(x => x.MapAuthorName)">Map Author</MudTableSortLabel>
+        </MudTh>
+        <MudTh>
+            <MudTableSortLabel SortBy="new Func<Map, object>(x => x.SongDuration)">Duration</MudTableSortLabel>
+        </MudTh>
     </HeaderContent>
     <RowTemplate>
         <MapBrowserRow Map="context"></MapBrowserRow>

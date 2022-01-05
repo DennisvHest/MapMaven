@@ -9,6 +9,7 @@ using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Drawing;
+using NVorbis;
 
 namespace BeatSaberTools.Services
 {
@@ -34,7 +35,8 @@ namespace BeatSaberTools.Services
                 var fileReadTasks = Directory.EnumerateDirectories(MapsLocation)
                     .Select(async mapDirectory =>
                     {
-                        var mapInfoText = await File.ReadAllTextAsync($"{mapDirectory}/Info.dat");
+                        var infoFilePath = Path.Combine(mapDirectory, "Info.dat");
+                        var mapInfoText = await File.ReadAllTextAsync(infoFilePath);
 
                         var info = JsonSerializer.Deserialize<MapInfo>(mapInfoText);
                         info.DirectoryPath = mapDirectory;
@@ -45,6 +47,13 @@ namespace BeatSaberTools.Services
 
                         if (string.IsNullOrEmpty(info.Id))
                             return null;
+
+                        var audioFilePath = Path.Combine(mapDirectory, info.SongFileName);
+
+                        using (var audioFile = new VorbisReader(audioFilePath))
+                        {
+                            info.SongDuration = audioFile.TotalTime;
+                        }
 
                         return info;
                     });

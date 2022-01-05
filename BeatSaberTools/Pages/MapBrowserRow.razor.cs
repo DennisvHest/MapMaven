@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Components;
 using BeatSaberTools.Models;
 using BeatSaberTools.Services;
 using BeatSaberTools.Extensions;
-using System.Threading.Tasks;
 
 namespace BeatSaberTools.Pages
 {

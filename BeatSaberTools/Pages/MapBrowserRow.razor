@@ -1,7 +1,10 @@
-﻿<MudTd Style="width: 50px">
+﻿<MudTd Style="width: 82px">
     @if (!string.IsNullOrEmpty(CoverImageDataUrl))
     {
         <img class="cover-image" src="@CoverImageDataUrl" />
     }
 </MudTd>
 <MudTd DataLabel="Name">@Map.Name</MudTd>
+<MudTd DataLabel="SongAuthorName">@Map.SongAuthorName</MudTd>
+<MudTd DataLabel="MapAuthorName">@Map.MapAuthorName</MudTd>
+<MudTd DataLabel="Duration">@Map.SongDuration.ToString("mm':'ss")</MudTd>

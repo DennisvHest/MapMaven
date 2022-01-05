@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System;
+using System.Text.Json.Serialization;
 
 namespace BeatSaberTools.Models.Data
 {
@@ -9,15 +10,25 @@ namespace BeatSaberTools.Models.Data
 
         [JsonPropertyName("_songName")]
         public string SongName { get; set; }
+        [JsonPropertyName("_songAuthorName")]
+        public string SongAuthorName { get; set; }
+        [JsonPropertyName("_levelAuthorName")]
+        public string LevelAuthorName { get; set; }
+        [JsonPropertyName("_songFilename")]
+        public string SongFileName { get; set; }
         [JsonPropertyName("_coverImageFilename")]
         public string CoverImageFilename { get; set; }
+        public TimeSpan SongDuration { get; set; }
 
         public Map ToMap()
         {
             return new Map
             {
                 Id = Id,
-                Name = SongName
+                Name = SongName,
+                SongAuthorName = SongAuthorName,
+                MapAuthorName = LevelAuthorName,
+                SongDuration = SongDuration
             };
         }
     }
