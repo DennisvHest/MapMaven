@@ -11,5 +11,6 @@ namespace BeatSaberTools.Models
         public TimeSpan SongDuration { get; set; }
         public TimeSpan PreviewStartTime { get; set; }
         public TimeSpan PreviewDuration { get; set; }
+        public TimeSpan PreviewEndTime => PreviewStartTime + PreviewDuration;
     }
 }

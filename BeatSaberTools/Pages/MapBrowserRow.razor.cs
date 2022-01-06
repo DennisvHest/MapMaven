@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Components;
 using BeatSaberTools.Models;
 using BeatSaberTools.Services;
 using BeatSaberTools.Extensions;
+using System.Reactive.Linq;
+using System;
 
 namespace BeatSaberTools.Pages
 {
@@ -14,6 +16,9 @@ namespace BeatSaberTools.Pages
 
         [Parameter]
         public Map Map { get; set; }
+
+        private bool CurrentlyPlaying = false;
+        private double PlaybackProgress = 0;
 
         protected string CoverImageDataUrl { get; set; }
 
@@ -29,6 +34,23 @@ namespace BeatSaberTools.Pages
 
                 StateHasChanged();
             });
+
+            var currentlyPlaying = SongPlayerService.CurrentlyPlayingMap
+                .Select(m => m != null && m.Id == Map?.Id);
+
+            currentlyPlaying.Subscribe(currentlyPlaying =>
+            {
+                CurrentlyPlaying = currentlyPlaying;
+                StateHasChanged();
+            });
+
+            Observable.CombineLatest(currentlyPlaying, SongPlayerService.PlaybackProgress, (playing, progress) => (playing, progress))
+                .Where(x => x.playing)
+                .Subscribe(x =>
+                {
+                    PlaybackProgress = x.progress;
+                    InvokeAsync(() => StateHasChanged());
+                });
         }
 
         void PlayPauseSongPreview()

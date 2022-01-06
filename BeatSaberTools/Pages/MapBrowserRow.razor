@@ -1,5 +1,13 @@
-﻿<MudTd Class="pa-0" Style="width: 50px">
-    <MudIconButton Icon="@Icons.Material.Filled.PlayCircle" OnClick="PlayPauseSongPreview"></MudIconButton>
+﻿<MudTd Class="pa-0" Style="width: 50px; position: relative;">
+    @if (CurrentlyPlaying)
+    {
+        <div class="playback-progress">
+            <MudProgressCircular Color="Color.Info" Max="1" Value="PlaybackProgress" Style="width: 24px; height: 24px" />
+        </div>
+    }
+    <MudIconButton Icon="@(CurrentlyPlaying ? Icons.Material.Filled.StopCircle : Icons.Material.Filled.PlayCircle)"
+                   OnClick="PlayPauseSongPreview">
+    </MudIconButton>
 </MudTd>
 <MudTd Class="pa-1" Style="width: 50px">
     @if (!string.IsNullOrEmpty(CoverImageDataUrl))

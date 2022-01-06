@@ -1,3 +1,11 @@
 ﻿.cover-image {
     height: 50px;
 }
+
+.playback-progress {
+    position: absolute;
+    top: 50%;
+    left: calc(50% - 1px);
+    transform: translate(-50%, -50%);
+    display: flex;
+}

@@ -2,6 +2,8 @@
 using BeatSaberTools.Utilities.NAudio;
 using NAudio.Vorbis;
 using NAudio.Wave;
+using System;
+using System.Reactive.Linq;
 using System.Reactive.Subjects;
 
 namespace BeatSaberTools.Services
@@ -15,15 +17,19 @@ namespace BeatSaberTools.Services
 
         private readonly BehaviorSubject<Map> _currentlyPlayingMap = new(null);
 
+        public IObservable<Map> CurrentlyPlayingMap => _currentlyPlayingMap;
+        public IObservable<double> PlaybackProgress;
+
         public SongPlayerService(BeatSaberDataService beatSaberDataService)
         {
             _beatSaberDataService = beatSaberDataService;
+            InitializePlaybackProgressObservable();
         }
 
         public void PlayStopSongPreview(Map map)
         {
             if (_outputDevice == null)
-                _outputDevice = new();
+                InitializeOutputDevice();
 
             _outputDevice.Stop();
 
@@ -48,6 +54,34 @@ namespace BeatSaberTools.Services
             _outputDevice.Play();
 
             _currentlyPlayingMap.OnNext(map);
+        }
+
+        private void InitializeOutputDevice()
+        {
+            _outputDevice = new();
+
+            _outputDevice.PlaybackStopped += (object sender, StoppedEventArgs args) =>
+            {
+                if (_outputDevice.PlaybackState == PlaybackState.Stopped)
+                    _currentlyPlayingMap.OnNext(null);
+            };
+        }
+
+        private void InitializePlaybackProgressObservable()
+        {
+            PlaybackProgress = _currentlyPlayingMap.Select(currentlyPlayingMap =>
+            {
+                if (currentlyPlayingMap == null)
+                {
+                    return Observable.Empty<double>();
+                }
+                else
+                {
+                    return Observable
+                        .Interval(TimeSpan.FromMilliseconds(200))
+                        .Select(x => (_audioFile.CurrentTime - currentlyPlayingMap.PreviewStartTime) / (currentlyPlayingMap.PreviewEndTime - currentlyPlayingMap.PreviewStartTime));
+                }
+            }).Switch();
         }
     }
 }
