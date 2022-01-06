@@ -19,6 +19,12 @@ namespace BeatSaberTools.Models.Data
         [JsonPropertyName("_coverImageFilename")]
         public string CoverImageFilename { get; set; }
         public TimeSpan SongDuration { get; set; }
+        [JsonPropertyName("_previewStartTime")]
+        public float PreviewStartTimeInSeconds { get; set; }
+        [JsonPropertyName("_previewDuration")]
+        public float PreviewDurationInSeconds { get; set; }
+        public TimeSpan PreviewStartTime => TimeSpan.FromSeconds(PreviewStartTimeInSeconds);
+        public TimeSpan PreviewDuration => TimeSpan.FromSeconds(PreviewDurationInSeconds);
 
         public Map ToMap()
         {
@@ -28,7 +34,9 @@ namespace BeatSaberTools.Models.Data
                 Name = SongName,
                 SongAuthorName = SongAuthorName,
                 MapAuthorName = LevelAuthorName,
-                SongDuration = SongDuration
+                SongDuration = SongDuration,
+                PreviewStartTime = PreviewStartTime,
+                PreviewDuration = PreviewDuration
             };
         }
     }

@@ -9,6 +9,8 @@ namespace BeatSaberTools.Pages
     {
         [Inject]
         protected BeatSaberDataService BeatSaberDataService { get; set; }
+        [Inject]
+        protected SongPlayerService SongPlayerService { get; set; }
 
         [Parameter]
         public Map Map { get; set; }
@@ -27,6 +29,11 @@ namespace BeatSaberTools.Pages
 
                 StateHasChanged();
             });
+        }
+
+        void PlayPauseSongPreview()
+        {
+            SongPlayerService.PlayStopSongPreview(Map);
         }
     }
 }

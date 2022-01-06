@@ -33,6 +33,7 @@ namespace BeatSaberTools.Services
             try
             {
                 var fileReadTasks = Directory.EnumerateDirectories(MapsLocation)
+                    .Take(10)
                     .Select(async mapDirectory =>
                     {
                         var infoFilePath = Path.Combine(mapDirectory, "Info.dat");
@@ -48,12 +49,7 @@ namespace BeatSaberTools.Services
                         if (string.IsNullOrEmpty(info.Id))
                             return null;
 
-                        var audioFilePath = Path.Combine(mapDirectory, info.SongFileName);
-
-                        using (var audioFile = new VorbisReader(audioFilePath))
-                        {
-                            info.SongDuration = audioFile.TotalTime;
-                        }
+                        FillSongInfo(info);
 
                         return info;
                     });
@@ -74,6 +70,16 @@ namespace BeatSaberTools.Services
             }
         }
 
+        private void FillSongInfo(MapInfo info)
+        {
+            var audioFilePath = Path.Combine(info.DirectoryPath, info.SongFileName);
+
+            using (var audioFile = new VorbisReader(audioFilePath))
+            {
+                info.SongDuration = audioFile.TotalTime;
+            }
+        }
+
         public Image GetMapCoverImage(string mapId)
         {
             var mapInfo = _mapInfo.Value[mapId];
@@ -81,6 +87,13 @@ namespace BeatSaberTools.Services
             var imageFilePath = Path.Combine(mapInfo.DirectoryPath, mapInfo.CoverImageFilename);
 
             return Image.FromFile(imageFilePath);
+        }
+
+        public string GetMapSongPath(string mapId)
+        {
+            var mapInfo = _mapInfo.Value[mapId];
+
+            return Path.Combine(mapInfo.DirectoryPath, mapInfo.SongFileName);
         }
     }
 }

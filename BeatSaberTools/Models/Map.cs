@@ -9,5 +9,7 @@ namespace BeatSaberTools.Models
         public string SongAuthorName { get; set; }
         public string MapAuthorName { get; set; }
         public TimeSpan SongDuration { get; set; }
+        public TimeSpan PreviewStartTime { get; set; }
+        public TimeSpan PreviewDuration { get; set; }
     }
 }

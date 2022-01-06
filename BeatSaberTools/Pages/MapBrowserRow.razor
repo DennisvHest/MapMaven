@@ -1,4 +1,7 @@
-﻿<MudTd Style="width: 82px">
+﻿<MudTd Class="pa-0" Style="width: 50px">
+    <MudIconButton Icon="@Icons.Material.Filled.PlayCircle" OnClick="PlayPauseSongPreview"></MudIconButton>
+</MudTd>
+<MudTd Class="pa-1" Style="width: 50px">
     @if (!string.IsNullOrEmpty(CoverImageDataUrl))
     {
         <img class="cover-image" src="@CoverImageDataUrl" />

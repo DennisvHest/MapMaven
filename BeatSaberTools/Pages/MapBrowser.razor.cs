@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Components;
 using BeatSaberTools.Services;
 using BeatSaberTools.Models;
 using System;
-using BeatSaberTools.Extensions;
 
 namespace BeatSaberTools.Pages
 {
