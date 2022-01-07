@@ -61,15 +61,16 @@
 	<ItemGroup>
 	  <None Remove="Pages\MapBrowser.razor.css" />
 	  <None Remove="Pages\MapBrowserRow.razor.css" />
+	  <None Remove="Shared\PlaylistList.razor.css" />
 	</ItemGroup>
 
 	<ItemGroup>
 	  <Content Include="Pages\MapBrowser.razor.css" />
 	  <Content Include="Pages\MapBrowserRow.razor.css" />
+	  <Content Include="Shared\PlaylistList.razor.css" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="BeatSaber.SongHashing" Version="1.1.1" />
 	  <PackageReference Include="MudBlazor" Version="6.0.4" />
 	  <PackageReference Include="NAudio" Version="2.0.1" />
 	  <PackageReference Include="NAudio.Vorbis" Version="1.5.0" />

@@ -1,0 +1,17 @@
+﻿@using BeatSaberTools.Models.Data.Playlists
+
+<MudList>
+    <MudListSubheader Class="d-flex align-center py-2" Style="border-top: 1px solid;">
+        <MudIcon Icon="@Icons.Filled.PlaylistPlay"></MudIcon> Playlists
+    </MudListSubheader>
+    @foreach (var playlist in Playlists)
+    {
+        <MudListItem title="@playlist.PlaylistTitle">
+            <div class="playlist-list-item">
+                <img src="data:image/png;@playlist.Image" class="mr-2" /> @playlist.PlaylistTitle
+            </div>
+        </MudListItem>
+    }
+</MudList>
+
+

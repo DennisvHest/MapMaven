@@ -26,9 +26,13 @@ namespace BeatSaberTools.Services
         private readonly BehaviorSubject<bool> _loadingMapInfo = new(false);
 
         private readonly BehaviorSubject<IEnumerable<PlaylistInfo>> _playlistInfo = new(Array.Empty<PlaylistInfo>());
+        private readonly BehaviorSubject<bool> _loadingPlaylistInfo = new(false);
 
         public IObservable<IEnumerable<MapInfo>> MapInfo => _mapInfo.Select(x => x.Values);
         public IObservable<bool> LoadingMapInfo => _loadingMapInfo;
+
+        public IObservable<IEnumerable<PlaylistInfo>> PlaylistInfo => _playlistInfo;
+        public IObservable<bool> LoadingPlaylistInfo => _loadingPlaylistInfo;
 
         public async Task LoadAllMapInfo()
         {
@@ -76,15 +80,28 @@ namespace BeatSaberTools.Services
 
         public async Task LoadAllPlaylists()
         {
-            var fileReadTasks = Directory.EnumerateFiles(PlaylistsLocation, "*.bplist")
-                .Select(async playlistFilePath =>
-                {
-                    var playlistInfoText = await File.ReadAllTextAsync(playlistFilePath);
+            _loadingPlaylistInfo.OnNext(true);
 
-                    return JsonSerializer.Deserialize<PlaylistInfo>(playlistInfoText);
-                });
+            try
+            {
+                var fileReadTasks = Directory.EnumerateFiles(PlaylistsLocation, "*.bplist")
+                    .Select(async playlistFilePath =>
+                    {
+                        var playlistInfoText = await File.ReadAllTextAsync(playlistFilePath);
 
-            // TODO: load into behavioursubject
+                        return JsonSerializer.Deserialize<PlaylistInfo>(playlistInfoText, new JsonSerializerOptions {
+                            PropertyNameCaseInsensitive = true
+                        });
+                    });
+
+                IEnumerable<PlaylistInfo> playlistInfo = await Task.WhenAll(fileReadTasks);
+
+                _playlistInfo.OnNext(playlistInfo);
+            }
+            finally
+            {
+                _loadingPlaylistInfo.OnNext(false);
+            }
         }
 
         private void FillSongInfo(MapInfo info)

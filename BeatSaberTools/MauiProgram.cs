@@ -26,6 +26,7 @@ namespace BeatSaberTools
 			builder.Services.AddSingleton<BeatSaberDataService>();
 			builder.Services.AddSingleton<MapService>();
 			builder.Services.AddSingleton<SongPlayerService>();
+			builder.Services.AddSingleton<PlaylistService>();
 
 			return builder.Build();
 		}
