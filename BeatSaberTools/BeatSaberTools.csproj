@@ -69,6 +69,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <PackageReference Include="BeatSaber.SongHashing" Version="1.1.1" />
 	  <PackageReference Include="MudBlazor" Version="6.0.4" />
 	  <PackageReference Include="NAudio" Version="2.0.1" />
 	  <PackageReference Include="NAudio.Vorbis" Version="1.5.0" />

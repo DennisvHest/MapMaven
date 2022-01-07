@@ -10,6 +10,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Drawing;
 using NVorbis;
+using BeatSaberTools.Models.Data.Playlists;
 
 namespace BeatSaberTools.Services
 {
@@ -17,11 +18,14 @@ namespace BeatSaberTools.Services
     {
         private const string BeatSaberInstallLocation = @"E:/Games/SteamLibrary/steamapps/common/Beat Saber";
         private const string MapsLocation = $"{BeatSaberInstallLocation}/Beat Saber_Data/CustomLevels";
+        private const string PlaylistsLocation = $"{BeatSaberInstallLocation}/Playlists";
 
-        private readonly Regex _mapIdRegex = new Regex(@"^[0-9A-Fa-f]{4}");
+        private readonly Regex _mapIdRegex = new Regex(@"^[0-9A-Fa-f]+");
 
         private readonly BehaviorSubject<Dictionary<string, MapInfo>> _mapInfo = new(new Dictionary<string, MapInfo>());
         private readonly BehaviorSubject<bool> _loadingMapInfo = new(false);
+
+        private readonly BehaviorSubject<IEnumerable<PlaylistInfo>> _playlistInfo = new(Array.Empty<PlaylistInfo>());
 
         public IObservable<IEnumerable<MapInfo>> MapInfo => _mapInfo.Select(x => x.Values);
         public IObservable<bool> LoadingMapInfo => _loadingMapInfo;
@@ -68,6 +72,19 @@ namespace BeatSaberTools.Services
             {
                 _loadingMapInfo.OnNext(false);
             }
+        }
+
+        public async Task LoadAllPlaylists()
+        {
+            var fileReadTasks = Directory.EnumerateFiles(PlaylistsLocation, "*.bplist")
+                .Select(async playlistFilePath =>
+                {
+                    var playlistInfoText = await File.ReadAllTextAsync(playlistFilePath);
+
+                    return JsonSerializer.Deserialize<PlaylistInfo>(playlistInfoText);
+                });
+
+            // TODO: load into behavioursubject
         }
 
         private void FillSongInfo(MapInfo info)
