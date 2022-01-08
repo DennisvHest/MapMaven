@@ -11,6 +11,10 @@ using System.Threading.Tasks;
 using System.Drawing;
 using NVorbis;
 using BeatSaberTools.Models.Data.Playlists;
+using BeatSaber.SongHashing;
+using System.Threading;
+using Microsoft.VisualStudio.PlatformUI;
+using System.Diagnostics;
 
 namespace BeatSaberTools.Services
 {
@@ -19,6 +23,9 @@ namespace BeatSaberTools.Services
         private const string BeatSaberInstallLocation = @"E:/Games/SteamLibrary/steamapps/common/Beat Saber";
         private const string MapsLocation = $"{BeatSaberInstallLocation}/Beat Saber_Data/CustomLevels";
         private const string PlaylistsLocation = $"{BeatSaberInstallLocation}/Playlists";
+        private const string UserDataLocation = $"{BeatSaberInstallLocation}/UserData";
+
+        private readonly IBeatmapHasher _beatmapHasher;
 
         private readonly Regex _mapIdRegex = new Regex(@"^[0-9A-Fa-f]+");
 
@@ -34,33 +41,22 @@ namespace BeatSaberTools.Services
         public IObservable<IEnumerable<PlaylistInfo>> PlaylistInfo => _playlistInfo;
         public IObservable<bool> LoadingPlaylistInfo => _loadingPlaylistInfo;
 
+        public BeatSaberDataService(IBeatmapHasher beatmapHasher)
+        {
+            _beatmapHasher = beatmapHasher;
+        }
+
         public async Task LoadAllMapInfo()
         {
             _loadingMapInfo.OnNext(true);
 
             try
             {
+                var songHashData = await GetSongHashData();
+
                 var fileReadTasks = Directory.EnumerateDirectories(MapsLocation)
                     //.Take(10)
-                    .Select(async mapDirectory =>
-                    {
-                        var infoFilePath = Path.Combine(mapDirectory, "Info.dat");
-                        var mapInfoText = await File.ReadAllTextAsync(infoFilePath);
-
-                        var info = JsonSerializer.Deserialize<MapInfo>(mapInfoText);
-                        info.DirectoryPath = mapDirectory;
-
-                        var directoryName = Path.GetFileName(Path.GetDirectoryName(info.DirectoryPath + "/"));
-
-                        info.Id = _mapIdRegex.Match(directoryName)?.Value;
-
-                        if (string.IsNullOrEmpty(info.Id))
-                            return null;
-
-                        FillSongInfo(info);
-
-                        return info;
-                    });
+                    .Select(mapDirectory => GetMapInfo(mapDirectory, songHashData));
 
                 IEnumerable<MapInfo> mapInfo = await Task.WhenAll(fileReadTasks);
 
@@ -89,7 +85,8 @@ namespace BeatSaberTools.Services
                     {
                         var playlistInfoText = await File.ReadAllTextAsync(playlistFilePath);
 
-                        return JsonSerializer.Deserialize<PlaylistInfo>(playlistInfoText, new JsonSerializerOptions {
+                        return JsonSerializer.Deserialize<PlaylistInfo>(playlistInfoText, new JsonSerializerOptions
+                        {
                             PropertyNameCaseInsensitive = true
                         });
                     });
@@ -102,6 +99,55 @@ namespace BeatSaberTools.Services
             {
                 _loadingPlaylistInfo.OnNext(false);
             }
+        }
+
+        private async Task<Dictionary<string, SongHash>> GetSongHashData()
+        {
+            var songHashFilePath = Path.Combine(UserDataLocation, "SongCore", "SongHashData.dat");
+            var songHashJson = await File.ReadAllTextAsync(songHashFilePath);
+
+            var songHashData = JsonSerializer.Deserialize<Dictionary<string, SongHash>>(songHashJson, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
+
+            return songHashData.ToDictionary(x => x.Key.NormalizePath(), x => x.Value);
+        }
+
+        private async Task<MapInfo> GetMapInfo(string mapDirectory, Dictionary<string, SongHash> songHashData)
+        {
+            var infoFilePath = Path.Combine(mapDirectory, "Info.dat");
+            var mapInfoText = await File.ReadAllTextAsync(infoFilePath);
+
+            var info = JsonSerializer.Deserialize<MapInfo>(mapInfoText);
+            info.DirectoryPath = mapDirectory;
+
+            info.Hash = songHashData.GetValueOrDefault(info.DirectoryPath.NormalizePath())?.Hash;
+
+            Debug.WriteLine($"Found hash for {mapDirectory}");
+
+            if (info.Hash == null)
+            {
+                Debug.WriteLine($"Dit not find hash for {mapDirectory}");
+
+                var hashResult = _beatmapHasher.HashDirectory(info.DirectoryPath, new CancellationToken());
+
+                if (hashResult.ResultType != HashResultType.Success)
+                    return null;
+
+                info.Hash = hashResult.Hash;
+            }
+
+            var directoryName = Path.GetFileName(Path.GetDirectoryName(info.DirectoryPath + "/"));
+
+            info.Id = _mapIdRegex.Match(directoryName)?.Value;
+
+            if (string.IsNullOrEmpty(info.Id))
+                return null;
+
+            //FillSongInfo(info);
+
+            return info;
         }
 
         private void FillSongInfo(MapInfo info)

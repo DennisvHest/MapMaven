@@ -6,6 +6,7 @@ namespace BeatSaberTools.Models.Data
     public class MapInfo
     {
         public string Id { get; set; }
+        public string Hash { get; set; }
         public string DirectoryPath { get; set; }
 
         [JsonPropertyName("_songName")]

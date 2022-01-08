@@ -4,6 +4,7 @@ using Microsoft.Maui.Hosting;
 using Microsoft.Maui.Controls.Hosting;
 using MudBlazor.Services;
 using BeatSaberTools.Services;
+using BeatSaber.SongHashing;
 
 namespace BeatSaberTools
 {
@@ -22,6 +23,8 @@ namespace BeatSaberTools
 
 			builder.Services.AddBlazorWebView();
 			builder.Services.AddMudServices();
+
+			builder.Services.AddSingleton<IBeatmapHasher, Hasher>();
 
 			builder.Services.AddSingleton<BeatSaberDataService>();
 			builder.Services.AddSingleton<MapService>();
