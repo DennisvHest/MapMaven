@@ -1,9 +1,13 @@
 ﻿@using BeatSaberTools.Models.Data.Playlists
 
-<MudList>
+<MudList Class="d-flex flex-column">
     <MudListSubheader Class="d-flex align-center py-2" Style="border-top: 1px solid;">
         <MudIcon Icon="@Icons.Filled.PlaylistPlay"></MudIcon> Playlists
     </MudListSubheader>
+    @if (LoadingPlaylists)
+    {
+        <MudProgressCircular Color="Color.Info" Size="Size.Small" Indeterminate="true" Class="align-self-center" />
+    }
     @foreach (var playlist in Playlists)
     {
         <MudListItem title="@playlist.PlaylistTitle">

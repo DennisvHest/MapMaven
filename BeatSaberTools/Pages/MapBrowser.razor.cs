@@ -24,13 +24,13 @@ namespace BeatSaberTools.Pages
             MapService.Maps.Subscribe(maps =>
             {
                 Maps = maps;
-                StateHasChanged();
+                InvokeAsync(StateHasChanged);
             });
 
             BeatSaberDataService.LoadingMapInfo.Subscribe(loading =>
             {
                 LoadingMapInfo = loading;
-                StateHasChanged();
+                InvokeAsync(StateHasChanged);
             });
         }
 

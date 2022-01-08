@@ -1,4 +1,6 @@
-﻿@inherits LayoutComponentBase
+﻿@using System.Reactive.Threading.Tasks
+
+@inherits LayoutComponentBase
 
 <MudThemeProvider Theme="BSToolsTheme.Theme" />
 <MudDialogProvider />
@@ -17,7 +19,7 @@
 
     protected override void OnInitialized()
     {
-        InvokeAsync(BeatSaberDataService.LoadAllMapInfo);
-        InvokeAsync(BeatSaberDataService.LoadAllPlaylists);
+        Task.Run(BeatSaberDataService.LoadAllMapInfo);
+        Task.Run(BeatSaberDataService.LoadAllPlaylists);
     }
 }

@@ -41,7 +41,7 @@ namespace BeatSaberTools.Services
             try
             {
                 var fileReadTasks = Directory.EnumerateDirectories(MapsLocation)
-                    .Take(10)
+                    //.Take(10)
                     .Select(async mapDirectory =>
                     {
                         var infoFilePath = Path.Combine(mapDirectory, "Info.dat");

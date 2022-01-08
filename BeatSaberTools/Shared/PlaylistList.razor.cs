@@ -11,14 +11,23 @@ namespace BeatSaberTools.Shared
         [Inject]
         protected PlaylistService PlaylistService { get; set; }
 
+        [Inject]
+        protected BeatSaberDataService BeatSaberDataService { get; set; }
 
         private IEnumerable<Playlist> Playlists = Array.Empty<Playlist>();
+        private bool LoadingPlaylists = false;
 
         protected override void OnInitialized()
         {
             PlaylistService.Playlists.Subscribe(playlists =>
             {
                 Playlists = playlists;
+                StateHasChanged();
+            });
+
+            BeatSaberDataService.LoadingPlaylistInfo.Subscribe(loading =>
+            {
+                LoadingPlaylists = loading;
                 StateHasChanged();
             });
         }

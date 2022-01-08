@@ -4,6 +4,7 @@ using BeatSaberTools.Services;
 using BeatSaberTools.Extensions;
 using System.Reactive.Linq;
 using System;
+using System.Threading.Tasks;
 
 namespace BeatSaberTools.Pages
 {
@@ -24,7 +25,7 @@ namespace BeatSaberTools.Pages
 
         protected override void OnInitialized()
         {
-            InvokeAsync(() =>
+            Task.Run(() =>
             {
                 var coverImage = BeatSaberDataService.GetMapCoverImage(Map.Id);
 
@@ -32,7 +33,7 @@ namespace BeatSaberTools.Pages
                     .GetResizedImage(50, 50)
                     .ToDataUrl();
 
-                StateHasChanged();
+                InvokeAsync(StateHasChanged);
             });
 
             var currentlyPlaying = SongPlayerService.CurrentlyPlayingMap

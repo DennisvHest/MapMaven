@@ -24,7 +24,20 @@ namespace BeatSaberTools.Models.Data
         [JsonPropertyName("_previewDuration")]
         public float PreviewDurationInSeconds { get; set; }
         public TimeSpan PreviewStartTime => TimeSpan.FromSeconds(PreviewStartTimeInSeconds);
-        public TimeSpan PreviewDuration => TimeSpan.FromSeconds(PreviewDurationInSeconds);
+        public TimeSpan PreviewDuration
+        {
+            get
+            {
+                try
+                {
+                    return TimeSpan.FromSeconds(PreviewDurationInSeconds);
+                }
+                catch
+                {
+                    return SongDuration - PreviewStartTime;
+                }
+            }
+        }
 
         public Map ToMap()
         {
