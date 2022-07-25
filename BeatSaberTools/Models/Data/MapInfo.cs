@@ -23,7 +23,11 @@ namespace BeatSaberTools.Models.Data
         public float PreviewStartTimeInSeconds { get; set; }
         [JsonPropertyName("_previewDuration")]
         public float PreviewDurationInSeconds { get; set; }
+
+        [JsonIgnore]
         public TimeSpan PreviewStartTime => TimeSpan.FromSeconds(PreviewStartTimeInSeconds);
+
+        [JsonIgnore]
         public TimeSpan PreviewDuration
         {
             get

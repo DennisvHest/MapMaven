@@ -18,6 +18,7 @@ namespace BeatSaberTools.Services
         private const string MapsLocation = $"{BeatSaberInstallLocation}/Beat Saber_Data/CustomLevels";
         private const string PlaylistsLocation = $"{BeatSaberInstallLocation}/Playlists";
         private const string UserDataLocation = $"{BeatSaberInstallLocation}/UserData";
+        private string MapInfoCachePath = Path.Combine(FileSystem.AppDataDirectory, "map-info.json");
 
         private readonly IBeatmapHasher _beatmapHasher;
 
@@ -47,10 +48,11 @@ namespace BeatSaberTools.Services
             try
             {
                 var songHashData = await GetSongHashData();
+                var mapInfoCache = await GetMapInfoCache();
 
                 var fileReadTasks = Directory.EnumerateDirectories(MapsLocation)
                     //.Take(10)
-                    .Select(mapDirectory => GetMapInfo(mapDirectory, songHashData));
+                    .Select(mapDirectory => GetMapInfo(mapDirectory, songHashData, mapInfoCache));
 
                 IEnumerable<MapInfo> mapInfo = await Task.WhenAll(fileReadTasks);
 
@@ -59,6 +61,8 @@ namespace BeatSaberTools.Services
                     .GroupBy(i => i.Id)
                     .Select(g => g.First())
                     .ToDictionary(i => i.Id);
+
+                await CacheMapInfo(mapInfoDictionary.Select(i => i.Value));
 
                 _mapInfo.OnNext(mapInfoDictionary);
             }
@@ -108,29 +112,38 @@ namespace BeatSaberTools.Services
             return songHashData.ToDictionary(x => x.Key.NormalizePath(), x => x.Value);
         }
 
-        private async Task<MapInfo> GetMapInfo(string mapDirectory, Dictionary<string, SongHash> songHashData)
+        private async Task<MapInfo> GetMapInfo(string mapDirectory, Dictionary<string, SongHash> songHashData, Dictionary<string, MapInfo> mapInfoCache)
         {
             var infoFilePath = Path.Combine(mapDirectory, "Info.dat");
             var mapInfoText = await File.ReadAllTextAsync(infoFilePath);
 
-            var info = JsonSerializer.Deserialize<MapInfo>(mapInfoText);
-            info.DirectoryPath = mapDirectory;
-
-            info.Hash = songHashData.GetValueOrDefault(info.DirectoryPath.NormalizePath())?.Hash;
+            var mapHash = songHashData.GetValueOrDefault(mapDirectory.NormalizePath())?.Hash;
 
             Debug.WriteLine($"Found hash for {mapDirectory}");
 
-            if (info.Hash == null)
+            if (mapHash == null)
             {
                 Debug.WriteLine($"Dit not find hash for {mapDirectory}");
 
-                var hashResult = _beatmapHasher.HashDirectory(info.DirectoryPath, new CancellationToken());
+                var hashResult = _beatmapHasher.HashDirectory(mapDirectory, new CancellationToken());
 
                 if (hashResult.ResultType != HashResultType.Success)
                     return null;
 
-                info.Hash = hashResult.Hash;
+                mapHash = hashResult.Hash;
             }
+
+            if (mapInfoCache.TryGetValue(mapHash, out var info))
+            {
+                return info;
+            }
+            else
+            {
+                info = JsonSerializer.Deserialize<MapInfo>(mapInfoText);
+            }
+
+            info.Hash = mapHash;
+            info.DirectoryPath = mapDirectory;
 
             var directoryName = Path.GetFileName(Path.GetDirectoryName(info.DirectoryPath + "/"));
 
@@ -139,7 +152,7 @@ namespace BeatSaberTools.Services
             if (string.IsNullOrEmpty(info.Id))
                 return null;
 
-            //FillSongInfo(info);
+            FillSongInfo(info);
 
             return info;
         }
@@ -168,6 +181,33 @@ namespace BeatSaberTools.Services
             var mapInfo = _mapInfo.Value[mapId];
 
             return Path.Combine(mapInfo.DirectoryPath, mapInfo.SongFileName);
+        }
+
+        private async Task<Dictionary<string, MapInfo>> GetMapInfoCache()
+        {
+            Dictionary<string, MapInfo> mapInfoCache = new Dictionary<string, MapInfo>();
+
+            if (File.Exists(MapInfoCachePath))
+            {
+                using (var mapInfoCacheStream = File.OpenRead(MapInfoCachePath))
+                {
+                    mapInfoCache = await JsonSerializer.DeserializeAsync<Dictionary<string, MapInfo>>(mapInfoCacheStream);
+                }
+            }
+
+            return mapInfoCache;
+        }
+
+        private async Task CacheMapInfo(IEnumerable<MapInfo> mapInfo)
+        {
+            var mapInfoByHash = mapInfo
+                .GroupBy(i => i.Hash)
+                .Select(x => x.First())
+                .ToDictionary(i => i.Hash);
+
+            string mapInfoCacheJson = JsonSerializer.Serialize(mapInfoByHash);
+
+            await File.WriteAllTextAsync(MapInfoCachePath, mapInfoCacheJson);
         }
     }
 }
