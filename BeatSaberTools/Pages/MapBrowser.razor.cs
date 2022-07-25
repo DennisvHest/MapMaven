@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Components;
 using BeatSaberTools.Services;
 using BeatSaberTools.Models;
 using System;
+using Map = BeatSaberTools.Models.Map;
 
 namespace BeatSaberTools.Pages
 {

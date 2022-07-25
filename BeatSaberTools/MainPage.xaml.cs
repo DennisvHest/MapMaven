@@ -1,12 +1,9 @@
-﻿using Microsoft.Maui.Controls;
+﻿namespace BeatSaberTools;
 
-namespace BeatSaberTools
+public partial class MainPage : ContentPage
 {
-    public partial class MainPage : ContentPage
+	public MainPage()
 	{
-		public MainPage()
-		{
-			InitializeComponent();
-		}
+		InitializeComponent();
 	}
 }

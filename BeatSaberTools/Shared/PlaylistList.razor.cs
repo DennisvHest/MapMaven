@@ -22,13 +22,13 @@ namespace BeatSaberTools.Shared
             PlaylistService.Playlists.Subscribe(playlists =>
             {
                 Playlists = playlists;
-                StateHasChanged();
+                InvokeAsync(StateHasChanged);
             });
 
             BeatSaberDataService.LoadingPlaylistInfo.Subscribe(loading =>
             {
                 LoadingPlaylists = loading;
-                StateHasChanged();
+                InvokeAsync(StateHasChanged);
             });
         }
     }

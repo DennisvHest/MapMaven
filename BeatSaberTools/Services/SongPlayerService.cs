@@ -2,9 +2,9 @@
 using BeatSaberTools.Utilities.NAudio;
 using NAudio.Vorbis;
 using NAudio.Wave;
-using System;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
+using Map = BeatSaberTools.Models.Map;
 
 namespace BeatSaberTools.Services
 {

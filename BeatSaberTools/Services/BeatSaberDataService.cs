@@ -1,20 +1,14 @@
 ﻿using BeatSaberTools.Models.Data;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Text.Json;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.Drawing;
 using NVorbis;
 using BeatSaberTools.Models.Data.Playlists;
 using BeatSaber.SongHashing;
-using System.Threading;
 using Microsoft.VisualStudio.PlatformUI;
 using System.Diagnostics;
+using Image = System.Drawing.Image;
 
 namespace BeatSaberTools.Services
 {

@@ -1,4 +1,5 @@
 ﻿using MudBlazor;
+using Colors = MudBlazor.Colors;
 
 namespace BeatSaberTools
 {

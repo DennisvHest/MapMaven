@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace BeatSaberTools.Models.Data.Playlists
+﻿namespace BeatSaberTools.Models.Data.Playlists
 {
     public class PlaylistInfo
     {

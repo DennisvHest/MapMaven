@@ -5,6 +5,7 @@ using BeatSaberTools.Extensions;
 using System.Reactive.Linq;
 using System;
 using System.Threading.Tasks;
+using Map = BeatSaberTools.Models.Map;
 
 namespace BeatSaberTools.Pages
 {

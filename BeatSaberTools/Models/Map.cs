@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace BeatSaberTools.Models
+﻿namespace BeatSaberTools.Models
 {
     public class Map
     {
