@@ -51,11 +51,11 @@ namespace BeatSaberTools.Services
                 var mapInfoCache = await GetMapInfoCache();
 
                 var fileReadTasks = Directory.EnumerateDirectories(MapsLocation)
-                    //.Take(10)
                     .Select(mapDirectory => GetMapInfo(mapDirectory, songHashData, mapInfoCache));
 
                 IEnumerable<MapInfo> mapInfo = await Task.WhenAll(fileReadTasks);
 
+                // Create a dictionary grouping all map info by ID
                 var mapInfoDictionary = mapInfo
                     .Where(i => i != null)
                     .GroupBy(i => i.Id)
@@ -99,6 +99,9 @@ namespace BeatSaberTools.Services
             }
         }
 
+        /// <summary>
+        /// Gets the hash data from SongCore (pre-generated hashes). Required to identify newly added or existing maps for caching.
+        /// </summary>
         private async Task<Dictionary<string, SongHash>> GetSongHashData()
         {
             var songHashFilePath = Path.Combine(UserDataLocation, "SongCore", "SongHashData.dat");
@@ -112,11 +115,14 @@ namespace BeatSaberTools.Services
             return songHashData.ToDictionary(x => x.Key.NormalizePath(), x => x.Value);
         }
 
+        /// <summary>
+        /// Gets all the information of the map located in the given mapDirectory.
+        /// </summary>
+        /// <param name="mapDirectory">The directory path of the map.</param>
+        /// <param name="songHashData">All song hashes.</param>
+        /// <param name="mapInfoCache">MapInfo from the cache.</param>
         private async Task<MapInfo> GetMapInfo(string mapDirectory, Dictionary<string, SongHash> songHashData, Dictionary<string, MapInfo> mapInfoCache)
         {
-            var infoFilePath = Path.Combine(mapDirectory, "Info.dat");
-            var mapInfoText = await File.ReadAllTextAsync(infoFilePath);
-
             var mapHash = songHashData.GetValueOrDefault(mapDirectory.NormalizePath())?.Hash;
 
             Debug.WriteLine($"Found hash for {mapDirectory}");
@@ -135,10 +141,14 @@ namespace BeatSaberTools.Services
 
             if (mapInfoCache.TryGetValue(mapHash, out var info))
             {
+                // Map info was found in cache. No further data retrieval nescessary.
                 return info;
             }
             else
             {
+                var infoFilePath = Path.Combine(mapDirectory, "Info.dat");
+                var mapInfoText = await File.ReadAllTextAsync(infoFilePath);
+
                 info = JsonSerializer.Deserialize<MapInfo>(mapInfoText);
             }
 
@@ -157,6 +167,9 @@ namespace BeatSaberTools.Services
             return info;
         }
 
+        /// <summary>
+        /// Fills additional song info of the given map that is not found within the Info.dat file of the map.
+        /// </summary>
         private void FillSongInfo(MapInfo info)
         {
             var audioFilePath = Path.Combine(info.DirectoryPath, info.SongFileName);
@@ -183,6 +196,10 @@ namespace BeatSaberTools.Services
             return Path.Combine(mapInfo.DirectoryPath, mapInfo.SongFileName);
         }
 
+        /// <summary>
+        /// Returns the MapInfo from the cache.
+        /// This is a dictionary with the map hash as the key.
+        /// </summary>
         private async Task<Dictionary<string, MapInfo>> GetMapInfoCache()
         {
             Dictionary<string, MapInfo> mapInfoCache = new Dictionary<string, MapInfo>();
@@ -198,6 +215,10 @@ namespace BeatSaberTools.Services
             return mapInfoCache;
         }
 
+        /// <summary>
+        /// Writes the given MapInfo's as JSON to the AppData cache.
+        /// The MapInfo's are transformed to a dictionary with the hash as the key.
+        /// </summary>
         private async Task CacheMapInfo(IEnumerable<MapInfo> mapInfo)
         {
             var mapInfoByHash = mapInfo
