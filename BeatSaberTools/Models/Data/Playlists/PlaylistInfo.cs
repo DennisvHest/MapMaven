@@ -7,14 +7,5 @@
         public string Image { get; set; }
 
         public ICollection<PlaylistSongInfo> Songs { get; set; }
-
-        public Playlist ToPlaylist()
-        {
-            return new Playlist
-            {
-                PlaylistTitle = PlaylistTitle,
-                Image = Image
-            };
-        }
     }
 }

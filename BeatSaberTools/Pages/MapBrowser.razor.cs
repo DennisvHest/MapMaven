@@ -13,10 +13,15 @@ namespace BeatSaberTools.Pages
         protected MapService MapService { get; set; }
 
         [Inject]
+        protected PlaylistService PlaylistService { get; set; }
+
+        [Inject]
         protected BeatSaberDataService BeatSaberDataService { get; set; }
 
         private IEnumerable<Map> Maps = new List<Map>();
         private bool LoadingMapInfo = false;
+
+        private IEnumerable<string> MapHashFilter = Array.Empty<string>();
 
         private string SearchString = "";
 
@@ -33,16 +38,33 @@ namespace BeatSaberTools.Pages
                 LoadingMapInfo = loading;
                 InvokeAsync(StateHasChanged);
             });
+
+            PlaylistService.SelectedPlaylist.Subscribe(selectedPlaylist =>
+            {
+                MapHashFilter = selectedPlaylist?.Maps.Select(m => m.Hash) ?? Array.Empty<string>();
+                InvokeAsync(StateHasChanged);
+            });
         }
 
         private bool Filter(Map map)
         {
-            if (string.IsNullOrWhiteSpace(SearchString))
-                return true;
+            var searchFilter = true;
 
-            var searchString = SearchString.Trim();
+            if (!string.IsNullOrWhiteSpace(SearchString))
+            {
+                var searchString = SearchString.Trim();
 
-            return $"{map.Name} {map.SongAuthorName} {map.MapAuthorName}".Contains(searchString, StringComparison.OrdinalIgnoreCase);
+                searchFilter = $"{map.Name} {map.SongAuthorName} {map.MapAuthorName}".Contains(searchString, StringComparison.OrdinalIgnoreCase);
+            }
+
+            var mapHashFilter = true;
+
+            if (MapHashFilter.Any())
+            {
+                mapHashFilter = MapHashFilter.Contains(map.Hash);
+            }
+
+            return searchFilter && mapHashFilter;
         }
     }
 }

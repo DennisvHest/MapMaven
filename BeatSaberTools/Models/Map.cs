@@ -3,6 +3,7 @@
     public class Map
     {
         public string Id { get; set; }
+        public string Hash { get; set; }
         public string Name { get; set; }
         public string SongAuthorName { get; set; }
         public string MapAuthorName { get; set; }
@@ -10,5 +11,6 @@
         public TimeSpan PreviewStartTime { get; set; }
         public TimeSpan PreviewDuration { get; set; }
         public TimeSpan PreviewEndTime => PreviewStartTime + PreviewDuration;
+
     }
 }

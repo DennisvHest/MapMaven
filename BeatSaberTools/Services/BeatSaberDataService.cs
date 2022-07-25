@@ -9,6 +9,10 @@ using BeatSaber.SongHashing;
 using Microsoft.VisualStudio.PlatformUI;
 using System.Diagnostics;
 using Image = System.Drawing.Image;
+using BeatSaberPlaylistsLib;
+using BeatSaberPlaylistsLib.Types;
+using BeatSaberPlaylistsLib.Blist;
+using BeatSaberPlaylistsLib.Legacy;
 
 namespace BeatSaberTools.Services
 {
@@ -21,24 +25,28 @@ namespace BeatSaberTools.Services
         private string MapInfoCachePath = Path.Combine(FileSystem.AppDataDirectory, "map-info.json");
 
         private readonly IBeatmapHasher _beatmapHasher;
+        private readonly PlaylistManager _playlistManager;
 
         private readonly Regex _mapIdRegex = new Regex(@"^[0-9A-Fa-f]+");
 
         private readonly BehaviorSubject<Dictionary<string, MapInfo>> _mapInfo = new(new Dictionary<string, MapInfo>());
         private readonly BehaviorSubject<bool> _loadingMapInfo = new(false);
 
-        private readonly BehaviorSubject<IEnumerable<PlaylistInfo>> _playlistInfo = new(Array.Empty<PlaylistInfo>());
+        private readonly BehaviorSubject<IEnumerable<IPlaylist>> _playlistInfo = new(Array.Empty<IPlaylist>());
         private readonly BehaviorSubject<bool> _loadingPlaylistInfo = new(false);
 
+        public IObservable<Dictionary<string, MapInfo>> MapInfoByHash => _mapInfo;
         public IObservable<IEnumerable<MapInfo>> MapInfo => _mapInfo.Select(x => x.Values);
         public IObservable<bool> LoadingMapInfo => _loadingMapInfo;
 
-        public IObservable<IEnumerable<PlaylistInfo>> PlaylistInfo => _playlistInfo;
+        public IObservable<IEnumerable<IPlaylist>> PlaylistInfo => _playlistInfo;
         public IObservable<bool> LoadingPlaylistInfo => _loadingPlaylistInfo;
 
         public BeatSaberDataService(IBeatmapHasher beatmapHasher)
         {
             _beatmapHasher = beatmapHasher;
+
+            _playlistManager = new PlaylistManager(PlaylistsLocation, new LegacyPlaylistHandler());
         }
 
         public async Task LoadAllMapInfo()
@@ -58,11 +66,11 @@ namespace BeatSaberTools.Services
                 // Create a dictionary grouping all map info by ID
                 var mapInfoDictionary = mapInfo
                     .Where(i => i != null)
-                    .GroupBy(i => i.Id)
+                    .GroupBy(i => i.Hash)
                     .Select(g => g.First())
-                    .ToDictionary(i => i.Id);
+                    .ToDictionary(i => i.Hash);
 
-                await CacheMapInfo(mapInfoDictionary.Select(i => i.Value));
+                await CacheMapInfo(mapInfoDictionary);
 
                 _mapInfo.OnNext(mapInfoDictionary);
             }
@@ -78,20 +86,9 @@ namespace BeatSaberTools.Services
 
             try
             {
-                var fileReadTasks = Directory.EnumerateFiles(PlaylistsLocation, "*.bplist")
-                    .Select(async playlistFilePath =>
-                    {
-                        var playlistInfoText = await File.ReadAllTextAsync(playlistFilePath);
+                var playlists = _playlistManager.GetAllPlaylists();
 
-                        return JsonSerializer.Deserialize<PlaylistInfo>(playlistInfoText, new JsonSerializerOptions
-                        {
-                            PropertyNameCaseInsensitive = true
-                        });
-                    });
-
-                IEnumerable<PlaylistInfo> playlistInfo = await Task.WhenAll(fileReadTasks);
-
-                _playlistInfo.OnNext(playlistInfo);
+                _playlistInfo.OnNext(playlists);
             }
             finally
             {
@@ -219,13 +216,8 @@ namespace BeatSaberTools.Services
         /// Writes the given MapInfo's as JSON to the AppData cache.
         /// The MapInfo's are transformed to a dictionary with the hash as the key.
         /// </summary>
-        private async Task CacheMapInfo(IEnumerable<MapInfo> mapInfo)
+        private async Task CacheMapInfo(Dictionary<string, MapInfo> mapInfoByHash)
         {
-            var mapInfoByHash = mapInfo
-                .GroupBy(i => i.Hash)
-                .Select(x => x.First())
-                .ToDictionary(i => i.Hash);
-
             string mapInfoCacheJson = JsonSerializer.Serialize(mapInfoByHash);
 
             await File.WriteAllTextAsync(MapInfoCachePath, mapInfoCacheJson);

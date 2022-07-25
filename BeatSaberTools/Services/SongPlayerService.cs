@@ -33,13 +33,13 @@ namespace BeatSaberTools.Services
 
             _outputDevice.Stop();
 
-            if (map.Id == _currentlyPlayingMap.Value?.Id)
+            if (map.Hash == _currentlyPlayingMap.Value?.Hash)
             {
                 _currentlyPlayingMap.OnNext(null);
                 return;
             }
 
-            var songPath = _beatSaberDataService.GetMapSongPath(map.Id);
+            var songPath = _beatSaberDataService.GetMapSongPath(map.Hash);
 
             _audioFile = new VorbisWaveReader(songPath);
 

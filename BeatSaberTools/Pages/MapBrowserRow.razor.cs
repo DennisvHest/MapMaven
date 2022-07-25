@@ -28,7 +28,7 @@ namespace BeatSaberTools.Pages
         {
             Task.Run(() =>
             {
-                var coverImage = BeatSaberDataService.GetMapCoverImage(Map.Id);
+                var coverImage = BeatSaberDataService.GetMapCoverImage(Map.Hash);
 
                 CoverImageDataUrl = coverImage
                     .GetResizedImage(50, 50)
@@ -38,7 +38,7 @@ namespace BeatSaberTools.Pages
             });
 
             var currentlyPlaying = SongPlayerService.CurrentlyPlayingMap
-                .Select(m => m != null && m.Id == Map?.Id);
+                .Select(m => m != null && m.Hash == Map?.Hash);
 
             currentlyPlaying.Subscribe(currentlyPlaying =>
             {

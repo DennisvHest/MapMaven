@@ -48,6 +48,7 @@ namespace BeatSaberTools.Models.Data
             return new Map
             {
                 Id = Id,
+                Hash = Hash,
                 Name = SongName,
                 SongAuthorName = SongAuthorName,
                 MapAuthorName = LevelAuthorName,

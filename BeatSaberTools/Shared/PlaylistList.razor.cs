@@ -17,6 +17,9 @@ namespace BeatSaberTools.Shared
         private IEnumerable<Playlist> Playlists = Array.Empty<Playlist>();
         private bool LoadingPlaylists = false;
 
+        private Playlist SelectedPlaylist;
+        private object SelectedPlaylistValue;
+
         protected override void OnInitialized()
         {
             PlaylistService.Playlists.Subscribe(playlists =>
@@ -30,6 +33,18 @@ namespace BeatSaberTools.Shared
                 LoadingPlaylists = loading;
                 InvokeAsync(StateHasChanged);
             });
+
+            PlaylistService.SelectedPlaylist.Subscribe(playlist =>
+            {
+                SelectedPlaylist = playlist;
+                SelectedPlaylistValue = SelectedPlaylist;
+                InvokeAsync(StateHasChanged);
+            });
+        }
+
+        protected void OnPlaylistSelect(Playlist playlist)
+        {
+            PlaylistService.SetSelectedPlaylist(playlist);
         }
     }
 }
