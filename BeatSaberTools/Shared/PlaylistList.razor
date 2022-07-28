@@ -1,8 +1,11 @@
 ﻿@using BeatSaberTools.Models.Data.Playlists
 
 <MudList Class="d-flex flex-column" Clickable="true" @bind-SelectedValue="SelectedPlaylistValue">
-    <MudListSubheader Class="d-flex align-center py-2" Style="border-top: 1px solid;">
-        <MudIcon Icon="@Icons.Filled.PlaylistPlay"></MudIcon> Playlists
+    <MudListSubheader Class="d-flex align-center justify-space-between py-2" Style="border-top: 1px solid;">
+        <div class="d-flex align-center">
+            <MudIcon Icon="@Icons.Filled.PlaylistPlay"></MudIcon> Playlists
+        </div>
+        <MudIconButton Icon="@Icons.Filled.Add" Variant="Variant.Outlined" Size="Size.Small" OnClick="OpenAddPlaylistDialog" />
     </MudListSubheader>
     @if (LoadingPlaylists)
     {
@@ -12,7 +15,11 @@
     {
         <MudListItem title="@playlist.Title" OnClick="() => OnPlaylistSelect(playlist)" Value="playlist">
             <div class="playlist-list-item">
-                <img src="data:image/png;@playlist.CoverImage" class="mr-2" /> @playlist.Title
+                @if (!string.IsNullOrEmpty(playlist.CoverImage))
+                {
+                    <img src="data:image/png;@playlist.CoverImage" class="mr-2" /> 
+                }
+                @playlist.Title
             </div>
         </MudListItem>
     }

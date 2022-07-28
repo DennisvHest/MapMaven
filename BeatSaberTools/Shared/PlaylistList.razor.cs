@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using BeatSaberTools.Models;
 using BeatSaberTools.Services;
 using Microsoft.AspNetCore.Components;
+using MudBlazor;
 
 namespace BeatSaberTools.Shared
 {
@@ -13,6 +14,9 @@ namespace BeatSaberTools.Shared
 
         [Inject]
         protected BeatSaberDataService BeatSaberDataService { get; set; }
+
+        [Inject]
+        protected IDialogService DialogService { get; set; }
 
         private IEnumerable<Playlist> Playlists = Array.Empty<Playlist>();
         private bool LoadingPlaylists = false;
@@ -45,6 +49,15 @@ namespace BeatSaberTools.Shared
         protected void OnPlaylistSelect(Playlist playlist)
         {
             PlaylistService.SetSelectedPlaylist(playlist);
+        }
+
+        protected void OpenAddPlaylistDialog()
+        {
+            DialogService.Show<AddPlaylistDialog>("Add playlist", new DialogOptions
+            {
+                MaxWidth = MaxWidth.Small,
+                FullWidth = true,
+            });
         }
     }
 }

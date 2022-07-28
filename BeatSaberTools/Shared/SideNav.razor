@@ -1,4 +1,9 @@
 ﻿<MudDrawer Open="true" Elevation="1">
-    <MudNavLink Href="/" Match="NavLinkMatch.All" Icon="@Icons.Filled.LibraryMusic" DisableRipple="true">Maps</MudNavLink>
+    <MudNavLink
+        Icon="@Icons.Filled.LibraryMusic"
+        DisableRipple="true"
+        OnClick="OnMapsNavigation">
+        Maps
+    </MudNavLink>
     <PlaylistList></PlaylistList>
 </MudDrawer>

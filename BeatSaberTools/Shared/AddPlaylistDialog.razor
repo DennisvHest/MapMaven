@@ -1,0 +1,20 @@
+﻿<EditForm Model="@AddPlaylistModel" OnValidSubmit="OnValidSubmit">
+    <MudDialog>
+        <DialogContent>
+            <DataAnnotationsValidator />
+            <MudGrid>
+                <MudItem xs="12">
+                    <MudTextField Label="Name"
+                                  Variant="Variant.Outlined"
+                                  @bind-Value="AddPlaylistModel.Name"
+                                  For="() => AddPlaylistModel.Name" />
+                </MudItem>
+            </MudGrid>
+        </DialogContent>
+        <DialogActions>
+            <MudButton OnClick="Cancel">Cancel</MudButton>
+            <MudButton ButtonType="ButtonType.Submit">Add</MudButton>
+        </DialogActions>
+    </MudDialog>
+</EditForm>
+

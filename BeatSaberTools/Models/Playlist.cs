@@ -18,7 +18,7 @@ namespace BeatSaberTools.Models
 
             var coverImageStream = playlist.GetCoverStream();
 
-            if (coverImageStream != null)
+            if (coverImageStream != null && playlist.HasCover)
                 coverImage = Image.FromStream(coverImageStream);
 
             CoverImage = coverImage?.ToDataUrl();

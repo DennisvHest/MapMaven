@@ -21,7 +21,7 @@ namespace BeatSaberTools.Pages
         private IEnumerable<Map> Maps = new List<Map>();
         private bool LoadingMapInfo = false;
 
-        private IEnumerable<string> MapHashFilter = Array.Empty<string>();
+        private IEnumerable<string> MapHashFilter = null;
 
         private string SearchString = "";
 
@@ -41,7 +41,7 @@ namespace BeatSaberTools.Pages
 
             PlaylistService.SelectedPlaylist.Subscribe(selectedPlaylist =>
             {
-                MapHashFilter = selectedPlaylist?.Maps.Select(m => m.Hash) ?? Array.Empty<string>();
+                MapHashFilter = selectedPlaylist?.Maps.Select(m => m.Hash);
                 InvokeAsync(StateHasChanged);
             });
         }
@@ -57,12 +57,12 @@ namespace BeatSaberTools.Pages
                 searchFilter = $"{map.Name} {map.SongAuthorName} {map.MapAuthorName}".Contains(searchString, StringComparison.OrdinalIgnoreCase);
             }
 
-            var mapHashFilter = true;
-
-            if (MapHashFilter.Any())
+            var mapHashFilter = MapHashFilter?.ToList() switch
             {
-                mapHashFilter = MapHashFilter.Contains(map.Hash);
-            }
+                null => true,
+                [] => false,
+                _ => MapHashFilter.Contains(map.Hash)
+            };
 
             return searchFilter && mapHashFilter;
         }

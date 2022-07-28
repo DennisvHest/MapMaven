@@ -18,10 +18,10 @@ namespace BeatSaberTools.Services
 {
     public class BeatSaberDataService
     {
-        private const string BeatSaberInstallLocation = @"E:/Games/SteamLibrary/steamapps/common/Beat Saber";
-        private const string MapsLocation = $"{BeatSaberInstallLocation}/Beat Saber_Data/CustomLevels";
-        private const string PlaylistsLocation = $"{BeatSaberInstallLocation}/Playlists";
-        private const string UserDataLocation = $"{BeatSaberInstallLocation}/UserData";
+        public const string BeatSaberInstallLocation = @"F:/SteamLibrary/steamapps/common/Beat Saber";
+        public const string MapsLocation = $"{BeatSaberInstallLocation}/Beat Saber_Data/CustomLevels";
+        public const string PlaylistsLocation = $"{BeatSaberInstallLocation}/Playlists";
+        public const string UserDataLocation = $"{BeatSaberInstallLocation}/UserData";
         private string MapInfoCachePath = Path.Combine(FileSystem.AppDataDirectory, "map-info.json");
 
         private readonly IBeatmapHasher _beatmapHasher;
