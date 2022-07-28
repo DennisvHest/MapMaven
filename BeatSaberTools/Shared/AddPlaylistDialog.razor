@@ -1,9 +1,24 @@
-﻿<EditForm Model="@AddPlaylistModel" OnValidSubmit="OnValidSubmit">
+﻿@using BeatSaberTools.Extensions;
+
+<EditForm Model="@AddPlaylistModel" OnValidSubmit="OnValidSubmit">
     <MudDialog>
         <DialogContent>
             <DataAnnotationsValidator />
             <MudGrid>
-                <MudItem xs="12">
+                <MudItem xs="6">
+                    <MudPaper @ondragenter="@SetDragClass" @ondragleave="@ClearDragClass" @ondragend="@ClearDragClass" Height="300px" Outlined="true" Class="@DragClass">
+                        <InputFile OnChange="OnInputFileChanged" class="absolute mud-width-full mud-height-full overflow-hidden z-2" style="opacity:0;" />
+                        @if (!string.IsNullOrEmpty(CoverImage))
+                        {
+                            <img src="@CoverImage" class="full-width" />
+                        }
+                        else
+                        {
+                            <MudText Typo="Typo.subtitle2">Drag and drop cover image or click to browse for cover images...</MudText>
+                        }
+                    </MudPaper>
+                </MudItem>
+                <MudItem xs="6">
                     <MudTextField Label="Name"
                                   Variant="Variant.Outlined"
                                   @bind-Value="AddPlaylistModel.Name"
