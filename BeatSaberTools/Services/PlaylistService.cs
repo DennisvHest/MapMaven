@@ -39,9 +39,18 @@ namespace BeatSaberTools.Services
 
             await _beatSaberDataService.LoadAllPlaylists();
 
-            SetSelectedPlaylist(playlist);
-
             return playlist;
+        }
+
+        public async Task DeletePlaylist(Playlist playlist)
+        {
+            var playlistToDelete = _playlistManager.GetPlaylist(playlist.FileName);
+            _playlistManager.DeletePlaylist(playlistToDelete);
+
+            if (playlist.FileName == _selectedPlaylist.Value?.FileName)
+                _selectedPlaylist.OnNext(null); // Playlist should not be selected if deleted.
+
+            await _beatSaberDataService.LoadAllPlaylists();
         }
     }
 }

@@ -1,11 +1,16 @@
 ﻿.playlist-list-item {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    line-height: 30px;
+    display: flex;
+    align-items: center;
 }
 
     .playlist-list-item img {
         width: 30px;
         float: left;
+    }
+
+    .playlist-list-item span {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        line-height: 30px;
     }

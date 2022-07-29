@@ -24,6 +24,10 @@ namespace BeatSaberTools.Shared
         private Playlist SelectedPlaylist;
         private object SelectedPlaylistValue;
 
+        private Playlist PlaylistToDelete;
+
+        bool ShowConfirmDelete = false;
+
         protected override void OnInitialized()
         {
             PlaylistService.Playlists.Subscribe(playlists =>
@@ -58,6 +62,24 @@ namespace BeatSaberTools.Shared
                 MaxWidth = MaxWidth.Small,
                 FullWidth = true,
             });
+        }
+
+        protected void OpenDeletePlaylistDialog(Playlist playlistToDelete)
+        {
+            PlaylistToDelete = playlistToDelete;
+            ShowConfirmDelete = true;
+        }
+
+        protected async Task DeletePlaylist()
+        {
+            await PlaylistService.DeletePlaylist(PlaylistToDelete);
+            RemovePlaylistToDelete();
+        }
+
+        protected void RemovePlaylistToDelete()
+        {
+            PlaylistToDelete = null;
+            ShowConfirmDelete = false;
         }
     }
 }
