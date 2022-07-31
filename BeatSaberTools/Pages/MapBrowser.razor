@@ -9,6 +9,7 @@
           RowStyle="height: 88px">
     <ToolBarContent>
         <MudTextField @bind-Value="SearchString"
+                      DebounceInterval="300"
                       Immediate="true"
                       Placeholder="Search"
                       Variant="Variant.Outlined"
