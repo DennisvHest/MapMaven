@@ -4,14 +4,12 @@ using System.Reactive.Subjects;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using NVorbis;
-using BeatSaberTools.Models.Data.Playlists;
 using BeatSaber.SongHashing;
 using Microsoft.VisualStudio.PlatformUI;
 using System.Diagnostics;
 using Image = System.Drawing.Image;
 using BeatSaberPlaylistsLib;
 using BeatSaberPlaylistsLib.Types;
-using BeatSaberPlaylistsLib.Blist;
 using BeatSaberPlaylistsLib.Legacy;
 
 namespace BeatSaberTools.Services
@@ -86,6 +84,7 @@ namespace BeatSaberTools.Services
 
             try
             {
+                _playlistManager.RefreshPlaylists(false);
                 var playlists = _playlistManager.GetAllPlaylists();
 
                 _playlistInfo.OnNext(playlists);

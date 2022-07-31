@@ -1,5 +1,6 @@
 ﻿using BeatSaber.SongHashing;
 using BeatSaberTools.Services;
+using MudBlazor;
 using MudBlazor.Services;
 
 namespace BeatSaberTools;
@@ -21,7 +22,10 @@ public static class MauiProgram
 		builder.Services.AddBlazorWebViewDeveloperTools();
 #endif
 
-        builder.Services.AddMudServices();
+        builder.Services.AddMudServices(config =>
+		{
+			config.SnackbarConfiguration.PositionClass = Defaults.Classes.Position.BottomCenter;
+		});
 
         builder.Services.AddSingleton<IBeatmapHasher, Hasher>();
 

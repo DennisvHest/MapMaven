@@ -1,11 +1,11 @@
 using Microsoft.AspNetCore.Components;
-using BeatSaberTools.Models;
 using BeatSaberTools.Services;
 using BeatSaberTools.Extensions;
 using System.Reactive.Linq;
-using System;
-using System.Threading.Tasks;
 using Map = BeatSaberTools.Models.Map;
+using MudBlazor;
+using BeatSaberTools.Shared;
+using BeatSaberTools.Models;
 
 namespace BeatSaberTools.Pages
 {
@@ -15,6 +15,14 @@ namespace BeatSaberTools.Pages
         protected BeatSaberDataService BeatSaberDataService { get; set; }
         [Inject]
         protected SongPlayerService SongPlayerService { get; set; }
+        [Inject]
+        protected PlaylistService PlaylistService { get; set; }
+
+        [Inject]
+        protected IDialogService DialogService { get; set; }
+
+        [Inject]
+        ISnackbar Snackbar { get; set; }
 
         [Parameter]
         public Map Map { get; set; }
@@ -58,6 +66,26 @@ namespace BeatSaberTools.Pages
         void PlayPauseSongPreview()
         {
             SongPlayerService.PlayStopSongPreview(Map);
+        }
+
+        async Task OpenAddMapToPlaylistDialog()
+        {
+            var dialog = DialogService.Show<PlaylistSelector>("Add map to playlist", new DialogOptions
+            {
+                MaxWidth = MaxWidth.ExtraSmall,
+                FullWidth = true,
+            });
+
+            var result = await dialog.Result;
+
+            if (!result.Cancelled)
+            {
+                var playlist = (Playlist)result.Data;
+
+                await PlaylistService.AddMapToPlaylist(Map, playlist);
+
+                Snackbar.Add($"Added map \"{Map.Name}\" to \"{playlist.Title}\"", Severity.Normal, config => config.Icon = Icons.Filled.Check);
+            }
         }
     }
 }

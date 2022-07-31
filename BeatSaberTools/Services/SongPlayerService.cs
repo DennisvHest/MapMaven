@@ -1,5 +1,4 @@
-﻿using BeatSaberTools.Models;
-using BeatSaberTools.Utilities.NAudio;
+﻿using BeatSaberTools.Utilities.NAudio;
 using NAudio.Vorbis;
 using NAudio.Wave;
 using System.Reactive.Linq;

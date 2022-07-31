@@ -1,5 +1,4 @@
 ﻿using NAudio.Wave;
-using System;
 
 namespace BeatSaberTools.Utilities.NAudio
 {

@@ -4,6 +4,7 @@ using BeatSaberTools.Models;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using Playlist = BeatSaberTools.Models.Playlist;
+using Map = BeatSaberTools.Models.Map;
 
 namespace BeatSaberTools.Services
 {
@@ -49,6 +50,22 @@ namespace BeatSaberTools.Services
 
             if (playlist.FileName == _selectedPlaylist.Value?.FileName)
                 _selectedPlaylist.OnNext(null); // Playlist should not be selected if deleted.
+
+            await _beatSaberDataService.LoadAllPlaylists();
+        }
+
+        public async Task AddMapToPlaylist(Map map, Playlist playlist)
+        {
+            var playlistToModify = _playlistManager.GetPlaylist(playlist.FileName);
+
+            playlistToModify.Add(
+                songHash: map.Hash,
+                songName: map.Name,
+                mapper: map.MapAuthorName,
+                songKey: null
+            );
+
+            _playlistManager.StorePlaylist(playlistToModify);
 
             await _beatSaberDataService.LoadAllPlaylists();
         }

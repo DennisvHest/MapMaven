@@ -1,5 +1,4 @@
-﻿using BeatSaberTools.Models;
-using System.Reactive.Linq;
+﻿using System.Reactive.Linq;
 using Map = BeatSaberTools.Models.Map;
 
 namespace BeatSaberTools.Services

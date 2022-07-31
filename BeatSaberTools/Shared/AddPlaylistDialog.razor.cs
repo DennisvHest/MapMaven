@@ -1,3 +1,4 @@
+using BeatSaberPlaylistsLib.Types;
 using BeatSaberTools.Extensions;
 using BeatSaberTools.Models;
 using BeatSaberTools.Services;
@@ -12,6 +13,9 @@ namespace BeatSaberTools.Shared
     {
         [Inject]
         protected PlaylistService PlaylistService { get; set; }
+
+        [Inject]
+        ISnackbar Snackbar { get; set; }
 
         [CascadingParameter]
         MudDialogInstance MudDialog { get; set; }
@@ -44,6 +48,8 @@ namespace BeatSaberTools.Shared
         async Task OnValidSubmit(EditContext context)
         {
             await PlaylistService.AddPlaylist(AddPlaylistModel);
+
+            Snackbar.Add($"Added playlist \"{AddPlaylistModel.Name}\"", Severity.Normal, config => config.Icon = Icons.Filled.Check);
 
             MudDialog.Close(DialogResult.Ok(AddPlaylistModel));
         }

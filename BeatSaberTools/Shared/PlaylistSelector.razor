@@ -1,0 +1,18 @@
+﻿<MudDialog>
+    <DialogContent>
+        <MudList Class="d-flex flex-column" Clickable="true">
+            @foreach (var playlist in Playlists)
+            {
+                <MudListItem title="@playlist.Title" OnClick="() => OnPlaylistSelect(playlist)" Value="playlist" Class="py-0 px-1">
+                    <div class="playlist-list-item">
+                        @if (!string.IsNullOrEmpty(playlist.CoverImage))
+                        {
+                            <img src="data:image/png;@playlist.CoverImage" class="ml-3 mr-3" />
+                        }
+                        <span>@playlist.Title</span>
+                    </div>
+                </MudListItem>
+            }
+        </MudList>
+    </DialogContent>
+</MudDialog>

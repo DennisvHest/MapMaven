@@ -1,9 +1,9 @@
-using System;
-using System.Collections.Generic;
+using BeatSaberPlaylistsLib.Types;
 using BeatSaberTools.Models;
 using BeatSaberTools.Services;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
+using Playlist = BeatSaberTools.Models.Playlist;
 
 namespace BeatSaberTools.Shared
 {
@@ -17,6 +17,9 @@ namespace BeatSaberTools.Shared
 
         [Inject]
         protected IDialogService DialogService { get; set; }
+
+        [Inject]
+        ISnackbar Snackbar { get; set; }
 
         private IEnumerable<Playlist> Playlists = Array.Empty<Playlist>();
         private bool LoadingPlaylists = false;
@@ -73,6 +76,9 @@ namespace BeatSaberTools.Shared
         protected async Task DeletePlaylist()
         {
             await PlaylistService.DeletePlaylist(PlaylistToDelete);
+            
+            Snackbar.Add($"Removed playlist \"{PlaylistToDelete.Title}\"", Severity.Normal, config => config.Icon = Icons.Filled.Check);
+            
             RemovePlaylistToDelete();
         }
 
