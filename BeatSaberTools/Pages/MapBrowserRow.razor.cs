@@ -9,7 +9,7 @@ using BeatSaberTools.Models;
 
 namespace BeatSaberTools.Pages
 {
-    public partial class MapBrowserRow
+    public partial class MapBrowserRow : IDisposable
     {
         [Inject]
         protected BeatSaberDataService BeatSaberDataService { get; set; }
@@ -27,10 +27,16 @@ namespace BeatSaberTools.Pages
         [Parameter]
         public Map Map { get; set; }
 
+        protected Playlist SelectedPlaylist { get; set; }
+
         private bool CurrentlyPlaying = false;
         private double PlaybackProgress = 0;
 
         protected string CoverImageDataUrl { get; set; }
+
+        bool ShowConfirmRemoveFromPlaylist = false;
+
+        IDisposable SelectedPlaylistSubscription;
 
         protected override void OnInitialized()
         {
@@ -61,6 +67,12 @@ namespace BeatSaberTools.Pages
                     PlaybackProgress = x.progress;
                     InvokeAsync(() => StateHasChanged());
                 });
+
+            SelectedPlaylistSubscription = PlaylistService.SelectedPlaylist.Subscribe(selectedPlaylist =>
+            {
+                SelectedPlaylist = selectedPlaylist;
+                InvokeAsync(() => StateHasChanged());
+            });
         }
 
         void PlayPauseSongPreview()
@@ -86,6 +98,31 @@ namespace BeatSaberTools.Pages
 
                 Snackbar.Add($"Added map \"{Map.Name}\" to \"{playlist.Title}\"", Severity.Normal, config => config.Icon = Icons.Filled.Check);
             }
+        }
+
+        void OpenDeleteFromPlaylistDialog()
+        {
+            ShowConfirmRemoveFromPlaylist = true;
+        }
+
+        void CloseDeleteFromPlaylistDialog()
+        {
+            ShowConfirmRemoveFromPlaylist = false;
+        }
+
+        async Task RemoveFromPlaylist()
+        {
+            await PlaylistService.RemoveMapFromPlaylist(Map, SelectedPlaylist);
+
+            Snackbar.Add($"Removed map \"{Map.Name}\" from playlist \"{SelectedPlaylist.Title}\"", Severity.Normal, config => config.Icon = Icons.Filled.Check);
+
+            CloseDeleteFromPlaylistDialog();
+            InvokeAsync(() => StateHasChanged());
+        }
+
+        public void Dispose()
+        {
+            SelectedPlaylistSubscription?.Dispose();
         }
     }
 }

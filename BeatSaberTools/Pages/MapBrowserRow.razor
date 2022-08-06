@@ -19,6 +19,22 @@
 <MudTd DataLabel="SongAuthorName">@Map.SongAuthorName</MudTd>
 <MudTd DataLabel="MapAuthorName">@Map.MapAuthorName</MudTd>
 <MudTd DataLabel="Duration">@Map.SongDuration.ToString("mm':'ss")</MudTd>
-<MudTd Style="width: 50px; position: relative;">
+<MudTd Style="width: 130px; position: relative;">
     <MudIconButton Icon="@Icons.Filled.PlaylistAdd" Variant="Variant.Text" Size="Size.Medium" OnClick="OpenAddMapToPlaylistDialog" />
+    @if (SelectedPlaylist != null)
+    {
+        <MudIconButton Icon="@Icons.Filled.PlaylistRemove" Variant="Variant.Text" Size="Size.Medium" OnClick="OpenDeleteFromPlaylistDialog" />
+    }
 </MudTd>
+
+
+
+<MudDialog @bind-IsVisible="ShowConfirmRemoveFromPlaylist">
+    <DialogContent>
+        <MudText>Are you sure you want to remove "@Map.Name" from the "@SelectedPlaylist.Title" playlist?</MudText>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="CloseDeleteFromPlaylistDialog">Cancel</MudButton>
+        <MudButton Color="@Color.Error" Variant="Variant.Filled" OnClick="RemoveFromPlaylist">Remove</MudButton>
+    </DialogActions>
+</MudDialog>
