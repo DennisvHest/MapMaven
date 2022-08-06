@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Components;
 using BeatSaberTools.Services;
 using Map = BeatSaberTools.Models.Map;
+using BeatSaberTools.Models;
 
 namespace BeatSaberTools.Pages
 {
@@ -17,6 +18,8 @@ namespace BeatSaberTools.Pages
 
         private IEnumerable<Map> Maps = new List<Map>();
         private bool LoadingMapInfo = false;
+
+        private Playlist SelectedPlaylist = null;
 
         private IEnumerable<string> MapHashFilter = null;
 
@@ -38,6 +41,7 @@ namespace BeatSaberTools.Pages
 
             PlaylistService.SelectedPlaylist.Subscribe(selectedPlaylist =>
             {
+                SelectedPlaylist = selectedPlaylist;
                 MapHashFilter = selectedPlaylist?.Maps.Select(m => m.Hash);
                 InvokeAsync(StateHasChanged);
             });
