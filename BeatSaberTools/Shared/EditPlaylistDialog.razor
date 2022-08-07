@@ -1,6 +1,6 @@
 ﻿@using BeatSaberTools.Extensions;
 
-<EditForm Model="@AddPlaylistModel" OnValidSubmit="OnValidSubmit">
+<EditForm Model="@EditPlaylistModel" OnValidSubmit="OnValidSubmit">
     <MudDialog>
         <DialogContent>
             <DataAnnotationsValidator />
@@ -22,20 +22,20 @@
                 <MudItem xs="6">
                     <MudTextField Label="Name"
                                   Variant="Variant.Outlined"
-                                  @bind-Value="AddPlaylistModel.Name"
-                                  For="() => AddPlaylistModel.Name"
+                                  @bind-Value="EditPlaylistModel.Name"
+                                  For="() => EditPlaylistModel.Name"
                                   Class="mb-4 mt-0" />
                     <MudTextField Label="Description"
                                   Variant="Variant.Outlined"
-                                  @bind-Value="AddPlaylistModel.Description"
-                                  For="() => AddPlaylistModel.Description"
+                                  @bind-Value="EditPlaylistModel.Description"
+                                  For="() => EditPlaylistModel.Description"
                                   Lines="3" />
                 </MudItem>
             </MudGrid>
         </DialogContent>
         <DialogActions>
             <MudButton OnClick="Cancel">Cancel</MudButton>
-            <MudButton ButtonType="ButtonType.Submit">Add</MudButton>
+            <MudButton ButtonType="ButtonType.Submit">@(NewPlaylist ? "Add" : "Save changes")</MudButton>
         </DialogActions>
     </MudDialog>
 </EditForm>

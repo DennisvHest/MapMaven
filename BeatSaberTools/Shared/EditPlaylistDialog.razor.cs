@@ -9,7 +9,7 @@ using Image = System.Drawing.Image;
 
 namespace BeatSaberTools.Shared
 {
-    public partial class AddPlaylistDialog
+    public partial class EditPlaylistDialog
     {
         [Inject]
         protected PlaylistService PlaylistService { get; set; }
@@ -20,9 +20,23 @@ namespace BeatSaberTools.Shared
         [CascadingParameter]
         MudDialogInstance MudDialog { get; set; }
 
-        AddPlaylistModel AddPlaylistModel = new AddPlaylistModel();
+        [Parameter]
+        public EditPlaylistModel EditPlaylistModel { get; set; }
+
+        bool NewPlaylist => EditPlaylistModel.FileName == null;
 
         string CoverImage;
+
+        protected override void OnInitialized()
+        {
+            if (EditPlaylistModel == null)
+                EditPlaylistModel = new EditPlaylistModel();
+        }
+
+        protected override void OnParametersSet()
+        {
+            CoverImage = EditPlaylistModel.CoverImage;
+        }
 
         private async Task OnInputFileChanged(InputFileChangeEventArgs e)
         {
@@ -35,23 +49,30 @@ namespace BeatSaberTools.Shared
                     await imageFile.CopyToAsync(ms);
                     var coverImage = Image.FromStream(ms);
                     CoverImage = coverImage.ToDataUrl();
-                    AddPlaylistModel.CoverImage = coverImage.ToBase64PrependedString();
+                    EditPlaylistModel.CoverImage = coverImage.ToBase64PrependedString();
                 }
             }
             else
             {
                 CoverImage = null;
-                AddPlaylistModel.CoverImage = null;
+                EditPlaylistModel.CoverImage = null;
             }
         }
 
         async Task OnValidSubmit(EditContext context)
         {
-            await PlaylistService.AddPlaylist(AddPlaylistModel);
+            if (NewPlaylist)
+            {
+                await PlaylistService.AddPlaylist(EditPlaylistModel);
+                Snackbar.Add($"Added playlist \"{EditPlaylistModel.Name}\"", Severity.Normal, config => config.Icon = Icons.Filled.Check);
+            }
+            else
+            {
+                await PlaylistService.EditPlaylist(EditPlaylistModel);
+                Snackbar.Add($"Saved playlist \"{EditPlaylistModel.Name}\"", Severity.Normal, config => config.Icon = Icons.Filled.Check);
+            }
 
-            Snackbar.Add($"Added playlist \"{AddPlaylistModel.Name}\"", Severity.Normal, config => config.Icon = Icons.Filled.Check);
-
-            MudDialog.Close(DialogResult.Ok(AddPlaylistModel));
+            MudDialog.Close(DialogResult.Ok(EditPlaylistModel));
         }
 
         void Cancel() => MudDialog.Cancel();

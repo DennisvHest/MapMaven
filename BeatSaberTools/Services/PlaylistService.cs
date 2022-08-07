@@ -5,6 +5,7 @@ using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using Playlist = BeatSaberTools.Models.Playlist;
 using Map = BeatSaberTools.Models.Map;
+using BeatSaberPlaylistsLib.Types;
 
 namespace BeatSaberTools.Services
 {
@@ -41,14 +42,14 @@ namespace BeatSaberTools.Services
             _selectedPlaylistFileName.OnNext(playlist?.FileName);
         }
 
-        public async Task<Playlist> AddPlaylist(AddPlaylistModel addPlaylistModel)
+        public async Task<Playlist> AddPlaylist(EditPlaylistModel editPlaylistModel)
         {
             var addedPlaylist = _playlistManager.CreatePlaylist(
-                fileName: addPlaylistModel.Name,
-                title: addPlaylistModel.Name,
+                fileName: editPlaylistModel.Name,
+                title: editPlaylistModel.Name,
                 author: "Beat Saber Tools",
-                coverImage: addPlaylistModel.CoverImage,
-                description: addPlaylistModel.Description
+                coverImage: editPlaylistModel.CoverImage,
+                description: editPlaylistModel.Description
              );
 
             _playlistManager.StorePlaylist(addedPlaylist);
@@ -67,6 +68,19 @@ namespace BeatSaberTools.Services
 
             if (playlist.FileName == _selectedPlaylistFileName.Value)
                 _selectedPlaylistFileName.OnNext(null); // Playlist should not be selected if deleted.
+
+            await _beatSaberDataService.LoadAllPlaylists();
+        }
+
+        public async Task EditPlaylist(EditPlaylistModel editPlaylistModel)
+        {
+            var playlistToModify = _playlistManager.GetPlaylist(editPlaylistModel.FileName);
+
+            playlistToModify.Title = editPlaylistModel.Name;
+            playlistToModify.Description = editPlaylistModel.Description;
+            playlistToModify.SetCover(editPlaylistModel.CoverImage);
+
+            _playlistManager.StorePlaylist(playlistToModify);
 
             await _beatSaberDataService.LoadAllPlaylists();
         }

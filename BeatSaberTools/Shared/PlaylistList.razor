@@ -21,6 +21,7 @@
                 }
                 <span>@playlist.Title</span>
                 <MudMenu Icon="@Icons.Material.Filled.MoreVert" Class="ml-auto">
+                    <MudMenuItem OnClick="() => OpenEditPlaylistDialog(playlist)">Edit</MudMenuItem>
                     <MudMenuItem OnClick="() => OpenDeletePlaylistDialog(playlist)">Delete</MudMenuItem>
                 </MudMenu>
             </div>

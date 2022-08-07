@@ -60,10 +60,22 @@ namespace BeatSaberTools.Shared
 
         protected void OpenAddPlaylistDialog()
         {
-            DialogService.Show<AddPlaylistDialog>("Add playlist", new DialogOptions
+            DialogService.Show<EditPlaylistDialog>("Add playlist", new DialogOptions
             {
                 MaxWidth = MaxWidth.Small,
-                FullWidth = true,
+                FullWidth = true
+            });
+        }
+
+        protected void OpenEditPlaylistDialog(Playlist playlist)
+        {
+            var parameters = new DialogParameters();
+            parameters.Add("EditPlaylistModel", new EditPlaylistModel(playlist));
+
+            DialogService.Show<EditPlaylistDialog>("Edit playlist", parameters, new DialogOptions
+            {
+                MaxWidth = MaxWidth.Small,
+                FullWidth = true
             });
         }
 
