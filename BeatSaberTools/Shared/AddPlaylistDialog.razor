@@ -6,7 +6,7 @@
             <DataAnnotationsValidator />
             <MudGrid>
                 <MudItem xs="6">
-                    <MudPaper @ondragenter="@SetDragClass" @ondragleave="@ClearDragClass" @ondragend="@ClearDragClass" Height="300px" Outlined="true" Class="@DragClass">
+                    <MudPaper Height="300px" Outlined="true" Class="relative rounded-lg border-2 border-dashed pa-4 mud-width-full mud-height-full d-flex align-center flex-column justify-center">
                         <InputFile OnChange="OnInputFileChanged" class="absolute mud-width-full mud-height-full overflow-hidden z-2" style="opacity:0;" />
                         @if (!string.IsNullOrEmpty(CoverImage))
                         {
@@ -14,7 +14,8 @@
                         }
                         else
                         {
-                            <MudText Typo="Typo.subtitle2">Drag and drop cover image or click to browse for cover images...</MudText>
+                            <MudIcon Icon="@Icons.Filled.Image" Size="Size.Large"></MudIcon>
+                            <MudText Typo="Typo.subtitle2">Click to browse for cover images...</MudText>
                         }
                     </MudPaper>
                 </MudItem>
@@ -22,7 +23,13 @@
                     <MudTextField Label="Name"
                                   Variant="Variant.Outlined"
                                   @bind-Value="AddPlaylistModel.Name"
-                                  For="() => AddPlaylistModel.Name" />
+                                  For="() => AddPlaylistModel.Name"
+                                  Class="mb-4 mt-0" />
+                    <MudTextField Label="Description"
+                                  Variant="Variant.Outlined"
+                                  @bind-Value="AddPlaylistModel.Description"
+                                  For="() => AddPlaylistModel.Description"
+                                  Lines="3" />
                 </MudItem>
             </MudGrid>
         </DialogContent>

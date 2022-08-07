@@ -8,6 +8,7 @@ namespace BeatSaberTools.Models
     {
         public string FileName { get; set; }
         public string Title { get; set; }
+        public string Description { get; set; }
         public string CoverImage { get; set; }
         public IEnumerable<PlaylistMap> Maps { get; set; }
 
@@ -15,6 +16,7 @@ namespace BeatSaberTools.Models
         {
             FileName = playlist.Filename;
             Title = playlist.Title;
+            Description = playlist.Description;
 
             Image coverImage = null;
 

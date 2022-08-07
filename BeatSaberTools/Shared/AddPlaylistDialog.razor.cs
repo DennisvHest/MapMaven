@@ -55,19 +55,5 @@ namespace BeatSaberTools.Shared
         }
 
         void Cancel() => MudDialog.Cancel();
-
-
-        private static string DefaultDragClass = "relative rounded-lg border-2 border-dashed pa-4 mud-width-full mud-height-full d-flex align-center";
-        private string DragClass = DefaultDragClass;
-
-        private void SetDragClass()
-        {
-            DragClass = $"{DefaultDragClass} mud-border-primary";
-        }
-
-        private void ClearDragClass()
-        {
-            DragClass = DefaultDragClass;
-        }
     }
 }

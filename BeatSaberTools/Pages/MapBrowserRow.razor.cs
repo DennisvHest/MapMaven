@@ -86,6 +86,7 @@ namespace BeatSaberTools.Pages
             {
                 MaxWidth = MaxWidth.ExtraSmall,
                 FullWidth = true,
+                CloseButton = true
             });
 
             var result = await dialog.Result;

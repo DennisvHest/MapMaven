@@ -43,7 +43,14 @@ namespace BeatSaberTools.Services
 
         public async Task<Playlist> AddPlaylist(AddPlaylistModel addPlaylistModel)
         {
-            var addedPlaylist = _playlistManager.CreatePlaylist(addPlaylistModel.Name, addPlaylistModel.Name, "DennisvHest", coverImage: addPlaylistModel.CoverImage);
+            var addedPlaylist = _playlistManager.CreatePlaylist(
+                fileName: addPlaylistModel.Name,
+                title: addPlaylistModel.Name,
+                author: "Beat Saber Tools",
+                coverImage: addPlaylistModel.CoverImage,
+                description: addPlaylistModel.Description
+             );
+
             _playlistManager.StorePlaylist(addedPlaylist);
 
             var playlist = new Playlist(addedPlaylist);

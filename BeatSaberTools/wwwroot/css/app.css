@@ -14,3 +14,11 @@
 .mud-main-content {
     height: 100vh;
 }
+
+.mud-dialog-width-xs {
+    max-width: 300px;
+}
+
+    .mud-dialog-width-xs .mud-dialog-content {
+        padding: 0;
+    }
