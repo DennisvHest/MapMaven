@@ -96,4 +96,9 @@
       <PackageReference Include="System.Reactive" Version="5.0.0" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\BeatSaberTools.Core\BeatSaberTools.Core.csproj" />
+      <ProjectReference Include="..\BeatSaberTools.Infrastructure\BeatSaberTools.Infrastructure.csproj" />
+    </ItemGroup>
+
 </Project>

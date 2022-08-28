@@ -5,12 +5,14 @@ using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using Playlist = BeatSaberTools.Models.Playlist;
 using Map = BeatSaberTools.Models.Map;
-using BeatSaberPlaylistsLib.Types;
+using BeatSaberTools.Core.Services;
 
 namespace BeatSaberTools.Services
 {
     public class PlaylistService
     {
+        private readonly IBeatSaverFileService _beatSaverFileService;
+
         private readonly BeatSaberDataService _beatSaberDataService;
         private readonly PlaylistManager _playlistManager;
 
@@ -19,10 +21,11 @@ namespace BeatSaberTools.Services
         public IObservable<IEnumerable<Playlist>> Playlists { get; private set; }
         public BehaviorSubject<Playlist> SelectedPlaylist = new(null);
 
-        public PlaylistService(BeatSaberDataService beatSaberDataService)
+        public PlaylistService(BeatSaberDataService beatSaberDataService, IBeatSaverFileService beatSaverFileService)
         {
+            _beatSaverFileService = beatSaverFileService;
             _beatSaberDataService = beatSaberDataService;
-            _playlistManager = new PlaylistManager(BeatSaberDataService.PlaylistsLocation, new LegacyPlaylistHandler());
+            _playlistManager = new PlaylistManager(_beatSaverFileService.PlaylistsLocation, new LegacyPlaylistHandler());
 
             Playlists = _beatSaberDataService.PlaylistInfo.Select(x => x.Select(i => new Playlist(i)));
 

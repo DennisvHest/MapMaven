@@ -1,4 +1,4 @@
-﻿using BeatSaber.SongHashing;
+﻿using BeatSaberTools.Infrastructure;
 using BeatSaberTools.Services;
 using MudBlazor;
 using MudBlazor.Services;
@@ -27,12 +27,7 @@ public static class MauiProgram
 			config.SnackbarConfiguration.PositionClass = Defaults.Classes.Position.BottomCenter;
 		});
 
-        builder.Services.AddSingleton<IBeatmapHasher, Hasher>();
-
-        builder.Services.AddSingleton<BeatSaberDataService>();
-        builder.Services.AddSingleton<MapService>();
-        builder.Services.AddSingleton<SongPlayerService>();
-        builder.Services.AddSingleton<PlaylistService>();
+		builder.Services.AddBeatSaberTools<BeatSaberToolFileService>();
 
         return builder.Build();
 	}

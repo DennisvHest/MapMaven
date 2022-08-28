@@ -11,16 +11,13 @@ using Image = System.Drawing.Image;
 using BeatSaberPlaylistsLib;
 using BeatSaberPlaylistsLib.Types;
 using BeatSaberPlaylistsLib.Legacy;
+using BeatSaberTools.Core.Services;
 
 namespace BeatSaberTools.Services
 {
     public class BeatSaberDataService
     {
-        public const string BeatSaberInstallLocation = @"F:/SteamLibrary/steamapps/common/Beat Saber";
-        public const string MapsLocation = $"{BeatSaberInstallLocation}/Beat Saber_Data/CustomLevels";
-        public const string PlaylistsLocation = $"{BeatSaberInstallLocation}/Playlists";
-        public const string UserDataLocation = $"{BeatSaberInstallLocation}/UserData";
-        private string MapInfoCachePath = Path.Combine(FileSystem.AppDataDirectory, "map-info.json");
+        private readonly IBeatSaverFileService _fileService;
 
         private readonly IBeatmapHasher _beatmapHasher;
         private readonly PlaylistManager _playlistManager;
@@ -40,11 +37,12 @@ namespace BeatSaberTools.Services
         public IObservable<IEnumerable<IPlaylist>> PlaylistInfo => _playlistInfo;
         public IObservable<bool> LoadingPlaylistInfo => _loadingPlaylistInfo;
 
-        public BeatSaberDataService(IBeatmapHasher beatmapHasher)
+        public BeatSaberDataService(IBeatmapHasher beatmapHasher, IBeatSaverFileService fileService)
         {
+            _fileService = fileService;
             _beatmapHasher = beatmapHasher;
 
-            _playlistManager = new PlaylistManager(PlaylistsLocation, new LegacyPlaylistHandler());
+            _playlistManager = new PlaylistManager(_fileService.PlaylistsLocation, new LegacyPlaylistHandler());
         }
 
         public async Task LoadAllMapInfo()
@@ -56,7 +54,7 @@ namespace BeatSaberTools.Services
                 var songHashData = await GetSongHashData();
                 var mapInfoCache = await GetMapInfoCache();
 
-                var fileReadTasks = Directory.EnumerateDirectories(MapsLocation)
+                var fileReadTasks = Directory.EnumerateDirectories(_fileService.MapsLocation)
                     .Select(mapDirectory => GetMapInfo(mapDirectory, songHashData, mapInfoCache));
 
                 IEnumerable<MapInfo> mapInfo = await Task.WhenAll(fileReadTasks);
@@ -100,7 +98,7 @@ namespace BeatSaberTools.Services
         /// </summary>
         private async Task<Dictionary<string, SongHash>> GetSongHashData()
         {
-            var songHashFilePath = Path.Combine(UserDataLocation, "SongCore", "SongHashData.dat");
+            var songHashFilePath = Path.Combine(_fileService.UserDataLocation, "SongCore", "SongHashData.dat");
             var songHashJson = await File.ReadAllTextAsync(songHashFilePath);
 
             var songHashData = JsonSerializer.Deserialize<Dictionary<string, SongHash>>(songHashJson, new JsonSerializerOptions
@@ -200,9 +198,9 @@ namespace BeatSaberTools.Services
         {
             Dictionary<string, MapInfo> mapInfoCache = new Dictionary<string, MapInfo>();
 
-            if (File.Exists(MapInfoCachePath))
+            if (File.Exists(_fileService.MapInfoCachePath))
             {
-                using (var mapInfoCacheStream = File.OpenRead(MapInfoCachePath))
+                using (var mapInfoCacheStream = File.OpenRead(_fileService.MapInfoCachePath))
                 {
                     mapInfoCache = await JsonSerializer.DeserializeAsync<Dictionary<string, MapInfo>>(mapInfoCacheStream);
                 }
@@ -219,7 +217,7 @@ namespace BeatSaberTools.Services
         {
             string mapInfoCacheJson = JsonSerializer.Serialize(mapInfoByHash);
 
-            await File.WriteAllTextAsync(MapInfoCachePath, mapInfoCacheJson);
+            await File.WriteAllTextAsync(_fileService.MapInfoCachePath, mapInfoCacheJson);
         }
     }
 }
