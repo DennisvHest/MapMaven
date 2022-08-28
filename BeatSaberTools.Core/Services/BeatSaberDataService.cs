@@ -51,17 +51,10 @@ namespace BeatSaberTools.Services
 
             try
             {
-                var songHashData = await GetSongHashData();
-                var mapInfoCache = await GetMapInfoCache();
-
-                var fileReadTasks = Directory.EnumerateDirectories(_fileService.MapsLocation)
-                    .Select(mapDirectory => GetMapInfo(mapDirectory, songHashData, mapInfoCache));
-
-                IEnumerable<MapInfo> mapInfo = await Task.WhenAll(fileReadTasks);
+                IEnumerable<MapInfo> mapInfo = await GetAllMapInfo();
 
                 // Create a dictionary grouping all map info by ID
                 var mapInfoDictionary = mapInfo
-                    .Where(i => i != null)
                     .GroupBy(i => i.Hash)
                     .Select(g => g.First())
                     .ToDictionary(i => i.Hash);
@@ -74,6 +67,19 @@ namespace BeatSaberTools.Services
             {
                 _loadingMapInfo.OnNext(false);
             }
+        }
+
+        public async Task<IEnumerable<MapInfo>> GetAllMapInfo()
+        {
+            var songHashData = await GetSongHashData();
+            var mapInfoCache = await GetMapInfoCache();
+
+            var fileReadTasks = Directory.EnumerateDirectories(_fileService.MapsLocation)
+                .Select(mapDirectory => GetMapInfo(mapDirectory, songHashData, mapInfoCache));
+
+            var mapInfo = await Task.WhenAll(fileReadTasks);
+
+            return mapInfo.Where(i => i != null);
         }
 
         public async Task LoadAllPlaylists()
@@ -156,6 +162,10 @@ namespace BeatSaberTools.Services
             if (string.IsNullOrEmpty(info.Id))
                 return null;
 
+            var mapDirectoryInfo = new DirectoryInfo(mapDirectory);
+
+            info.AddedDateTime = mapDirectoryInfo.CreationTime;
+
             FillSongInfo(info);
 
             return info;
@@ -198,7 +208,7 @@ namespace BeatSaberTools.Services
         {
             Dictionary<string, MapInfo> mapInfoCache = new Dictionary<string, MapInfo>();
 
-            if (File.Exists(_fileService.MapInfoCachePath))
+            if (_fileService.MapInfoCachePath != null && File.Exists(_fileService.MapInfoCachePath))
             {
                 using (var mapInfoCacheStream = File.OpenRead(_fileService.MapInfoCachePath))
                 {
@@ -215,6 +225,9 @@ namespace BeatSaberTools.Services
         /// </summary>
         private async Task CacheMapInfo(Dictionary<string, MapInfo> mapInfoByHash)
         {
+            if (_fileService.MapInfoCachePath == null)
+                return;
+
             string mapInfoCacheJson = JsonSerializer.Serialize(mapInfoByHash);
 
             await File.WriteAllTextAsync(_fileService.MapInfoCachePath, mapInfoCacheJson);

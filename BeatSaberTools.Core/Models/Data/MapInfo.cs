@@ -18,6 +18,7 @@ namespace BeatSaberTools.Models.Data
         public string SongFileName { get; set; }
         [JsonPropertyName("_coverImageFilename")]
         public string CoverImageFilename { get; set; }
+        public DateTime AddedDateTime { get; set; }
         public TimeSpan SongDuration { get; set; }
         [JsonPropertyName("_previewStartTime")]
         public float PreviewStartTimeInSeconds { get; set; }
