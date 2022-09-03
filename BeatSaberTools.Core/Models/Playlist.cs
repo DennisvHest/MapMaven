@@ -12,6 +12,8 @@ namespace BeatSaberTools.Models
         public string CoverImage { get; set; }
         public IEnumerable<PlaylistMap> Maps { get; set; }
 
+        public bool IsDynamicPlaylist { get; set; }
+
         public Playlist(IPlaylist playlist)
         {
             FileName = playlist.Filename;
@@ -28,6 +30,11 @@ namespace BeatSaberTools.Models
             CoverImage = coverImage?.ToDataUrl();
 
             Maps = playlist.Select(s => new PlaylistMap(s));
+
+            if (playlist.TryGetCustomData("beatSaberTools", out dynamic customData))
+            {
+                IsDynamicPlaylist = customData.isDynamicPlaylist;
+            }
         }
     }
 }

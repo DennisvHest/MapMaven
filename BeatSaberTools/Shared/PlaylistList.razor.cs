@@ -2,6 +2,7 @@ using BeatSaberTools.Models;
 using BeatSaberTools.Services;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
+using System.Reactive.Linq;
 using Playlist = BeatSaberTools.Models.Playlist;
 
 namespace BeatSaberTools.Shared
@@ -21,6 +22,7 @@ namespace BeatSaberTools.Shared
         ISnackbar Snackbar { get; set; }
 
         private IEnumerable<Playlist> Playlists = Array.Empty<Playlist>();
+        private IEnumerable<Playlist> DynamicPlaylists = Array.Empty<Playlist>();
         private bool LoadingPlaylists = false;
 
         private Playlist SelectedPlaylist;
@@ -32,9 +34,23 @@ namespace BeatSaberTools.Shared
 
         protected override void OnInitialized()
         {
-            PlaylistService.Playlists.Subscribe(playlists =>
+            var allPlaylists = PlaylistService.Playlists;
+
+            var playlists = allPlaylists
+                .Select(playlists => playlists.Where(p => !p.IsDynamicPlaylist));
+
+            var dynamicPlaylists = allPlaylists
+                .Select(playlists => playlists.Where(p => p.IsDynamicPlaylist));
+
+            playlists.Subscribe(playlists =>
             {
                 Playlists = playlists;
+                InvokeAsync(StateHasChanged);
+            });
+
+            dynamicPlaylists.Subscribe(playlists =>
+            {
+                DynamicPlaylists = playlists;
                 InvokeAsync(StateHasChanged);
             });
 
@@ -60,6 +76,15 @@ namespace BeatSaberTools.Shared
         protected void OpenAddPlaylistDialog()
         {
             DialogService.Show<EditPlaylistDialog>("Add playlist", new DialogOptions
+            {
+                MaxWidth = MaxWidth.Small,
+                FullWidth = true
+            });
+        }
+
+        protected void OpenAddDynamicPlaylistDialog()
+        {
+            DialogService.Show<EditDynamicPlaylistDialog>("Add playlist", new DialogOptions
             {
                 MaxWidth = MaxWidth.Small,
                 FullWidth = true

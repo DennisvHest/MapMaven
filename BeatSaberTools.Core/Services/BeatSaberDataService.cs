@@ -88,8 +88,7 @@ namespace BeatSaberTools.Services
 
             try
             {
-                _playlistManager.RefreshPlaylists(false);
-                var playlists = _playlistManager.GetAllPlaylists();
+                var playlists = await GetAllPlaylists();
 
                 _playlistInfo.OnNext(playlists);
             }
@@ -97,6 +96,13 @@ namespace BeatSaberTools.Services
             {
                 _loadingPlaylistInfo.OnNext(false);
             }
+        }
+
+        public async Task<IEnumerable<IPlaylist>> GetAllPlaylists()
+        {
+            _playlistManager.RefreshPlaylists(false);
+
+            return _playlistManager.GetAllPlaylists();
         }
 
         /// <summary>
