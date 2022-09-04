@@ -9,13 +9,44 @@
 	<link href="_content/MudBlazor/MudBlazor.min.css" rel="stylesheet" />
 	<link href="css/app.css" rel="stylesheet" />
 	<link href="BeatSaberTools.styles.css" rel="stylesheet" />
+
+	<style>
+        .load-icon {
+            position: absolute;
+            left: calc(50% - 75px);
+            top: calc(50% - 75px);
+            width: 150px;
+            height: 150px;
+            animation-name: pulse;
+            animation-duration: 3s;
+            animation-direction: alternate;
+            animation-iteration-count: infinite;
+            transition-timing-function: ease-in-out;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.1);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+	</style>
 </head>
 
-<body>
+<body style="background-color: #32333dff;">
 
 	<div class="status-bar-safe-area"></div>
 
-	<div id="app">Loading...</div>
+	<div id="app">
+		<img src="images/logo.png" class="load-icon" />
+	</div>
 
 	<div id="blazor-error-ui">
 		An unhandled error has occurred.

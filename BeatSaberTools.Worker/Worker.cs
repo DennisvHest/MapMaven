@@ -1,6 +1,7 @@
 using BeatSaberTools.Models;
 using BeatSaberTools.Services;
 using System.Diagnostics;
+using System.Linq;
 
 namespace BeatSaberTools.Worker
 {
@@ -44,14 +45,19 @@ namespace BeatSaberTools.Worker
 
                 var maps = await _beatSaberDataService.GetAllMapInfo();
 
-                var recentlyAddedMaps = maps
-                    .OrderByDescending(m => m.AddedDateTime)
-                    .Take(10)
-                    .Select(m => m.ToMap());
-
                 foreach (var playlist in dynamicPlaylists)
                 {
-                    await _playlistService.ReplaceMapsInPlaylist(recentlyAddedMaps, playlist.Playlist, loadPlaylists: false);
+                    var configuration = playlist.Playlist.DynamicPlaylistConfiguration;
+
+                    if (configuration.Type == "RECENTLY_ADDED_MAPS")
+                    {
+                        var recentlyAddedMaps = maps
+                            .OrderByDescending(m => m.AddedDateTime)
+                            .Take(configuration.MapCount)
+                            .Select(m => m.ToMap());
+
+                        await _playlistService.ReplaceMapsInPlaylist(recentlyAddedMaps, playlist.Playlist, loadPlaylists: false);
+                    }
                 }
 
                 _logger.LogInformation("Created playlist with recently added maps!");

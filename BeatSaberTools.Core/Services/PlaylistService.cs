@@ -7,6 +7,7 @@ using Playlist = BeatSaberTools.Models.Playlist;
 using Map = BeatSaberTools.Models.Map;
 using BeatSaberTools.Core.Services;
 using BeatSaberPlaylistsLib.Types;
+using BeatSaberTools.Core.Models;
 
 namespace BeatSaberTools.Services
 {
@@ -46,9 +47,9 @@ namespace BeatSaberTools.Services
             _selectedPlaylistFileName.OnNext(playlist?.FileName);
         }
 
-        public async Task<Playlist> AddDynamicPlaylist(EditPlaylistModel editPlaylistModel, IEnumerable<Map>? playlistMaps = null, bool loadPlaylists = true)
+        public async Task<Playlist> AddDynamicPlaylist(EditDynamicPlaylistModel editPlaylistModel, IEnumerable<Map>? playlistMaps = null, bool loadPlaylists = true)
         {
-            var playlist = await CreatePlaylist(editPlaylistModel, playlistMaps, dynamicPlaylist: true);
+            var playlist = await CreateDynamicPlaylist(editPlaylistModel, playlistMaps);
 
             if (loadPlaylists)
                 await _beatSaberDataService.LoadAllPlaylists();
@@ -58,7 +59,7 @@ namespace BeatSaberTools.Services
 
         public async Task<Playlist> AddPlaylist(EditPlaylistModel editPlaylistModel, IEnumerable<Map>? playlistMaps = null, bool loadPlaylists = true)
         {
-            var playlist = await CreatePlaylist(editPlaylistModel, playlistMaps, dynamicPlaylist: false);
+            var playlist = await CreatePlaylist(editPlaylistModel, playlistMaps);
 
             if (loadPlaylists)
                 await _beatSaberDataService.LoadAllPlaylists();
@@ -66,26 +67,46 @@ namespace BeatSaberTools.Services
             return playlist;
         }
 
-        private async Task<Playlist> CreatePlaylist(EditPlaylistModel editPlaylistModel, IEnumerable<Map>? playlistMaps, bool dynamicPlaylist)
+        private async Task<Playlist> CreatePlaylist(EditPlaylistModel editPlaylistModel, IEnumerable<Map>? playlistMaps)
+        {
+            IPlaylist addedPlaylist = CreateIPlaylist(editPlaylistModel, playlistMaps);
+
+            _playlistManager.StorePlaylist(addedPlaylist);
+
+            var playlist = new Playlist(addedPlaylist);
+
+            return playlist;
+        }
+
+        private async Task<Playlist> CreateDynamicPlaylist(EditDynamicPlaylistModel editDynamicPlaylistModel, IEnumerable<Map>? playlistMaps)
+        {
+            IPlaylist addedPlaylist = CreateIPlaylist(editDynamicPlaylistModel, playlistMaps);
+
+            addedPlaylist.SetCustomData("beatSaberTools", new
+            {
+                isDynamicPlaylist = true,
+                dynamicPlaylistConfiguration = editDynamicPlaylistModel.DynamicPlaylistConfiguration
+            });
+
+            _playlistManager.StorePlaylist(addedPlaylist);
+
+            var playlist = new Playlist(addedPlaylist);
+
+            return playlist;
+        }
+
+        private IPlaylist CreateIPlaylist(EditPlaylistModel editPlaylistModel, IEnumerable<Map>? playlistMaps)
         {
             if (playlistMaps == null)
                 playlistMaps = Array.Empty<Map>();
 
             var addedPlaylist = _playlistManager.CreatePlaylist(
-                fileName: editPlaylistModel.Name,
+                fileName: editPlaylistModel.FileName ?? editPlaylistModel.Name,
                 title: editPlaylistModel.Name,
                 author: "Beat Saber Tools",
                 coverImage: editPlaylistModel.CoverImage,
                 description: editPlaylistModel.Description
             );
-
-            if (dynamicPlaylist)
-            {
-                addedPlaylist.SetCustomData("beatSaberTools", new
-                {
-                    isDynamicPlaylist = dynamicPlaylist
-                });
-            }
 
             foreach (var map in playlistMaps)
             {
@@ -97,11 +118,7 @@ namespace BeatSaberTools.Services
                 );
             }
 
-            _playlistManager.StorePlaylist(addedPlaylist);
-
-            var playlist = new Playlist(addedPlaylist);
-
-            return playlist;
+            return addedPlaylist;
         }
 
         public async Task DeletePlaylist(Playlist playlist)

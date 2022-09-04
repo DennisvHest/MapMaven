@@ -2,7 +2,14 @@
 
 <MudDialog>
     <DialogContent>
-        <MudButton OnClick="AddRecentlyAddedMapsPlaylist">Recently added maps</MudButton>
+        @foreach (var playlist in DynamicPlaylists)
+        {
+            <MudButton OnClick="() => AddDynamicPlaylist(playlist)" Variant="Variant.Filled">
+                <div class="d-flex flex-column align-center justify-center dynamic-playlist-add">
+                    <MudIcon Icon="@Icons.Filled.AccessTime" Size="Size.Large" Class="mb-2"></MudIcon> @playlist.Name
+                </div>
+            </MudButton>
+        }
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancel">Cancel</MudButton>

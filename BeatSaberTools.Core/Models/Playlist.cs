@@ -1,5 +1,7 @@
 ﻿using BeatSaberPlaylistsLib.Types;
+using BeatSaberTools.Core.Models;
 using BeatSaberTools.Extensions;
+using Newtonsoft.Json.Linq;
 using Image = System.Drawing.Image;
 
 namespace BeatSaberTools.Models
@@ -12,7 +14,9 @@ namespace BeatSaberTools.Models
         public string CoverImage { get; set; }
         public IEnumerable<PlaylistMap> Maps { get; set; }
 
-        public bool IsDynamicPlaylist { get; set; }
+        public DynamicPlaylistConfiguration DynamicPlaylistConfiguration { get; set; }
+
+        public bool IsDynamicPlaylist => DynamicPlaylistConfiguration != null;
 
         public Playlist(IPlaylist playlist)
         {
@@ -33,7 +37,14 @@ namespace BeatSaberTools.Models
 
             if (playlist.TryGetCustomData("beatSaberTools", out dynamic customData))
             {
-                IsDynamicPlaylist = customData.isDynamicPlaylist;
+                if (customData.dynamicPlaylistConfiguration is DynamicPlaylistConfiguration dynamicPlaylistConfiguration)
+                {
+                    DynamicPlaylistConfiguration = dynamicPlaylistConfiguration;
+                }
+                else if (customData.dynamicPlaylistConfiguration is JObject configuration)
+                {
+                    DynamicPlaylistConfiguration = configuration.ToObject<DynamicPlaylistConfiguration>();
+                }
             }
         }
     }
