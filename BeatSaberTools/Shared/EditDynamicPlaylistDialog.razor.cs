@@ -1,6 +1,8 @@
 using BeatSaberTools.Core.Models;
+using BeatSaberTools.Models;
 using BeatSaberTools.Services;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Forms;
 using MudBlazor;
 
 namespace BeatSaberTools.Shared
@@ -10,8 +12,13 @@ namespace BeatSaberTools.Shared
         [Inject]
         protected PlaylistService PlaylistService { get; set; }
 
+        [Inject]
+        ISnackbar Snackbar { get; set; }
+
         [CascadingParameter]
         MudDialogInstance MudDialog { get; set; }
+
+        protected EditDynamicPlaylistModel SelectedPlaylist { get; set; }
 
         private static IEnumerable<EditDynamicPlaylistModel> DynamicPlaylists = new EditDynamicPlaylistModel[]
         {
@@ -28,11 +35,21 @@ namespace BeatSaberTools.Shared
             }
         };
 
-        async Task AddDynamicPlaylist(EditDynamicPlaylistModel dynamicPlaylist)
+        async void ConfigureDynamicPlaylist(EditDynamicPlaylistModel dynamicPlaylist)
         {
-            await PlaylistService.AddDynamicPlaylist(dynamicPlaylist);
+            SelectedPlaylist = dynamicPlaylist;
+        }
+
+        async Task AddDynamicPlaylist()
+        {
+            await PlaylistService.AddDynamicPlaylist(SelectedPlaylist);
+
+            Snackbar.Add($"Added playlist \"{SelectedPlaylist.Name}\"", Severity.Normal, config => config.Icon = Icons.Filled.Check);
+
+            MudDialog.Close(DialogResult.Ok(SelectedPlaylist));
         }
 
         void Cancel() => MudDialog.Cancel();
+        void CancelConfiguration() => SelectedPlaylist = null;
     }
 }
