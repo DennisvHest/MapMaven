@@ -35,7 +35,7 @@ namespace BeatSaberTools.Shared
             }
         };
 
-        async void ConfigureDynamicPlaylist(EditDynamicPlaylistModel dynamicPlaylist)
+        void ConfigureDynamicPlaylist(EditDynamicPlaylistModel dynamicPlaylist)
         {
             SelectedPlaylist = dynamicPlaylist;
         }
