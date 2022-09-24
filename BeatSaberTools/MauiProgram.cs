@@ -29,6 +29,10 @@ public static class MauiProgram
 
 		builder.Services.AddBeatSaberTools<BeatSaberToolFileService>();
 
+#if WINDOWS
+        builder.Services.AddTransient<IFolderPicker, Platforms.Windows.FolderPicker>();
+#endif
+
         return builder.Build();
 	}
 }

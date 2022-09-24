@@ -1,4 +1,5 @@
 ﻿@using System.Reactive.Threading.Tasks
+@using BeatSaberTools.Core.Services
 
 @inherits LayoutComponentBase
 
@@ -7,18 +8,34 @@
 <MudSnackbarProvider />
 
 <MudLayout>
-    <SideNav></SideNav>
-    <MudMainContent Class="pa-0">
-        @Body
-    </MudMainContent>
+    @if (InitialSetupDone)
+    {
+        <SideNav></SideNav>
+        <MudMainContent Class="pa-0">
+            @Body
+        </MudMainContent>
+    }
+    else
+    {
+        <InitialSetup></InitialSetup>
+    }
 </MudLayout>
 
 @code {
     [Inject]
     protected BeatSaberDataService BeatSaberDataService { get; set; }
 
+    [Inject]
+    protected IBeatSaverFileService BeatSaberToolFileService { get; set; }
+
+    protected bool InitialSetupDone { get; set; }
+
     protected override void OnInitialized()
     {
+        //Preferences.Clear("BSTools");
+
+        InitialSetupDone = BeatSaberToolFileService.BeatSaberInstallLocation != null;
+
         Task.Run(BeatSaberDataService.LoadAllMapInfo);
         Task.Run(BeatSaberDataService.LoadAllPlaylists);
     }

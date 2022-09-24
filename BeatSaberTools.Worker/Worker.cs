@@ -1,7 +1,6 @@
 using BeatSaberTools.Models;
 using BeatSaberTools.Services;
 using System.Diagnostics;
-using System.Linq;
 
 namespace BeatSaberTools.Worker
 {

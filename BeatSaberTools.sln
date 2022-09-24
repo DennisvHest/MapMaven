@@ -8,7 +8,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BeatSaberTools.Worker", "Be
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BeatSaberTools.Core", "BeatSaberTools.Core\BeatSaberTools.Core.csproj", "{45CA051A-9230-48D0-A3D6-0BCAD2F5D91A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BeatSaberTools.Infrastructure", "BeatSaberTools.Infrastructure\BeatSaberTools.Infrastructure.csproj", "{CBC276AA-8E1E-4247-AC5F-EB45AD949687}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BeatSaberTools.Infrastructure", "BeatSaberTools.Infrastructure\BeatSaberTools.Infrastructure.csproj", "{CBC276AA-8E1E-4247-AC5F-EB45AD949687}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
