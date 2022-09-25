@@ -1,4 +1,5 @@
-﻿using BeatSaberTools.Infrastructure;
+﻿using BeatSaberTools.Core.Services;
+using BeatSaberTools.Infrastructure;
 using BeatSaberTools.Services;
 using MudBlazor;
 using MudBlazor.Services;
@@ -29,9 +30,13 @@ public static class MauiProgram
 
 		builder.Services.AddBeatSaberTools<BeatSaberToolFileService>();
 
+		builder.Services.AddSingleton(services => (BeatSaberToolFileService)services.GetService<IBeatSaverFileService>());
+
 #if WINDOWS
         builder.Services.AddTransient<IFolderPicker, Platforms.Windows.FolderPicker>();
 #endif
+
+        Preferences.Clear("BSTools");
 
         return builder.Build();
 	}

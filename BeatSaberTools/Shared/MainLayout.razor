@@ -1,7 +1,8 @@
 ﻿@using System.Reactive.Threading.Tasks
-@using BeatSaberTools.Core.Services
 
 @inherits LayoutComponentBase
+
+@inject IDialogService DialogService
 
 <MudThemeProvider Theme="BSToolsTheme.Theme" />
 <MudDialogProvider />
@@ -15,10 +16,6 @@
             @Body
         </MudMainContent>
     }
-    else
-    {
-        <InitialSetup></InitialSetup>
-    }
 </MudLayout>
 
 @code {
@@ -26,17 +23,34 @@
     protected BeatSaberDataService BeatSaberDataService { get; set; }
 
     [Inject]
-    protected IBeatSaverFileService BeatSaberToolFileService { get; set; }
+    protected BeatSaberToolFileService BeatSaberToolFileService { get; set; }
 
     protected bool InitialSetupDone { get; set; }
 
     protected override void OnInitialized()
     {
-        //Preferences.Clear("BSTools");
+        BeatSaberToolFileService.BeatSaberInstallLocationObservable.Subscribe(location =>
+        {
+            InitialSetupDone = location != null;
 
-        InitialSetupDone = BeatSaberToolFileService.BeatSaberInstallLocation != null;
+            StateHasChanged();
 
-        Task.Run(BeatSaberDataService.LoadAllMapInfo);
-        Task.Run(BeatSaberDataService.LoadAllPlaylists);
+            if (InitialSetupDone)
+            {
+                Task.Run(BeatSaberDataService.LoadAllMapInfo);
+                Task.Run(BeatSaberDataService.LoadAllPlaylists);
+            }
+        });
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (BeatSaberToolFileService.BeatSaberInstallLocation == null)
+        {
+            DialogService.Show<InitialSetup>(null, new DialogOptions
+            {
+                DisableBackdropClick = true
+            });
+        }
     }
 }

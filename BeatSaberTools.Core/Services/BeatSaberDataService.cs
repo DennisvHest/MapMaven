@@ -20,7 +20,7 @@ namespace BeatSaberTools.Services
         private readonly IBeatSaverFileService _fileService;
 
         private readonly IBeatmapHasher _beatmapHasher;
-        private readonly PlaylistManager _playlistManager;
+        private PlaylistManager _playlistManager;
 
         private readonly Regex _mapIdRegex = new Regex(@"^[0-9A-Fa-f]+");
 
@@ -42,7 +42,10 @@ namespace BeatSaberTools.Services
             _fileService = fileService;
             _beatmapHasher = beatmapHasher;
 
-            _playlistManager = new PlaylistManager(_fileService.PlaylistsLocation, new LegacyPlaylistHandler());
+            _fileService.PlaylistsLocationObservable.Subscribe(playlistsLocation =>
+            {
+                _playlistManager = new PlaylistManager(_fileService.PlaylistsLocation, new LegacyPlaylistHandler());
+            });
         }
 
         public async Task LoadAllMapInfo()

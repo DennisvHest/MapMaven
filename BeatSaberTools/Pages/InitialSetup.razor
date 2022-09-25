@@ -1,8 +1,16 @@
-﻿<MudDialog IsVisible="true">
+﻿<MudDialog Style="width: 600px">
+    <TitleContent></TitleContent>
     <DialogContent>
-        <MudButton OnClick="PickFolder">Select install location</MudButton>
+        <MudTextField
+            @bind-Value="BeatSaberInstallLocation"
+            Variant="Variant.Outlined"
+            Label="Beat Saber install location"
+            Adornment="Adornment.End"
+            AdornmentIcon="@Icons.Filled.DriveFileMove"
+            OnAdornmentClick="PickFolder">
+        </MudTextField>
     </DialogContent>
     <DialogActions>
-        <MudButton ButtonType="ButtonType.Submit">Start</MudButton>
+        <MudButton Color="Color.Primary" Variant="Variant.Filled" Class="ma-3" OnClick="SaveInititalSetup">Start</MudButton>
     </DialogActions>
 </MudDialog>
