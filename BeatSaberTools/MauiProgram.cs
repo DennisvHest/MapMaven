@@ -36,8 +36,6 @@ public static class MauiProgram
         builder.Services.AddTransient<IFolderPicker, Platforms.Windows.FolderPicker>();
 #endif
 
-        Preferences.Clear("BSTools");
-
         return builder.Build();
 	}
 }
