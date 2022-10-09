@@ -1,4 +1,6 @@
-﻿namespace BeatSaberTools.Models
+﻿using BeatSaberTools.Core.ApiClients;
+
+namespace BeatSaberTools.Models
 {
     public class Map
     {
@@ -12,5 +14,6 @@
         public TimeSpan PreviewDuration { get; set; }
         public TimeSpan PreviewEndTime => PreviewStartTime + PreviewDuration;
 
+        public PlayerScore? PlayerScore { get; set; }
     }
 }

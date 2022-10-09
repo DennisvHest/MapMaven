@@ -1,4 +1,5 @@
 ﻿@using System.Reactive.Threading.Tasks
+@using BeatSaberTools.Core.Services
 
 @inherits LayoutComponentBase
 
@@ -23,6 +24,9 @@
     protected BeatSaberDataService BeatSaberDataService { get; set; }
 
     [Inject]
+    protected ScoreSaberService ScoreSaberService { get; set; }
+
+    [Inject]
     protected BeatSaberToolFileService BeatSaberToolFileService { get; set; }
 
     protected bool InitialSetupDone { get; set; }
@@ -38,6 +42,7 @@
             if (InitialSetupDone)
             {
                 Task.Run(BeatSaberDataService.LoadAllMapInfo);
+                Task.Run(async () => await ScoreSaberService.LoadPlayerScores("76561198029374636"));
                 Task.Run(BeatSaberDataService.LoadAllPlaylists);
             }
         });

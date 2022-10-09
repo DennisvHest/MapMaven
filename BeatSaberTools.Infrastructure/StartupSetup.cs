@@ -1,4 +1,5 @@
 ﻿using BeatSaber.SongHashing;
+using BeatSaberTools.Core.ApiClients;
 using BeatSaberTools.Core.Services;
 using BeatSaberTools.Services;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,11 +12,14 @@ namespace BeatSaberTools.Infrastructure
         {
             services.AddSingleton<IBeatmapHasher, Hasher>();
 
+            services.AddHttpClient<ScoreSaberApiClient>();
+
             services.AddSingleton(typeof(IBeatSaverFileService), typeof(TFileService));
             services.AddSingleton<BeatSaberDataService>();
             services.AddSingleton<MapService>();
             services.AddSingleton<SongPlayerService>();
             services.AddSingleton<PlaylistService>();
+            services.AddSingleton<ScoreSaberService>();
         }
     }
 }

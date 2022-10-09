@@ -18,7 +18,12 @@
 <MudTd DataLabel="Name">@Map.Name</MudTd>
 <MudTd DataLabel="SongAuthorName">@Map.SongAuthorName</MudTd>
 <MudTd DataLabel="MapAuthorName">@Map.MapAuthorName</MudTd>
-<MudTd DataLabel="Duration">@Map.SongDuration.ToString("mm':'ss")</MudTd>
+<MudTd DataLabel="Duration" Style="width: 130px">@Map.SongDuration.ToString("mm':'ss")</MudTd>
+<MudTd Style="width: 130px">
+    @if (Map.PlayerScore?.Score?.Pp != null) {
+        <MudChip Color="Color.Info" Size="Size.Small" Variant="Variant.Outlined">@(Map.PlayerScore?.Score?.Pp) pp</MudChip>
+    }
+</MudTd>
 <MudTd Style="width: 130px; position: relative;">
     <MudIconButton Icon="@Icons.Filled.PlaylistAdd" Variant="Variant.Text" Size="Size.Medium" OnClick="OpenAddMapToPlaylistDialog" />
     @if (SelectedPlaylist != null)
