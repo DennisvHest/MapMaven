@@ -42,7 +42,7 @@
             if (InitialSetupDone)
             {
                 Task.Run(BeatSaberDataService.LoadAllMapInfo);
-                Task.Run(async () => await ScoreSaberService.LoadPlayerScores("76561198029374636"));
+                Task.Run(ScoreSaberService.LoadPlayerScores);
                 Task.Run(BeatSaberDataService.LoadAllPlaylists);
             }
         });
