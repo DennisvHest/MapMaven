@@ -1,0 +1,16 @@
+﻿@using BeatSaberTools.Core.Services
+
+<iframe src="@GetScoreSaberReplayUrl()" style="height: 80vh"></iframe>
+
+@code {
+    [Inject]
+    protected ScoreSaberService ScoreSaberService { get; set; }
+
+    [Parameter]
+    public Map Map { get; set; }
+
+    string GetScoreSaberReplayUrl()
+    {
+        return ScoreSaberService.GetScoreSaberReplayUrl(Map.Id, Map.PlayerScore);
+    }
+}

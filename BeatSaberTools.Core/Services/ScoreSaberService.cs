@@ -13,11 +13,14 @@ namespace BeatSaberTools.Core.Services
 
         public readonly IObservable<IEnumerable<PlayerScore>> PlayerScores;
 
+        private const string _replayBaseUrl = "https://www.replay.beatleader.xyz";
+
         public ScoreSaberService(
             ScoreSaberApiClient scoreSaber,
             IBeatSaverFileService fileService)
         {
             _scoreSaber = scoreSaber;
+            _fileService = fileService;
 
             PlayerScores = _playerId.Select(playerId =>
             {
@@ -37,7 +40,6 @@ namespace BeatSaberTools.Core.Services
                     return scoreCollection.PlayerScores;
                 });
             }).Concat();
-            _fileService = fileService;
         }
 
         public void LoadPlayerScores()
@@ -59,6 +61,14 @@ namespace BeatSaberTools.Core.Services
                 .First();
 
             _playerId.OnNext(playerId);
+        }
+
+        public string? GetScoreSaberReplayUrl(string mapId, PlayerScore score)
+        {
+            if (!score.Score.HasReplay)
+                return null;
+
+            return $"{_replayBaseUrl}/?id={mapId}&difficulty={score.Leaderboard.Difficulty.DifficultyName}&playerID={_playerId.Value}";
         }
     }
 }

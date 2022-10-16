@@ -38,7 +38,12 @@
         <MudTh>
             <MudTableSortLabel SortBy="new Func<Map, object>(x => x.SongDuration)">Duration</MudTableSortLabel>
         </MudTh>
-        <MudTh></MudTh>
+        <MudTh>
+            <MudTableSortLabel SortBy="new Func<Map, object>(x => x.PlayerScore?.Score?.Pp)">pp</MudTableSortLabel>
+        </MudTh>
+        <MudTh>
+            <MudTableSortLabel SortBy="new Func<Map, object>(x => !(x.PlayerScore?.Score?.HasReplay ?? false))"><img src="images/replay-icon.png" style="width: 24px" /></MudTableSortLabel>
+        </MudTh>
         <MudTh></MudTh>
     </HeaderContent>
     <RowTemplate>

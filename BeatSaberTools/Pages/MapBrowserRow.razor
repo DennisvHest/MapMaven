@@ -24,6 +24,12 @@
         <MudChip Color="Color.Info" Size="Size.Small" Variant="Variant.Outlined">@(Map.PlayerScore?.Score?.Pp) pp</MudChip>
     }
 </MudTd>
+<MudTd>
+    @if (Map.PlayerScore?.Score?.HasReplay == true)
+    {
+        <MudButton Class="replay-button" OnClick="OpenReplay" Style="min-width: 0; border-radius: 100%;"><img src="images/replay-icon.png" style="width: 24px" /></MudButton>
+    }
+</MudTd>
 <MudTd Style="width: 130px; position: relative;">
     <MudIconButton Icon="@Icons.Filled.PlaylistAdd" Variant="Variant.Text" Size="Size.Medium" OnClick="OpenAddMapToPlaylistDialog" />
     @if (SelectedPlaylist != null)

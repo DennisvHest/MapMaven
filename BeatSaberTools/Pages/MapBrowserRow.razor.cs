@@ -6,6 +6,7 @@ using Map = BeatSaberTools.Models.Map;
 using MudBlazor;
 using BeatSaberTools.Shared;
 using BeatSaberTools.Models;
+using BeatSaberTools.Core.Services;
 
 namespace BeatSaberTools.Pages
 {
@@ -17,6 +18,8 @@ namespace BeatSaberTools.Pages
         protected SongPlayerService SongPlayerService { get; set; }
         [Inject]
         protected PlaylistService PlaylistService { get; set; }
+        [Inject]
+        protected ScoreSaberService ScoreSaberService { get; set; }
 
         [Inject]
         protected IDialogService DialogService { get; set; }
@@ -119,6 +122,21 @@ namespace BeatSaberTools.Pages
 
             CloseDeleteFromPlaylistDialog();
             InvokeAsync(() => StateHasChanged());
+        }
+
+        void OpenReplay()
+        {
+            var parameters = new DialogParameters
+            {
+                { nameof(Replay.Map), Map }
+            };
+
+            DialogService.Show<Replay>(null, parameters, new DialogOptions
+            {
+                MaxWidth = MaxWidth.ExtraExtraLarge,
+                FullWidth = true,
+                CloseButton = true
+            });
         }
 
         public void Dispose()

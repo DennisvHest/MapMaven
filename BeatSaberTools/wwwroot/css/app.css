@@ -22,3 +22,11 @@
     .mud-dialog-width-xs .mud-dialog-content {
         padding: 0;
     }
+
+.mud-dialog-title {
+    min-height: 50px;
+}
+
+.mud-dialog-title > .mud-icon-button {
+    padding: 6px;
+}
