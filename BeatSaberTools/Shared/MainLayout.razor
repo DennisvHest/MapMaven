@@ -43,6 +43,7 @@
             {
                 Task.Run(BeatSaberDataService.LoadAllMapInfo);
                 Task.Run(ScoreSaberService.LoadPlayerScores);
+                Task.Run(ScoreSaberService.LoadRankedMaps);
                 Task.Run(BeatSaberDataService.LoadAllPlaylists);
             }
         });

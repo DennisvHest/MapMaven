@@ -1,4 +1,7 @@
 ﻿using BeatSaberTools.Core.ApiClients;
+using BeatSaberTools.Core.Models.Data.ScoreSaber;
+using System.Net.Http;
+using System.Net.Http.Json;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 
@@ -8,19 +11,24 @@ namespace BeatSaberTools.Core.Services
     {
         private readonly ScoreSaberApiClient _scoreSaber;
         private readonly IBeatSaverFileService _fileService;
+        private readonly IHttpClientFactory _httpClientFactory;
 
         private readonly BehaviorSubject<string?> _playerId = new(null);
+        private readonly BehaviorSubject<IEnumerable<RankedMap>> _rankedMaps = new(Enumerable.Empty<RankedMap>());
 
         public readonly IObservable<IEnumerable<PlayerScore>> PlayerScores;
+        public IObservable<IEnumerable<RankedMap>> RankedMaps => _rankedMaps;
 
         private const string _replayBaseUrl = "https://www.replay.beatleader.xyz";
 
         public ScoreSaberService(
             ScoreSaberApiClient scoreSaber,
-            IBeatSaverFileService fileService)
+            IBeatSaverFileService fileService,
+            IHttpClientFactory httpClientFactory)
         {
             _scoreSaber = scoreSaber;
             _fileService = fileService;
+            _httpClientFactory = httpClientFactory;
 
             PlayerScores = _playerId.Select(playerId =>
             {
@@ -61,6 +69,22 @@ namespace BeatSaberTools.Core.Services
                 .First();
 
             _playerId.OnNext(playerId);
+        }
+
+        public async Task LoadRankedMaps()
+        {
+            var rankedMaps = await GetRankedMaps();
+
+            _rankedMaps.OnNext(rankedMaps);
+        }
+
+        public async Task<IEnumerable<RankedMap>> GetRankedMaps()
+        {
+            var httpClient = _httpClientFactory.CreateClient("RankedScoresaber");
+
+            var response = await httpClient.GetFromJsonAsync<RankedMapResponse>("/ranked");
+
+            return response?.List ?? Enumerable.Empty<RankedMap>();
         }
 
         public string? GetScoreSaberReplayUrl(string mapId, PlayerScore score)

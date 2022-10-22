@@ -13,6 +13,10 @@ namespace BeatSaberTools.Infrastructure
             services.AddSingleton<IBeatmapHasher, Hasher>();
 
             services.AddHttpClient<ScoreSaberApiClient>();
+            services.AddHttpClient("RankedScoresaber", config =>
+            {
+                config.BaseAddress = new Uri("https://scoresaber.balibalo.xyz");
+            });
 
             services.AddSingleton(typeof(IBeatSaverFileService), typeof(TFileService));
             services.AddSingleton<BeatSaberDataService>();

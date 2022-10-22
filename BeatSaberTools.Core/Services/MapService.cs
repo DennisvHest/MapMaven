@@ -1,4 +1,5 @@
-﻿using BeatSaberTools.Core.Services;
+﻿using BeatSaberTools.Core.Models.Data.ScoreSaber;
+using BeatSaberTools.Core.Services;
 using System.Reactive.Linq;
 using Map = BeatSaberTools.Models.Map;
 
@@ -24,17 +25,26 @@ namespace BeatSaberTools.Services
                 )
             );
 
-            Maps = Observable.CombineLatest(_beatSaberDataService.MapInfo, _scoreSaberService.PlayerScores, (maps, playerScores) =>
-            {
-                return maps.GroupJoin(playerScores, mapInfo => mapInfo.Hash, score => score.Leaderboard.SongHash, (mapInfo, scores) =>
+            Maps = Observable.CombineLatest(
+                _beatSaberDataService.MapInfo,
+                _scoreSaberService.PlayerScores,
+                _scoreSaberService.RankedMaps,
+                (maps, playerScores, rankedMaps) =>
                 {
-                    var map = mapInfo.ToMap();
+                    return maps.GroupJoin(playerScores, mapInfo => mapInfo.Hash, score => score.Leaderboard.SongHash, (mapInfo, scores) =>
+                    {
+                        var map = mapInfo.ToMap();
 
-                    map.PlayerScore = scores.FirstOrDefault();
+                        map.PlayerScore = scores.FirstOrDefault();
 
-                    return map;
+                        return map;
+                    }).GroupJoin(rankedMaps, map => map.Hash, rankedMap => rankedMap.Id, (map, rankedMap) =>
+                    {
+                        map.RankedMap = rankedMap.FirstOrDefault();
+
+                        return map;
+                    });
                 });
-            });
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using BeatSaberTools.Core.ApiClients;
+using BeatSaberTools.Core.Models.Data.ScoreSaber;
 
 namespace BeatSaberTools.Models
 {
@@ -15,5 +16,6 @@ namespace BeatSaberTools.Models
         public TimeSpan PreviewEndTime => PreviewStartTime + PreviewDuration;
 
         public PlayerScore? PlayerScore { get; set; }
+        public RankedMap? RankedMap { get; set; }
     }
 }
