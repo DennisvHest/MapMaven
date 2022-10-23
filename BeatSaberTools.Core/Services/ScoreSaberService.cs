@@ -1,6 +1,6 @@
 ﻿using BeatSaberTools.Core.ApiClients;
 using BeatSaberTools.Core.Models.Data.ScoreSaber;
-using System.Net.Http;
+using BeatSaberTools.Core.Utilities.Scoresaber;
 using System.Net.Http.Json;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
@@ -16,7 +16,9 @@ namespace BeatSaberTools.Core.Services
         private readonly BehaviorSubject<string?> _playerId = new(null);
         private readonly BehaviorSubject<IEnumerable<RankedMap>> _rankedMaps = new(Enumerable.Empty<RankedMap>());
 
+        public readonly IObservable<Player> PlayerProfile;
         public readonly IObservable<IEnumerable<PlayerScore>> PlayerScores;
+        public readonly IObservable<IEnumerable<ScoreEstimate>> ScoreEstimates;
         public IObservable<IEnumerable<RankedMap>> RankedMaps => _rankedMaps;
 
         private const string _replayBaseUrl = "https://www.replay.beatleader.xyz";
@@ -48,9 +50,31 @@ namespace BeatSaberTools.Core.Services
                     return scoreCollection.PlayerScores;
                 });
             }).Concat();
+
+            PlayerProfile = _playerId.Select(playerId =>
+            {
+                if (string.IsNullOrEmpty(playerId))
+                    Observable.Return(null as Player);
+
+                return Observable.FromAsync(async () => await _scoreSaber.FullAsync(playerId));
+            }).Concat();
+
+            ScoreEstimates = Observable.CombineLatest(PlayerProfile, PlayerScores, RankedMaps, (player, playerScores, rankedMaps) =>
+            {
+                var rankedMapPlayerScorePairs = playerScores.Join(rankedMaps, playerScore => playerScore.Leaderboard.SongHash, rankedMap => rankedMap.Id, (playerScore, rankedMap) =>
+                {
+                    return new RankedMapScorePair
+                    {
+                        Map = rankedMap,
+                        PlayerScore = playerScore
+                    };
+                });
+
+                return rankedMaps.Select(map => ScoreSaber.GetScoreEstimate(map, rankedMapPlayerScorePairs, Convert.ToDecimal(player.Pp))).ToList();
+            });
         }
 
-        public void LoadPlayerScores()
+        public async Task LoadPlayerData()
         {
             var scoreSaberReplaysLocation = Path.Combine(_fileService.UserDataLocation, "ScoreSaber", "Replays");
 

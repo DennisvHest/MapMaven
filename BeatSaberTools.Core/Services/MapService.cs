@@ -1,5 +1,6 @@
-﻿using BeatSaberTools.Core.Models.Data.ScoreSaber;
+﻿using BeatSaberTools.Core.ApiClients;
 using BeatSaberTools.Core.Services;
+using BeatSaberTools.Core.Utilities.Scoresaber;
 using System.Reactive.Linq;
 using Map = BeatSaberTools.Models.Map;
 
@@ -27,11 +28,12 @@ namespace BeatSaberTools.Services
 
             Maps = Observable.CombineLatest(
                 _beatSaberDataService.MapInfo,
-                _scoreSaberService.PlayerScores,
+                _scoreSaberService.PlayerScores.StartWith(Enumerable.Empty<PlayerScore>()),
                 _scoreSaberService.RankedMaps,
-                (maps, playerScores, rankedMaps) =>
+                _scoreSaberService.ScoreEstimates.StartWith(Enumerable.Empty<ScoreEstimate>()),
+                (maps, playerScores, rankedMaps, scoreEstimates) =>
                 {
-                    return maps.GroupJoin(playerScores, mapInfo => mapInfo.Hash, score => score.Leaderboard.SongHash, (mapInfo, scores) =>
+                    var asdf = maps.GroupJoin(playerScores, mapInfo => mapInfo.Hash, score => score.Leaderboard.SongHash, (mapInfo, scores) =>
                     {
                         var map = mapInfo.ToMap();
 
@@ -43,7 +45,14 @@ namespace BeatSaberTools.Services
                         map.RankedMap = rankedMap.FirstOrDefault();
 
                         return map;
+                    }).GroupJoin(scoreEstimates, map => map.Hash, scoreEstimate => scoreEstimate.MapId, (map, scoreEstimate) =>
+                    {
+                        map.ScoreEstimate = scoreEstimate.FirstOrDefault();
+
+                        return map;
                     });
+
+                    return asdf;
                 });
         }
     }

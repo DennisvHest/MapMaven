@@ -1,4 +1,6 @@
 ﻿@using System.Text.Json
+@using BeatSaberTools.Core.Utilities.Scoresaber
+
 <MudTd Class="pa-0" Style="width: 50px; position: relative;">
     @if (CurrentlyPlaying)
     {
@@ -20,9 +22,21 @@
 <MudTd DataLabel="SongAuthorName">@Map.SongAuthorName</MudTd>
 <MudTd DataLabel="MapAuthorName">@Map.MapAuthorName</MudTd>
 <MudTd DataLabel="Duration" Style="width: 130px">@Map.SongDuration.ToString("mm':'ss")</MudTd>
+<MudTd>
+    @if (Map.PlayerScore != null)
+    {
+        <MudChip Color="Color.Info" Size="Size.Small" Variant="Variant.Outlined">@Map.PlayerScore.AccuracyWithMods().ToString("##.##")%</MudChip>
+    }
+</MudTd>
 <MudTd Style="width: 130px">
     @if (Map.PlayerScore?.Score?.Pp != null) {
-        <MudChip Color="Color.Info" Size="Size.Small" Variant="Variant.Outlined">@(Map.PlayerScore?.Score?.Pp) pp</MudChip>
+        <MudChip Color="Color.Info" Size="Size.Small" Variant="Variant.Outlined">@Map.PlayerScore.Score.Pp.ToString("##.##") pp</MudChip>
+    }
+</MudTd>
+<MudTd Style="width: 130px">
+    @if (Map.ScoreEstimate != null)
+    {
+        <MudChip Color="Color.Info" Size="Size.Small" Variant="Variant.Outlined">+@Map.ScoreEstimate.PPIncrease.ToString("##.##") pp</MudChip>
     }
 </MudTd>
 <MudTd>

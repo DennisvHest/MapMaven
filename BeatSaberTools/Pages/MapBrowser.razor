@@ -1,4 +1,5 @@
 ﻿@page "/"
+@using BeatSaberTools.Core.Utilities.Scoresaber
 
 <MudTable Items="Maps"
           Height="calc(100% - 116px)"
@@ -39,7 +40,15 @@
             <MudTableSortLabel SortBy="new Func<Map, object>(x => x.SongDuration)">Duration</MudTableSortLabel>
         </MudTh>
         <MudTh>
+            <MudTableSortLabel SortBy="new Func<Map, object>(x => x.PlayerScore?.AccuracyWithMods())">%</MudTableSortLabel>
+        </MudTh>
+        <MudTh>
             <MudTableSortLabel SortBy="new Func<Map, object>(x => x.PlayerScore?.Score?.Pp)">pp</MudTableSortLabel>
+        </MudTh>
+        <MudTh>
+            <MudTableSortLabel SortBy="new Func<Map, object>(x => x.ScoreEstimate?.PPIncrease)">
+                <MudIcon Icon="@Icons.Filled.KeyboardDoubleArrowUp"></MudIcon>pp
+            </MudTableSortLabel>
         </MudTh>
         <MudTh>
             <MudTableSortLabel SortBy="new Func<Map, object>(x => !(x.PlayerScore?.Score?.HasReplay ?? false))"><img src="images/replay-icon.png" style="width: 24px" /></MudTableSortLabel>

@@ -670,7 +670,7 @@
             "style": "simple",
             "explode": false,
             "schema": {
-              "type": "number"
+              "type": "string"
             }
           }
         ],
@@ -680,10 +680,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Player"
-                  }
+                  "$ref": "#/components/schemas/Player"
                 }
               }
             }

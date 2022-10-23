@@ -1,5 +1,6 @@
 ﻿using BeatSaberTools.Core.ApiClients;
 using BeatSaberTools.Core.Models.Data.ScoreSaber;
+using BeatSaberTools.Core.Utilities.Scoresaber;
 
 namespace BeatSaberTools.Models
 {
@@ -17,5 +18,6 @@ namespace BeatSaberTools.Models
 
         public PlayerScore? PlayerScore { get; set; }
         public RankedMap? RankedMap { get; set; }
+        public ScoreEstimate? ScoreEstimate { get; set; }
     }
 }

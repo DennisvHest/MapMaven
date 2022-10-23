@@ -42,7 +42,7 @@
             if (InitialSetupDone)
             {
                 Task.Run(BeatSaberDataService.LoadAllMapInfo);
-                Task.Run(ScoreSaberService.LoadPlayerScores);
+                Task.Run(ScoreSaberService.LoadPlayerData);
                 Task.Run(ScoreSaberService.LoadRankedMaps);
                 Task.Run(BeatSaberDataService.LoadAllPlaylists);
             }
