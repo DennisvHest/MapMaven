@@ -35,7 +35,7 @@ namespace BeatSaberTools.Core.Services
             PlayerScores = _playerId.Select(playerId =>
             {
                 if (string.IsNullOrEmpty(playerId))
-                    Observable.Return(Enumerable.Empty<PlayerScore>());
+                    return Observable.Return(Enumerable.Empty<PlayerScore>());
 
                 return Observable.FromAsync(async () =>
                 {
@@ -54,7 +54,7 @@ namespace BeatSaberTools.Core.Services
             PlayerProfile = _playerId.Select(playerId =>
             {
                 if (string.IsNullOrEmpty(playerId))
-                    Observable.Return(null as Player);
+                    return Observable.Return(null as Player);
 
                 return Observable.FromAsync(async () => await _scoreSaber.FullAsync(playerId));
             }).Concat();

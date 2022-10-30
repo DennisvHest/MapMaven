@@ -7,7 +7,7 @@ using Playlist = BeatSaberTools.Models.Playlist;
 using Map = BeatSaberTools.Models.Map;
 using BeatSaberTools.Core.Services;
 using BeatSaberPlaylistsLib.Types;
-using BeatSaberTools.Core.Models;
+using BeatSaberTools.Core.Models.DynamicPlaylists;
 
 namespace BeatSaberTools.Services
 {

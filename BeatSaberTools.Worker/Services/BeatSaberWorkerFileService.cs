@@ -1,4 +1,5 @@
 ﻿using BeatSaberTools.Core.Services;
+using System.Reactive.Linq;
 
 namespace BeatSaberTools.Worker.Services
 {
@@ -7,6 +8,8 @@ namespace BeatSaberTools.Worker.Services
         public string BeatSaberInstallLocation => @"F:/SteamLibrary/steamapps/common/Beat Saber";
 
         public string MapInfoCachePath => null!;
+
+        public IObservable<string> BeatSaberInstallLocationObservable => Observable.Return(BeatSaberInstallLocation);
 
         public void SetBeatSaberInstallLocation(string path) { }
     }

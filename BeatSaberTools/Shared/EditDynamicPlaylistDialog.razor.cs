@@ -1,7 +1,8 @@
-using BeatSaberTools.Core.Models;
+using BeatSaberTools.Core.Models.DynamicPlaylists;
 using BeatSaberTools.Services;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
+using SortDirection = BeatSaberTools.Core.Models.DynamicPlaylists.SortDirection;
 
 namespace BeatSaberTools.Shared
 {
@@ -27,7 +28,14 @@ namespace BeatSaberTools.Shared
                 Description = "The most recently downloaded maps.",
                 DynamicPlaylistConfiguration = new DynamicPlaylistConfiguration
                 {
-                    Type = "RECENTLY_ADDED_MAPS",
+                    SortOperations = new[]
+                    {
+                        new SortOperation
+                        {
+                            Field = "AddedDateTime",
+                            Direction = SortDirection.Descending
+                        }
+                    },
                     MapCount = 20
                 }
             }

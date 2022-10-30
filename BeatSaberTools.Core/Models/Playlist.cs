@@ -1,5 +1,5 @@
 ﻿using BeatSaberPlaylistsLib.Types;
-using BeatSaberTools.Core.Models;
+using BeatSaberTools.Core.Models.DynamicPlaylists;
 using BeatSaberTools.Extensions;
 using Newtonsoft.Json.Linq;
 using Image = System.Drawing.Image;

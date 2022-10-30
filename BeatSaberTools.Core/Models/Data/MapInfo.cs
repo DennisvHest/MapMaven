@@ -53,6 +53,7 @@ namespace BeatSaberTools.Models.Data
                 Name = SongName,
                 SongAuthorName = SongAuthorName,
                 MapAuthorName = LevelAuthorName,
+                AddedDateTime = AddedDateTime,
                 SongDuration = SongDuration,
                 PreviewStartTime = PreviewStartTime,
                 PreviewDuration = PreviewDuration
