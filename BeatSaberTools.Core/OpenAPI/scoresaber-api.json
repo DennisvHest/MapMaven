@@ -1155,7 +1155,7 @@
         "type": "object",
         "properties": {
           "total": {
-            "type": "number"
+            "type": "integer"
           },
           "page": {
             "type": "number"

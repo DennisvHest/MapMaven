@@ -1,6 +1,7 @@
 ﻿using BeatSaberTools.Core.ApiClients;
 using BeatSaberTools.Core.Models.Data.ScoreSaber;
 using BeatSaberTools.Core.Utilities.Scoresaber;
+using BeatSaberTools.Models;
 using System.Net.Http.Json;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
@@ -39,15 +40,29 @@ namespace BeatSaberTools.Core.Services
 
                 return Observable.FromAsync(async () =>
                 {
-                    var scoreCollection = await _scoreSaber.Scores2Async(
-                        playerId: playerId,
-                        limit: 100,
-                        sort: Sort.Top,
-                        page: 1,
-                        withMetadata: true
-                    );
+                    var playerScores = Enumerable.Empty<PlayerScore>();
+                    int totalScores;
+                    int page = 1;
 
-                    return scoreCollection.PlayerScores;
+                    do
+                    {
+                        var scoreCollection = await _scoreSaber.Scores2Async(
+                            playerId: playerId,
+                            limit: 100,
+                            sort: Sort.Top,
+                            page: page,
+                            withMetadata: true
+                        );
+
+                        totalScores = scoreCollection.Metadata.Total;
+
+                        playerScores = playerScores.Concat(scoreCollection.PlayerScores);
+
+                        page++;
+                    }
+                    while ((page - 1) * 100 < totalScores);
+
+                    return playerScores;
                 });
             }).Concat();
 
@@ -71,7 +86,8 @@ namespace BeatSaberTools.Core.Services
                         Map = rankedMap,
                         PlayerScore = playerScore
                     };
-                });
+                })
+                .Where(pair => pair.Map.Difficulty.ToLower() == pair.PlayerScore.Leaderboard.Difficulty.DifficultyName.ToLower());
 
                 return rankedMaps.Select(map => ScoreSaber.GetScoreEstimate(map, rankedMapPlayerScorePairs, Convert.ToDecimal(player.Pp))).ToList();
             });
