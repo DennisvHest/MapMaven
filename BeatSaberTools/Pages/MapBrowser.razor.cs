@@ -20,6 +20,7 @@ namespace BeatSaberTools.Pages
         private bool LoadingMapInfo = false;
 
         private Playlist SelectedPlaylist = null;
+        private string SelectedSongAuthorName = null;
 
         private IEnumerable<string> MapHashFilter = null;
 
@@ -45,6 +46,12 @@ namespace BeatSaberTools.Pages
                 MapHashFilter = selectedPlaylist?.Maps.Select(m => m.Hash);
                 InvokeAsync(StateHasChanged);
             });
+
+            MapService.SelectedSongAuthorName.Subscribe(selectedSongAuthor =>
+            {
+                SelectedSongAuthorName = selectedSongAuthor;
+                InvokeAsync(StateHasChanged);
+            });
         }
 
         private bool Filter(Map map)
@@ -65,7 +72,19 @@ namespace BeatSaberTools.Pages
                 _ => MapHashFilter.Contains(map.Hash)
             };
 
-            return searchFilter && mapHashFilter;
+            var songAuthorFilter = true;
+
+            if (!string.IsNullOrEmpty(SelectedSongAuthorName))
+            {
+                songAuthorFilter = map.SongAuthorName == SelectedSongAuthorName;
+            }
+
+            return searchFilter && mapHashFilter && songAuthorFilter;
+        }
+
+        protected void RemoveSongAuthorFilter()
+        {
+            MapService.SelectSongAuthor(null);
         }
     }
 }

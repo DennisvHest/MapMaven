@@ -114,6 +114,10 @@ namespace BeatSaberTools.Services
         private async Task<Dictionary<string, SongHash>> GetSongHashData()
         {
             var songHashFilePath = Path.Combine(_fileService.UserDataLocation, "SongCore", "SongHashData.dat");
+
+            if (!File.Exists(songHashFilePath))
+                return new Dictionary<string, SongHash>();
+
             var songHashJson = await File.ReadAllTextAsync(songHashFilePath);
 
             var songHashData = JsonSerializer.Deserialize<Dictionary<string, SongHash>>(songHashJson, new JsonSerializerOptions

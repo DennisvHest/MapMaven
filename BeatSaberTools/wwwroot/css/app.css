@@ -30,3 +30,8 @@
 .mud-dialog-title > .mud-icon-button {
     padding: 6px;
 }
+
+
+a:hover {
+    cursor: pointer;
+}

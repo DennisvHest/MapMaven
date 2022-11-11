@@ -20,6 +20,8 @@ namespace BeatSaberTools.Pages
         protected PlaylistService PlaylistService { get; set; }
         [Inject]
         protected ScoreSaberService ScoreSaberService { get; set; }
+        [Inject]
+        protected MapService MapService { get; set; }
 
         [Inject]
         protected IDialogService DialogService { get; set; }
@@ -137,6 +139,11 @@ namespace BeatSaberTools.Pages
                 FullWidth = true,
                 CloseButton = true
             });
+        }
+
+        void SelectSongAuthor()
+        {
+            MapService.SelectSongAuthor(Map.SongAuthorName);
         }
 
         public void Dispose()

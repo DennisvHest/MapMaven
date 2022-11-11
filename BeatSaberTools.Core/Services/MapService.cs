@@ -4,6 +4,7 @@ using BeatSaberTools.Core.Services;
 using BeatSaberTools.Core.Utilities.Scoresaber;
 using BeatSaberTools.Models.Data;
 using System.Reactive.Linq;
+using System.Reactive.Subjects;
 using Map = BeatSaberTools.Models.Map;
 
 namespace BeatSaberTools.Services
@@ -13,9 +14,14 @@ namespace BeatSaberTools.Services
         private readonly BeatSaberDataService _beatSaberDataService;
         private readonly ScoreSaberService _scoreSaberService;
 
+        private readonly BehaviorSubject<string?> _selectedSongAuthorName = new BehaviorSubject<string?>(null);
+
         public IObservable<IEnumerable<Map>> Maps { get; private set; }
         public IObservable<IEnumerable<Map>> CompleteMapData { get; private set; }
         public IObservable<Dictionary<string, Map>> MapsByHash { get; private set; }
+
+        public IObservable<string?> SelectedSongAuthorName => _selectedSongAuthorName;
+
 
         public MapService(BeatSaberDataService beatSaberDataService, ScoreSaberService scoreSaberService)
         {
@@ -64,6 +70,11 @@ namespace BeatSaberTools.Services
 
                 return map;
             });
+        }
+
+        public void SelectSongAuthor(string name)
+        {
+            _selectedSongAuthorName.OnNext(name);
         }
     }
 }

@@ -61,6 +61,9 @@ namespace BeatSaberTools.Core.Services
 
             ScoreEstimates = Observable.CombineLatest(PlayerProfile, PlayerScores, RankedMaps, (player, playerScores, rankedMaps) =>
             {
+                if (player == null)
+                    return Enumerable.Empty<ScoreEstimate>();
+
                 var rankedMapPlayerScorePairs = playerScores.Join(rankedMaps, playerScore => playerScore.Leaderboard.SongHash, rankedMap => rankedMap.Id, (playerScore, rankedMap) =>
                 {
                     return new RankedMapScorePair

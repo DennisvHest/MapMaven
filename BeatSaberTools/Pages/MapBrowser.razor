@@ -13,6 +13,10 @@
         {
             <MudChip Variant="Variant.Outlined">@SelectedPlaylist.Title</MudChip>
         }
+        @if (SelectedSongAuthorName != null)
+        {
+            <MudChip Variant="Variant.Outlined" OnClose="RemoveSongAuthorFilter">@SelectedSongAuthorName</MudChip>
+        }
         <MudTextField @bind-Value="SearchString"
                       DebounceInterval="300"
                       Immediate="true"
