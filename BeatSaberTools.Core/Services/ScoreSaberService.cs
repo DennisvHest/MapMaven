@@ -79,17 +79,24 @@ namespace BeatSaberTools.Core.Services
                 if (player == null)
                     return Enumerable.Empty<ScoreEstimate>();
 
-                var rankedMapPlayerScorePairs = playerScores.Join(rankedMaps, playerScore => playerScore.Leaderboard.SongHash, rankedMap => rankedMap.Id, (playerScore, rankedMap) =>
-                {
-                    return new RankedMapScorePair
+                var rankedMapPlayerScorePairs = playerScores
+                    .GroupBy(s => s.Leaderboard.SongHash)
+                    .Select(x =>
+                        x.OrderByDescending(s => s.Leaderboard.Difficulty.Difficulty1).First()
+                    )
+                    .Join(rankedMaps, playerScore => playerScore.Leaderboard.SongHash, rankedMap => rankedMap.Id, (playerScore, rankedMap) =>
                     {
-                        Map = rankedMap,
-                        PlayerScore = playerScore
-                    };
-                })
-                .Where(pair => pair.Map.Difficulty.ToLower() == pair.PlayerScore.Leaderboard.Difficulty.DifficultyName.ToLower());
+                        return new RankedMapScorePair
+                        {
+                            Map = rankedMap,
+                            PlayerScore = playerScore
+                        };
+                    })
+                    .Where(pair => pair.Map.Difficulty.ToLower() == pair.PlayerScore.Leaderboard.Difficulty.DifficultyName.ToLower());
 
-                return rankedMaps.Select(map => ScoreSaber.GetScoreEstimate(map, rankedMapPlayerScorePairs, Convert.ToDecimal(player.Pp))).ToList();
+                var scoresaber = new Scoresaber(player, rankedMapPlayerScorePairs.Select(x => x.PlayerScore));
+
+                return rankedMaps.Select(map => scoresaber.GetScoreEstimate(map)).ToList();
             });
         }
 

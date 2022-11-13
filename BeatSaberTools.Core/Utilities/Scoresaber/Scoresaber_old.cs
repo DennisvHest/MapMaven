@@ -3,11 +3,8 @@ using BeatSaberTools.Core.Models.Data.ScoreSaber;
 
 namespace BeatSaberTools.Core.Utilities.Scoresaber
 {
-    public class Scoresaber
+    public static class Scoresaber_old
     {
-        private readonly Player _player;
-        private readonly IEnumerable<PlayerScore> _playerScores;
-
         public const decimal PPDecay = .965M;
 
         public static readonly List<PPCurveItem> PPCurve = new List<PPCurveItem>
@@ -29,48 +26,6 @@ namespace BeatSaberTools.Core.Utilities.Scoresaber
             new PPCurveItem { At = 110M, Value = 1.18M },
             new PPCurveItem { At = 114M, Value = 1.25M },
         };
-
-        public Scoresaber(Player player, IEnumerable<PlayerScore> playerScores)
-        {
-            _player = player;
-            _playerScores = playerScores;
-        }
-
-        public ScoreEstimate GetScoreEstimate(RankedMap map)
-        {
-            var now = DateTimeOffset.Now;
-            var decay = TimeSpan.FromDays(15).TotalMilliseconds;
-
-            var estimatedPercentage = _playerScores.Average(score =>
-            {
-                var starFactor = 1 / (map.Stars / Convert.ToDecimal(score.Leaderboard.Stars));
-
-                var accuracy = score.AccuracyWithMods();
-
-                // Scores that were set longer ago, don't weigh as much in the comparison between star difficulties, compared to scores set more recently.
-                var at = score.Score.TimeSet != default ? score.Score.TimeSet : now;
-                var time = (now - at).TotalMilliseconds / decay;
-
-                var timeFactor = 1 / Math.Pow(0.9, time);
-
-                return accuracy * starFactor * Convert.ToDecimal(timeFactor);
-            });
-
-            var estimatedPP = map.PP * ApplyCurve(estimatedPercentage);
-
-            var totalPPEstimate = GetTotalPP(_playerScores, estimatedPP, new string[] { map.Id });
-
-            return new ScoreEstimate
-            {
-                MapId = map.Id,
-                Accuracy = estimatedPercentage,
-                PP = estimatedPP,
-                TotalPP = totalPPEstimate,
-                PPIncrease = Math.Max(totalPPEstimate - Convert.ToDecimal(_player.Pp), 0),
-                Difficulty = map.Difficulty,
-                Stars = map.Stars
-            };
-        }
 
         /// <summary>
         /// Gets the total of the PP from the given scores and applies the PP decay rules from ScoreSaber.
@@ -105,6 +60,63 @@ namespace BeatSaberTools.Core.Utilities.Scoresaber
 
                     return total + score.PP * ppDecayMultiplier;
                 });
+        }
+
+        /// <summary>
+        /// Returns a <see cref="ScoreEstimate"/> for the given map based on the given existing scores.
+        /// </summary>
+        /// <param name="map">Map to get the score estimate for.</param>
+        /// <param name="mapScores">Existing scores.</param>
+        /// <returns>A <see cref="ScoreEstimate"/> containing estimated accuracy, PP gain and total PP.</returns>
+        public static ScoreEstimate GetScoreEstimate(RankedMap map, IEnumerable<RankedMapScorePair> mapScores, decimal currentTotalPP)
+        {
+            var now = DateTimeOffset.Now;
+            var decay = 1000 * 60 * 60 * 24 * 15;
+            var maxStars = mapScores.Max(s => s.Map.Stars);
+
+            (decimal Weight, decimal Sum) total = (0, 0);
+
+            var data = mapScores.Aggregate(total, (runningTotal, mapPlayerScore) =>
+            {
+                // If the map has a higher star difficulty than the existing score map, it weighs more.
+                var d = 2 * Math.Abs(map.Stars - mapPlayerScore.Map.Stars);
+                var front = map.Stars > mapPlayerScore.Map.Stars ? d * d * d : 1;
+
+                // Scores that were set longer ago, don't weigh as much in the comparison between star difficulties, compared to scores set more recently.
+                var at = mapPlayerScore.PlayerScore.Score.TimeSet != default ? mapPlayerScore.PlayerScore.Score.TimeSet : now;
+                var time = 1 + Math.Max(now.ToUnixTimeMilliseconds() - at.ToUnixTimeMilliseconds(), 0) / decay;
+
+                var weight = 1 / (1 + d * time * front);
+
+                runningTotal.Weight += weight;
+                runningTotal.Sum += mapPlayerScore.PlayerScore.AccuracyWithMods() * weight;
+
+                return runningTotal;
+            });
+
+            var result = data.Weight != 0 ? data.Sum / data.Weight : 0;
+
+            // If the map is more difficult than the most difficult map that has been scored on, it weighs more towards a higher score.
+            if (map.Stars > maxStars)
+            {
+                var d = 2 * Math.Abs(map.Stars - maxStars);
+                result /= (1 + d * d);
+            }
+
+            var estimatedPP = map.PP * ApplyCurve(result);
+
+            var totalPPEstimate = GetTotalPP(mapScores.Select(m => m.PlayerScore), estimatedPP, new string[] { map.Id });
+
+            return new ScoreEstimate
+            {
+                MapId = map.Id,
+                Accuracy = result,
+                PP = estimatedPP,
+                TotalPP = totalPPEstimate,
+                PPIncrease = Math.Max(totalPPEstimate - currentTotalPP, 0),
+                Difficulty = map.Difficulty,
+                Stars = map.Stars
+            };
         }
 
         /// <summary>
