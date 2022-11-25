@@ -59,25 +59,14 @@ namespace BeatSaberTools.Pages
             var currentlyPlaying = SongPlayerService.CurrentlyPlayingMap
                 .Select(m => m != null && m.Hash == Map?.Hash);
 
-            currentlyPlaying.Subscribe(currentlyPlaying =>
-            {
-                CurrentlyPlaying = currentlyPlaying;
-                StateHasChanged();
-            });
+            SubscribeAndBind(currentlyPlaying, currentlyPlaying => CurrentlyPlaying = currentlyPlaying);
 
-            Observable.CombineLatest(currentlyPlaying, SongPlayerService.PlaybackProgress, (playing, progress) => (playing, progress))
-                .Where(x => x.playing)
-                .Subscribe(x =>
-                {
-                    PlaybackProgress = x.progress;
-                    InvokeAsync(() => StateHasChanged());
-                });
+            var playbackProgress = Observable.CombineLatest(currentlyPlaying, SongPlayerService.PlaybackProgress, (playing, progress) => (playing, progress))
+                .Where(x => x.playing);
 
-            SelectedPlaylistSubscription = PlaylistService.SelectedPlaylist.Subscribe(selectedPlaylist =>
-            {
-                SelectedPlaylist = selectedPlaylist;
-                InvokeAsync(() => StateHasChanged());
-            });
+            SubscribeAndBind(playbackProgress, x => PlaybackProgress = x.progress);
+
+            SelectedPlaylistSubscription = SubscribeAndBind(PlaylistService.SelectedPlaylist, selectedPlaylist => SelectedPlaylist = selectedPlaylist);
         }
 
         void PlayPauseSongPreview()

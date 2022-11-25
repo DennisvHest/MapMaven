@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Components;
 using BeatSaberTools.Services;
 using Map = BeatSaberTools.Models.Map;
 using BeatSaberTools.Models;
+using BeatSaberTools.Extensions;
 
 namespace BeatSaberTools.Pages
 {
@@ -28,30 +29,14 @@ namespace BeatSaberTools.Pages
 
         protected override void OnInitialized()
         {
-            MapService.Maps.Subscribe(maps =>
-            {
-                Maps = maps;
-                InvokeAsync(StateHasChanged);
-            });
-
-            BeatSaberDataService.LoadingMapInfo.Subscribe(loading =>
-            {
-                LoadingMapInfo = loading;
-                InvokeAsync(StateHasChanged);
-            });
-
-            PlaylistService.SelectedPlaylist.Subscribe(selectedPlaylist =>
+            SubscribeAndBind(MapService.Maps, maps => Maps = maps);
+            SubscribeAndBind(BeatSaberDataService.LoadingMapInfo, loading => LoadingMapInfo = loading);
+            SubscribeAndBind(PlaylistService.SelectedPlaylist, selectedPlaylist =>
             {
                 SelectedPlaylist = selectedPlaylist;
                 MapHashFilter = selectedPlaylist?.Maps.Select(m => m.Hash);
-                InvokeAsync(StateHasChanged);
             });
-
-            MapService.SelectedSongAuthorName.Subscribe(selectedSongAuthor =>
-            {
-                SelectedSongAuthorName = selectedSongAuthor;
-                InvokeAsync(StateHasChanged);
-            });
+            SubscribeAndBind(MapService.SelectedSongAuthorName, selectedSongAuthor => SelectedSongAuthorName = selectedSongAuthor);
         }
 
         private bool Filter(Map map)
