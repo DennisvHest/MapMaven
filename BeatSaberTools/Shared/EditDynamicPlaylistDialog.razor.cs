@@ -1,4 +1,5 @@
 using BeatSaberTools.Core.Models.DynamicPlaylists;
+using BeatSaberTools.Core.Services;
 using BeatSaberTools.Services;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
@@ -10,6 +11,8 @@ namespace BeatSaberTools.Shared
     {
         [Inject]
         protected PlaylistService PlaylistService { get; set; }
+        [Inject]
+        protected DynamicPlaylistArrangementService DynamicPlaylistArrangementService { get; set; }
 
         [Inject]
         ISnackbar Snackbar { get; set; }
@@ -49,6 +52,7 @@ namespace BeatSaberTools.Shared
         async Task AddDynamicPlaylist()
         {
             await PlaylistService.AddDynamicPlaylist(SelectedPlaylist);
+            Task.Run(DynamicPlaylistArrangementService.ArrangeDynamicPlaylists);
 
             Snackbar.Add($"Added playlist \"{SelectedPlaylist.Name}\"", Severity.Normal, config => config.Icon = Icons.Filled.Check);
 

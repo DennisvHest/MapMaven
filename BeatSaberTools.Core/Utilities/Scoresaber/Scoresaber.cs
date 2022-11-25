@@ -38,6 +38,17 @@ namespace BeatSaberTools.Core.Utilities.Scoresaber
 
         public ScoreEstimate GetScoreEstimate(RankedMap map)
         {
+            return new ScoreEstimate
+            {
+                MapId = map.Id,
+                Accuracy = 0,
+                PP = 0,
+                TotalPP = 0,
+                PPIncrease = 0,
+                Difficulty = map.Difficulty,
+                Stars = map.Stars
+            };
+
             var now = DateTimeOffset.Now;
             var decay = TimeSpan.FromDays(15).TotalMilliseconds;
 

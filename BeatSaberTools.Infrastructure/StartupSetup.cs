@@ -24,6 +24,7 @@ namespace BeatSaberTools.Infrastructure
             services.AddSingleton<SongPlayerService>();
             services.AddSingleton<PlaylistService>();
             services.AddSingleton<ScoreSaberService>();
+            services.AddSingleton<DynamicPlaylistArrangementService>();
         }
     }
 }
