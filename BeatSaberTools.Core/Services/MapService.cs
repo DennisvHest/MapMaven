@@ -66,7 +66,7 @@ namespace BeatSaberTools.Services
                 return map;
             }).GroupJoin(scoreEstimates, map => map.Hash, scoreEstimate => scoreEstimate.MapId, (map, scoreEstimate) =>
             {
-                map.ScoreEstimate = scoreEstimate.FirstOrDefault();
+                map.ScoreEstimate = scoreEstimate;
 
                 return map;
             });

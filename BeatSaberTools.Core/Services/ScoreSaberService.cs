@@ -80,23 +80,18 @@ namespace BeatSaberTools.Core.Services
                     return Enumerable.Empty<ScoreEstimate>();
 
                 var rankedMapPlayerScorePairs = playerScores
-                    .GroupBy(s => s.Leaderboard.SongHash)
-                    .Select(x =>
-                        x.OrderByDescending(s => s.Leaderboard.Difficulty.Difficulty1).First()
-                    )
-                    .Join(rankedMaps, playerScore => playerScore.Leaderboard.SongHash, rankedMap => rankedMap.Id, (playerScore, rankedMap) =>
+                    .Join(rankedMaps, playerScore => playerScore.Leaderboard.SongHash + playerScore.Leaderboard.Difficulty.DifficultyName.ToLower(), rankedMap => rankedMap.Id + rankedMap.Difficulty.ToLower(), (playerScore, rankedMap) =>
                     {
                         return new RankedMapScorePair
                         {
                             Map = rankedMap,
                             PlayerScore = playerScore
                         };
-                    })
-                    .Where(pair => pair.Map.Difficulty.ToLower() == pair.PlayerScore.Leaderboard.Difficulty.DifficultyName.ToLower());
+                    });
 
                 var scoresaber = new Scoresaber(player, rankedMapPlayerScorePairs.Select(x => x.PlayerScore));
 
-                return rankedMaps.Select(map => scoresaber.GetScoreEstimate(map)).ToList();
+                return rankedMapPlayerScorePairs.Select(pair => scoresaber.GetScoreEstimate(pair.Map)).ToList();
             });
         }
 

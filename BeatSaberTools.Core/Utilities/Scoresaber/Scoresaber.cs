@@ -38,34 +38,27 @@ namespace BeatSaberTools.Core.Utilities.Scoresaber
 
         public ScoreEstimate GetScoreEstimate(RankedMap map)
         {
-            return new ScoreEstimate
-            {
-                MapId = map.Id,
-                Accuracy = 0,
-                PP = 0,
-                TotalPP = 0,
-                PPIncrease = 0,
-                Difficulty = map.Difficulty,
-                Stars = map.Stars
-            };
+            var estimatedPercentage = _playerScores
+                .Where(s => !s.Score.Modifiers.Contains("NF")) // Not including "No fail" scores, because these scores are not representative of performance relative to other maps.
+                .Average(score =>
+                {
+                    var scoreStars = Convert.ToDecimal(score.Leaderboard.Stars);
 
-            var now = DateTimeOffset.Now;
-            var decay = TimeSpan.FromDays(15).TotalMilliseconds;
+                    decimal starFactor;
 
-            var estimatedPercentage = _playerScores.Average(score =>
-            {
-                var starFactor = 1 / (map.Stars / Convert.ToDecimal(score.Leaderboard.Stars));
+                    if (map.Stars > scoreStars)
+                    {
+                        starFactor = 1 / (map.Stars / Convert.ToDecimal(score.Leaderboard.Stars));
+                    }
+                    else
+                    {
+                        starFactor = 1;
+                    }
 
-                var accuracy = score.AccuracyWithMods();
+                    var accuracy = score.AccuracyWithMods();
 
-                // Scores that were set longer ago, don't weigh as much in the comparison between star difficulties, compared to scores set more recently.
-                var at = score.Score.TimeSet != default ? score.Score.TimeSet : now;
-                var time = (now - at).TotalMilliseconds / decay;
-
-                var timeFactor = 1 / Math.Pow(0.9, time);
-
-                return accuracy * starFactor * Convert.ToDecimal(timeFactor);
-            });
+                    return accuracy * starFactor;
+                });
 
             var estimatedPP = map.PP * ApplyCurve(estimatedPercentage);
 
