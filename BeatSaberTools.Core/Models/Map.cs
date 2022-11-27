@@ -19,6 +19,6 @@ namespace BeatSaberTools.Models
 
         public PlayerScore? PlayerScore { get; set; }
         public RankedMap? RankedMap { get; set; }
-        public IEnumerable<ScoreEstimate> ScoreEstimate { get; set; }
+        public IEnumerable<ScoreEstimate> ScoreEstimate { get; set; } = Enumerable.Empty<ScoreEstimate>();
     }
 }

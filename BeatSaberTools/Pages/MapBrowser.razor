@@ -52,9 +52,9 @@
             <MudTableSortLabel SortBy="new Func<Map, object>(x => x.PlayerScore?.Score?.Pp)">pp</MudTableSortLabel>
         </MudTh>
         <MudTh>
-            @*<MudTableSortLabel SortBy="new Func<Map, object>(x => x.ScoreEstimate?.PPIncrease)">*@
+            <MudTableSortLabel SortBy="new Func<Map, object>(x => x.ScoreEstimate.Any() ? x.ScoreEstimate.Max(x => x.PPIncrease) : 0)">
                 <MudIcon Icon="@Icons.Filled.KeyboardDoubleArrowUp"></MudIcon>pp
-            @*</MudTableSortLabel>*@
+            </MudTableSortLabel>
         </MudTh>
         <MudTh>
             <MudTableSortLabel SortBy="new Func<Map, object>(x => !(x.PlayerScore?.Score?.HasReplay ?? false))"><img src="images/replay-icon.png" style="width: 24px" /></MudTableSortLabel>

@@ -3,29 +3,41 @@ using BeatSaberTools.Core.Models.Data.ScoreSaber;
 
 namespace BeatSaberTools.Core.Utilities.Scoresaber
 {
-    public static class Scoresaber_old
+    public class Scoresaber_old
     {
+        private readonly Player _player;
+        private readonly IEnumerable<PlayerScore> _playerScores;
+
         public const decimal PPDecay = .965M;
 
         public static readonly List<PPCurveItem> PPCurve = new List<PPCurveItem>
         {
             new PPCurveItem { At = 0M, Value = 0M },
-            new PPCurveItem { At = 45M, Value = 0.015M },
-            new PPCurveItem { At = 50M, Value = 0.03M },
-            new PPCurveItem { At = 55M, Value = 0.06M },
-            new PPCurveItem { At = 60M, Value = 0.105M },
+            new PPCurveItem { At = 45M, Value = 0.01M },
+            new PPCurveItem { At = 50M, Value = 0.02M },
+            new PPCurveItem { At = 55M, Value = 0.05M },
+            new PPCurveItem { At = 60M, Value = 0.1M },
             new PPCurveItem { At = 65M, Value = 0.16M },
-            new PPCurveItem { At = 68M, Value = 0.24M },
-            new PPCurveItem { At = 70M, Value = 0.285M },
-            new PPCurveItem { At = 80M, Value = 0.563M },
-            new PPCurveItem { At = 84M, Value = 0.695M },
-            new PPCurveItem { At = 88M, Value = 0.826M },
-            new PPCurveItem { At = 94.5M, Value = 1.015M },
-            new PPCurveItem { At = 95M, Value = 1.046M },
-            new PPCurveItem { At = 100M, Value = 1.12M },
-            new PPCurveItem { At = 110M, Value = 1.18M },
-            new PPCurveItem { At = 114M, Value = 1.25M },
+            new PPCurveItem { At = 70M, Value = 0.21M },
+            new PPCurveItem { At = 75M, Value = 0.3M },
+            new PPCurveItem { At = 80M, Value = 0.41M },
+            new PPCurveItem { At = 86M, Value = 0.6M },
+            new PPCurveItem { At = 89M, Value = 0.79M },
+            new PPCurveItem { At = 92M, Value = 0.92M },
+            new PPCurveItem { At = 94M, Value = 1.01M },
+            new PPCurveItem { At = 95M, Value = 1.05M },
+            new PPCurveItem { At = 96M, Value = 1.12M },
+            new PPCurveItem { At = 97M, Value = 1.2M },
+            new PPCurveItem { At = 98M, Value = 1.3M },
+            new PPCurveItem { At = 99M, Value = 1.4M },
+            new PPCurveItem { At = 100M, Value = 1.5M },
         };
+
+        public Scoresaber_old(Player player, IEnumerable<PlayerScore> playerScores)
+        {
+            _player = player;
+            _playerScores = playerScores;
+        }
 
         /// <summary>
         /// Gets the total of the PP from the given scores and applies the PP decay rules from ScoreSaber.
@@ -68,28 +80,28 @@ namespace BeatSaberTools.Core.Utilities.Scoresaber
         /// <param name="map">Map to get the score estimate for.</param>
         /// <param name="mapScores">Existing scores.</param>
         /// <returns>A <see cref="ScoreEstimate"/> containing estimated accuracy, PP gain and total PP.</returns>
-        public static ScoreEstimate GetScoreEstimate(RankedMap map, IEnumerable<RankedMapScorePair> mapScores, decimal currentTotalPP)
+        public ScoreEstimate GetScoreEstimate(RankedMap map)
         {
             var now = DateTimeOffset.Now;
             var decay = 1000 * 60 * 60 * 24 * 15;
-            var maxStars = mapScores.Max(s => s.Map.Stars);
+            var maxStars = Convert.ToDecimal(_playerScores.Max(s => s.Leaderboard.Stars));
 
             (decimal Weight, decimal Sum) total = (0, 0);
 
-            var data = mapScores.Aggregate(total, (runningTotal, mapPlayerScore) =>
+            var data = _playerScores.Aggregate(total, (runningTotal, playerScore) =>
             {
                 // If the map has a higher star difficulty than the existing score map, it weighs more.
-                var d = 2 * Math.Abs(map.Stars - mapPlayerScore.Map.Stars);
-                var front = map.Stars > mapPlayerScore.Map.Stars ? d * d * d : 1;
+                var d = 2 * Math.Abs(map.Stars - Convert.ToDecimal(playerScore.Leaderboard.Stars));
+                var front = map.Stars > Convert.ToDecimal(playerScore.Leaderboard.Stars) ? d * d * d : 1;
 
                 // Scores that were set longer ago, don't weigh as much in the comparison between star difficulties, compared to scores set more recently.
-                var at = mapPlayerScore.PlayerScore.Score.TimeSet != default ? mapPlayerScore.PlayerScore.Score.TimeSet : now;
+                var at = playerScore.Score.TimeSet != default ? playerScore.Score.TimeSet : now;
                 var time = 1 + Math.Max(now.ToUnixTimeMilliseconds() - at.ToUnixTimeMilliseconds(), 0) / decay;
 
                 var weight = 1 / (1 + d * time * front);
 
                 runningTotal.Weight += weight;
-                runningTotal.Sum += mapPlayerScore.PlayerScore.AccuracyWithMods() * weight;
+                runningTotal.Sum += playerScore.AccuracyWithMods() * weight;
 
                 return runningTotal;
             });
@@ -105,7 +117,7 @@ namespace BeatSaberTools.Core.Utilities.Scoresaber
 
             var estimatedPP = map.PP * ApplyCurve(result);
 
-            var totalPPEstimate = GetTotalPP(mapScores.Select(m => m.PlayerScore), estimatedPP, new string[] { map.Id });
+            var totalPPEstimate = GetTotalPP(_playerScores, estimatedPP, new string[] { map.Id });
 
             return new ScoreEstimate
             {
@@ -113,7 +125,7 @@ namespace BeatSaberTools.Core.Utilities.Scoresaber
                 Accuracy = result,
                 PP = estimatedPP,
                 TotalPP = totalPPEstimate,
-                PPIncrease = Math.Max(totalPPEstimate - currentTotalPP, 0),
+                PPIncrease = Math.Max(totalPPEstimate - Convert.ToDecimal(_player.Pp), 0),
                 Difficulty = map.Difficulty,
                 Stars = map.Stars
             };

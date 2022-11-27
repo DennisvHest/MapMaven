@@ -13,21 +13,24 @@ namespace BeatSaberTools.Core.Utilities.Scoresaber
         public static readonly List<PPCurveItem> PPCurve = new List<PPCurveItem>
         {
             new PPCurveItem { At = 0M, Value = 0M },
-            new PPCurveItem { At = 45M, Value = 0.015M },
-            new PPCurveItem { At = 50M, Value = 0.03M },
-            new PPCurveItem { At = 55M, Value = 0.06M },
-            new PPCurveItem { At = 60M, Value = 0.105M },
+            new PPCurveItem { At = 45M, Value = 0.01M },
+            new PPCurveItem { At = 50M, Value = 0.02M },
+            new PPCurveItem { At = 55M, Value = 0.05M },
+            new PPCurveItem { At = 60M, Value = 0.1M },
             new PPCurveItem { At = 65M, Value = 0.16M },
-            new PPCurveItem { At = 68M, Value = 0.24M },
-            new PPCurveItem { At = 70M, Value = 0.285M },
-            new PPCurveItem { At = 80M, Value = 0.563M },
-            new PPCurveItem { At = 84M, Value = 0.695M },
-            new PPCurveItem { At = 88M, Value = 0.826M },
-            new PPCurveItem { At = 94.5M, Value = 1.015M },
-            new PPCurveItem { At = 95M, Value = 1.046M },
-            new PPCurveItem { At = 100M, Value = 1.12M },
-            new PPCurveItem { At = 110M, Value = 1.18M },
-            new PPCurveItem { At = 114M, Value = 1.25M },
+            new PPCurveItem { At = 70M, Value = 0.21M },
+            new PPCurveItem { At = 75M, Value = 0.3M },
+            new PPCurveItem { At = 80M, Value = 0.41M },
+            new PPCurveItem { At = 86M, Value = 0.6M },
+            new PPCurveItem { At = 89M, Value = 0.79M },
+            new PPCurveItem { At = 92M, Value = 0.92M },
+            new PPCurveItem { At = 94M, Value = 1.01M },
+            new PPCurveItem { At = 95M, Value = 1.05M },
+            new PPCurveItem { At = 96M, Value = 1.12M },
+            new PPCurveItem { At = 97M, Value = 1.2M },
+            new PPCurveItem { At = 98M, Value = 1.3M },
+            new PPCurveItem { At = 99M, Value = 1.4M },
+            new PPCurveItem { At = 100M, Value = 1.5M },
         };
 
         public Scoresaber(Player player, IEnumerable<PlayerScore> playerScores)
@@ -38,9 +41,14 @@ namespace BeatSaberTools.Core.Utilities.Scoresaber
 
         public ScoreEstimate GetScoreEstimate(RankedMap map)
         {
-            var estimatedPercentage = _playerScores
+            var now = DateTimeOffset.Now;
+            var decay = TimeSpan.FromDays(15).TotalMilliseconds;
+
+            (decimal Weight, decimal Sum) total = (0, 0);
+
+            var data = _playerScores
                 .Where(s => !s.Score.Modifiers.Contains("NF")) // Not including "No fail" scores, because these scores are not representative of performance relative to other maps.
-                .Average(score =>
+                .Aggregate(total, (runningTotal, score) =>
                 {
                     var scoreStars = Convert.ToDecimal(score.Leaderboard.Stars);
 
@@ -55,19 +63,30 @@ namespace BeatSaberTools.Core.Utilities.Scoresaber
                         starFactor = 1;
                     }
 
+                    // Scores that were set longer ago, don't weigh as much in the comparison between star difficulties, compared to scores set more recently.
+                    var at = score.Score.TimeSet != default ? score.Score.TimeSet : now;
+                    var time = Math.Max(now.ToUnixTimeMilliseconds() - at.ToUnixTimeMilliseconds(), 0) / decay;
+
+                    var timeFactor = Convert.ToDecimal(Math.Pow(0.95, time));
+
                     var accuracy = score.AccuracyWithMods();
 
-                    return accuracy * starFactor;
+                    runningTotal.Weight += starFactor * timeFactor;
+                    runningTotal.Sum += accuracy * starFactor * timeFactor;
+
+                    return runningTotal;
                 });
 
-            var estimatedPP = map.PP * ApplyCurve(estimatedPercentage);
+            var estimatedAccuracy = data.Weight != 0 ? data.Sum / data.Weight : 0;
+
+            var estimatedPP = map.PP * ApplyCurve(estimatedAccuracy);
 
             var totalPPEstimate = GetTotalPP(_playerScores, estimatedPP, new string[] { map.Id });
 
             return new ScoreEstimate
             {
                 MapId = map.Id,
-                Accuracy = estimatedPercentage,
+                Accuracy = estimatedAccuracy,
                 PP = estimatedPP,
                 TotalPP = totalPPEstimate,
                 PPIncrease = Math.Max(totalPPEstimate - Convert.ToDecimal(_player.Pp), 0),

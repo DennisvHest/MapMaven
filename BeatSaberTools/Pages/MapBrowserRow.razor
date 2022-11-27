@@ -43,12 +43,12 @@
     {
         @foreach (var scoreEstimate in Map.ScoreEstimate)
         {
-            <MudPaper Elevation="5" Class="pa-2 ma-2">
-                <MudChip Color="Color.Info" Size="Size.Small" Variant="Variant.Outlined">+@scoreEstimate.PPIncrease.ToString("#0.##") pp</MudChip>
-                <MudChip Color="Color.Info" Size="Size.Small" Variant="Variant.Outlined">@scoreEstimate.Accuracy.ToString("#0.##") %</MudChip>
-                <MudChip Color="Color.Info" Size="Size.Small" Variant="Variant.Outlined">@scoreEstimate.Difficulty</MudChip>
-                <MudChip Color="Color.Info" Size="Size.Small" Variant="Variant.Outlined">@scoreEstimate.Stars <MudIcon Icon="@Icons.Filled.Star" Size="Size.Small"></MudIcon></MudChip>
-            </MudPaper>
+            <MudChip Color="Color.Info" Size="Size.Small" Variant="Variant.Outlined">
+                @scoreEstimate.Difficulty | 
+                @scoreEstimate.Stars <MudIcon Icon="@Icons.Filled.Star" Size="Size.Small"></MudIcon> |
+                @scoreEstimate.Accuracy.ToString("#0.##") % |
+                +@scoreEstimate.PPIncrease.ToString("#0.##") pp
+            </MudChip>
         }
     }
 </MudTd>
