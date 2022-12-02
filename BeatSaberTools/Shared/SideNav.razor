@@ -2,8 +2,14 @@
     <MudNavLink
         Icon="@Icons.Filled.LibraryMusic"
         DisableRipple="true"
-        OnClick="OnMapsNavigation">
+        OnClick="@(() => OnMapsNavigation("/"))">
         Maps
+    </MudNavLink>
+    <MudNavLink
+        Icon="@Icons.Filled.LibraryMusic"
+        DisableRipple="true"
+        OnClick="@(() => OnMapsNavigation("/ranked"))">
+        Ranked
     </MudNavLink>
     <PlaylistList></PlaylistList>
 </MudDrawer>

@@ -11,10 +11,10 @@ namespace BeatSaberTools.Shared
         [Inject]
         public NavigationManager NavigationManager { get; set; }
 
-        protected void OnMapsNavigation()
+        protected void OnMapsNavigation(string path)
         {
             PlaylistService.SetSelectedPlaylist(null);
-            NavigationManager.NavigateTo("/");
+            NavigationManager.NavigateTo(path);
         }
     }
 }

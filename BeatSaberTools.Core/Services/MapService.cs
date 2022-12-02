@@ -17,6 +17,7 @@ namespace BeatSaberTools.Services
         private readonly BehaviorSubject<string?> _selectedSongAuthorName = new BehaviorSubject<string?>(null);
 
         public IObservable<IEnumerable<Map>> Maps { get; private set; }
+        public IObservable<IEnumerable<Map>> RankedMaps { get; private set; }
         public IObservable<IEnumerable<Map>> CompleteMapData { get; private set; }
         public IObservable<Dictionary<string, Map>> MapsByHash { get; private set; }
 
@@ -41,6 +42,8 @@ namespace BeatSaberTools.Services
                 _scoreSaberService.RankedMaps,
                 _scoreSaberService.ScoreEstimates.StartWith(Enumerable.Empty<ScoreEstimate>()),
                 CombineMapData);
+
+            RankedMaps = _scoreSaberService.RankedMaps.Select(maps => maps.Select(m => m.ToMap()));
 
             CompleteMapData = Observable.CombineLatest(
                 _beatSaberDataService.MapInfo,

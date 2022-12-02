@@ -1,0 +1,17 @@
+﻿@inherits ReactiveComponent
+
+@page "/ranked"
+
+<MapBrowser Maps="MapList"></MapBrowser>
+
+@code {
+    [Inject]
+    protected MapService MapService { get; set; }
+
+    IEnumerable<Map> MapList { get; set; } = new List<Map>();
+
+    protected override void OnInitialized()
+    {
+        SubscribeAndBind(MapService.RankedMaps, maps => MapList = maps);
+    }
+}

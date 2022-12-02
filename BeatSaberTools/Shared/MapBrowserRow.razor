@@ -15,9 +15,9 @@
     </MudIconButton>
 </MudTd>
 <MudTd Class="pa-1" Style="width: 50px">
-    @if (!string.IsNullOrEmpty(CoverImageDataUrl))
+    @if (!string.IsNullOrEmpty(CoverImageUrl))
     {
-        <img class="cover-image" src="@CoverImageDataUrl" />
+        <img class="cover-image" src="@CoverImageUrl" />
     }
 </MudTd>
 <MudTd DataLabel="Name">@Map.Name</MudTd>

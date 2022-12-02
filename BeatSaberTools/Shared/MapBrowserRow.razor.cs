@@ -4,11 +4,10 @@ using BeatSaberTools.Extensions;
 using System.Reactive.Linq;
 using Map = BeatSaberTools.Models.Map;
 using MudBlazor;
-using BeatSaberTools.Shared;
 using BeatSaberTools.Models;
 using BeatSaberTools.Core.Services;
 
-namespace BeatSaberTools.Pages
+namespace BeatSaberTools.Shared
 {
     public partial class MapBrowserRow : IDisposable
     {
@@ -37,7 +36,7 @@ namespace BeatSaberTools.Pages
         private bool CurrentlyPlaying = false;
         private double PlaybackProgress = 0;
 
-        protected string CoverImageDataUrl { get; set; }
+        protected string CoverImageUrl { get; set; }
 
         bool ShowConfirmRemoveFromPlaylist = false;
 
@@ -45,23 +44,30 @@ namespace BeatSaberTools.Pages
 
         protected override void OnInitialized()
         {
-            Task.Run(() =>
+            if (string.IsNullOrEmpty(Map.CoverImageUrl))
             {
-                var coverImage = BeatSaberDataService.GetMapCoverImage(Map.Hash);
+                Task.Run(() =>
+                {
+                    var coverImage = BeatSaberDataService.GetMapCoverImage(Map.Hash);
 
-                CoverImageDataUrl = coverImage
-                    .GetResizedImage(50, 50)
-                    .ToDataUrl();
+                    CoverImageUrl = coverImage
+                        .GetResizedImage(50, 50)
+                        .ToDataUrl();
 
-                InvokeAsync(StateHasChanged);
-            });
+                    InvokeAsync(StateHasChanged);
+                });
+            }
+            else
+            {
+                CoverImageUrl = Map.CoverImageUrl;
+            }
 
             var currentlyPlaying = SongPlayerService.CurrentlyPlayingMap
                 .Select(m => m != null && m.Hash == Map?.Hash);
 
             SubscribeAndBind(currentlyPlaying, currentlyPlaying => CurrentlyPlaying = currentlyPlaying);
 
-            var playbackProgress = Observable.CombineLatest(currentlyPlaying, SongPlayerService.PlaybackProgress, (playing, progress) => (playing, progress))
+            var playbackProgress = currentlyPlaying.CombineLatest(SongPlayerService.PlaybackProgress, (playing, progress) => (playing, progress))
                 .Where(x => x.playing);
 
             SubscribeAndBind(playbackProgress, x => PlaybackProgress = x.progress);

@@ -16,6 +16,7 @@ namespace BeatSaberTools.Models
         public TimeSpan PreviewStartTime { get; set; }
         public TimeSpan PreviewDuration { get; set; }
         public TimeSpan PreviewEndTime => PreviewStartTime + PreviewDuration;
+        public string CoverImageUrl { get; set; }
 
         public PlayerScore? PlayerScore { get; set; }
         public RankedMap? RankedMap { get; set; }

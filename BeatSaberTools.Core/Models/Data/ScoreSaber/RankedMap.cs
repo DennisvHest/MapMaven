@@ -1,4 +1,5 @@
 ﻿
+using BeatSaberTools.Models;
 using System.Text.Json.Serialization;
 
 namespace BeatSaberTools.Core.Models.Data.ScoreSaber
@@ -24,9 +25,24 @@ namespace BeatSaberTools.Core.Models.Data.ScoreSaber
         public decimal Rating { get; set; }
         public string Download { get; set; }
         public decimal Duration { get; set; }
+        public decimal? DurationSeconds { get; set; }
         public int NoteCount { get; set; }
         [JsonPropertyName("njs")]
         public decimal NoteJumpSpeed { get; set; }
         public int RecentScores { get; set; }
+
+        public Map ToMap()
+        {
+            return new Map
+            {
+                Id = Id,
+                Hash = Id,
+                Name = Name,
+                SongAuthorName = Artist,
+                MapAuthorName = Mapper,
+                SongDuration = TimeSpan.FromSeconds((double)(DurationSeconds ?? Duration / Bpm)),
+                CoverImageUrl = $"https://cdn.scoresaber.com/covers/{Id}.png"
+            };
+        }
     }
 }

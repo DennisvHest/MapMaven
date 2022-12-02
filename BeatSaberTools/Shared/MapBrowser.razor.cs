@@ -4,7 +4,7 @@ using Map = BeatSaberTools.Models.Map;
 using BeatSaberTools.Models;
 using BeatSaberTools.Extensions;
 
-namespace BeatSaberTools.Pages
+namespace BeatSaberTools.Shared
 {
     public partial class MapBrowser
     {
@@ -17,7 +17,8 @@ namespace BeatSaberTools.Pages
         [Inject]
         protected BeatSaberDataService BeatSaberDataService { get; set; }
 
-        private IEnumerable<Map> Maps = new List<Map>();
+        [Parameter]
+        public IEnumerable<Map> Maps { get; set; } = new List<Map>();
         private bool LoadingMapInfo = false;
 
         private Playlist SelectedPlaylist = null;
@@ -29,7 +30,6 @@ namespace BeatSaberTools.Pages
 
         protected override void OnInitialized()
         {
-            SubscribeAndBind(MapService.Maps, maps => Maps = maps);
             SubscribeAndBind(BeatSaberDataService.LoadingMapInfo, loading => LoadingMapInfo = loading);
             SubscribeAndBind(PlaylistService.SelectedPlaylist, selectedPlaylist =>
             {
