@@ -20,6 +20,9 @@ namespace BeatSaberTools.Core.Services
         public readonly IObservable<Player> PlayerProfile;
         public readonly IObservable<IEnumerable<PlayerScore>> PlayerScores;
         public readonly IObservable<IEnumerable<ScoreEstimate>> ScoreEstimates;
+        public IObservable<IEnumerable<ScoreEstimate>> RankedMapScoreEstimates;
+
+
         public IObservable<IEnumerable<RankedMap>> RankedMaps => _rankedMaps;
 
         private const string _replayBaseUrl = "https://www.replay.beatleader.xyz";
@@ -92,6 +95,16 @@ namespace BeatSaberTools.Core.Services
                 var scoresaber = new Scoresaber_old(player, rankedMapPlayerScorePairs.Select(x => x.PlayerScore));
 
                 return rankedMapPlayerScorePairs.Select(pair => scoresaber.GetScoreEstimate(pair.Map)).ToList();
+            });
+
+            RankedMapScoreEstimates = Observable.CombineLatest(PlayerProfile, PlayerScores, RankedMaps, (player, playerScores, rankedMaps) =>
+            {
+                if (player == null)
+                    return Enumerable.Empty<ScoreEstimate>();
+
+                var scoresaber = new Scoresaber_old(player, playerScores);
+
+                return rankedMaps.Select(map => scoresaber.GetScoreEstimate(map)).ToList();
             });
         }
 

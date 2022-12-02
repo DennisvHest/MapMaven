@@ -43,7 +43,20 @@ namespace BeatSaberTools.Services
                 _scoreSaberService.ScoreEstimates.StartWith(Enumerable.Empty<ScoreEstimate>()),
                 CombineMapData);
 
-            RankedMaps = _scoreSaberService.RankedMaps.Select(maps => maps.Select(m => m.ToMap()));
+            RankedMaps = Observable.CombineLatest(
+                _scoreSaberService.RankedMaps,
+                _scoreSaberService.RankedMapScoreEstimates.StartWith(Enumerable.Empty<ScoreEstimate>()),
+                (maps, scoreEstimates) =>
+                {
+                    return maps.GroupJoin(scoreEstimates, map => map.Id, scoreEstimate => scoreEstimate.MapId, (rankedMap, scoreEstimate) =>
+                    {
+                        var map = rankedMap.ToMap();
+
+                        map.ScoreEstimate = scoreEstimate;
+
+                        return map;
+                    });
+                });
 
             CompleteMapData = Observable.CombineLatest(
                 _beatSaberDataService.MapInfo,
