@@ -115,14 +115,19 @@ namespace BeatSaberTools.Core.Utilities.Scoresaber
                 result /= (1 + d * d);
             }
 
-            var estimatedPP = map.PP * ApplyCurve(result);
+            return GetScoreEstimate(map, result);
+        }
+
+        public ScoreEstimate GetScoreEstimate(RankedMap map, decimal accuracy)
+        {
+            var estimatedPP = map.PP * ApplyCurve(accuracy);
 
             var totalPPEstimate = GetTotalPP(_playerScores, estimatedPP, new string[] { map.Id });
 
             return new ScoreEstimate
             {
                 MapId = map.Id,
-                Accuracy = result,
+                Accuracy = accuracy,
                 PP = estimatedPP,
                 TotalPP = totalPPEstimate,
                 PPIncrease = Math.Max(totalPPEstimate - Convert.ToDecimal(_player.Pp), 0),

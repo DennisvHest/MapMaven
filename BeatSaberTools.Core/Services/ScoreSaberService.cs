@@ -2,6 +2,7 @@
 using BeatSaberTools.Core.Models.Data.ScoreSaber;
 using BeatSaberTools.Core.Utilities.Scoresaber;
 using BeatSaberTools.Models;
+using BeatSaberTools_Core;
 using System.Net.Http.Json;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
@@ -94,7 +95,15 @@ namespace BeatSaberTools.Core.Services
 
                 var scoresaber = new Scoresaber_old(player, rankedMapPlayerScorePairs.Select(x => x.PlayerScore));
 
-                return rankedMapPlayerScorePairs.Select(pair => scoresaber.GetScoreEstimate(pair.Map)).ToList();
+                return rankedMapPlayerScorePairs.Select(pair =>
+                {
+                    var output = ScoreEstimateMLModel.Predict(new ScoreEstimateMLModel.ModelInput {
+                        TotalPP = Convert.ToSingle(player.Pp),
+                        StarDifficulty = Convert.ToSingle(pair.Map.Stars)
+                    });
+
+                    return scoresaber.GetScoreEstimate(pair.Map, Convert.ToDecimal(output.Score));
+                }).ToList();
             });
 
             RankedMapScoreEstimates = Observable.CombineLatest(PlayerProfile, PlayerScores, RankedMaps, (player, playerScores, rankedMaps) =>
@@ -104,7 +113,16 @@ namespace BeatSaberTools.Core.Services
 
                 var scoresaber = new Scoresaber_old(player, playerScores);
 
-                return rankedMaps.Select(map => scoresaber.GetScoreEstimate(map)).ToList();
+                return rankedMaps.Select(map =>
+                {
+                    var output = ScoreEstimateMLModel.Predict(new ScoreEstimateMLModel.ModelInput
+                    {
+                        TotalPP = Convert.ToSingle(player.Pp),
+                        StarDifficulty = Convert.ToSingle(map.Stars)
+                    });
+
+                    return scoresaber.GetScoreEstimate(map, Convert.ToDecimal(output.Score));
+                }).ToList();
             });
         }
 

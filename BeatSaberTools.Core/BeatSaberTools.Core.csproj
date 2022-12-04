@@ -1,20 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
-
   <ItemGroup>
     <None Remove="C:\Users\denni\.nuget\packages\naudio.vorbis\1.5.0\contentFiles\any\netstandard2.0\README.md" />
     <None Remove="OpenAPI\scoresaber-api.json" />
   </ItemGroup>
-
   <ItemGroup>
     <OpenApiReference Include="OpenAPI\scoresaber-api.json" CodeGenerator="NSwagCSharp" Namespace="BeatSaberTools.Core.ApiClients" ClassName="ScoreSaberApiClient" />
   </ItemGroup>
-
   <ItemGroup>
     <PackageReference Include="BeatSaber.SongHashing" Version="1.1.1" />
     <PackageReference Include="BeatSaberPlaylistsLib" Version="1.6.6" />
@@ -23,6 +19,9 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" />
+    <PackageReference Include="Microsoft.ML" Version="2.0.0" />
+    <PackageReference Include="Microsoft.ML.FastTree" Version="2.0.0" />
+    <PackageReference Include="Microsoft.ML.LightGbm" Version="2.0.0" />
     <PackageReference Include="Microsoft.VisualStudio.Utilities" Version="17.2.32505.113" />
     <PackageReference Include="NAudio" Version="2.1.0" />
     <PackageReference Include="NAudio.Vorbis" Version="1.5.0" />
@@ -35,5 +34,16 @@
     <PackageReference Include="System.Drawing.Common" Version="6.0.0" />
     <PackageReference Include="System.Reactive" Version="5.0.0" />
   </ItemGroup>
-
+  <ItemGroup Label="ScoreEstimateMLModel">
+    <None Include="ScoreEstimateMLModel.consumption.cs">
+      <DependentUpon>ScoreEstimateMLModel.mbconfig</DependentUpon>
+    </None>
+    <None Include="ScoreEstimateMLModel.training.cs">
+      <DependentUpon>ScoreEstimateMLModel.mbconfig</DependentUpon>
+    </None>
+    <None Include="ScoreEstimateMLModel.zip">
+      <DependentUpon>ScoreEstimateMLModel.mbconfig</DependentUpon>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>
