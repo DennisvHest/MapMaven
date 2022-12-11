@@ -35,9 +35,10 @@ namespace BeatSaberTools_Core
         public static IEstimator<ITransformer> BuildPipeline(MLContext mlContext)
         {
             // Data process configuration with pipeline data transformations
-            var pipeline = mlContext.Transforms.ReplaceMissingValues(new []{new InputOutputColumnPair(@"StarDifficulty", @"StarDifficulty"),new InputOutputColumnPair(@"TotalPP", @"TotalPP")})      
-                                    .Append(mlContext.Transforms.Concatenate(@"Features", new []{@"StarDifficulty",@"TotalPP"}))      
-                                    .Append(mlContext.Regression.Trainers.LightGbm(new LightGbmRegressionTrainer.Options(){NumberOfLeaves=4,NumberOfIterations=10838,MinimumExampleCountPerLeaf=20,LearningRate=0.0733990508824688,LabelColumnName=@"Accuracy",FeatureColumnName=@"Features",ExampleWeightColumnName=null,Booster=new GradientBooster.Options(){SubsampleFraction=0.434873265981951,FeatureFraction=0.677578786908409,L1Regularization=2E-10,L2Regularization=0.999999776672986},MaximumBinCountPerFeature=912}));
+            var pipeline = mlContext.Transforms.ReplaceMissingValues(new []{new InputOutputColumnPair(@"PP", @"PP"),new InputOutputColumnPair(@"StarDifficulty", @"StarDifficulty")})      
+                                    .Append(mlContext.Transforms.Conversion.ConvertType(@"TimeSet", @"TimeSet"))      
+                                    .Append(mlContext.Transforms.Concatenate(@"Features", new []{@"PP",@"StarDifficulty",@"TimeSet"}))      
+                                    .Append(mlContext.Regression.Trainers.LightGbm(new LightGbmRegressionTrainer.Options(){NumberOfLeaves=885,NumberOfIterations=4,MinimumExampleCountPerLeaf=20,LearningRate=0.999999776672986,LabelColumnName=@"Accuracy",FeatureColumnName=@"Features",ExampleWeightColumnName=null,Booster=new GradientBooster.Options(){SubsampleFraction=0.137126408148852,FeatureFraction=0.99999999,L1Regularization=3.42574714359709E-10,L2Regularization=0.999999776672986},MaximumBinCountPerFeature=522}));
 
             return pipeline;
         }

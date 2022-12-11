@@ -98,8 +98,9 @@ namespace BeatSaberTools.Core.Services
                 return rankedMapPlayerScorePairs.Select(pair =>
                 {
                     var output = ScoreEstimateMLModel.Predict(new ScoreEstimateMLModel.ModelInput {
-                        TotalPP = Convert.ToSingle(player.Pp),
-                        StarDifficulty = Convert.ToSingle(pair.Map.Stars)
+                        PP = Convert.ToSingle(player.Pp),
+                        StarDifficulty = Convert.ToSingle(pair.Map.Stars),
+                        TimeSet = DateTime.Now
                     });
 
                     return scoresaber.GetScoreEstimate(pair.Map, Convert.ToDecimal(output.Score));
@@ -117,8 +118,9 @@ namespace BeatSaberTools.Core.Services
                 {
                     var output = ScoreEstimateMLModel.Predict(new ScoreEstimateMLModel.ModelInput
                     {
-                        TotalPP = Convert.ToSingle(player.Pp),
-                        StarDifficulty = Convert.ToSingle(map.Stars)
+                        PP = Convert.ToSingle(player.Pp),
+                        StarDifficulty = Convert.ToSingle(map.Stars),
+                        TimeSet = DateTime.Now
                     });
 
                     return scoresaber.GetScoreEstimate(map, Convert.ToDecimal(output.Score));

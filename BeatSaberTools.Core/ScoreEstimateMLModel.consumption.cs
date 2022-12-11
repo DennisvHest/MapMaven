@@ -16,16 +16,20 @@ namespace BeatSaberTools_Core
         public class ModelInput
         {
             [LoadColumn(0)]
-            [ColumnName(@"StarDifficulty")]
-            public float StarDifficulty { get; set; }
+            [ColumnName(@"PP")]
+            public float PP { get; set; }
 
             [LoadColumn(1)]
-            [ColumnName(@"TotalPP")]
-            public float TotalPP { get; set; }
+            [ColumnName(@"StarDifficulty")]
+            public float StarDifficulty { get; set; }
 
             [LoadColumn(2)]
             [ColumnName(@"Accuracy")]
             public float Accuracy { get; set; }
+
+            [LoadColumn(3)]
+            [ColumnName(@"TimeSet")]
+            public DateTime TimeSet { get; set; }
 
         }
 
@@ -37,14 +41,17 @@ namespace BeatSaberTools_Core
         #region model output class
         public class ModelOutput
         {
+            [ColumnName(@"PP")]
+            public float PP { get; set; }
+
             [ColumnName(@"StarDifficulty")]
             public float StarDifficulty { get; set; }
 
-            [ColumnName(@"TotalPP")]
-            public float TotalPP { get; set; }
-
             [ColumnName(@"Accuracy")]
             public float Accuracy { get; set; }
+
+            [ColumnName(@"TimeSet")]
+            public float TimeSet { get; set; }
 
             [ColumnName(@"Features")]
             public float[] Features { get; set; }
