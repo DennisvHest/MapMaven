@@ -48,11 +48,11 @@ namespace BeatSaberTools.Services
                 _scoreSaberService.RankedMapScoreEstimates.StartWith(Enumerable.Empty<ScoreEstimate>()),
                 (maps, scoreEstimates) =>
                 {
-                    return maps.GroupJoin(scoreEstimates, map => map.Id, scoreEstimate => scoreEstimate.MapId, (rankedMap, scoreEstimate) =>
+                    return maps.GroupJoin(scoreEstimates, map => map.Id + map.Difficulty, scoreEstimate => scoreEstimate.MapId + scoreEstimate.Difficulty, (rankedMap, scoreEstimates) =>
                     {
                         var map = rankedMap.ToMap();
 
-                        map.ScoreEstimate = scoreEstimate;
+                        map.ScoreEstimate = scoreEstimates;
 
                         return map;
                     });

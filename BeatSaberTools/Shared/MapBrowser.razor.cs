@@ -21,6 +21,12 @@ namespace BeatSaberTools.Shared
         public IEnumerable<Map> Maps { get; set; } = new List<Map>();
         private bool LoadingMapInfo = false;
 
+        [Parameter]
+        public RenderFragment? HeaderContent { get; set; }
+
+        [Parameter]
+        public RenderFragment? RowContent { get; set; }
+
         private Playlist SelectedPlaylist = null;
         private string SelectedSongAuthorName = null;
 
