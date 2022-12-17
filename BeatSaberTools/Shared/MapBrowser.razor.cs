@@ -25,7 +25,7 @@ namespace BeatSaberTools.Shared
         public RenderFragment? HeaderContent { get; set; }
 
         [Parameter]
-        public RenderFragment? RowContent { get; set; }
+        public RenderFragment<Map>? RowContent { get; set; }
 
         private Playlist SelectedPlaylist = null;
         private string SelectedSongAuthorName = null;

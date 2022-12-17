@@ -1,8 +1,15 @@
 ﻿@inherits ReactiveComponent
 
-@page "/"
+@page "/ranked"
 
-<MapBrowser Maps="MapList"></MapBrowser>
+<MapBrowser Maps="MapList">
+    <HeaderContent>
+        <RankedMapBrowserHeader></RankedMapBrowserHeader>
+    </HeaderContent>
+    <RowContent>
+        <RankedMapBrowserRow Map="context"></RankedMapBrowserRow>
+    </RowContent>
+</MapBrowser>
 
 @code {
     [Inject]
@@ -12,6 +19,6 @@
 
     protected override void OnInitialized()
     {
-        SubscribeAndBind(MapService.Maps, maps => MapList = maps);
+        SubscribeAndBind(MapService.RankedMaps, maps => MapList = maps);
     }
 }

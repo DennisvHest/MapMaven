@@ -1,0 +1,29 @@
+﻿@using System.Text.Json
+@using BeatSaberTools.Core.Utilities.Scoresaber
+
+<MudTd Class="pa-1" Style="width: 50px">
+    @if (!string.IsNullOrEmpty(CoverImageUrl))
+    {
+        <img class="cover-image" src="@CoverImageUrl" />
+    }
+</MudTd>
+<MudTd DataLabel="Name">@Map.Name</MudTd>
+<MudTd DataLabel="SongAuthorName">
+    <MudLink Color="Color.Default" Typo="Typo.body2">@Map.SongAuthorName</MudLink>
+</MudTd>
+<MudTd DataLabel="MapAuthorName">@Map.MapAuthorName</MudTd>
+<MudTd DataLabel="Duration" Style="width: 130px">@Map.SongDuration.ToString("mm':'ss")</MudTd>
+<MudTd Style="width: 130px">
+    @if (Map.ScoreEstimate != null)
+    {
+        @foreach (var scoreEstimate in Map.ScoreEstimate)
+        {
+            <MudChip Color="Color.Info" Size="Size.Small" Variant="Variant.Outlined">
+                @scoreEstimate.Difficulty |
+                @scoreEstimate.Stars <MudIcon Icon="@Icons.Filled.Star" Size="Size.Small"></MudIcon> |
+                @scoreEstimate.Accuracy.ToString("#0.##") % |
+                +@scoreEstimate.PPIncrease.ToString("#0.##") pp
+            </MudChip>
+        }
+    }
+</MudTd>

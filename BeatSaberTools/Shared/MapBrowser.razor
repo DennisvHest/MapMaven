@@ -33,7 +33,10 @@
         @HeaderContent
     </HeaderContent>
     <RowTemplate>
-        <MapBrowserRow Map="context"></MapBrowserRow>
+        @if (RowContent != null)
+        {
+            @RowContent(context)
+        }
     </RowTemplate>
     <PagerContent>
         <MudTablePager />
