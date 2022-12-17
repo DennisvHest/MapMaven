@@ -27,3 +27,9 @@
         }
     }
 </MudTd>
+<MudTd>
+    @if (!MapInstalled)
+    {
+        <MudIconButton Icon="@Icons.Filled.Download" OnClick="DownloadMap"></MudIconButton>
+    }
+</MudTd>

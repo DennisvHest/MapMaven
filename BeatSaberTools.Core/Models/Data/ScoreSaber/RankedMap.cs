@@ -35,7 +35,7 @@ namespace BeatSaberTools.Core.Models.Data.ScoreSaber
         {
             return new Map
             {
-                Id = Id,
+                Id = Key,
                 Hash = Id,
                 Name = Name,
                 SongAuthorName = Artist,

@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Components;
 using BeatSaberTools.Services;
 using Map = BeatSaberTools.Models.Map;
 using BeatSaberTools.Models;
-using BeatSaberTools.Extensions;
 
 namespace BeatSaberTools.Shared
 {

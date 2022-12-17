@@ -1,10 +1,5 @@
-using BeatSaberTools.Core.Models.DynamicPlaylists;
 using BeatSaberTools.Core.Services;
-using BeatSaberTools.Models;
-using BeatSaberTools.Services;
-using Pather.CSharp;
 using System.Diagnostics;
-using System.Reactive.Linq;
 
 namespace BeatSaberTools.Worker
 {

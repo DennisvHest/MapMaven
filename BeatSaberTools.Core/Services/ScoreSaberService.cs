@@ -1,7 +1,6 @@
 ﻿using BeatSaberTools.Core.ApiClients;
 using BeatSaberTools.Core.Models.Data.ScoreSaber;
 using BeatSaberTools.Core.Utilities.Scoresaber;
-using BeatSaberTools.Models;
 using BeatSaberTools_Core;
 using System.Net.Http.Json;
 using System.Reactive.Linq;

@@ -10,10 +10,15 @@ namespace BeatSaberTools.Shared
         [Inject]
         protected BeatSaberDataService BeatSaberDataService { get; set; }
 
+        [Inject]
+        protected MapService MapService { get; set; }
+
         [Parameter]
         public Map Map { get; set; }
 
         protected string CoverImageUrl { get; set; }
+
+        bool MapInstalled { get; set; }
 
         protected override void OnInitialized()
         {
@@ -34,6 +39,14 @@ namespace BeatSaberTools.Shared
             {
                 CoverImageUrl = Map.CoverImageUrl;
             }
+
+            MapInstalled = MapService.MapIsInstalled(Map);
+        }
+
+        async Task DownloadMap()
+        {
+            await MapService.DownloadMap(Map);
+            MapInstalled = true;
         }
     }
 }

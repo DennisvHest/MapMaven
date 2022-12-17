@@ -2,6 +2,7 @@
 using BeatSaberTools.Core.ApiClients;
 using BeatSaberTools.Core.Services;
 using BeatSaberTools.Services;
+using BeatSaverSharp;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace BeatSaberTools.Infrastructure
@@ -11,6 +12,7 @@ namespace BeatSaberTools.Infrastructure
         public static void AddBeatSaberTools<TFileService>(this IServiceCollection services) where TFileService : IBeatSaverFileService
         {
             services.AddSingleton<IBeatmapHasher, Hasher>();
+            services.AddSingleton(_ => new BeatSaver("BeatSaberTools", new Version(1, 0)));
 
             services.AddHttpClient<ScoreSaberApiClient>();
             services.AddHttpClient("RankedScoresaber", config =>

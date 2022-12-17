@@ -1,8 +1,10 @@
 ﻿using BeatSaberTools.Core.ApiClients;
 using BeatSaberTools.Core.Models.Data.ScoreSaber;
 using BeatSaberTools.Core.Services;
+using BeatSaberTools.Core.Utilities.BeatSaver;
 using BeatSaberTools.Core.Utilities.Scoresaber;
 using BeatSaberTools.Models.Data;
+using BeatSaverSharp;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using Map = BeatSaberTools.Models.Map;
@@ -13,6 +15,9 @@ namespace BeatSaberTools.Services
     {
         private readonly BeatSaberDataService _beatSaberDataService;
         private readonly ScoreSaberService _scoreSaberService;
+        private readonly IBeatSaverFileService _fileService;
+
+        private readonly BeatSaver _beatSaver;
 
         private readonly BehaviorSubject<string?> _selectedSongAuthorName = new BehaviorSubject<string?>(null);
 
@@ -24,10 +29,17 @@ namespace BeatSaberTools.Services
         public IObservable<string?> SelectedSongAuthorName => _selectedSongAuthorName;
 
 
-        public MapService(BeatSaberDataService beatSaberDataService, ScoreSaberService scoreSaberService)
+        public MapService(
+            BeatSaberDataService beatSaberDataService,
+            ScoreSaberService scoreSaberService,
+            BeatSaver beatSaver,
+            IBeatSaverFileService fileService)
         {
             _beatSaberDataService = beatSaberDataService;
             _scoreSaberService = scoreSaberService;
+            _fileService = fileService;
+
+            _beatSaver = beatSaver;
 
             MapsByHash = _beatSaberDataService.MapInfoByHash
                 .Select(x => x
@@ -91,6 +103,18 @@ namespace BeatSaberTools.Services
         public void SelectSongAuthor(string name)
         {
             _selectedSongAuthorName.OnNext(name);
+        }
+
+        public async Task DownloadMap(Map map)
+        {
+            var beatMap = await _beatSaver.BeatmapByHash(map.Hash);
+
+            await MapInstaller.InstallMap(beatMap, _fileService.MapsLocation);
+        }
+
+        public bool MapIsInstalled(Map map)
+        {
+            return MapInstaller.MapIsInstalled(map, _fileService.MapsLocation);
         }
     }
 }
