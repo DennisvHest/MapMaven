@@ -9,10 +9,13 @@
 </MudTd>
 <MudTd DataLabel="Name">@Map.Name</MudTd>
 <MudTd DataLabel="SongAuthorName">
-    <MudLink Color="Color.Default" Typo="Typo.body2">@Map.SongAuthorName</MudLink>
+    @Map.SongAuthorName
 </MudTd>
 <MudTd DataLabel="MapAuthorName">@Map.MapAuthorName</MudTd>
 <MudTd DataLabel="Duration" Style="width: 130px">@Map.SongDuration.ToString("mm':'ss")</MudTd>
+<MudTd>
+    @(Map.PlayerScore != null)
+</MudTd>
 <MudTd Style="width: 130px">
     @if (Map.ScoreEstimate != null)
     {

@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Components;
 using BeatSaberTools.Services;
 using Map = BeatSaberTools.Models.Map;
 using BeatSaberTools.Models;
+using BeatSaberTools.Core.Models;
 
 namespace BeatSaberTools.Components.Maps
 {
@@ -27,7 +28,7 @@ namespace BeatSaberTools.Components.Maps
         public RenderFragment<Map>? RowContent { get; set; }
 
         private Playlist SelectedPlaylist = null;
-        private string SelectedSongAuthorName = null;
+        private IEnumerable<MapFilter> MapFilters = Enumerable.Empty<MapFilter>();
 
         private IEnumerable<string> MapHashFilter = null;
 
@@ -41,7 +42,7 @@ namespace BeatSaberTools.Components.Maps
                 SelectedPlaylist = selectedPlaylist;
                 MapHashFilter = selectedPlaylist?.Maps.Select(m => m.Hash);
             });
-            SubscribeAndBind(MapService.SelectedSongAuthorName, selectedSongAuthor => SelectedSongAuthorName = selectedSongAuthor);
+            SubscribeAndBind(MapService.SelectedSongAuthorName, selectedSongAuthor => MapFilters = selectedSongAuthor);
         }
 
         private bool Filter(Map map)
@@ -62,19 +63,14 @@ namespace BeatSaberTools.Components.Maps
                 _ => MapHashFilter.Contains(map.Hash)
             };
 
-            var songAuthorFilter = true;
+            var mapFilter = MapFilters.All(f => f.Filter(map));
 
-            if (!string.IsNullOrEmpty(SelectedSongAuthorName))
-            {
-                songAuthorFilter = map.SongAuthorName == SelectedSongAuthorName;
-            }
-
-            return searchFilter && mapHashFilter && songAuthorFilter;
+            return searchFilter && mapHashFilter && mapFilter;
         }
 
-        protected void RemoveSongAuthorFilter()
+        protected void RemoveMapFilter(MapFilter mapFilter)
         {
-            MapService.SelectSongAuthor(null);
+            MapService.RemoveMapFilter(mapFilter);
         }
     }
 }

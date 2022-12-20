@@ -14,9 +14,9 @@
         {
             <MudChip Variant="Variant.Outlined">@SelectedPlaylist.Title</MudChip>
         }
-        @if (SelectedSongAuthorName != null)
+        @foreach (var mapFilter in MapFilters)
         {
-            <MudChip Variant="Variant.Outlined" OnClose="RemoveSongAuthorFilter">@SelectedSongAuthorName</MudChip>
+            <MudChip Variant="Variant.Outlined" OnClose="() => RemoveMapFilter(mapFilter)">@mapFilter.Name</MudChip>
         }
         <MudTextField @bind-Value="SearchString"
                       DebounceInterval="300"

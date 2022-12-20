@@ -139,7 +139,11 @@ namespace BeatSaberTools.Components.Maps
 
         void SelectSongAuthor()
         {
-            MapService.SelectSongAuthor(Map.SongAuthorName);
+            MapService.AddMapFilter(new Core.Models.MapFilter
+            {
+                Name = Map.SongAuthorName,
+                Filter = map => map.SongAuthorName == Map.SongAuthorName
+            });
         }
 
         public void Dispose()
