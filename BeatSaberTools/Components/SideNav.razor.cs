@@ -1,7 +1,7 @@
 using BeatSaberTools.Services;
 using Microsoft.AspNetCore.Components;
 
-namespace BeatSaberTools.Shared
+namespace BeatSaberTools.Components
 {
     public partial class SideNav
     {

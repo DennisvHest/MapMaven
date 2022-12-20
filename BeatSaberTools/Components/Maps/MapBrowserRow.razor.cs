@@ -6,8 +6,9 @@ using Map = BeatSaberTools.Models.Map;
 using MudBlazor;
 using BeatSaberTools.Models;
 using BeatSaberTools.Core.Services;
+using BeatSaberTools.Components.Playlists;
 
-namespace BeatSaberTools.Shared
+namespace BeatSaberTools.Components.Maps
 {
     public partial class MapBrowserRow : IDisposable
     {

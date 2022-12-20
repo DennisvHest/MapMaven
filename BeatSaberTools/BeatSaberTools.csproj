@@ -88,7 +88,12 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Data\" />
+      <AndroidResource Remove="Data\**" />
+      <Compile Remove="Data\**" />
+      <Content Remove="Data\**" />
+      <EmbeddedResource Remove="Data\**" />
+      <MauiXaml Remove="Data\**" />
+      <None Remove="Data\**" />
     </ItemGroup>
 
     <ItemGroup>

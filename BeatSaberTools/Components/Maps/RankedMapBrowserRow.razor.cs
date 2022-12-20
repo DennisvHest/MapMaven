@@ -3,7 +3,7 @@ using BeatSaberTools.Services;
 using Microsoft.AspNetCore.Components;
 using Map = BeatSaberTools.Models.Map;
 
-namespace BeatSaberTools.Shared
+namespace BeatSaberTools.Components.Maps
 {
     public partial class RankedMapBrowserRow
     {

@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Components.Forms;
 using MudBlazor;
 using Image = System.Drawing.Image;
 
-namespace BeatSaberTools.Shared
+namespace BeatSaberTools.Components.Playlists
 {
     public partial class EditPlaylistDialog
     {

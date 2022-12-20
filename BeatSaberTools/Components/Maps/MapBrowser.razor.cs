@@ -3,7 +3,7 @@ using BeatSaberTools.Services;
 using Map = BeatSaberTools.Models.Map;
 using BeatSaberTools.Models;
 
-namespace BeatSaberTools.Shared
+namespace BeatSaberTools.Components.Maps
 {
     public partial class MapBrowser
     {

@@ -5,7 +5,7 @@ using MudBlazor;
 using System.Reactive.Linq;
 using Playlist = BeatSaberTools.Models.Playlist;
 
-namespace BeatSaberTools.Shared
+namespace BeatSaberTools.Components.Playlists
 {
     public partial class PlaylistList
     {

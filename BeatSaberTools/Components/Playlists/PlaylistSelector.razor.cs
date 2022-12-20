@@ -3,7 +3,7 @@ using BeatSaberTools.Services;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 
-namespace BeatSaberTools.Shared
+namespace BeatSaberTools.Components.Playlists
 {
     public partial class PlaylistSelector
     {

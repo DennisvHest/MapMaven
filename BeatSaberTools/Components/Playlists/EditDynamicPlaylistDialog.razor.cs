@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using SortDirection = BeatSaberTools.Core.Models.DynamicPlaylists.SortDirection;
 
-namespace BeatSaberTools.Shared
+namespace BeatSaberTools.Components.Playlists
 {
     public partial class EditDynamicPlaylistDialog
     {
