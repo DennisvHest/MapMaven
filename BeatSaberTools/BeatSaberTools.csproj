@@ -65,13 +65,13 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="BeatSaber.SongHashing" Version="1.1.1" />
+      <PackageReference Include="BeatSaber.SongHashing" Version="1.2.0" />
       <PackageReference Include="BeatSaberPlaylistsLib" Version="1.6.6" />
-      <PackageReference Include="Microsoft.VisualStudio.Utilities" Version="17.2.32505.113" />
-      <PackageReference Include="MudBlazor" Version="6.0.12" />
+      <PackageReference Include="Microsoft.VisualStudio.Utilities" Version="17.4.33103.184" />
+      <PackageReference Include="MudBlazor" Version="6.1.6" />
       <PackageReference Include="NAudio" Version="2.1.0" />
       <PackageReference Include="NAudio.Vorbis" Version="1.5.0" />
-      <PackageReference Include="System.Drawing.Common" Version="6.0.0" />
+      <PackageReference Include="System.Drawing.Common" Version="7.0.0" />
       <PackageReference Include="System.Reactive" Version="5.0.0" />
     </ItemGroup>
 

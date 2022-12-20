@@ -144,7 +144,7 @@ namespace BeatSaberTools.Services
             {
                 Debug.WriteLine($"Dit not find hash for {mapDirectory}");
 
-                var hashResult = _beatmapHasher.HashDirectory(mapDirectory, new CancellationToken());
+                var hashResult = await _beatmapHasher.HashDirectoryAsync(mapDirectory, new CancellationToken());
 
                 if (hashResult.ResultType != HashResultType.Success)
                     return null;
