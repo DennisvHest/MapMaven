@@ -2,14 +2,17 @@
 
 @page "/improve"
 
-<MapBrowser Maps="MapList">
-    <HeaderContent>
-        <RankedMapBrowserHeader></RankedMapBrowserHeader>
-    </HeaderContent>
-    <RowContent>
-        <RankedMapBrowserRow Map="context"></RankedMapBrowserRow>
-    </RowContent>
-</MapBrowser>
+<div class="d-flex full-height">
+    <ImprovementTweaker></ImprovementTweaker>
+    <MapBrowser Maps="MapList">
+        <HeaderContent>
+            <RankedMapBrowserHeader></RankedMapBrowserHeader>
+        </HeaderContent>
+        <RowContent>
+            <RankedMapBrowserRow Map="context"></RankedMapBrowserRow>
+        </RowContent>
+    </MapBrowser>
+</div>
 
 @code {
     [Inject]
