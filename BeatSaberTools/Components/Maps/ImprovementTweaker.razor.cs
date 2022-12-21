@@ -25,18 +25,17 @@ namespace BeatSaberTools.Components.Maps
                 return;
             }
 
-            PlayedMapFilter = PlayedFilter switch
+            PlayedMapFilter = new MapFilter
             {
-                "Not played" => new MapFilter
-                {
-                    Name = PlayedFilter,
-                    Filter = map => map.PlayerScore == null
-                },
-                "Played" => new MapFilter
-                {
-                    Name = PlayedFilter,
-                    Filter = map => map.PlayerScore != null
-                }
+                Type = MapFilterType.Played,
+                Name = PlayedFilter,
+                Visible = false
+            };
+
+            PlayedMapFilter.Filter = PlayedFilter switch
+            {
+                "Not played" => map => map.PlayerScore == null,
+                "Played" => map => map.PlayerScore != null
             };
 
             MapService.AddMapFilter(PlayedMapFilter);

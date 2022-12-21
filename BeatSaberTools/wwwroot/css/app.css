@@ -35,3 +35,11 @@
 a:hover {
     cursor: pointer;
 }
+
+.mud-select {
+    flex-grow: 0;
+}
+
+.mud-table-toolbar {
+    background-color: var(--mud-palette-surface);
+}

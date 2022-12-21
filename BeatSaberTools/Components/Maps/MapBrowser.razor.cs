@@ -42,7 +42,7 @@ namespace BeatSaberTools.Components.Maps
                 SelectedPlaylist = selectedPlaylist;
                 MapHashFilter = selectedPlaylist?.Maps.Select(m => m.Hash);
             });
-            SubscribeAndBind(MapService.SelectedSongAuthorName, selectedSongAuthor => MapFilters = selectedSongAuthor);
+            SubscribeAndBind(MapService.MapFilters, selectedSongAuthor => MapFilters = selectedSongAuthor);
         }
 
         private bool Filter(Map map)

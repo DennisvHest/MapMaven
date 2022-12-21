@@ -14,7 +14,7 @@
         {
             <MudChip Variant="Variant.Outlined">@SelectedPlaylist.Title</MudChip>
         }
-        @foreach (var mapFilter in MapFilters)
+        @foreach (var mapFilter in MapFilters.Where(f => f.Visible))
         {
             <MudChip Variant="Variant.Outlined" OnClose="() => RemoveMapFilter(mapFilter)">@mapFilter.Name</MudChip>
         }

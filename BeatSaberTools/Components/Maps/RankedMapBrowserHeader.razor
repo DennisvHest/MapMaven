@@ -13,9 +13,7 @@
 <MudTh>
     <MudTableSortLabel SortBy="new Func<Map, object>(x => x.SongDuration)">Duration</MudTableSortLabel>
 </MudTh>
-<MudTh>
-    Played?
-</MudTh>
+<MudTh></MudTh>
 <MudTh>
     <MudTableSortLabel InitialDirection="SortDirection.Descending" SortBy="new Func<Map, object>(x => x.ScoreEstimate.Any() ? x.ScoreEstimate.Max(x => x.PPIncrease) : 0)">
         <MudIcon Icon="@Icons.Filled.KeyboardDoubleArrowUp"></MudIcon>pp

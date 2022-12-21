@@ -14,7 +14,11 @@
 <MudTd DataLabel="MapAuthorName">@Map.MapAuthorName</MudTd>
 <MudTd DataLabel="Duration" Style="width: 130px">@Map.SongDuration.ToString("mm':'ss")</MudTd>
 <MudTd>
-    @(Map.PlayerScore != null)
+    @if (Map.PlayerScore != null)
+    {
+        <MudChip Color="Color.Info" Size="Size.Small" Variant="Variant.Outlined">@Map.PlayerScore.Accuracy().ToString("#0.##") %</MudChip>
+        <MudChip Color="Color.Info" Size="Size.Small" Variant="Variant.Outlined">@Map.PlayerScore.Score.Pp.ToString("#0.##") pp</MudChip>
+    }
 </MudTd>
 <MudTd Style="width: 130px">
     @if (Map.ScoreEstimate != null)

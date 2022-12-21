@@ -28,7 +28,7 @@ namespace BeatSaberTools.Services
         public IObservable<IEnumerable<Map>> CompleteMapData { get; private set; }
         public IObservable<Dictionary<string, Map>> MapsByHash { get; private set; }
 
-        public IObservable<IEnumerable<MapFilter>> SelectedSongAuthorName => _mapFilters;
+        public IObservable<IEnumerable<MapFilter>> MapFilters => _mapFilters;
 
 
         public MapService(
