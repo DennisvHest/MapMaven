@@ -9,13 +9,13 @@ namespace BeatSaberTools
         {
             Palette = new Palette()
             {
-                Primary = Colors.Red.Accent1,
-                Secondary = Colors.Green.Accent4,
+                Primary = "#174167",
+                Secondary = "#8A0000",
                 Black = "#27272f",
-                Background = "#32333d",
+                Background = "#0f0f0f",
                 BackgroundGrey = "#27272f",
-                Surface = "#373740",
-                DrawerBackground = "#27272f",
+                Surface = "#171717",
+                DrawerBackground = "#1c1c1c",
                 DrawerText = "rgba(255,255,255, 0.50)",
                 DrawerIcon = "rgba(255,255,255, 0.50)",
                 AppbarBackground = "#27272f",

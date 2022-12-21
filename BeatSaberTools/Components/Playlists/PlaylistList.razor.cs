@@ -63,7 +63,7 @@ namespace BeatSaberTools.Components.Playlists
             PlaylistService.SelectedPlaylist.Subscribe(playlist =>
             {
                 SelectedPlaylist = playlist;
-                SelectedPlaylistValue = SelectedPlaylist;
+                SelectedPlaylistValue = SelectedPlaylist?.FileName;
                 InvokeAsync(StateHasChanged);
             });
         }

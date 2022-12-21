@@ -43,3 +43,32 @@ a:hover {
 .mud-table-toolbar {
     background-color: var(--mud-palette-surface);
 }
+
+.mud-primary-text {
+    color: white !important;
+}
+
+.mud-navmenu.mud-navmenu-bordered .mud-nav-link.active:not(.mud-nav-link-disabled),
+.mud-selected-item {
+    border-inline-start-style: solid;
+    border-inline-start-width: 2px;
+    border-inline-end: none;
+    border-inline-color: var(--mud-palette-primary);
+}
+
+.mud-navmenu.mud-navmenu-primary .mud-nav-link.active:not(.mud-nav-link-disabled),
+.mud-navmenu.mud-navmenu-primary .mud-nav-link.active:not(.mud-nav-link-disabled):hover:not(.mud-nav-link-disabled),
+.mud-navmenu.mud-navmenu-primary .mud-nav-link.active:not(.mud-nav-link-disabled):focus-visible:not(.mud-nav-link-disabled),
+.mud-selected-item {
+    background-color: transparent !important;
+}
+
+.mud-navmenu.mud-navmenu-primary .mud-nav-link.active:not(.mud-nav-link-disabled),
+.mud-navmenu.mud-navmenu-primary .mud-nav-link.active:not(.mud-nav-link-disabled) .mud-nav-link-icon {
+    color: #e6e6e6;
+}
+
+.playlist-selector-dialog .mud-dialog-content {
+    max-height: 600px;
+    overflow-y: auto;
+}

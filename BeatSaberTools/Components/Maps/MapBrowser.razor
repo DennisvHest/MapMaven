@@ -16,7 +16,7 @@
         }
         @foreach (var mapFilter in MapFilters.Where(f => f.Visible))
         {
-            <MudChip Variant="Variant.Outlined" OnClose="() => RemoveMapFilter(mapFilter)">@mapFilter.Name</MudChip>
+            <MudChip OnClose="() => RemoveMapFilter(mapFilter)">@mapFilter.Name</MudChip>
         }
         <MudTextField @bind-Value="SearchString"
                       DebounceInterval="300"

@@ -3,10 +3,11 @@ using BeatSaberTools.Services;
 using Map = BeatSaberTools.Models.Map;
 using BeatSaberTools.Models;
 using BeatSaberTools.Core.Models;
+using Microsoft.AspNetCore.Components.Routing;
 
 namespace BeatSaberTools.Components.Maps
 {
-    public partial class MapBrowser
+    public partial class MapBrowser : IDisposable
     {
         [Inject]
         protected MapService MapService { get; set; }
@@ -16,6 +17,9 @@ namespace BeatSaberTools.Components.Maps
 
         [Inject]
         protected BeatSaberDataService BeatSaberDataService { get; set; }
+
+        [Inject]
+        protected NavigationManager NavigationManager { get; set; }
 
         [Parameter]
         public IEnumerable<Map> Maps { get; set; } = new List<Map>();
@@ -36,6 +40,8 @@ namespace BeatSaberTools.Components.Maps
 
         protected override void OnInitialized()
         {
+            NavigationManager.LocationChanged += LocationChanged;
+
             SubscribeAndBind(BeatSaberDataService.LoadingMapInfo, loading => LoadingMapInfo = loading);
             SubscribeAndBind(PlaylistService.SelectedPlaylist, selectedPlaylist =>
             {
@@ -71,6 +77,13 @@ namespace BeatSaberTools.Components.Maps
         protected void RemoveMapFilter(MapFilter mapFilter)
         {
             MapService.RemoveMapFilter(mapFilter);
+        }
+
+        private void LocationChanged(object sender, LocationChangedEventArgs e) => MapService.ClearMapFilters();
+
+        public void Dispose()
+        {
+            NavigationManager.LocationChanged -= LocationChanged;
         }
     }
 }

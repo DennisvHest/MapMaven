@@ -123,6 +123,13 @@ namespace BeatSaberTools.Services
             _mapFilters.OnNext(_mapFilters.Value);
         }
 
+        public void ClearMapFilters()
+        {
+            _mapFilters.Value.Clear();
+
+            _mapFilters.OnNext(_mapFilters.Value);
+        }
+
         public async Task DownloadMap(Map map)
         {
             var beatMap = await _beatSaver.BeatmapByHash(map.Hash);

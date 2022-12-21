@@ -1,15 +1,21 @@
 ﻿<MudDrawer Open="true" Elevation="1">
-    <MudNavLink
-        Icon="@Icons.Filled.LibraryMusic"
-        DisableRipple="true"
-        OnClick="@(() => OnMapsNavigation("/"))">
-        Maps
-    </MudNavLink>
-    <MudNavLink
-        Icon="@Icons.Filled.KeyboardDoubleArrowUp"
-        DisableRipple="true"
-        OnClick="@(() => OnMapsNavigation("/improve"))">
-        Improve
-    </MudNavLink>
-    <PlaylistList></PlaylistList>
+    <MudNavMenu Color="Color.Primary" Bordered="true">
+        <div @onclick="OnMapsNavigation">
+            <MudNavLink Icon="@Icons.Filled.LibraryMusic"
+                        DisableRipple="true"
+                        Match="NavLinkMatch.All"
+                        Href="/">
+                Maps
+            </MudNavLink>
+        </div>
+        <div @onclick="OnMapsNavigation">
+            <MudNavLink Icon="@Icons.Filled.KeyboardDoubleArrowUp"
+                        DisableRipple="true"
+                        Match="NavLinkMatch.All"
+                        Href="/improve">
+                Improve
+            </MudNavLink>
+        </div>
+        <PlaylistList></PlaylistList>
+    </MudNavMenu>
 </MudDrawer>

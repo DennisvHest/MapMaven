@@ -11,10 +11,9 @@ namespace BeatSaberTools.Components
         [Inject]
         public NavigationManager NavigationManager { get; set; }
 
-        protected void OnMapsNavigation(string path)
+        protected void OnMapsNavigation()
         {
             PlaylistService.SetSelectedPlaylist(null);
-            NavigationManager.NavigateTo(path);
         }
     }
 }
