@@ -16,6 +16,7 @@ namespace BeatSaberTools.Services
         private readonly IBeatSaverFileService _beatSaverFileService;
 
         private readonly BeatSaberDataService _beatSaberDataService;
+        private readonly MapService _mapService;
         private readonly PlaylistManager _playlistManager;
 
         private readonly BehaviorSubject<string> _selectedPlaylistFileName = new(null);
@@ -23,10 +24,11 @@ namespace BeatSaberTools.Services
         public IObservable<IEnumerable<Playlist>> Playlists { get; private set; }
         public BehaviorSubject<Playlist> SelectedPlaylist = new(null);
 
-        public PlaylistService(BeatSaberDataService beatSaberDataService, IBeatSaverFileService beatSaverFileService)
+        public PlaylistService(BeatSaberDataService beatSaberDataService, IBeatSaverFileService beatSaverFileService, MapService mapService)
         {
             _beatSaverFileService = beatSaverFileService;
             _beatSaberDataService = beatSaberDataService;
+            _mapService = mapService;
             _playlistManager = new PlaylistManager(_beatSaverFileService.PlaylistsLocation, new LegacyPlaylistHandler());
 
             Playlists = _beatSaberDataService.PlaylistInfo.Select(x => x.Select(i => new Playlist(i)));
@@ -119,6 +121,16 @@ namespace BeatSaberTools.Services
             }
 
             return addedPlaylist;
+        }
+
+        public async Task AddPlaylistAndDownloadMaps(EditPlaylistModel editPlaylistModel, IEnumerable<Map>? playlistMaps = null, bool loadPlaylists = true)
+        {
+            foreach (var map in playlistMaps)
+            {
+                await _mapService.DownloadMap(map);
+            }
+
+            await AddPlaylist(editPlaylistModel, playlistMaps, loadPlaylists);
         }
 
         public async Task DeletePlaylist(Playlist playlist)

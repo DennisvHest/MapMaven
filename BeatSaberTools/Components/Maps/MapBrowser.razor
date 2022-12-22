@@ -2,12 +2,17 @@
 
 @using BeatSaberTools.Core.Utilities.Scoresaber
 
-<MudTable Items="Maps"
+<MudTable T="Map"
+          Items="Maps"
           Height="calc(100% - 116px)"
           Class="full-height full-width background-transparent"
           Loading="LoadingMapInfo"
           Filter="Filter"
           FixedHeader="true"
+          MultiSelection="Selectable"
+          SelectOnRowClick="false"
+          SelectedItems="SelectedMaps"
+          SelectedItemsChanged="OnSelectedItemsChanged"
           RowStyle="height: 88px">
     <ToolBarContent>
         @if (SelectedPlaylist != null)

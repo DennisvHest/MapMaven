@@ -31,10 +31,15 @@ namespace BeatSaberTools.Components.Maps
         [Parameter]
         public RenderFragment<Map>? RowContent { get; set; }
 
+        [Parameter]
+        public bool Selectable { get; set; } = false;
+
         private Playlist SelectedPlaylist = null;
         private IEnumerable<MapFilter> MapFilters = Enumerable.Empty<MapFilter>();
 
         private IEnumerable<string> MapHashFilter = null;
+
+        private HashSet<Map> SelectedMaps = new HashSet<Map>();
 
         private string SearchString = "";
 
@@ -49,6 +54,7 @@ namespace BeatSaberTools.Components.Maps
                 MapHashFilter = selectedPlaylist?.Maps.Select(m => m.Hash);
             });
             SubscribeAndBind(MapService.MapFilters, selectedSongAuthor => MapFilters = selectedSongAuthor);
+            SubscribeAndBind(MapService.SelectedMaps, selectedMaps => SelectedMaps = selectedMaps);
         }
 
         private bool Filter(Map map)
@@ -79,7 +85,16 @@ namespace BeatSaberTools.Components.Maps
             MapService.RemoveMapFilter(mapFilter);
         }
 
-        private void LocationChanged(object sender, LocationChangedEventArgs e) => MapService.ClearMapFilters();
+        void OnSelectedItemsChanged(HashSet<Map> selectedMaps)
+        {
+            MapService.SetSelectedMaps(selectedMaps);
+        }
+
+        private void LocationChanged(object sender, LocationChangedEventArgs e)
+        {
+            MapService.ClearMapFilters();
+            MapService.ClearSelectedMaps();
+        }
 
         public void Dispose()
         {

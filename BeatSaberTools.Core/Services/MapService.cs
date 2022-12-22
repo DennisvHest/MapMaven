@@ -6,7 +6,6 @@ using BeatSaberTools.Core.Utilities.BeatSaver;
 using BeatSaberTools.Core.Utilities.Scoresaber;
 using BeatSaberTools.Models.Data;
 using BeatSaverSharp;
-using System.Collections.Generic;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using Map = BeatSaberTools.Models.Map;
@@ -23,10 +22,14 @@ namespace BeatSaberTools.Services
 
         private readonly BehaviorSubject<List<MapFilter>> _mapFilters = new(new List<MapFilter>());
 
+        private readonly BehaviorSubject<HashSet<Map>> _selectedMaps = new(Enumerable.Empty<Map>().ToHashSet());
+
         public IObservable<IEnumerable<Map>> Maps { get; private set; }
         public IObservable<IEnumerable<Map>> RankedMaps { get; private set; }
         public IObservable<IEnumerable<Map>> CompleteMapData { get; private set; }
         public IObservable<Dictionary<string, Map>> MapsByHash { get; private set; }
+
+        public IObservable<HashSet<Map>> SelectedMaps => _selectedMaps;
 
         public IObservable<IEnumerable<MapFilter>> MapFilters => _mapFilters;
 
@@ -76,7 +79,7 @@ namespace BeatSaberTools.Services
                         map.PlayerScore = scores.FirstOrDefault();
 
                         return map;
-                    });
+                    }).ToList();
                 });
 
             CompleteMapData = Observable.CombineLatest(
@@ -106,7 +109,7 @@ namespace BeatSaberTools.Services
                 map.ScoreEstimate = scoreEstimate;
 
                 return map;
-            });
+            }).ToList();
         }
 
         public void AddMapFilter(MapFilter filter)
@@ -130,8 +133,15 @@ namespace BeatSaberTools.Services
             _mapFilters.OnNext(_mapFilters.Value);
         }
 
-        public async Task DownloadMap(Map map)
+        public void SetSelectedMaps(HashSet<Map> selectedMaps) => _selectedMaps.OnNext(selectedMaps);
+
+        public void ClearSelectedMaps() => _selectedMaps.OnNext(new HashSet<Map>());
+
+        public async Task DownloadMap(Map map, bool force = false)
         {
+            if (!force && MapIsInstalled(map))
+                return;
+
             var beatMap = await _beatSaver.BeatmapByHash(map.Hash);
 
             await MapInstaller.InstallMap(beatMap, _fileService.MapsLocation);
