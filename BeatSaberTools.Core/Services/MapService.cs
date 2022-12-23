@@ -137,14 +137,17 @@ namespace BeatSaberTools.Services
 
         public void ClearSelectedMaps() => _selectedMaps.OnNext(new HashSet<Map>());
 
-        public async Task DownloadMap(Map map, bool force = false)
+        public async Task DownloadMap(Map map, bool force = false, IProgress<double>? progress = null)
         {
             if (!force && MapIsInstalled(map))
+            {
+                progress?.Report(1);
                 return;
+            }
 
             var beatMap = await _beatSaver.BeatmapByHash(map.Hash);
 
-            await MapInstaller.InstallMap(beatMap, _fileService.MapsLocation);
+            await MapInstaller.InstallMap(beatMap, _fileService.MapsLocation, progress);
         }
 
         public bool MapIsInstalled(Map map)

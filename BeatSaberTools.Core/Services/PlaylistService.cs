@@ -8,6 +8,8 @@ using Map = BeatSaberTools.Models.Map;
 using BeatSaberTools.Core.Services;
 using BeatSaberPlaylistsLib.Types;
 using BeatSaberTools.Core.Models.DynamicPlaylists;
+using System.Diagnostics;
+using BeatSaberTools.Core.Models.Data;
 
 namespace BeatSaberTools.Services
 {
@@ -123,11 +125,39 @@ namespace BeatSaberTools.Services
             return addedPlaylist;
         }
 
-        public async Task AddPlaylistAndDownloadMaps(EditPlaylistModel editPlaylistModel, IEnumerable<Map>? playlistMaps = null, bool loadPlaylists = true)
+        public async Task AddPlaylistAndDownloadMaps(EditPlaylistModel editPlaylistModel, IEnumerable<Map> playlistMaps, bool loadPlaylists = true, IProgress<ItemProgress<Map>>? progress = null)
         {
-            foreach (var map in playlistMaps)
+            ItemProgress<Map>? totalProgress = null;
+
+            if (progress != null)
             {
-                await _mapService.DownloadMap(map);
+                totalProgress = new ItemProgress<Map>
+                {
+                    TotalItems = playlistMaps.Count()
+                };
+
+                progress.Report(totalProgress);
+            }
+
+            foreach (var map in playlistMaps)
+            {                    
+                Progress<double>? mapProgress = null;
+
+                if (totalProgress != null)
+                {
+                    totalProgress.CurrentItem = map;
+
+                    mapProgress = new Progress<double>(x =>
+                    {
+                        totalProgress.CurrentMapProgress = x;
+                        progress.Report(totalProgress);
+                    });
+                }
+
+                await _mapService.DownloadMap(map, progress: mapProgress);
+
+                if (totalProgress != null)
+                    totalProgress.CompletedItems++;
             }
 
             await AddPlaylist(editPlaylistModel, playlistMaps, loadPlaylists);

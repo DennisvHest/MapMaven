@@ -19,9 +19,9 @@ namespace BeatSaberTools.Core.Utilities.BeatSaver
             '\u0017', '\u0018', '\u0019', '\u001a', '\u001b', '\u001c', '\u001d', '\u001f',
         };
 
-        public static async Task InstallMap(Beatmap map, string mapsLocation)
+        public static async Task InstallMap(Beatmap map, string mapsLocation, IProgress<double>? progress = null)
         {
-            var zipBytes = await map.LatestVersion.DownloadZIP();
+            var zipBytes = await map.LatestVersion.DownloadZIP(progress: progress);
 
             string directory = GetMapDirectory(map, mapsLocation);
 

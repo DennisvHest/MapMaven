@@ -1,7 +1,12 @@
+using BeatSaberTools.Components.Shared;
 using BeatSaberTools.Core.Models;
+using BeatSaberTools.Core.Models.Data;
 using BeatSaberTools.Models;
 using BeatSaberTools.Services;
 using Microsoft.AspNetCore.Components;
+using MudBlazor;
+using System.Reactive.Linq;
+using System.Reactive.Subjects;
 using Map = BeatSaberTools.Models.Map;
 
 namespace BeatSaberTools.Components.Maps
@@ -9,10 +14,13 @@ namespace BeatSaberTools.Components.Maps
     public partial class ImprovementTweaker
     {
         [Inject]
-        protected MapService MapService { get; set; }
+        MapService MapService { get; set; }
 
         [Inject]
-        protected PlaylistService PlaylistService { get; set; }
+        PlaylistService PlaylistService { get; set; }
+
+        [Inject]
+        ISnackbar Snackbar { get; set; }
 
         string PlayedFilter = "Both";
         MapFilter PlayedMapFilter = null;
@@ -55,13 +63,29 @@ namespace BeatSaberTools.Components.Maps
 
         async Task CreatePlaylistFromSelectedMaps()
         {
+            var subject = new BehaviorSubject<ItemProgress<Map>>(null);
+
+            var snackbar = Snackbar.Add<MapDownloadProgressMessage>(new Dictionary<string, object>
+            {
+                { nameof(MapDownloadProgressMessage.ProgressReport), subject.Sample(TimeSpan.FromSeconds(0.2)).AsObservable() },
+                { nameof(MapDownloadProgressMessage.CreatingPlaylist), true },
+            }, configure: config =>
+            {
+                config.RequireInteraction = true;
+                config.ShowCloseIcon = false;
+            });
+
             var playlistModel = new EditPlaylistModel
             {
                 Name = $"Improvement Maps ({DateTime.Now:dd-MM-yyyy HH:mm:ss})",
                 FileName = $"Improvement Maps ({DateTime.Now:dd-MM-yyyy_HH-mm-ss})"
             };
 
-            await PlaylistService.AddPlaylistAndDownloadMaps(playlistModel, SelectedMaps);
+            var progress = new Progress<ItemProgress<Map>>(subject.OnNext);
+
+            await PlaylistService.AddPlaylistAndDownloadMaps(playlistModel, SelectedMaps, progress: progress);
+
+            Snackbar.Remove(snackbar);
         }
     }
 }

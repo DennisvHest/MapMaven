@@ -1,0 +1,39 @@
+﻿@inherits ReactiveComponent
+
+@using BeatSaberTools.Core.Models.Data;
+
+@{
+    var totalProgressPercentage = (Progress?.TotalProgress ?? 0) * 100;
+}
+
+<div class="d-flex align-center">
+    @if (Progress != null)
+    {
+        <MudProgressCircular Color="Color.Primary" Size="Size.Small" Class="mr-2" Value="@totalProgressPercentage" />
+    }
+
+    @if (CreatingPlaylist)
+    {
+        @:Creating playlist
+    }
+
+    @if (Progress != null && Progress.TotalItems != Progress.CompletedItems)
+    {
+        @:- Adding map: @Progress.CurrentItem.Name (@(Progress.CompletedItems + 1)/@Progress.TotalItems) (@totalProgressPercentage.ToString("#0") %)
+    }
+</div>
+
+@code {
+    [Parameter]
+    public IObservable<ItemProgress<Map>> ProgressReport { get; set; }
+
+    [Parameter]
+    public bool CreatingPlaylist { get; set; }
+
+    ItemProgress<Map> Progress { get; set; }
+
+    protected override void OnInitialized()
+    {
+        SubscribeAndBind(ProgressReport, progress => Progress = progress);
+    }
+}
