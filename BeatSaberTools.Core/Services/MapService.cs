@@ -61,12 +61,13 @@ namespace BeatSaberTools.Services
                 CombineMapData);
 
             RankedMaps = Observable.CombineLatest(
+                _beatSaberDataService.MapInfo,
                 _scoreSaberService.RankedMaps,
                 _scoreSaberService.RankedMapScoreEstimates.StartWith(Enumerable.Empty<ScoreEstimate>()),
                 _scoreSaberService.PlayerScores,
-                (maps, scoreEstimates, playerScores) =>
+                (maps, rankedMaps, scoreEstimates, playerScores) =>
                 {
-                    return maps.GroupJoin(scoreEstimates, map => map.Id + map.Difficulty, scoreEstimate => scoreEstimate.MapId + scoreEstimate.Difficulty, (rankedMap, scoreEstimates) =>
+                    return rankedMaps.GroupJoin(scoreEstimates, map => map.Id + map.Difficulty, scoreEstimate => scoreEstimate.MapId + scoreEstimate.Difficulty, (rankedMap, scoreEstimates) =>
                     {
                         var map = rankedMap.ToMap();
 
@@ -148,6 +149,8 @@ namespace BeatSaberTools.Services
             var beatMap = await _beatSaver.BeatmapByHash(map.Hash);
 
             await MapInstaller.InstallMap(beatMap, _fileService.MapsLocation, progress);
+
+            await _beatSaberDataService.LoadMapInfo(beatMap.ID);
         }
 
         public bool MapIsInstalled(Map map)

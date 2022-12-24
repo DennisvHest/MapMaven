@@ -72,6 +72,29 @@ namespace BeatSaberTools.Services
             }
         }
 
+        public async Task LoadMapInfo(string id)
+        {
+            var mapDirectory = Directory.EnumerateDirectories(_fileService.MapsLocation)
+                .FirstOrDefault(d =>
+                {
+                    var directoryName = Path.GetFileName(d);
+
+                    return directoryName.StartsWith(id);
+                });
+
+            if (mapDirectory == null)
+                return;
+
+            var mapInfo = await GetMapInfo(mapDirectory);
+
+            if (_mapInfo.Value.ContainsKey(mapInfo.Hash))
+                return;
+
+            _mapInfo.Value.Add(mapInfo.Hash, mapInfo);
+
+            _mapInfo.OnNext(_mapInfo.Value);
+        }
+
         public async Task<IEnumerable<MapInfo>> GetAllMapInfo()
         {
             var songHashData = await GetSongHashData();
@@ -134,8 +157,14 @@ namespace BeatSaberTools.Services
         /// <param name="mapDirectory">The directory path of the map.</param>
         /// <param name="songHashData">All song hashes.</param>
         /// <param name="mapInfoCache">MapInfo from the cache.</param>
-        private async Task<MapInfo> GetMapInfo(string mapDirectory, Dictionary<string, SongHash> songHashData, Dictionary<string, MapInfo> mapInfoCache)
+        private async Task<MapInfo> GetMapInfo(string mapDirectory, Dictionary<string, SongHash>? songHashData = null, Dictionary<string, MapInfo>? mapInfoCache = null)
         {
+            if (songHashData == null)
+                songHashData = new();
+
+            if (mapInfoCache == null)
+                mapInfoCache = new();
+
             var mapHash = songHashData.GetValueOrDefault(mapDirectory.NormalizePath())?.Hash;
 
             Debug.WriteLine($"Found hash for {mapDirectory}");

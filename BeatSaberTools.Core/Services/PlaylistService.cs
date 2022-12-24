@@ -26,6 +26,9 @@ namespace BeatSaberTools.Services
         public IObservable<IEnumerable<Playlist>> Playlists { get; private set; }
         public BehaviorSubject<Playlist> SelectedPlaylist = new(null);
 
+        private readonly BehaviorSubject<bool> _creatingPlaylist = new(false);
+        public IObservable<bool> CreatingPlaylist => _creatingPlaylist;
+
         public PlaylistService(BeatSaberDataService beatSaberDataService, IBeatSaverFileService beatSaverFileService, MapService mapService)
         {
             _beatSaverFileService = beatSaverFileService;
@@ -127,40 +130,49 @@ namespace BeatSaberTools.Services
 
         public async Task AddPlaylistAndDownloadMaps(EditPlaylistModel editPlaylistModel, IEnumerable<Map> playlistMaps, bool loadPlaylists = true, IProgress<ItemProgress<Map>>? progress = null)
         {
-            ItemProgress<Map>? totalProgress = null;
+            _creatingPlaylist.OnNext(true);
 
-            if (progress != null)
+            try
             {
-                totalProgress = new ItemProgress<Map>
+                ItemProgress<Map>? totalProgress = null;
+
+                if (progress != null)
                 {
-                    TotalItems = playlistMaps.Count()
-                };
-
-                progress.Report(totalProgress);
-            }
-
-            foreach (var map in playlistMaps)
-            {                    
-                Progress<double>? mapProgress = null;
-
-                if (totalProgress != null)
-                {
-                    totalProgress.CurrentItem = map;
-
-                    mapProgress = new Progress<double>(x =>
+                    totalProgress = new ItemProgress<Map>
                     {
-                        totalProgress.CurrentMapProgress = x;
-                        progress.Report(totalProgress);
-                    });
+                        TotalItems = playlistMaps.Count()
+                    };
+
+                    progress.Report(totalProgress);
                 }
 
-                await _mapService.DownloadMap(map, progress: mapProgress);
+                foreach (var map in playlistMaps)
+                {
+                    Progress<double>? mapProgress = null;
 
-                if (totalProgress != null)
-                    totalProgress.CompletedItems++;
+                    if (totalProgress != null)
+                    {
+                        totalProgress.CurrentItem = map;
+
+                        mapProgress = new Progress<double>(x =>
+                        {
+                            totalProgress.CurrentMapProgress = x;
+                            progress.Report(totalProgress);
+                        });
+                    }
+
+                    await _mapService.DownloadMap(map, progress: mapProgress);
+
+                    if (totalProgress != null)
+                        totalProgress.CompletedItems++;
+                }
+
+                await AddPlaylist(editPlaylistModel, playlistMaps, loadPlaylists);
             }
-
-            await AddPlaylist(editPlaylistModel, playlistMaps, loadPlaylists);
+            finally
+            {
+                _creatingPlaylist.OnNext(false);
+            }
         }
 
         public async Task DeletePlaylist(Playlist playlist)

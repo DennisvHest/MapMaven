@@ -27,9 +27,12 @@ namespace BeatSaberTools.Components.Maps
 
         HashSet<Map> SelectedMaps = new();
 
+        bool CreatingPlaylist = false;
+
         protected override void OnInitialized()
         {
             SubscribeAndBind(MapService.SelectedMaps, selectedMaps => SelectedMaps = selectedMaps);
+            SubscribeAndBind(PlaylistService.CreatingPlaylist, creatingPlaylist => CreatingPlaylist = creatingPlaylist);
         }
 
         void OnPlayedFilterChanged(string value)
@@ -86,6 +89,8 @@ namespace BeatSaberTools.Components.Maps
             await PlaylistService.AddPlaylistAndDownloadMaps(playlistModel, SelectedMaps, progress: progress);
 
             Snackbar.Remove(snackbar);
+
+            Snackbar.Add($"Created playlist: {playlistModel.Name}", Severity.Normal, config => config.Icon = Icons.Filled.Check);
         }
     }
 }
