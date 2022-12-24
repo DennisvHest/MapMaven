@@ -88,6 +88,8 @@ namespace BeatSaberTools.Components.Maps
 
             await PlaylistService.AddPlaylistAndDownloadMaps(playlistModel, SelectedMaps, progress: progress);
 
+            MapService.ClearSelectedMaps();
+
             Snackbar.Remove(snackbar);
 
             Snackbar.Add($"Created playlist: {playlistModel.Name}", Severity.Normal, config => config.Icon = Icons.Filled.Check);

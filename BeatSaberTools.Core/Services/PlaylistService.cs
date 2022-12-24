@@ -132,6 +132,8 @@ namespace BeatSaberTools.Services
         {
             _creatingPlaylist.OnNext(true);
 
+            playlistMaps = playlistMaps.ToList();
+
             try
             {
                 ItemProgress<Map>? totalProgress = null;
