@@ -94,5 +94,10 @@ namespace BeatSaberTools.Components.Maps
 
             Snackbar.Add($"Created playlist: {playlistModel.Name}", Severity.Normal, config => config.Icon = Icons.Filled.Check);
         }
+
+        void ClearSelection()
+        {
+            MapService.ClearSelectedMaps();
+        }
     }
 }
