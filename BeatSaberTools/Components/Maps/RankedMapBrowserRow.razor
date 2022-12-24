@@ -13,11 +13,23 @@
 </MudTd>
 <MudTd DataLabel="MapAuthorName">@Map.MapAuthorName</MudTd>
 <MudTd DataLabel="Duration" Style="width: 130px">@Map.SongDuration.ToString("mm':'ss")</MudTd>
+<MudTd DataLabel="Difficulty">
+    @{
+        var difficulty = Map.ScoreEstimate.FirstOrDefault()?.Difficulty;
+        var chipStyle = $"border: 1px solid {DifficultyColor.Get(difficulty)}";
+    }
+    <MudChip Size="Size.Small" Variant="Variant.Outlined" Style="@chipStyle">@difficulty</MudChip>
+</MudTd>
+<MudTd DataLabel="StarDifficulty">
+    <MudChip Size="Size.Small">
+        @Map.ScoreEstimate.FirstOrDefault()?.Stars <MudIcon Icon="@Icons.Filled.Star" Size="Size.Small"></MudIcon>
+    </MudChip>
+</MudTd>
 <MudTd>
     @if (Map.PlayerScore != null)
     {
-        <MudChip Color="Color.Primary" Size="Size.Small">@Map.PlayerScore.Accuracy().ToString("#0.##") %</MudChip>
-        <MudChip Color="Color.Primary" Size="Size.Small">@Map.PlayerScore.Score.Pp.ToString("#0.##") pp</MudChip>
+        <MudChip Size="Size.Small">@Map.PlayerScore.Accuracy().ToString("#0.##") %</MudChip>
+        <MudChip Size="Size.Small">@Map.PlayerScore.Score.Pp.ToString("#0.##") pp</MudChip>
     }
 </MudTd>
 <MudTd Style="width: 130px">
@@ -26,8 +38,6 @@
         @foreach (var scoreEstimate in Map.ScoreEstimate)
         {
             <MudChip Color="Color.Primary" Size="Size.Small">
-                @scoreEstimate.Difficulty |
-                @scoreEstimate.Stars <MudIcon Icon="@Icons.Filled.Star" Size="Size.Small"></MudIcon> |
                 @scoreEstimate.Accuracy.ToString("#0.##") % |
                 +@scoreEstimate.PPIncrease.ToString("#0.##") pp
             </MudChip>

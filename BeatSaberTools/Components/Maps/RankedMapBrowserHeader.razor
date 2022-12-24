@@ -13,6 +13,14 @@
 <MudTh>
     <MudTableSortLabel SortBy="new Func<Map, object>(x => x.SongDuration)">Duration</MudTableSortLabel>
 </MudTh>
+<MudTh>
+    <MudTableSortLabel SortBy="new Func<Map, object>(x => x.ScoreEstimate?.FirstOrDefault()?.Difficulty)">Difficulty</MudTableSortLabel>
+</MudTh>
+<MudTh>
+    <MudTableSortLabel SortBy="new Func<Map, object>(x => x.ScoreEstimate?.FirstOrDefault()?.Stars)">
+        <MudIcon Icon="@Icons.Filled.Star" Size="Size.Small"></MudIcon>
+    </MudTableSortLabel>
+</MudTh>
 <MudTh></MudTh>
 <MudTh>
     <MudTableSortLabel InitialDirection="SortDirection.Descending" SortBy="new Func<Map, object>(x => x.ScoreEstimate.Any() ? x.ScoreEstimate.Max(x => x.PPIncrease) : 0)">
