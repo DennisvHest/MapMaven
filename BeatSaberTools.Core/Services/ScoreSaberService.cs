@@ -36,7 +36,7 @@ namespace BeatSaberTools.Core.Services
             _fileService = fileService;
             _httpClientFactory = httpClientFactory;
 
-            PlayerScores = _playerId.Select(playerId =>
+            var playerScores = _playerId.Select(playerId =>
             {
                 if (string.IsNullOrEmpty(playerId))
                     return Observable.Return(Enumerable.Empty<PlayerScore>());
@@ -67,7 +67,11 @@ namespace BeatSaberTools.Core.Services
 
                     return playerScores;
                 });
-            }).Concat();
+            }).Concat().Replay(1);
+
+            playerScores.Connect();
+
+            PlayerScores = playerScores;
 
             PlayerProfile = _playerId.Select(playerId =>
             {
@@ -77,7 +81,7 @@ namespace BeatSaberTools.Core.Services
                 return Observable.FromAsync(async () => await _scoreSaber.FullAsync(playerId));
             }).Concat();
 
-            ScoreEstimates = Observable.CombineLatest(PlayerProfile, PlayerScores, RankedMaps, (player, playerScores, rankedMaps) =>
+            var scoreEstimates = Observable.CombineLatest(PlayerProfile, PlayerScores, RankedMaps, (player, playerScores, rankedMaps) =>
             {
                 if (player == null)
                     return Enumerable.Empty<ScoreEstimate>();
@@ -96,7 +100,8 @@ namespace BeatSaberTools.Core.Services
 
                 return rankedMapPlayerScorePairs.Select(pair =>
                 {
-                    var output = ScoreEstimateMLModel.Predict(new ScoreEstimateMLModel.ModelInput {
+                    var output = ScoreEstimateMLModel.Predict(new ScoreEstimateMLModel.ModelInput
+                    {
                         PP = Convert.ToSingle(player.Pp),
                         StarDifficulty = Convert.ToSingle(pair.Map.Stars),
                         TimeSet = DateTime.Now
@@ -104,9 +109,13 @@ namespace BeatSaberTools.Core.Services
 
                     return scoresaber.GetScoreEstimate(pair.Map, Convert.ToDecimal(output.Score));
                 }).ToList();
-            });
+            }).Replay(1);
 
-            RankedMapScoreEstimates = Observable.CombineLatest(PlayerProfile, PlayerScores, RankedMaps, (player, playerScores, rankedMaps) =>
+            scoreEstimates.Connect();
+
+            ScoreEstimates = scoreEstimates;
+
+            var rankedMapScoreEstimates = Observable.CombineLatest(PlayerProfile, PlayerScores, RankedMaps, (player, playerScores, rankedMaps) =>
             {
                 if (player == null)
                     return Enumerable.Empty<ScoreEstimate>();
@@ -124,7 +133,11 @@ namespace BeatSaberTools.Core.Services
 
                     return scoresaber.GetScoreEstimate(map, Convert.ToDecimal(output.Score));
                 }).ToList();
-            });
+            }).Replay(1);
+
+            rankedMapScoreEstimates.Connect();
+
+            RankedMapScoreEstimates = rankedMapScoreEstimates;
         }
 
         public async Task LoadPlayerData()
