@@ -4,6 +4,7 @@ using Map = BeatSaberTools.Models.Map;
 using BeatSaberTools.Models;
 using BeatSaberTools.Core.Models;
 using Microsoft.AspNetCore.Components.Routing;
+using MudBlazor;
 
 namespace BeatSaberTools.Components.Maps
 {
@@ -29,10 +30,12 @@ namespace BeatSaberTools.Components.Maps
         public RenderFragment? HeaderContent { get; set; }
 
         [Parameter]
-        public RenderFragment<Map>? RowContent { get; set; }
+        public RenderFragment<MapRowContext>? RowContent { get; set; }
 
         [Parameter]
         public bool Selectable { get; set; } = false;
+
+        MudTable<Map> TableRef;
 
         private Playlist SelectedPlaylist = null;
         private IEnumerable<MapFilter> MapFilters = Enumerable.Empty<MapFilter>();
@@ -95,6 +98,8 @@ namespace BeatSaberTools.Components.Maps
             MapService.ClearMapFilters();
             MapService.ClearSelectedMaps();
         }
+
+        public IEnumerable<Map> GetFilteredMaps() => TableRef.FilteredItems;
 
         public void Dispose()
         {

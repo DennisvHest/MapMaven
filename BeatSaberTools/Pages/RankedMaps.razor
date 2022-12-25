@@ -1,15 +1,16 @@
 ﻿@inherits ReactiveComponent
 
 @page "/improve"
+@using BeatSaberTools.Core.Models;
 
 <div class="d-flex full-height">
-    <ImprovementTweaker></ImprovementTweaker>
-    <MapBrowser Maps="MapList" Selectable="true">
+    <ImprovementTweaker OnMapSelectionChanged="OnMapSelectionChanged"></ImprovementTweaker>
+    <MapBrowser @ref="MapBrowser" Maps="MapList" Selectable="true">
         <HeaderContent>
             <RankedMapBrowserHeader></RankedMapBrowserHeader>
         </HeaderContent>
         <RowContent>
-            <RankedMapBrowserRow Map="context"></RankedMapBrowserRow>
+            <RankedMapBrowserRow Map="context.Map" RowNumber="context.RowNumber"></RankedMapBrowserRow>
         </RowContent>
     </MapBrowser>
 </div>
@@ -18,10 +19,21 @@
     [Inject]
     protected MapService MapService { get; set; }
 
+    MapBrowser MapBrowser { get; set; }
+
     IEnumerable<Map> MapList { get; set; } = new List<Map>();
 
     protected override void OnInitialized()
     {
         SubscribeAndBind(MapService.RankedMaps, maps => MapList = maps);
+    }
+
+    void OnMapSelectionChanged(MapSelectionConfig mapSelectionConfig)
+    {
+        var selectedMaps = MapBrowser.GetFilteredMaps()
+            .Skip(mapSelectionConfig.MapSelectStartFromNumber - 1)
+            .Take(mapSelectionConfig.MapSelectNumber);
+
+        MapService.SelectMaps(selectedMaps);
     }
 }

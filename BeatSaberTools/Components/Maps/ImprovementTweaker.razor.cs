@@ -22,12 +22,18 @@ namespace BeatSaberTools.Components.Maps
         [Inject]
         ISnackbar Snackbar { get; set; }
 
+        [Parameter]
+        public EventCallback<MapSelectionConfig> OnMapSelectionChanged { get; set; }
+
         string PlayedFilter = "Both";
         MapFilter PlayedMapFilter = null;
 
         HashSet<Map> SelectedMaps = new();
 
         bool CreatingPlaylist = false;
+
+        int MapSelectNumber = 10;
+        int MapSelectStartFromNumber = 1;
 
         protected override void OnInitialized()
         {
@@ -98,6 +104,15 @@ namespace BeatSaberTools.Components.Maps
         void ClearSelection()
         {
             MapService.ClearSelectedMaps();
+        }
+
+        async Task ApplyMapSelection()
+        {
+            await OnMapSelectionChanged.InvokeAsync(new MapSelectionConfig
+            {
+                MapSelectNumber = MapSelectNumber,
+                MapSelectStartFromNumber = MapSelectStartFromNumber
+            });
         }
     }
 }

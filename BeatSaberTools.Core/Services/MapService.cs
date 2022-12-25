@@ -140,6 +140,11 @@ namespace BeatSaberTools.Services
 
         public void ClearSelectedMaps() => _selectedMaps.OnNext(new HashSet<Map>());
 
+        public void SelectMaps(IEnumerable<Map> selectedMaps)
+        {
+            _selectedMaps.OnNext(selectedMaps.ToHashSet());
+        }
+
         public async Task DownloadMap(Map map, bool force = false, IProgress<double>? progress = null)
         {
             if (!force && MapIsInstalled(map))

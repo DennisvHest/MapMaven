@@ -12,11 +12,22 @@
                 <MudSelectItem Value="@("Not played")" />
                 <MudSelectItem Value="@("Played")" />
             </MudSelect>
+            <MudExpansionPanels Class="mt-3">
+                <MudExpansionPanel Text="Select..." Style="background-color: var(--mud-palette-drawer-background);">
+                    <MudNumericField @bind-Value="MapSelectNumber" Label="Number of maps" Class="my-3" Min="1" />
+                    <MudNumericField @bind-Value="MapSelectStartFromNumber" Label="Starting from number" Class="my-3" Min="1" />
+                    <MudButton Variant="Variant.Outlined"
+                               Class="full-width my-3"
+                               OnClick="ApplyMapSelection">
+                        Apply
+                    </MudButton>
+                </MudExpansionPanel>
+            </MudExpansionPanels>
         </div>
         <div>
             @if (SelectedMaps.Any())
             {
-                <MudButton Variant="Variant.Filled"
+                <MudButton Variant="Variant.Text"
                            StartIcon="@Icons.Filled.Clear"
                            Class="full-width mx-0 mt-3 mb-0"
                            OnClick="ClearSelection">

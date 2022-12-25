@@ -2,7 +2,8 @@
 
 @using BeatSaberTools.Core.Utilities.Scoresaber
 
-<MudTable T="Map"
+<MudTable @ref="TableRef"
+          T="Map"
           Items="Maps"
           Height="calc(100% - 116px)"
           Class="full-height full-width background-transparent"
@@ -40,7 +41,11 @@
     <RowTemplate>
         @if (RowContent != null)
         {
-            @RowContent(context)
+            @RowContent(new Core.Models.MapRowContext
+            {
+                RowNumber = TableRef.FilteredItems.TakeWhile(x => x != context).Count() + 1,
+                Map = context
+            })
         }
     </RowTemplate>
     <PagerContent>

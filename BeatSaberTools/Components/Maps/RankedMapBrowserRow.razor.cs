@@ -16,6 +16,9 @@ namespace BeatSaberTools.Components.Maps
         [Parameter]
         public Map Map { get; set; }
 
+        [Parameter]
+        public int RowNumber { get; set; }
+
         protected string CoverImageUrl { get; set; }
 
         bool MapInstalled { get; set; }
