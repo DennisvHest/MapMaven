@@ -8,7 +8,6 @@ using Map = BeatSaberTools.Models.Map;
 using BeatSaberTools.Core.Services;
 using BeatSaberPlaylistsLib.Types;
 using BeatSaberTools.Core.Models.DynamicPlaylists;
-using System.Diagnostics;
 using BeatSaberTools.Core.Models.Data;
 
 namespace BeatSaberTools.Services

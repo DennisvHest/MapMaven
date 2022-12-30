@@ -12,6 +12,7 @@ namespace BeatSaberTools.Services
 
         public string BeatSaberInstallLocation => _beatSaberInstallLocation.Value;
         public string MapInfoCachePath => Path.Combine(FileSystem.AppDataDirectory, "map-info.json");
+        public string HiddenMapConfigPath => Path.Combine(FileSystem.AppDataDirectory, "hidden-map-config.json");
 
 
         private BehaviorSubject<string> _beatSaberInstallLocation = new(Preferences.Get(_installLocationPreferencesKey, null, _preferencesSharedName));

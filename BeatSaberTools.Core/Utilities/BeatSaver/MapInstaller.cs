@@ -1,6 +1,5 @@
 ﻿using BeatSaberTools.Models;
 using BeatSaverSharp.Models;
-using System.IO;
 using System.IO.Compression;
 
 namespace BeatSaberTools.Core.Utilities.BeatSaver

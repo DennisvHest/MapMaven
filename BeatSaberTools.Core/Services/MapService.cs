@@ -8,6 +8,7 @@ using BeatSaberTools.Models.Data;
 using BeatSaverSharp;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
+using System.Text.Json;
 using Map = BeatSaberTools.Models.Map;
 
 namespace BeatSaberTools.Services
@@ -23,6 +24,8 @@ namespace BeatSaberTools.Services
         private readonly BehaviorSubject<List<MapFilter>> _mapFilters = new(new List<MapFilter>());
 
         private readonly BehaviorSubject<HashSet<Map>> _selectedMaps = new(Enumerable.Empty<Map>().ToHashSet());
+
+        private readonly BehaviorSubject<HiddenMapConfiguration> _hiddenMapConfig = new(new());
 
         public IObservable<IEnumerable<Map>> Maps { get; private set; }
         public IObservable<IEnumerable<Map>> RankedMaps { get; private set; }
@@ -60,11 +63,22 @@ namespace BeatSaberTools.Services
                 _scoreSaberService.ScoreEstimates.StartWith(Enumerable.Empty<ScoreEstimate>()),
                 CombineMapData);
 
+            var hiddenMaps = Observable.CombineLatest(_hiddenMapConfig, _scoreSaberService.PlayerProfile, (hiddenMapConfig, player) =>
+            {
+                if (hiddenMapConfig == null || player == null)
+                    return new HashSet<HiddenMap>();
+
+                return hiddenMapConfig?.Items
+                    .FirstOrDefault(i => i.PlayerId == player.Id)
+                    ?.Maps ?? new HashSet<HiddenMap>();
+            });
+
             RankedMaps = Observable.CombineLatest(
                 _beatSaberDataService.MapInfo,
                 _scoreSaberService.RankedMaps,
                 _scoreSaberService.RankedMapScoreEstimates,
                 _scoreSaberService.PlayerScores,
+                hiddenMaps,
                 CombineRankedMapData);
 
             CompleteMapData = Observable.CombineLatest(
@@ -97,22 +111,33 @@ namespace BeatSaberTools.Services
             }).ToList();
         }
 
-        private IEnumerable<Map> CombineRankedMapData(IEnumerable<MapInfo> maps, IEnumerable<RankedMap> rankedMaps, IEnumerable<ScoreEstimate> scoreEstimates, IEnumerable<PlayerScore> playerScores)
+        private IEnumerable<Map> CombineRankedMapData(
+            IEnumerable<MapInfo> maps,
+            IEnumerable<RankedMap> rankedMaps,
+            IEnumerable<ScoreEstimate> scoreEstimates,
+            IEnumerable<PlayerScore> playerScores,
+            HashSet<HiddenMap> hiddenMaps)
         {
-            return rankedMaps.GroupJoin(scoreEstimates, map => map.Id + map.Difficulty, scoreEstimate => scoreEstimate.MapId + scoreEstimate.Difficulty, (rankedMap, scoreEstimates) =>
-            {
-                var map = rankedMap.ToMap();
+            return rankedMaps
+                .GroupJoin(scoreEstimates, map => map.Id + map.Difficulty, scoreEstimate => scoreEstimate.MapId + scoreEstimate.Difficulty, (rankedMap, scoreEstimates) =>
+                {
+                    var map = rankedMap.ToMap();
 
-                map.ScoreEstimate = scoreEstimates;
-                map.RankedMap = rankedMap;
+                    map.ScoreEstimate = scoreEstimates;
+                    map.RankedMap = rankedMap;
 
-                return map;
-            }).GroupJoin(playerScores, map => map.RankedMap.Id + map.RankedMap.Difficulty, score => score.Leaderboard.SongHash + score.Leaderboard.Difficulty.DifficultyName, (map, scores) =>
-            {
-                map.PlayerScore = scores.FirstOrDefault();
+                    return map;
+                }).GroupJoin(playerScores, map => map.RankedMap.Id + map.RankedMap.Difficulty, score => score.Leaderboard.SongHash + score.Leaderboard.Difficulty.DifficultyName, (map, scores) =>
+                {
+                    map.PlayerScore = scores.FirstOrDefault();
 
-                return map;
-            }).ToList();
+                    return map;
+                }).GroupJoin(hiddenMaps, map => map.Hash, hiddenMap => hiddenMap.Hash, (map, hiddenMap) =>
+                {
+                    map.Hidden = hiddenMap.Any();
+
+                    return map;
+                }).ToList();
         }
 
         public void AddMapFilter(MapFilter filter)
@@ -163,6 +188,61 @@ namespace BeatSaberTools.Services
         public bool MapIsInstalled(Map map)
         {
             return MapInstaller.MapIsInstalled(map, _fileService.MapsLocation);
+        }
+
+        public async Task LoadHiddenMapConfig()
+        {
+            if (!File.Exists(_fileService.HiddenMapConfigPath))
+                return;
+
+            HiddenMapConfiguration hiddenMapConfig;
+
+            using (var hiddenMapConfigStream = File.OpenRead(_fileService.HiddenMapConfigPath))
+            {
+                hiddenMapConfig = await JsonSerializer.DeserializeAsync<HiddenMapConfiguration>(hiddenMapConfigStream);
+            }
+
+            _hiddenMapConfig.OnNext(hiddenMapConfig);
+        }
+
+        public async Task HideUnhideMap(Map map)
+        {
+            var hiddenMapConfig = _hiddenMapConfig.Value;
+            var playerId = _scoreSaberService.PlayerId;
+
+            var configItem = hiddenMapConfig.Items.FirstOrDefault(i => i.PlayerId == playerId);
+
+            if (configItem == null)
+            {
+                configItem = new HiddenMapConfigurationItem
+                {
+                    PlayerId = playerId
+                };
+
+                hiddenMapConfig.Items.Add(configItem);
+            }
+
+            var hiddenMap = new HiddenMap(map);
+
+            if (map.Hidden)
+            {
+                configItem.Maps.Remove(hiddenMap);
+            }
+            else
+            {
+                configItem.Maps.Add(hiddenMap);
+            }
+
+            await SaveHiddenMapConfig(hiddenMapConfig);
+
+            _hiddenMapConfig.OnNext(_hiddenMapConfig.Value);
+        }
+
+        private async Task SaveHiddenMapConfig(HiddenMapConfiguration hiddenMapConfig)
+        {
+            string hiddenMapConfigJson = JsonSerializer.Serialize(hiddenMapConfig);
+
+            await File.WriteAllTextAsync(_fileService.HiddenMapConfigPath, hiddenMapConfigJson);
         }
     }
 }

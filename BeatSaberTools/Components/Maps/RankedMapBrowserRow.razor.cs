@@ -51,5 +51,10 @@ namespace BeatSaberTools.Components.Maps
             await MapService.DownloadMap(Map);
             MapInstalled = true;
         }
+
+        async Task HideUnhideMap()
+        {
+            await MapService.HideUnhideMap(Map);
+        }
     }
 }

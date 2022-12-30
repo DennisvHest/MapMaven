@@ -28,6 +28,9 @@ namespace BeatSaberTools.Components.Maps
         string PlayedFilter = "Both";
         MapFilter PlayedMapFilter = null;
 
+        string HiddenFilter = "Not hidden";
+        MapFilter HiddenMapFilter = null;
+
         HashSet<Map> SelectedMaps = new();
 
         bool CreatingPlaylist = false;
@@ -39,6 +42,11 @@ namespace BeatSaberTools.Components.Maps
         {
             SubscribeAndBind(MapService.SelectedMaps, selectedMaps => SelectedMaps = selectedMaps);
             SubscribeAndBind(PlaylistService.CreatingPlaylist, creatingPlaylist => CreatingPlaylist = creatingPlaylist);
+        }
+
+        protected override void OnAfterRender(bool firstRender)
+        {
+            OnHiddenFilterChanged(HiddenFilter);
         }
 
         void OnPlayedFilterChanged(string value)
@@ -68,6 +76,35 @@ namespace BeatSaberTools.Components.Maps
             };
 
             MapService.AddMapFilter(PlayedMapFilter);
+        }
+
+        void OnHiddenFilterChanged(string value)
+        {
+            HiddenFilter = value;
+
+            if (HiddenMapFilter != null)
+                MapService.RemoveMapFilter(HiddenMapFilter);
+
+            if (HiddenFilter == "Both")
+            {
+                HiddenMapFilter = null;
+                return;
+            }
+
+            HiddenMapFilter = new MapFilter
+            {
+                Type = MapFilterType.Played,
+                Name = HiddenFilter,
+                Visible = false
+            };
+
+            HiddenMapFilter.Filter = HiddenFilter switch
+            {
+                "Not hidden" => map => !map.Hidden,
+                "Hidden" => map => map.Hidden
+            };
+
+            MapService.AddMapFilter(HiddenMapFilter);
         }
 
         async Task CreatePlaylistFromSelectedMaps()

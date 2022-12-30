@@ -20,10 +20,11 @@ namespace BeatSaberTools.Core.Services
         public readonly IObservable<Player> PlayerProfile;
         public readonly IObservable<IEnumerable<PlayerScore>> PlayerScores;
         public readonly IObservable<IEnumerable<ScoreEstimate>> ScoreEstimates;
-        public IObservable<IEnumerable<ScoreEstimate>> RankedMapScoreEstimates;
-
+        public readonly IObservable<IEnumerable<ScoreEstimate>> RankedMapScoreEstimates;
 
         public IObservable<IEnumerable<RankedMap>> RankedMaps => _rankedMaps;
+
+        public string? PlayerId => _playerId.Value;
 
         private const string _replayBaseUrl = "https://www.replay.beatleader.xyz";
 
