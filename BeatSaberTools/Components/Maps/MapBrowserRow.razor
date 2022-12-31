@@ -39,9 +39,9 @@
     }
 </MudTd>
 <MudTd Style="width: 130px">
-    @if (Map.ScoreEstimate != null)
+    @if (Map.ScoreEstimates != null)
     {
-        @foreach (var scoreEstimate in Map.ScoreEstimate)
+        @foreach (var scoreEstimate in Map.ScoreEstimates)
         {
             <MudChip Color="Color.Primary" Size="Size.Small">
                 @scoreEstimate.Difficulty | 

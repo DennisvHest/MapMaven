@@ -39,7 +39,7 @@
                     Clear selection
                 </MudButton>
                 <MudChip Variant="Variant.Outlined" Class="full-width mx-0 my-3">
-                    @SelectedMaps.Count() maps (+@SelectedMaps.Sum(m => m.ScoreEstimate.FirstOrDefault()?.PPIncrease ?? 0).ToString("#0.##") pp)
+                    @SelectedMaps.Count() maps (+@SelectedMaps.Sum(m => m.ScoreEstimates.FirstOrDefault()?.PPIncrease ?? 0).ToString("#0.##") pp)
                 </MudChip>
             }
             <MudButton Color="Color.Primary"

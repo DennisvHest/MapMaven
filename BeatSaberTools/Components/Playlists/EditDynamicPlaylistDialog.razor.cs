@@ -31,11 +31,40 @@ namespace BeatSaberTools.Components.Playlists
                 Description = "The most recently downloaded maps.",
                 DynamicPlaylistConfiguration = new DynamicPlaylistConfiguration
                 {
+                    MapPool = MapPool.Standard,
                     SortOperations = new[]
                     {
                         new SortOperation
                         {
                             Field = "AddedDateTime",
+                            Direction = SortDirection.Descending
+                        }
+                    },
+                    MapCount = 20
+                }
+            },
+            new EditDynamicPlaylistModel
+            {
+                FileName = "IMPROVEMENT_MAPS",
+                Name = "Improvement maps",
+                Description = "Maps recommended to play for maximum pp gain.",
+                DynamicPlaylistConfiguration = new DynamicPlaylistConfiguration
+                {
+                    MapPool = MapPool.Improvement,
+                    FilterOperations = new[]
+                    {
+                        new FilterOperation
+                        {
+                            Field = "Hidden",
+                            Operator = Core.Models.DynamicPlaylists.FilterOperator.Equals,
+                            Value = false.ToString()
+                        }
+                    },
+                    SortOperations = new[]
+                    {
+                        new SortOperation
+                        {
+                            Field = "ScoreEstimate.PPIncrease",
                             Direction = SortDirection.Descending
                         }
                     },

@@ -12,7 +12,7 @@ namespace BeatSaberTools.Core.Models
         public HiddenMap(Map map)
         {
             Hash = map.Hash;
-            Difficulty = map.ScoreEstimate.SingleOrDefault()?.Difficulty;
+            Difficulty = map.ScoreEstimates.SingleOrDefault()?.Difficulty;
         }
 
         public override bool Equals(object? obj)

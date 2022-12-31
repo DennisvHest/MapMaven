@@ -16,14 +16,14 @@
 <MudTd DataLabel="Duration" Style="width: 130px">@Map.SongDuration.ToString("mm':'ss")</MudTd>
 <MudTd DataLabel="Difficulty">
     @{
-        var difficulty = Map.ScoreEstimate.FirstOrDefault()?.Difficulty;
+        var difficulty = Map.ScoreEstimates.FirstOrDefault()?.Difficulty;
         var chipStyle = $"border: 1px solid {DifficultyColor.Get(difficulty)}";
     }
     <MudChip Size="Size.Small" Variant="Variant.Outlined" Style="@chipStyle">@difficulty</MudChip>
 </MudTd>
 <MudTd DataLabel="StarDifficulty">
     <MudChip Size="Size.Small">
-        @Map.ScoreEstimate.FirstOrDefault()?.Stars <MudIcon Icon="@Icons.Filled.Star" Size="Size.Small"></MudIcon>
+        @Map.ScoreEstimates.FirstOrDefault()?.Stars <MudIcon Icon="@Icons.Filled.Star" Size="Size.Small"></MudIcon>
     </MudChip>
 </MudTd>
 <MudTd>
@@ -34,9 +34,9 @@
     }
 </MudTd>
 <MudTd Style="width: 130px">
-    @if (Map.ScoreEstimate != null)
+    @if (Map.ScoreEstimates != null)
     {
-        @foreach (var scoreEstimate in Map.ScoreEstimate)
+        @foreach (var scoreEstimate in Map.ScoreEstimates)
         {
             <MudChip Color="Color.Primary" Size="Size.Small">
                 @scoreEstimate.Accuracy.ToString("#0.##") % |

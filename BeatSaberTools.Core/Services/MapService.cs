@@ -105,7 +105,7 @@ namespace BeatSaberTools.Services
                 return map;
             }).GroupJoin(scoreEstimates, map => map.Hash, scoreEstimate => scoreEstimate.MapId, (map, scoreEstimate) =>
             {
-                map.ScoreEstimate = scoreEstimate;
+                map.ScoreEstimates = scoreEstimate;
 
                 return map;
             }).ToList();
@@ -123,7 +123,7 @@ namespace BeatSaberTools.Services
                 {
                     var map = rankedMap.ToMap();
 
-                    map.ScoreEstimate = scoreEstimates;
+                    map.ScoreEstimates = scoreEstimates;
                     map.RankedMap = rankedMap;
 
                     return map;

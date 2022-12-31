@@ -48,17 +48,25 @@ namespace BeatSaberTools.Core.Services
             });
 
             var maps = await _mapService.CompleteMapData.FirstAsync();
+            var rankedMaps = await _mapService.RankedMaps.FirstAsync();
 
             foreach (var playlist in dynamicPlaylists)
             {
                 var configuration = playlist.Playlist.DynamicPlaylistConfiguration;
 
-                maps = FilterMaps(maps, configuration);
-                maps = SortMaps(maps, configuration);
+                var playlistMaps = configuration.MapPool switch
+                {
+                    MapPool.Standard => maps,
+                    MapPool.Improvement => rankedMaps,
+                    _ => maps
+                };
 
-                maps = maps.Take(configuration.MapCount);
+                playlistMaps = FilterMaps(playlistMaps, configuration);
+                playlistMaps = SortMaps(playlistMaps, configuration);
 
-                await _playlistService.ReplaceMapsInPlaylist(maps, playlist.Playlist, loadPlaylists: false);
+                playlistMaps = playlistMaps.Take(configuration.MapCount);
+
+                await _playlistService.ReplaceMapsInPlaylist(playlistMaps, playlist.Playlist, loadPlaylists: false);
             }
         }
 
@@ -98,6 +106,18 @@ namespace BeatSaberTools.Core.Services
                     FilterOperator.LessThan => timeSpanValue < compareValue,
                     FilterOperator.LessThanOrEqual => timeSpanValue <= compareValue,
                     FilterOperator.GreaterThanOrEqual => timeSpanValue >= compareValue,
+                    _ => true
+                };
+            }
+
+            if (value is bool boolValue)
+            {
+                var compareValue = bool.Parse(filterOperation.Value);
+
+                return filterOperation.Operator switch
+                {
+                    FilterOperator.Equals => boolValue == compareValue,
+                    FilterOperator.NotEquals => boolValue != compareValue,
                     _ => true
                 };
             }
