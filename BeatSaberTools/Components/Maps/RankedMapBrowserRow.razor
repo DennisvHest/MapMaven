@@ -48,11 +48,13 @@
 <MudTd>
     @if (!MapInstalled)
     {
-        <MudIconButton Icon="@Icons.Filled.Download" OnClick="DownloadMap"></MudIconButton>
+        <MudTooltip Text="Download">
+            <MudIconButton Icon="@Icons.Filled.Download" OnClick="DownloadMap"></MudIconButton>
+        </MudTooltip>
     }
 </MudTd>
 <MudTd>
-    <MudTooltip Text="Hide map">
-        <MudIconButton Icon="@Icons.Filled.HideSource" OnClick="HideUnhideMap"></MudIconButton>
+    <MudTooltip Text="@(Map.Hidden ? "Un-hide map" : "Hide map")">
+        <MudIconButton Icon="@(Map.Hidden ? Icons.Filled.RemoveRedEye : Icons.Filled.DisabledVisible)" OnClick="HideUnhideMap"></MudIconButton>
     </MudTooltip>
 </MudTd>

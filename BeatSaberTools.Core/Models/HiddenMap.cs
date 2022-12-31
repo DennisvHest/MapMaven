@@ -1,27 +1,31 @@
 ﻿using BeatSaberTools.Models;
-using System.Diagnostics.CodeAnalysis;
 
 namespace BeatSaberTools.Core.Models
 {
     public class HiddenMap
     {
         public string Hash { get; set; }
+        public string? Difficulty { get; set; }
 
         public HiddenMap() { }
 
         public HiddenMap(Map map)
         {
             Hash = map.Hash;
+            Difficulty = map.ScoreEstimate.SingleOrDefault()?.Difficulty;
         }
 
         public override bool Equals(object? obj)
         {
-            return Hash == (obj as HiddenMap)?.Hash;
+            var otherMap = obj as HiddenMap;
+
+            return Hash == otherMap?.Hash
+                && Difficulty == otherMap?.Difficulty;
         }
 
         public override int GetHashCode()
         {
-            return Hash.GetHashCode();
+            return (Hash + Difficulty).GetHashCode();
         }
     }
 }

@@ -132,7 +132,7 @@ namespace BeatSaberTools.Services
                     map.PlayerScore = scores.FirstOrDefault();
 
                     return map;
-                }).GroupJoin(hiddenMaps, map => map.Hash, hiddenMap => hiddenMap.Hash, (map, hiddenMap) =>
+                }).GroupJoin(hiddenMaps, map => map.Hash + map.RankedMap.Difficulty, hiddenMap => hiddenMap.Hash + hiddenMap.Difficulty, (map, hiddenMap) =>
                 {
                     map.Hidden = hiddenMap.Any();
 
