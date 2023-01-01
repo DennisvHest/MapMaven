@@ -61,6 +61,10 @@
     <ItemGroup>
       <PackageReference Include="BeatSaber.SongHashing" Version="1.2.0" />
       <PackageReference Include="BeatSaberPlaylistsLib" Version="1.6.6" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.1">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
       <PackageReference Include="Microsoft.VisualStudio.Utilities" Version="17.4.33103.184" />
       <PackageReference Include="MudBlazor" Version="6.1.6" />
       <PackageReference Include="NAudio" Version="2.1.0" />

@@ -30,12 +30,16 @@ public static class MauiProgram
 
 		builder.Services.AddBeatSaberTools<BeatSaberToolFileService>();
 
-		builder.Services.AddSingleton(services => (BeatSaberToolFileService)services.GetService<IBeatSaverFileService>());
+		builder.Services.AddSingleton(services => (BeatSaberToolFileService)services.GetService<BeatSaverFileServiceBase>());
 
 #if WINDOWS
         builder.Services.AddTransient<IFolderPicker, Platforms.Windows.FolderPicker>();
 #endif
 
-        return builder.Build();
+        var mauiApp = builder.Build();
+
+		StartupSetup.Initialize(mauiApp.Services);
+
+		return mauiApp;
 	}
 }

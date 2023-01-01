@@ -17,7 +17,7 @@ namespace BeatSaberTools.Services
     {
         private readonly BeatSaberDataService _beatSaberDataService;
         private readonly ScoreSaberService _scoreSaberService;
-        private readonly IBeatSaverFileService _fileService;
+        private readonly BeatSaverFileServiceBase _fileService;
 
         private readonly BeatSaver _beatSaver;
 
@@ -41,7 +41,7 @@ namespace BeatSaberTools.Services
             BeatSaberDataService beatSaberDataService,
             ScoreSaberService scoreSaberService,
             BeatSaver beatSaver,
-            IBeatSaverFileService fileService)
+            BeatSaverFileServiceBase fileService)
         {
             _beatSaberDataService = beatSaberDataService;
             _scoreSaberService = scoreSaberService;

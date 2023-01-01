@@ -15,4 +15,6 @@ IHost host = Host.CreateDefaultBuilder(args)
     })
     .Build();
 
+await StartupSetup.Initialize(host.Services);
+
 await host.RunAsync();

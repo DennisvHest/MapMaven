@@ -12,12 +12,17 @@ using BeatSaberPlaylistsLib;
 using BeatSaberPlaylistsLib.Types;
 using BeatSaberPlaylistsLib.Legacy;
 using BeatSaberTools.Core.Services;
+using AspNetCore.Repository;
+using AspNetCore.UnitOfWork;
 
 namespace BeatSaberTools.Services
 {
     public class BeatSaberDataService
     {
-        private readonly IBeatSaverFileService _fileService;
+        private readonly BeatSaverFileServiceBase _fileService;
+
+        private readonly IRepository<MapInfo> _mapInfoCacheRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
         private readonly IBeatmapHasher _beatmapHasher;
         private PlaylistManager _playlistManager;
@@ -37,8 +42,11 @@ namespace BeatSaberTools.Services
         public IObservable<IEnumerable<IPlaylist>> PlaylistInfo => _playlistInfo;
         public IObservable<bool> LoadingPlaylistInfo => _loadingPlaylistInfo;
 
-        public BeatSaberDataService(IBeatmapHasher beatmapHasher, IBeatSaverFileService fileService)
+        public BeatSaberDataService(IBeatmapHasher beatmapHasher, BeatSaverFileServiceBase fileService, IUnitOfWork unitOfWork)
         {
+            _unitOfWork = unitOfWork;
+            _mapInfoCacheRepository = _unitOfWork.Repository<MapInfo>();
+
             _fileService = fileService;
             _beatmapHasher = beatmapHasher;
 
@@ -248,17 +256,9 @@ namespace BeatSaberTools.Services
         /// </summary>
         private async Task<Dictionary<string, MapInfo>> GetMapInfoCache()
         {
-            Dictionary<string, MapInfo> mapInfoCache = new Dictionary<string, MapInfo>();
+            var mapInfo = await _mapInfoCacheRepository.GetAsync();
 
-            if (_fileService.MapInfoCachePath != null && File.Exists(_fileService.MapInfoCachePath))
-            {
-                using (var mapInfoCacheStream = File.OpenRead(_fileService.MapInfoCachePath))
-                {
-                    mapInfoCache = await JsonSerializer.DeserializeAsync<Dictionary<string, MapInfo>>(mapInfoCacheStream);
-                }
-            }
-
-            return mapInfoCache;
+            return mapInfo.ToDictionary(i => i.Hash);
         }
 
         /// <summary>
@@ -267,12 +267,10 @@ namespace BeatSaberTools.Services
         /// </summary>
         private async Task CacheMapInfo(Dictionary<string, MapInfo> mapInfoByHash)
         {
-            if (_fileService.MapInfoCachePath == null)
-                return;
+            _mapInfoCacheRepository.Delete(_mapInfoCacheRepository.DbSet);
+            _mapInfoCacheRepository.Insert(mapInfoByHash.Values);
 
-            string mapInfoCacheJson = JsonSerializer.Serialize(mapInfoByHash);
-
-            await File.WriteAllTextAsync(_fileService.MapInfoCachePath, mapInfoCacheJson);
+            await _unitOfWork.SaveAsync();
         }
     }
 }
