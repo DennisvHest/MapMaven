@@ -20,8 +20,8 @@ namespace BeatSaberTools.Infrastructure
             services.AddDbContext<BSToolsContext>()
                 .AddUnitOfWork<BSToolsContext>();
 
-            services.AddSingleton<IBeatmapHasher, Hasher>();
-            services.AddSingleton(_ => new BeatSaver("BeatSaberTools", new Version(1, 0)));
+            services.AddScoped<IBeatmapHasher, Hasher>();
+            services.AddScoped(_ => new BeatSaver("BeatSaberTools", new Version(1, 0)));
 
             services.AddHttpClient<ScoreSaberApiClient>();
             services.AddHttpClient("RankedScoresaber", config =>
@@ -29,13 +29,13 @@ namespace BeatSaberTools.Infrastructure
                 config.BaseAddress = new Uri("https://scoresaber.balibalo.xyz");
             });
 
-            services.AddSingleton(typeof(BeatSaverFileServiceBase), typeof(TFileService));
-            services.AddSingleton<BeatSaberDataService>();
-            services.AddSingleton<MapService>();
-            services.AddSingleton<SongPlayerService>();
-            services.AddSingleton<PlaylistService>();
-            services.AddSingleton<ScoreSaberService>();
-            services.AddSingleton<DynamicPlaylistArrangementService>();
+            services.AddScoped(typeof(BeatSaverFileServiceBase), typeof(TFileService));
+            services.AddScoped<BeatSaberDataService>();
+            services.AddScoped<MapService>();
+            services.AddScoped<SongPlayerService>();
+            services.AddScoped<PlaylistService>();
+            services.AddScoped<ScoreSaberService>();
+            services.AddScoped<DynamicPlaylistArrangementService>();
         }
 
         public static void Initialize(IServiceProvider serviceProvider)

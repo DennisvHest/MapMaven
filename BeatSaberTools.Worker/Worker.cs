@@ -5,16 +5,17 @@ namespace BeatSaberTools.Worker
 {
     public class Worker : BackgroundService
     {
-        private readonly DynamicPlaylistArrangementService _dynamicPlaylistArrangementService;
-
         private readonly PeriodicTimer _timer = new PeriodicTimer(Debugger.IsAttached ? TimeSpan.FromSeconds(30) : TimeSpan.FromMinutes(5));
 
-        private readonly ILogger<Worker> _logger;
+        private readonly IServiceProvider _serviceProvider;
 
-        public Worker(ILogger<Worker> logger, DynamicPlaylistArrangementService dynamicPlaylistArrangementService)
+        private readonly ILogger<Worker> _logger;
+        
+
+        public Worker(ILogger<Worker> logger, IServiceProvider serviceProvider)
         {
+            _serviceProvider = serviceProvider;
             _logger = logger;
-            _dynamicPlaylistArrangementService = dynamicPlaylistArrangementService;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -26,7 +27,12 @@ namespace BeatSaberTools.Worker
             {
                 _logger.LogInformation("Gathering recently added maps...");
 
-                await _dynamicPlaylistArrangementService.ArrangeDynamicPlaylists();
+                using (var scope = _serviceProvider.CreateScope())
+                {
+                    var dynamicPlaylistArrangementService = scope.ServiceProvider.GetRequiredService<DynamicPlaylistArrangementService>();
+
+                    await dynamicPlaylistArrangementService.ArrangeDynamicPlaylists();
+                }
 
                 _logger.LogInformation("Created playlist with recently added maps!");
             }
