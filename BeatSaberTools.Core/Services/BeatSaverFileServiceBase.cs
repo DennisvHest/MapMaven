@@ -8,7 +8,7 @@ namespace BeatSaberTools.Core.Services
         public virtual string MapsLocation => $"{BeatSaberInstallLocation}/Beat Saber_Data/CustomLevels";
         public virtual string PlaylistsLocation => $"{BeatSaberInstallLocation}/Playlists";
         public virtual string UserDataLocation => $"{BeatSaberInstallLocation}/UserData";
-        public static string AppDataLocation => Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "BSTools");
+        public static string AppDataLocation => Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "BSTools");
         public virtual string MapInfoCachePath { get; }
         public virtual string HiddenMapConfigPath { get; }
         public virtual IObservable<string> BeatSaberInstallLocationObservable { get; }

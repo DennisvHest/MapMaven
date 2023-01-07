@@ -30,6 +30,7 @@ namespace BeatSaberTools.Services
         public IObservable<IEnumerable<Map>> Maps { get; private set; }
         public IObservable<IEnumerable<Map>> RankedMaps { get; private set; }
         public IObservable<IEnumerable<Map>> CompleteMapData { get; private set; }
+        public IObservable<IEnumerable<Map>> CompleteRankedMapData { get; private set; }
         public IObservable<Dictionary<string, Map>> MapsByHash { get; private set; }
 
         public IObservable<HashSet<Map>> SelectedMaps => _selectedMaps;
@@ -87,6 +88,14 @@ namespace BeatSaberTools.Services
                 _scoreSaberService.RankedMaps,
                 _scoreSaberService.ScoreEstimates,
                 CombineMapData);
+
+            CompleteRankedMapData = Observable.CombineLatest(
+                _beatSaberDataService.MapInfo,
+                _scoreSaberService.RankedMaps,
+                _scoreSaberService.RankedMapScoreEstimates.Where(x => x.Any()),
+                _scoreSaberService.PlayerScores.Where(x => x.Any()),
+                hiddenMaps,
+                CombineRankedMapData);
         }
 
         private IEnumerable<Map> CombineMapData(IEnumerable<MapInfo> maps, IEnumerable<PlayerScore> playerScores, IEnumerable<RankedMap> rankedMaps, IEnumerable<ScoreEstimate> scoreEstimates)

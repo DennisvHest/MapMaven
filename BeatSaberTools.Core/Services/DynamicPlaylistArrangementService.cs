@@ -48,7 +48,7 @@ namespace BeatSaberTools.Core.Services
             });
 
             var maps = await _mapService.CompleteMapData.FirstAsync();
-            var rankedMaps = await _mapService.RankedMaps.FirstAsync();
+            var rankedMaps = await _mapService.CompleteRankedMapData.FirstAsync();
 
             foreach (var playlist in dynamicPlaylists)
             {
