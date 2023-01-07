@@ -44,7 +44,8 @@ namespace BeatSaberTools.Core.Services
                 _beatSaberDataService.LoadAllMapInfo(),
                 _scoreSaberService.LoadPlayerData(),
                 _scoreSaberService.LoadRankedMaps(),
-                _beatSaberDataService.LoadAllPlaylists()
+                _beatSaberDataService.LoadAllPlaylists(),
+                _mapService.LoadHiddenMaps()
             });
 
             var maps = await _mapService.CompleteMapData.FirstAsync();

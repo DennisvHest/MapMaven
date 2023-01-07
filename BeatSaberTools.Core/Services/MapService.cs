@@ -1,11 +1,16 @@
-﻿using BeatSaberTools.Core.ApiClients;
+﻿using AspNetCore.Repository;
+using AspNetCore.UnitOfWork;
+using BeatSaberTools.Core.ApiClients;
 using BeatSaberTools.Core.Models;
+using BeatSaberTools.Core.Models.Data;
 using BeatSaberTools.Core.Models.Data.ScoreSaber;
 using BeatSaberTools.Core.Services;
 using BeatSaberTools.Core.Utilities.BeatSaver;
 using BeatSaberTools.Core.Utilities.Scoresaber;
 using BeatSaberTools.Models.Data;
 using BeatSaverSharp;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Text.Json;
@@ -21,11 +26,13 @@ namespace BeatSaberTools.Services
 
         private readonly BeatSaver _beatSaver;
 
+        private readonly IServiceProvider _serviceProvider;
+
         private readonly BehaviorSubject<List<MapFilter>> _mapFilters = new(new List<MapFilter>());
 
         private readonly BehaviorSubject<HashSet<Map>> _selectedMaps = new(Enumerable.Empty<Map>().ToHashSet());
 
-        private readonly BehaviorSubject<HiddenMapConfiguration> _hiddenMapConfig = new(new());
+        private readonly BehaviorSubject<IEnumerable<HiddenMap>> _hiddenMaps = new(Enumerable.Empty<HiddenMap>());
 
         public IObservable<IEnumerable<Map>> Maps { get; private set; }
         public IObservable<IEnumerable<Map>> RankedMaps { get; private set; }
@@ -42,13 +49,14 @@ namespace BeatSaberTools.Services
             BeatSaberDataService beatSaberDataService,
             ScoreSaberService scoreSaberService,
             BeatSaver beatSaver,
-            BeatSaverFileServiceBase fileService)
+            BeatSaverFileServiceBase fileService,
+            IServiceProvider serviceProvider)
         {
             _beatSaberDataService = beatSaberDataService;
             _scoreSaberService = scoreSaberService;
             _fileService = fileService;
-
             _beatSaver = beatSaver;
+            _serviceProvider = serviceProvider;
 
             MapsByHash = _beatSaberDataService.MapInfoByHash
                 .Select(x => x
@@ -64,14 +72,12 @@ namespace BeatSaberTools.Services
                 _scoreSaberService.ScoreEstimates.StartWith(Enumerable.Empty<ScoreEstimate>()),
                 CombineMapData);
 
-            var hiddenMaps = Observable.CombineLatest(_hiddenMapConfig, _scoreSaberService.PlayerProfile, (hiddenMapConfig, player) =>
+            var hiddenMaps = Observable.CombineLatest(_hiddenMaps, _scoreSaberService.PlayerProfile, (hiddenMaps, player) =>
             {
-                if (hiddenMapConfig == null || player == null)
-                    return new HashSet<HiddenMap>();
+                if (hiddenMaps == null || player == null)
+                    return Enumerable.Empty<HiddenMap>();
 
-                return hiddenMapConfig?.Items
-                    .FirstOrDefault(i => i.PlayerId == player.Id)
-                    ?.Maps ?? new HashSet<HiddenMap>();
+                return hiddenMaps.Where(m => m.PlayerId == player.Id);
             });
 
             RankedMaps = Observable.CombineLatest(
@@ -125,7 +131,7 @@ namespace BeatSaberTools.Services
             IEnumerable<RankedMap> rankedMaps,
             IEnumerable<ScoreEstimate> scoreEstimates,
             IEnumerable<PlayerScore> playerScores,
-            HashSet<HiddenMap> hiddenMaps)
+            IEnumerable<HiddenMap> hiddenMaps)
         {
             return rankedMaps
                 .GroupJoin(scoreEstimates, map => map.Id + map.Difficulty, scoreEstimate => scoreEstimate.MapId + scoreEstimate.Difficulty, (rankedMap, scoreEstimates) =>
@@ -199,59 +205,57 @@ namespace BeatSaberTools.Services
             return MapInstaller.MapIsInstalled(map, _fileService.MapsLocation);
         }
 
-        public async Task LoadHiddenMapConfig()
+        public async Task LoadHiddenMaps()
         {
-            if (!File.Exists(_fileService.HiddenMapConfigPath))
-                return;
+            using var scope = _serviceProvider.CreateScope();
 
-            HiddenMapConfiguration hiddenMapConfig;
+            var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
+            var hiddenMapRepository = unitOfWork.Repository<HiddenMap>();
 
-            using (var hiddenMapConfigStream = File.OpenRead(_fileService.HiddenMapConfigPath))
-            {
-                hiddenMapConfig = await JsonSerializer.DeserializeAsync<HiddenMapConfiguration>(hiddenMapConfigStream);
-            }
+            var hiddenMaps = await hiddenMapRepository.GetAsync();
 
-            _hiddenMapConfig.OnNext(hiddenMapConfig);
+            _hiddenMaps.OnNext(hiddenMaps);
         }
 
         public async Task HideUnhideMap(Map map)
         {
-            var hiddenMapConfig = _hiddenMapConfig.Value;
+            using var scope = _serviceProvider.CreateScope();
+
+            var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
+            var hiddenMapRepository = unitOfWork.Repository<HiddenMap>();
+            var playerRepository = unitOfWork.Repository<Core.Models.Data.Player>();
+
             var playerId = _scoreSaberService.PlayerId;
 
-            var configItem = hiddenMapConfig.Items.FirstOrDefault(i => i.PlayerId == playerId);
+            var player = await playerRepository.GetFirstOrDefaultAsync(
+                predicate: p => p.Id == playerId,
+                include: x => x.Include(p => p.HiddenMaps)
+            );
 
-            if (configItem == null)
+            if (player == null)
             {
-                configItem = new HiddenMapConfigurationItem
-                {
-                    PlayerId = playerId
-                };
+                player = new Core.Models.Data.Player { Id = playerId };
 
-                hiddenMapConfig.Items.Add(configItem);
+                playerRepository.Insert(player);
             }
 
             var hiddenMap = new HiddenMap(map);
 
             if (map.Hidden)
             {
-                configItem.Maps.Remove(hiddenMap);
+                var mapToRemove = player.HiddenMaps.FirstOrDefault(m => m.Hash == map.Hash);
+
+                hiddenMapRepository.Delete(mapToRemove);
             }
             else
             {
-                configItem.Maps.Add(hiddenMap);
+                hiddenMap.PlayerId = playerId;
+                hiddenMapRepository.Insert(hiddenMap);
             }
 
-            await SaveHiddenMapConfig(hiddenMapConfig);
+            await unitOfWork.SaveAsync();
 
-            _hiddenMapConfig.OnNext(_hiddenMapConfig.Value);
-        }
-
-        private async Task SaveHiddenMapConfig(HiddenMapConfiguration hiddenMapConfig)
-        {
-            string hiddenMapConfigJson = JsonSerializer.Serialize(hiddenMapConfig);
-
-            await File.WriteAllTextAsync(_fileService.HiddenMapConfigPath, hiddenMapConfigJson);
+            await LoadHiddenMaps();
         }
     }
 }

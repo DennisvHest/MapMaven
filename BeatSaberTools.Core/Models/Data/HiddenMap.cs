@@ -1,4 +1,6 @@
-﻿namespace BeatSaberTools.Core.Models.Data
+﻿using BeatSaberTools.Models;
+
+namespace BeatSaberTools.Core.Models.Data
 {
     public class HiddenMap
     {
@@ -8,5 +10,13 @@
         public string PlayerId { get; set; }
 
         public virtual Player Player { get; set; }
+
+        public HiddenMap() { }
+
+        public HiddenMap(Map map)
+        {
+            Hash = map.Hash;
+            Difficulty = map.ScoreEstimates.SingleOrDefault()?.Difficulty;
+        }
     }
 }
