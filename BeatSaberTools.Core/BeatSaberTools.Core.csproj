@@ -12,10 +12,10 @@
     <OpenApiReference Include="OpenAPI\scoresaber-api.json" CodeGenerator="NSwagCSharp" Namespace="BeatSaberTools.Core.ApiClients" ClassName="ScoreSaberApiClient" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="AspNet.Core.UnitOfWork" Version="2.1.0" />
     <PackageReference Include="BeatSaber.SongHashing" Version="1.2.0" />
     <PackageReference Include="BeatSaberPlaylistsLib" Version="1.6.6" />
     <PackageReference Include="BeatSaverSharper" Version="3.4.4" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.1" />
     <PackageReference Include="Microsoft.Extensions.ApiDescription.Client" Version="7.0.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

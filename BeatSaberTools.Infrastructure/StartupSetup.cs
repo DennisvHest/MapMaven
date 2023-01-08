@@ -1,5 +1,4 @@
-﻿using AspNetCore.UnitOfWork;
-using BeatSaber.SongHashing;
+﻿using BeatSaber.SongHashing;
 using BeatSaberTools.Core.ApiClients;
 using BeatSaberTools.Core.Services;
 using BeatSaberTools.Infrastructure.Data;
@@ -17,8 +16,8 @@ namespace BeatSaberTools.Infrastructure
         {
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
 
-            services.AddDbContext<BSToolsContext>()
-                .AddUnitOfWork<BSToolsContext>();
+            services.AddDbContext<BSToolsContext>();
+            services.AddScoped<IDataStore, BSToolsContext>();
 
             services.AddScoped<IBeatmapHasher, Hasher>();
             services.AddScoped(_ => new BeatSaver("BeatSaberTools", new Version(1, 0)));

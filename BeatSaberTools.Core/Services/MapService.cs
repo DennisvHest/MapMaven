@@ -1,6 +1,4 @@
-﻿using AspNetCore.Repository;
-using AspNetCore.UnitOfWork;
-using BeatSaberTools.Core.ApiClients;
+﻿using BeatSaberTools.Core.ApiClients;
 using BeatSaberTools.Core.Models;
 using BeatSaberTools.Core.Models.Data;
 using BeatSaberTools.Core.Models.Data.ScoreSaber;
@@ -209,10 +207,9 @@ namespace BeatSaberTools.Services
         {
             using var scope = _serviceProvider.CreateScope();
 
-            var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
-            var hiddenMapRepository = unitOfWork.Repository<HiddenMap>();
+            var dataStore = scope.ServiceProvider.GetRequiredService<IDataStore>();
 
-            var hiddenMaps = await hiddenMapRepository.GetAsync();
+            var hiddenMaps = await dataStore.Set<HiddenMap>().ToListAsync();
 
             _hiddenMaps.OnNext(hiddenMaps);
         }
@@ -221,22 +218,19 @@ namespace BeatSaberTools.Services
         {
             using var scope = _serviceProvider.CreateScope();
 
-            var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
-            var hiddenMapRepository = unitOfWork.Repository<HiddenMap>();
-            var playerRepository = unitOfWork.Repository<Core.Models.Data.Player>();
+            var dataStore = scope.ServiceProvider.GetRequiredService<IDataStore>();
 
             var playerId = _scoreSaberService.PlayerId;
 
-            var player = await playerRepository.GetFirstOrDefaultAsync(
-                predicate: p => p.Id == playerId,
-                include: x => x.Include(p => p.HiddenMaps)
-            );
+            var player = await dataStore.Set<Core.Models.Data.Player>()
+                .Include(p => p.HiddenMaps)
+                .FirstOrDefaultAsync(p => p.Id == playerId);
 
             if (player == null)
             {
                 player = new Core.Models.Data.Player { Id = playerId };
 
-                playerRepository.Insert(player);
+                dataStore.Set<Core.Models.Data.Player>().Add(player);
             }
 
             var hiddenMap = new HiddenMap(map);
@@ -245,15 +239,15 @@ namespace BeatSaberTools.Services
             {
                 var mapToRemove = player.HiddenMaps.FirstOrDefault(m => m.Hash == map.Hash);
 
-                hiddenMapRepository.Delete(mapToRemove);
+                dataStore.Set<HiddenMap>().Remove(mapToRemove);
             }
             else
             {
                 hiddenMap.PlayerId = playerId;
-                hiddenMapRepository.Insert(hiddenMap);
+                dataStore.Set<HiddenMap>().Add(hiddenMap);
             }
 
-            await unitOfWork.SaveAsync();
+            await dataStore.SaveChangesAsync();
 
             await LoadHiddenMaps();
         }

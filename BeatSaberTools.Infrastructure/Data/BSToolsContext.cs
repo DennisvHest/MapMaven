@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BeatSaberTools.Infrastructure.Data
 {
-    public class BSToolsContext : DbContext
+    public class BSToolsContext : DbContext, IDataStore
     {
         public DbSet<MapInfo> MapInfos { get; set; }
         public DbSet<Player> Players { get; set; }

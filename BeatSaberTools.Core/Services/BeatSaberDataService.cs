@@ -12,8 +12,8 @@ using BeatSaberPlaylistsLib;
 using BeatSaberPlaylistsLib.Types;
 using BeatSaberPlaylistsLib.Legacy;
 using BeatSaberTools.Core.Services;
-using AspNetCore.Repository;
-using AspNetCore.UnitOfWork;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.EntityFrameworkCore;
 
 namespace BeatSaberTools.Services
 {
@@ -21,11 +21,10 @@ namespace BeatSaberTools.Services
     {
         private readonly BeatSaverFileServiceBase _fileService;
 
-        private readonly IRepository<MapInfo> _mapInfoCacheRepository;
-        private readonly IUnitOfWork _unitOfWork;
-
         private readonly IBeatmapHasher _beatmapHasher;
         private PlaylistManager _playlistManager;
+
+        private readonly IServiceProvider _serviceProvider;
 
         private readonly Regex _mapIdRegex = new Regex(@"^[0-9A-Fa-f]+");
 
@@ -42,13 +41,11 @@ namespace BeatSaberTools.Services
         public IObservable<IEnumerable<IPlaylist>> PlaylistInfo => _playlistInfo;
         public IObservable<bool> LoadingPlaylistInfo => _loadingPlaylistInfo;
 
-        public BeatSaberDataService(IBeatmapHasher beatmapHasher, BeatSaverFileServiceBase fileService, IUnitOfWork unitOfWork)
+        public BeatSaberDataService(IBeatmapHasher beatmapHasher, BeatSaverFileServiceBase fileService, IServiceProvider serviceProvider)
         {
-            _unitOfWork = unitOfWork;
-            _mapInfoCacheRepository = _unitOfWork.Repository<MapInfo>();
-
             _fileService = fileService;
             _beatmapHasher = beatmapHasher;
+            _serviceProvider = serviceProvider;
 
             _fileService.PlaylistsLocationObservable.Subscribe(playlistsLocation =>
             {
@@ -256,7 +253,11 @@ namespace BeatSaberTools.Services
         /// </summary>
         private async Task<Dictionary<string, MapInfo>> GetMapInfoCache()
         {
-            var mapInfo = await _mapInfoCacheRepository.GetAsync();
+            using var scope = _serviceProvider.CreateScope();
+
+            var dataStore = scope.ServiceProvider.GetService<IDataStore>();
+
+            var mapInfo = await dataStore.Set<MapInfo>().ToListAsync();
 
             return mapInfo.ToDictionary(i => i.Hash);
         }
@@ -267,10 +268,14 @@ namespace BeatSaberTools.Services
         /// </summary>
         private async Task CacheMapInfo(Dictionary<string, MapInfo> mapInfoByHash)
         {
-            _mapInfoCacheRepository.Delete(_mapInfoCacheRepository.DbSet);
-            _mapInfoCacheRepository.Insert(mapInfoByHash.Values);
+            using var scope = _serviceProvider.CreateScope();
 
-            await _unitOfWork.SaveAsync();
+            var dataStore = scope.ServiceProvider.GetService<IDataStore>();
+
+            dataStore.Set<MapInfo>().RemoveRange(dataStore.Set<MapInfo>());
+            dataStore.Set<MapInfo>().AddRange(mapInfoByHash.Values);
+
+            await dataStore.SaveChangesAsync();
         }
     }
 }
