@@ -97,7 +97,7 @@ namespace BeatSaberTools.Core.Services
                         };
                     });
 
-                var scoresaber = new Scoresaber_old(player, rankedMapPlayerScorePairs.Select(x => x.PlayerScore));
+                var scoresaber = new Scoresaber(player, rankedMapPlayerScorePairs.Select(x => x.PlayerScore));
 
                 return rankedMapPlayerScorePairs.Select(pair =>
                 {
@@ -121,7 +121,7 @@ namespace BeatSaberTools.Core.Services
                 if (player == null)
                     return Enumerable.Empty<ScoreEstimate>();
 
-                var scoresaber = new Scoresaber_old(player, playerScores);
+                var scoresaber = new Scoresaber(player, playerScores);
 
                 return rankedMaps.Select(map =>
                 {
