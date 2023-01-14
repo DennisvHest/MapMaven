@@ -7,6 +7,8 @@ using BeatSaverSharp;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System.Net;
+using System.Security.AccessControl;
+using System.Security.Principal;
 
 namespace BeatSaberTools.Infrastructure
 {
@@ -41,9 +43,31 @@ namespace BeatSaberTools.Infrastructure
         {
             using var scope = serviceProvider.CreateScope();
 
-            var context = scope.ServiceProvider.GetService<BSToolsContext>();
+            var context = scope.ServiceProvider.GetRequiredService<BSToolsContext>();
 
             context.Database.Migrate();
+
+            SetDbFullAccessPermissions();
+        }
+
+        /// <summary>
+        /// Sets full access permissions on the SQLite db file to avoid "writing to readonly database" error
+        /// </summary>
+        private static void SetDbFullAccessPermissions()
+        {
+            var dbFileInfo = new FileInfo(BSToolsContext.DbPath);
+            var access = dbFileInfo.GetAccessControl();
+
+            var accessRule = new FileSystemAccessRule(
+                identity: new SecurityIdentifier(WellKnownSidType.WorldSid, null),
+                fileSystemRights: FileSystemRights.FullControl,
+                inheritanceFlags: InheritanceFlags.None,
+                propagationFlags: PropagationFlags.NoPropagateInherit,
+                type: AccessControlType.Allow
+            );
+
+            access.AddAccessRule(accessRule);
+            dbFileInfo.SetAccessControl(access);
         }
     }
 }
