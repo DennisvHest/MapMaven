@@ -14,7 +14,7 @@ namespace BeatSaberTools.Services
 {
     public class PlaylistService
     {
-        private readonly BeatSaverFileServiceBase _beatSaverFileService;
+        private readonly BeatSaverFileService _beatSaverFileService;
 
         private readonly BeatSaberDataService _beatSaberDataService;
         private readonly MapService _mapService;
@@ -28,7 +28,7 @@ namespace BeatSaberTools.Services
         private readonly BehaviorSubject<bool> _creatingPlaylist = new(false);
         public IObservable<bool> CreatingPlaylist => _creatingPlaylist;
 
-        public PlaylistService(BeatSaberDataService beatSaberDataService, BeatSaverFileServiceBase beatSaverFileService, MapService mapService)
+        public PlaylistService(BeatSaberDataService beatSaberDataService, BeatSaverFileService beatSaverFileService, MapService mapService)
         {
             _beatSaverFileService = beatSaverFileService;
             _beatSaberDataService = beatSaberDataService;

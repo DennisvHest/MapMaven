@@ -1,3 +1,4 @@
+using BeatSaberTools.Core.Services;
 using BeatSaberTools.Services;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
@@ -10,7 +11,7 @@ namespace BeatSaberTools.Pages
         protected IFolderPicker FolderPicker { get; set; }
 
         [Inject]
-        protected BeatSaberToolFileService BeatSaberToolFileService { get; set; }
+        protected BeatSaverFileService BeatSaberToolFileService { get; set; }
 
         [CascadingParameter]
         MudDialogInstance MudDialog { get; set; }

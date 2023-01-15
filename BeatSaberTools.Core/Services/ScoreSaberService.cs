@@ -11,7 +11,7 @@ namespace BeatSaberTools.Core.Services
     public class ScoreSaberService
     {
         private readonly ScoreSaberApiClient _scoreSaber;
-        private readonly BeatSaverFileServiceBase _fileService;
+        private readonly BeatSaverFileService _fileService;
         private readonly IHttpClientFactory _httpClientFactory;
 
         private readonly BehaviorSubject<string?> _playerId = new(null);
@@ -30,7 +30,7 @@ namespace BeatSaberTools.Core.Services
 
         public ScoreSaberService(
             ScoreSaberApiClient scoreSaber,
-            BeatSaverFileServiceBase fileService,
+            BeatSaverFileService fileService,
             IHttpClientFactory httpClientFactory)
         {
             _scoreSaber = scoreSaber;

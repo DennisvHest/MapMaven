@@ -1,5 +1,4 @@
-﻿using BeatSaberTools.Core.Services;
-using BeatSaberTools.Infrastructure;
+﻿using BeatSaberTools.Infrastructure;
 using BeatSaberTools.Services;
 using MudBlazor;
 using MudBlazor.Services;
@@ -28,9 +27,9 @@ public static class MauiProgram
 			config.SnackbarConfiguration.PositionClass = Defaults.Classes.Position.BottomCenter;
 		});
 
-		builder.Services.AddBeatSaberTools<BeatSaberToolFileService>();
+		builder.Services.AddBeatSaberTools();
 
-		builder.Services.AddSingleton(services => (BeatSaberToolFileService)services.GetService<BeatSaverFileServiceBase>());
+		//builder.Services.AddSingleton(services => (BeatSaberToolFileService)services.GetService<BeatSaverFileServiceBase>());
 
 #if WINDOWS
         builder.Services.AddTransient<IFolderPicker, Platforms.Windows.FolderPicker>();

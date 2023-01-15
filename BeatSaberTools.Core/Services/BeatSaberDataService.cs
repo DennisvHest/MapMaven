@@ -19,7 +19,7 @@ namespace BeatSaberTools.Services
 {
     public class BeatSaberDataService
     {
-        private readonly BeatSaverFileServiceBase _fileService;
+        private readonly BeatSaverFileService _fileService;
 
         private readonly IBeatmapHasher _beatmapHasher;
         private PlaylistManager _playlistManager;
@@ -41,7 +41,7 @@ namespace BeatSaberTools.Services
         public IObservable<IEnumerable<IPlaylist>> PlaylistInfo => _playlistInfo;
         public IObservable<bool> LoadingPlaylistInfo => _loadingPlaylistInfo;
 
-        public BeatSaberDataService(IBeatmapHasher beatmapHasher, BeatSaverFileServiceBase fileService, IServiceProvider serviceProvider)
+        public BeatSaberDataService(IBeatmapHasher beatmapHasher, BeatSaverFileService fileService, IServiceProvider serviceProvider)
         {
             _fileService = fileService;
             _beatmapHasher = beatmapHasher;

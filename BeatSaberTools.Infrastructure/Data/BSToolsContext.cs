@@ -11,12 +11,12 @@ namespace BeatSaberTools.Infrastructure.Data
         public DbSet<Player> Players { get; set; }
         public DbSet<HiddenMap> HiddenMaps { get; set; }
 
-        public static string DbPath => Path.Join(BeatSaverFileServiceBase.AppDataLocation, "BSTools.db");
+        public static string DbPath => Path.Join(BeatSaverFileService.AppDataLocation, "BSTools.db");
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
         {
-            if (!Directory.Exists(BeatSaverFileServiceBase.AppDataLocation))
-                Directory.CreateDirectory(BeatSaverFileServiceBase.AppDataLocation);
+            if (!Directory.Exists(BeatSaverFileService.AppDataLocation))
+                Directory.CreateDirectory(BeatSaverFileService.AppDataLocation);
 
             options.UseSqlite($"Data Source={DbPath}");
         }

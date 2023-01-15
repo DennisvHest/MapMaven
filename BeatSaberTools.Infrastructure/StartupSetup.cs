@@ -14,7 +14,7 @@ namespace BeatSaberTools.Infrastructure
 {
     public static class StartupSetup
     {
-        public static void AddBeatSaberTools<TFileService>(this IServiceCollection services) where TFileService : BeatSaverFileServiceBase
+        public static void AddBeatSaberTools(this IServiceCollection services)
         {
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
 
@@ -30,7 +30,7 @@ namespace BeatSaberTools.Infrastructure
                 config.BaseAddress = new Uri("https://scoresaber.balibalo.xyz");
             });
 
-            services.AddScoped(typeof(BeatSaverFileServiceBase), typeof(TFileService));
+            services.AddScoped<BeatSaverFileService>();
             services.AddScoped<BeatSaberDataService>();
             services.AddScoped<MapService>();
             services.AddScoped<SongPlayerService>();

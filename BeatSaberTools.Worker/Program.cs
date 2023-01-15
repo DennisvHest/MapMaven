@@ -1,6 +1,5 @@
 using BeatSaberTools.Infrastructure;
 using BeatSaberTools.Worker;
-using BeatSaberTools.Worker.Services;
 
 IHost host = Host.CreateDefaultBuilder(args)
     .UseWindowsService(options =>
@@ -9,7 +8,7 @@ IHost host = Host.CreateDefaultBuilder(args)
     })
     .ConfigureServices(services =>
     {
-        services.AddBeatSaberTools<BeatSaberWorkerFileService>();
+        services.AddBeatSaberTools();
 
         services.AddHostedService<Worker>();
     })
