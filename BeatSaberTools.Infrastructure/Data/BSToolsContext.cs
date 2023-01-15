@@ -10,6 +10,7 @@ namespace BeatSaberTools.Infrastructure.Data
         public DbSet<MapInfo> MapInfos { get; set; }
         public DbSet<Player> Players { get; set; }
         public DbSet<HiddenMap> HiddenMaps { get; set; }
+        public DbSet<ApplicationSetting> ApplicationSettings { get; set; }
 
         public static string DbPath => Path.Join(BeatSaverFileService.AppDataLocation, "BSTools.db");
 
@@ -40,6 +41,16 @@ namespace BeatSaberTools.Infrastructure.Data
             hiddenMap
                 .Property(m => m.Id)
                 .ValueGeneratedOnAdd();
+
+            var applicationSetting = modelBuilder.Entity<ApplicationSetting>();
+
+            applicationSetting
+                .Property(s => s.Id)
+                .ValueGeneratedOnAdd();
+
+            applicationSetting
+                .Property(s => s.Key)
+                .HasMaxLength(50);
         }
     }
 }

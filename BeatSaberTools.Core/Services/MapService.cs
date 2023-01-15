@@ -11,7 +11,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
-using System.Text.Json;
 using Map = BeatSaberTools.Models.Map;
 
 namespace BeatSaberTools.Services
