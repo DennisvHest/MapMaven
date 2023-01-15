@@ -18,7 +18,7 @@ namespace BeatSaberTools.Services
 
         private readonly BeatSaberDataService _beatSaberDataService;
         private readonly MapService _mapService;
-        private readonly PlaylistManager _playlistManager;
+        private PlaylistManager _playlistManager;
 
         private readonly BehaviorSubject<string> _selectedPlaylistFileName = new(null);
 
@@ -33,7 +33,7 @@ namespace BeatSaberTools.Services
             _beatSaverFileService = beatSaverFileService;
             _beatSaberDataService = beatSaberDataService;
             _mapService = mapService;
-            _playlistManager = new PlaylistManager(_beatSaverFileService.PlaylistsLocation, new LegacyPlaylistHandler());
+            ResetPlaylistManager();
 
             Playlists = _beatSaberDataService.PlaylistInfo.Select(x => x.Select(i => new Playlist(i)));
 
@@ -46,6 +46,11 @@ namespace BeatSaberTools.Services
                     return x.playlists.FirstOrDefault(p => p.FileName == x.selectedPlaylistFileName);
                 })
                 .Subscribe(SelectedPlaylist.OnNext); // Subscribing here because of weird behavior with multiple subscriptions triggering multiple reruns of this observable.
+        }
+
+        public void ResetPlaylistManager()
+        {
+            _playlistManager = new PlaylistManager(_beatSaverFileService.PlaylistsLocation, new LegacyPlaylistHandler());
         }
 
         public void SetSelectedPlaylist(Playlist playlist)

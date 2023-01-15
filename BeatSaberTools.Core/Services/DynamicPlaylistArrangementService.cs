@@ -12,10 +12,11 @@ namespace BeatSaberTools.Core.Services
         private readonly MapService _mapService;
         private readonly PlaylistService _playlistService;
         private readonly ScoreSaberService _scoreSaberService;
+        private readonly ApplicationSettingService _applicationSettingService;
 
         private readonly IResolver _resolver;
 
-        public DynamicPlaylistArrangementService(BeatSaberDataService beatSaberDataService, MapService mapService, PlaylistService playlistService, ScoreSaberService scoreSaberService)
+        public DynamicPlaylistArrangementService(BeatSaberDataService beatSaberDataService, MapService mapService, PlaylistService playlistService, ScoreSaberService scoreSaberService, ApplicationSettingService applicationSettingService)
         {
             _beatSaberDataService = beatSaberDataService;
             _mapService = mapService;
@@ -23,10 +24,15 @@ namespace BeatSaberTools.Core.Services
             _scoreSaberService = scoreSaberService;
 
             _resolver = new Resolver();
+            _applicationSettingService = applicationSettingService;
         }
 
         public async Task ArrangeDynamicPlaylists()
         {
+            await _applicationSettingService.LoadAsync();
+
+            _playlistService.ResetPlaylistManager();
+
             var playlists = await _beatSaberDataService.GetAllPlaylists();
 
             var dynamicPlaylists = playlists
