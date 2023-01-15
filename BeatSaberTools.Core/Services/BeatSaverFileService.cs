@@ -1,21 +1,15 @@
-﻿using BeatSaberTools.Core.Extensions;
-using BeatSaberTools.Core.Models.Data;
-using Microsoft.Extensions.DependencyInjection;
-using System.Reactive.Linq;
-using System.Reactive.Subjects;
+﻿using System.Reactive.Linq;
 
 namespace BeatSaberTools.Core.Services
 {
     public class BeatSaverFileService
     {
-        private IServiceProvider _serviceProvider;
-
+        private readonly ApplicationSettingService _applicationSettingService;
+        
         private const string BeatSaberInstallLocationKey = "BeatSaberInstallLocation";
 
-        public string? BeatSaberInstallLocation => _beatSaberInstallLocation.Value;
-
-        private BehaviorSubject<string?> _beatSaberInstallLocation = new(null);
-        public IObservable<string?> BeatSaberInstallLocationObservable => _beatSaberInstallLocation;
+        public string? BeatSaberInstallLocation { get; private set; }
+        public IObservable<string?> BeatSaberInstallLocationObservable { get; private set; }
 
         public virtual string MapsLocation => $"{BeatSaberInstallLocation}/Beat Saber_Data/CustomLevels";
         public virtual string PlaylistsLocation => $"{BeatSaberInstallLocation}/Playlists";
@@ -25,27 +19,23 @@ namespace BeatSaberTools.Core.Services
         public virtual IObservable<string> PlaylistsLocationObservable => BeatSaberInstallLocationObservable.Select(location => $"{location}/Playlists");
         public virtual IObservable<string> UserDataLocationObservable => BeatSaberInstallLocationObservable.Select(location => $"{location}/UserData");
 
-        public BeatSaverFileService(IServiceProvider serviceProvider)
+        public BeatSaverFileService(ApplicationSettingService applicationSettingService)
         {
-            _serviceProvider = serviceProvider;
-        }
+            _applicationSettingService = applicationSettingService;
 
+            BeatSaberInstallLocationObservable = _applicationSettingService.ApplicationSettings.Select(applicationSettings =>
+            {
+                BeatSaberInstallLocation = applicationSettings.TryGetValue(BeatSaberInstallLocationKey, out var beatSaberInstallLocation) ? beatSaberInstallLocation.StringValue : null;
+
+                return BeatSaberInstallLocation;
+            });
+        }
 
         public async Task SetBeatSaberInstallLocation(string path)
         {
             path = path.Replace('\\', '/');
 
-            using var scope = _serviceProvider.CreateScope();
-
-            var dataStore = scope.ServiceProvider.GetRequiredService<IDataStore>();
-
-            await dataStore
-                .Set<ApplicationSetting>()
-                .AddOrUpdateAsync(BeatSaberInstallLocationKey, path);
-
-            await dataStore.SaveChangesAsync();
-
-            _beatSaberInstallLocation.OnNext(path);
+            await _applicationSettingService.AddOrUpdateAsync(BeatSaberInstallLocationKey, path);
         }
     }
 }

@@ -21,6 +21,9 @@
 
 @code {
     [Inject]
+    protected ApplicationSettingService ApplicationSettingService { get; set; }
+
+    [Inject]
     protected BeatSaberDataService BeatSaberDataService { get; set; }
 
     [Inject]
@@ -34,8 +37,10 @@
 
     protected bool InitialSetupDone { get; set; }
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
+        await ApplicationSettingService.LoadAsync();
+
         BeatSaberToolFileService.BeatSaberInstallLocationObservable.Subscribe(location =>
         {
             InitialSetupDone = location != null;

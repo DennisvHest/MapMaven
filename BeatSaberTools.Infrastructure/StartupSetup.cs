@@ -37,6 +37,7 @@ namespace BeatSaberTools.Infrastructure
             services.AddScoped<PlaylistService>();
             services.AddScoped<ScoreSaberService>();
             services.AddScoped<DynamicPlaylistArrangementService>();
+            services.AddScoped<ApplicationSettingService>();
         }
 
         public static void Initialize(IServiceProvider serviceProvider)
