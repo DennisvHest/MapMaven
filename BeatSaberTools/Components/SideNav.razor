@@ -1,6 +1,6 @@
 ﻿<MudDrawer Open="true" Elevation="1">
     <PlayerProfile></PlayerProfile>
-    <MudNavMenu Color="Color.Primary" Bordered="true">
+    <MudNavMenu Color="Color.Primary" Bordered="true" Class="full-height">
         <div @onclick="OnMapsNavigation">
             <MudNavLink Icon="@Icons.Filled.LibraryMusic"
                         DisableRipple="true"
@@ -18,5 +18,14 @@
             </MudNavLink>
         </div>
         <PlaylistList></PlaylistList>
+        <div class="absolute full-width" style="bottom: 0">
+            <div @onclick="OpenSettings" @onclick:preventDefault="true">
+                <MudNavLink Icon="@Icons.Material.Filled.Settings"
+                            Href="#"
+                            DisableRipple="true">
+                    Settings
+                </MudNavLink>
+            </div>
+        </div>
     </MudNavMenu>
 </MudDrawer>

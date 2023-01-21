@@ -14,6 +14,7 @@ using BeatSaberPlaylistsLib.Legacy;
 using BeatSaberTools.Core.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace BeatSaberTools.Services
 {
@@ -51,6 +52,12 @@ namespace BeatSaberTools.Services
             {
                 _playlistManager = new PlaylistManager(_fileService.PlaylistsLocation, new LegacyPlaylistHandler());
             });
+
+            _fileService.BeatSaberInstallLocationObservable
+                .DistinctUntilChanged()
+                .Select(_ => Observable.FromAsync(LoadAllMapInfo))
+                .Concat()
+                .Subscribe();
         }
 
         public async Task LoadAllMapInfo()
@@ -102,6 +109,9 @@ namespace BeatSaberTools.Services
 
         public async Task<IEnumerable<MapInfo>> GetAllMapInfo()
         {
+            if (!Directory.Exists(_fileService.MapsLocation))
+                return Enumerable.Empty<MapInfo>();
+
             var songHashData = await GetSongHashData();
             var mapInfoCache = await GetMapInfoCache();
 
@@ -268,6 +278,9 @@ namespace BeatSaberTools.Services
         /// </summary>
         private async Task CacheMapInfo(Dictionary<string, MapInfo> mapInfoByHash)
         {
+            if (!mapInfoByHash.Any())
+                return;
+
             using var scope = _serviceProvider.CreateScope();
 
             var dataStore = scope.ServiceProvider.GetService<IDataStore>();

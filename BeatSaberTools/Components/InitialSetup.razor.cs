@@ -3,7 +3,7 @@ using BeatSaberTools.Services;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 
-namespace BeatSaberTools.Pages
+namespace BeatSaberTools.Components
 {
     public partial class InitialSetup
     {
@@ -18,16 +18,21 @@ namespace BeatSaberTools.Pages
 
         public string BeatSaberInstallLocation { get; set; }
 
+        protected override void OnInitialized()
+        {
+            SubscribeAndBind(BeatSaberToolFileService.BeatSaberInstallLocationObservable, installLocation => BeatSaberInstallLocation = installLocation);
+        }
+
         public async Task PickFolder()
         {
             BeatSaberInstallLocation = await FolderPicker.PickFolder();
         }
 
-        public void SaveInititalSetup()
+        public async Task SaveInititalSetup()
         {
             MudDialog.Close(DialogResult.Ok(true));
 
-            BeatSaberToolFileService.SetBeatSaberInstallLocation(BeatSaberInstallLocation);
+            await BeatSaberToolFileService.SetBeatSaberInstallLocation(BeatSaberInstallLocation);
         }
     }
 }
