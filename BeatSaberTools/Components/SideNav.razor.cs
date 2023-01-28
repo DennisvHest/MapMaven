@@ -23,7 +23,7 @@ namespace BeatSaberTools.Components
 
         protected void OpenSettings()
         {
-            DialogService.Show<InitialSetup>(null);
+            DialogService.Show<Settings>(null);
         }
     }
 }

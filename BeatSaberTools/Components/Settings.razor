@@ -11,6 +11,11 @@
             AdornmentIcon="@Icons.Filled.DriveFileMove"
             OnAdornmentClick="PickFolder">
         </MudTextField>
+        <MudTextField
+            @bind-Value="PlayerId"
+            Variant="Variant.Outlined"
+            Label="ScoreSaber player ID / URL">
+        </MudTextField>
     </DialogContent>
     <DialogActions>
         <MudButton Color="Color.Primary" Variant="Variant.Filled" Class="ma-3" OnClick="SaveInititalSetup">Start</MudButton>

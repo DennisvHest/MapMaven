@@ -5,7 +5,7 @@ using MudBlazor;
 
 namespace BeatSaberTools.Components
 {
-    public partial class InitialSetup
+    public partial class Settings
     {
         [Inject]
         protected IFolderPicker FolderPicker { get; set; }
@@ -13,14 +13,19 @@ namespace BeatSaberTools.Components
         [Inject]
         protected BeatSaverFileService BeatSaberToolFileService { get; set; }
 
+        [Inject]
+        protected ScoreSaberService ScoreSaberService { get; set; }
+
         [CascadingParameter]
         MudDialogInstance MudDialog { get; set; }
 
         public string BeatSaberInstallLocation { get; set; }
+        public string PlayerId { get; set; }
 
         protected override void OnInitialized()
         {
             SubscribeAndBind(BeatSaberToolFileService.BeatSaberInstallLocationObservable, installLocation => BeatSaberInstallLocation = installLocation);
+            SubscribeAndBind(ScoreSaberService.PlayerIdObservable, playerId => PlayerId = playerId);
         }
 
         public async Task PickFolder()
@@ -33,6 +38,7 @@ namespace BeatSaberTools.Components
             MudDialog.Close(DialogResult.Ok(true));
 
             await BeatSaberToolFileService.SetBeatSaberInstallLocation(BeatSaberInstallLocation);
+            await ScoreSaberService.SetPlayerId(PlayerId);
         }
     }
 }

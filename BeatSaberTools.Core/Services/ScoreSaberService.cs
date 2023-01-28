@@ -12,11 +12,13 @@ namespace BeatSaberTools.Core.Services
     {
         private readonly ScoreSaberApiClient _scoreSaber;
         private readonly BeatSaverFileService _fileService;
+        private readonly ApplicationSettingService _applicationSettingService;
         private readonly IHttpClientFactory _httpClientFactory;
 
         private readonly BehaviorSubject<string?> _playerId = new(null);
         private readonly BehaviorSubject<IEnumerable<RankedMap>> _rankedMaps = new(Enumerable.Empty<RankedMap>());
 
+        public IObservable<string?> PlayerIdObservable => _playerId;
         public readonly IObservable<Player> PlayerProfile;
         public readonly IObservable<IEnumerable<PlayerScore>> PlayerScores;
         public readonly IObservable<IEnumerable<ScoreEstimate>> ScoreEstimates;
@@ -26,16 +28,19 @@ namespace BeatSaberTools.Core.Services
 
         public string? PlayerId => _playerId.Value;
 
+        private const string PlayerIdSettingKey = "PlayerId";
         private const string _replayBaseUrl = "https://www.replay.beatleader.xyz";
 
         public ScoreSaberService(
             ScoreSaberApiClient scoreSaber,
             BeatSaverFileService fileService,
-            IHttpClientFactory httpClientFactory)
+            IHttpClientFactory httpClientFactory,
+            ApplicationSettingService applicationSettingService)
         {
             _scoreSaber = scoreSaber;
             _fileService = fileService;
             _httpClientFactory = httpClientFactory;
+            _applicationSettingService = applicationSettingService;
 
             var playerScores = _playerId.Select(playerId =>
             {
@@ -139,19 +144,29 @@ namespace BeatSaberTools.Core.Services
             rankedMapScoreEstimates.Connect();
 
             RankedMapScoreEstimates = rankedMapScoreEstimates;
+
+            _applicationSettingService.ApplicationSettings
+                .Select(applicationSettings => applicationSettings.TryGetValue(PlayerIdSettingKey, out var playerId) ? playerId.StringValue : null)
+                .DistinctUntilChanged()
+                .Subscribe(_playerId.OnNext);
         }
 
-        public async Task LoadPlayerData()
+        public async Task SetPlayerId(string playerId)
+        {
+            await _applicationSettingService.AddOrUpdateAsync(PlayerIdSettingKey, playerId);
+        }
+
+        public string? GetPlayerIdFromReplays()
         {
             var scoreSaberReplaysLocation = Path.Combine(_fileService.UserDataLocation, "ScoreSaber", "Replays");
 
             if (!Directory.Exists(scoreSaberReplaysLocation))
-                return;
+                return null;
 
             var replayFileName = Directory.EnumerateFiles(scoreSaberReplaysLocation, "*.dat").FirstOrDefault();
 
             if (string.IsNullOrEmpty(replayFileName))
-                return;
+                return null;
 
             var replayFile = new FileInfo(replayFileName);
 
@@ -159,7 +174,7 @@ namespace BeatSaberTools.Core.Services
                 .Split('-')
                 .First();
 
-            _playerId.OnNext(playerId);
+            return playerId;
         }
 
         public async Task LoadRankedMaps()

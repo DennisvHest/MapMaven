@@ -50,7 +50,6 @@
             if (InitialSetupDone)
             {
                 Task.Run(BeatSaberDataService.LoadAllMapInfo);
-                Task.Run(ScoreSaberService.LoadPlayerData);
                 Task.Run(ScoreSaberService.LoadRankedMaps);
                 Task.Run(BeatSaberDataService.LoadAllPlaylists);
                 Task.Run(MapService.LoadHiddenMaps);
@@ -62,7 +61,7 @@
     {
         if (BeatSaberToolFileService.BeatSaberInstallLocation == null)
         {
-            DialogService.Show<InitialSetup>(null, new DialogOptions
+            DialogService.Show<Settings>(null, new DialogOptions
             {
                 DisableBackdropClick = true
             });
