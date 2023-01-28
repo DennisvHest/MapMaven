@@ -52,23 +52,23 @@ namespace BeatSaberTools.Infrastructure
         }
 
         /// <summary>
-        /// Sets full access permissions on the SQLite db file to avoid "writing to readonly database" error
+        /// Sets full access permissions on the application data directory to avoid "writing to readonly database" error
         /// </summary>
         private static void SetDbFullAccessPermissions()
         {
-            var dbFileInfo = new FileInfo(BSToolsContext.DbPath);
-            var access = dbFileInfo.GetAccessControl();
+            var appDataDirectoryInfo = new DirectoryInfo(BeatSaverFileService.AppDataLocation);
+            var access = appDataDirectoryInfo.GetAccessControl();
 
             var accessRule = new FileSystemAccessRule(
                 identity: new SecurityIdentifier(WellKnownSidType.WorldSid, null),
                 fileSystemRights: FileSystemRights.FullControl,
-                inheritanceFlags: InheritanceFlags.None,
-                propagationFlags: PropagationFlags.NoPropagateInherit,
+                inheritanceFlags: InheritanceFlags.ContainerInherit | InheritanceFlags.ObjectInherit,
+                propagationFlags: PropagationFlags.None,
                 type: AccessControlType.Allow
             );
 
             access.AddAccessRule(accessRule);
-            dbFileInfo.SetAccessControl(access);
+            appDataDirectoryInfo.SetAccessControl(access);
         }
     }
 }
