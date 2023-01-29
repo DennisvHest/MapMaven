@@ -61,10 +61,17 @@
     {
         if (BeatSaberToolFileService.BeatSaberInstallLocation == null)
         {
-            DialogService.Show<Settings>(null, new DialogOptions
-            {
-                DisableBackdropClick = true
-            });
+            DialogService.Show<Settings>(
+                title: null,
+                parameters: new()
+                {
+                    { nameof(Settings.InitialSetup), true }
+                },
+                options: new()
+                {
+                    DisableBackdropClick = true
+                }
+            );
         }
     }
 }

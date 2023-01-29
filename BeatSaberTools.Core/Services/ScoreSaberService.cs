@@ -156,9 +156,9 @@ namespace BeatSaberTools.Core.Services
             await _applicationSettingService.AddOrUpdateAsync(PlayerIdSettingKey, playerId);
         }
 
-        public string? GetPlayerIdFromReplays()
+        public string? GetPlayerIdFromReplays(string beatSaberInstallLocation)
         {
-            var scoreSaberReplaysLocation = Path.Combine(_fileService.UserDataLocation, "ScoreSaber", "Replays");
+            var scoreSaberReplaysLocation = Path.Combine(BeatSaverFileService.GetUserDataLocation(beatSaberInstallLocation), "ScoreSaber", "Replays");
 
             if (!Directory.Exists(scoreSaberReplaysLocation))
                 return null;

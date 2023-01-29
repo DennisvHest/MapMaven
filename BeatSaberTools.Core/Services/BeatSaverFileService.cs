@@ -5,7 +5,7 @@ namespace BeatSaberTools.Core.Services
     public class BeatSaverFileService
     {
         private readonly ApplicationSettingService _applicationSettingService;
-        
+
         private const string BeatSaberInstallLocationKey = "BeatSaberInstallLocation";
 
         public string? BeatSaberInstallLocation { get; private set; }
@@ -13,7 +13,8 @@ namespace BeatSaberTools.Core.Services
 
         public virtual string MapsLocation => $"{BeatSaberInstallLocation}/Beat Saber_Data/CustomLevels";
         public virtual string PlaylistsLocation => $"{BeatSaberInstallLocation}/Playlists";
-        public virtual string UserDataLocation => $"{BeatSaberInstallLocation}/UserData";
+        public virtual string UserDataLocation => GetUserDataLocation(BeatSaberInstallLocation);
+
         public static string AppDataLocation => Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "BSTools");
         public virtual IObservable<string> MapsLocationObservable => BeatSaberInstallLocationObservable.Select(location => $"{location}/Beat Saber_Data/CustomLevels");
         public virtual IObservable<string> PlaylistsLocationObservable => BeatSaberInstallLocationObservable.Select(location => $"{location}/Playlists");
@@ -29,6 +30,11 @@ namespace BeatSaberTools.Core.Services
 
                 return BeatSaberInstallLocation;
             });
+        }
+
+        public static string GetUserDataLocation(string beatSaberInstallLocation)
+        {
+            return $"{beatSaberInstallLocation}/UserData";
         }
 
         public async Task SetBeatSaberInstallLocation(string path)

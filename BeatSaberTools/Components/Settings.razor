@@ -1,12 +1,24 @@
 ﻿@inherits ReactiveComponent
 
 <MudDialog Style="width: 600px">
-    <TitleContent></TitleContent>
+    <TitleContent>
+        <div class="d-flex align-center">
+            <MudIcon Icon="@Icons.Material.Filled.Settings" Class="mr-2"></MudIcon>
+            <h3>@(InitialSetup ? "Setup" : "Settings")</h3>
+            @if(!InitialSetup)
+            {
+                <MudIconButton Icon="@Icons.Material.Filled.Close" OnClick="Close" Style="margin-left: auto"></MudIconButton>
+            }
+        </div>
+    </TitleContent>
     <DialogContent>
         <MudTextField
             @bind-Value="BeatSaberInstallLocation"
+            DebounceInterval="300"
+            OnDebounceIntervalElapsed="AutoFillPlayerId"
             Variant="Variant.Outlined"
             Label="Beat Saber install location"
+            Class="mb-4"
             Adornment="Adornment.End"
             AdornmentIcon="@Icons.Filled.DriveFileMove"
             OnAdornmentClick="PickFolder">
@@ -14,10 +26,12 @@
         <MudTextField
             @bind-Value="PlayerId"
             Variant="Variant.Outlined"
-            Label="ScoreSaber player ID / URL">
+            Label="ScoreSaber player ID / URL (optional)">
         </MudTextField>
     </DialogContent>
     <DialogActions>
-        <MudButton Color="Color.Primary" Variant="Variant.Filled" Class="ma-3" OnClick="SaveInititalSetup">Start</MudButton>
+        <MudButton Color="Color.Primary" Variant="Variant.Filled" Class="ma-3" Disabled="string.IsNullOrEmpty(BeatSaberInstallLocation)" OnClick="SaveSettings">
+            @(InitialSetup ? "Start" : "Save")
+        </MudButton>
     </DialogActions>
 </MudDialog>

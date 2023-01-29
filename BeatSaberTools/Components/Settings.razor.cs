@@ -2,11 +2,14 @@ using BeatSaberTools.Core.Services;
 using BeatSaberTools.Services;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
+using System.Text.RegularExpressions;
 
 namespace BeatSaberTools.Components
 {
     public partial class Settings
     {
+        private static readonly Regex _scoreSaberPlayerIdUrlRegex = new Regex(@"scoresaber.com\/u\/(?<playerId>[^\/\?]+)");
+
         [Inject]
         protected IFolderPicker FolderPicker { get; set; }
 
@@ -19,6 +22,9 @@ namespace BeatSaberTools.Components
         [CascadingParameter]
         MudDialogInstance MudDialog { get; set; }
 
+        [Parameter]
+        public bool InitialSetup { get; set; } = false;
+
         public string BeatSaberInstallLocation { get; set; }
         public string PlayerId { get; set; }
 
@@ -28,17 +34,42 @@ namespace BeatSaberTools.Components
             SubscribeAndBind(ScoreSaberService.PlayerIdObservable, playerId => PlayerId = playerId);
         }
 
+        public void AutoFillPlayerId(string beatSaberInstallLocation)
+        {
+            if (!string.IsNullOrEmpty(PlayerId))
+                return;
+
+            var playerId = ScoreSaberService.GetPlayerIdFromReplays(beatSaberInstallLocation);
+
+            if (!string.IsNullOrEmpty(playerId))
+                PlayerId = playerId;
+        }
+
         public async Task PickFolder()
         {
             BeatSaberInstallLocation = await FolderPicker.PickFolder();
+
+            AutoFillPlayerId(BeatSaberInstallLocation);
         }
 
-        public async Task SaveInititalSetup()
+        public async Task SaveSettings()
         {
-            MudDialog.Close(DialogResult.Ok(true));
+            if (!string.IsNullOrEmpty(PlayerId))
+            {
+                var playerIdMatch = _scoreSaberPlayerIdUrlRegex.Match(PlayerId);
+
+                PlayerId = playerIdMatch.Groups.GetValueOrDefault("playerId")?.Value;
+            }
+
+            Close();
 
             await BeatSaberToolFileService.SetBeatSaberInstallLocation(BeatSaberInstallLocation);
             await ScoreSaberService.SetPlayerId(PlayerId);
+        }
+
+        public void Close()
+        {
+            MudDialog.Close(DialogResult.Ok(true));
         }
     }
 }
