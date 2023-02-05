@@ -51,12 +51,9 @@
         <MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Compile Remove="Data\**" />
-      <EmbeddedResource Remove="Data\**" />
-      <MauiXaml Remove="Data\**" />
-      <None Remove="Data\**" />
-    </ItemGroup>
+	<ItemGroup>
+		<None Include="Worker\**" CopyToPublishDirectory="PreserveNewest" />
+	</ItemGroup>
 
     <ItemGroup>
       <PackageReference Include="BeatSaber.SongHashing" Version="1.2.0" />
