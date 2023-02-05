@@ -37,13 +37,15 @@
     <PackageReference Include="System.Reactive" Version="5.0.0" />
   </ItemGroup>
   <ItemGroup Label="ScoreEstimateMLModel">
-    <None Include="ScoreEstimateMLModel.consumption.cs">
+    <None Include="ScoreEstimation\ScoreEstimateMLModel.consumption.cs">
       <DependentUpon>ScoreEstimateMLModel.mbconfig</DependentUpon>
     </None>
-    <None Include="ScoreEstimateMLModel.training.cs">
+    <None Include="ScoreEstimation\ScoreEstimateMLModel.training.cs">
       <DependentUpon>ScoreEstimateMLModel.mbconfig</DependentUpon>
     </None>
-    <None Include="ScoreEstimateMLModel.zip">
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="ScoreEstimation\ScoreEstimateMLModel.zip">
       <DependentUpon>ScoreEstimateMLModel.mbconfig</DependentUpon>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
