@@ -1,8 +1,10 @@
-﻿using BeatSaberTools.Infrastructure;
+﻿using BeatSaberTools.Core.Services;
+using BeatSaberTools.Infrastructure;
 using BeatSaberTools.Services;
 using Microsoft.Maui.LifecycleEvents;
 using MudBlazor;
 using MudBlazor.Services;
+using Serilog;
 
 namespace BeatSaberTools;
 
@@ -17,6 +19,16 @@ public static class MauiProgram
             {
                 fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
             });
+
+        Log.Logger = new LoggerConfiguration()
+            .MinimumLevel.Information()
+            .WriteTo.File(
+                path: Path.Join(BeatSaverFileService.AppDataLocation, "logs", "app-logs", "app-log-.txt"),
+                rollingInterval: RollingInterval.Day
+            ).CreateLogger();
+
+        builder.Services.AddLogging(loggingBuilder =>
+          loggingBuilder.AddSerilog(dispose: true));
 
         builder.Services.AddMauiBlazorWebView();
 #if DEBUG

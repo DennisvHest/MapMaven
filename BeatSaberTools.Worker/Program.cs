@@ -1,5 +1,7 @@
+using BeatSaberTools.Core.Services;
 using BeatSaberTools.Infrastructure;
 using BeatSaberTools.Worker;
+using Serilog;
 
 IHost host = Host.CreateDefaultBuilder(args)
     .UseWindowsService(options =>
@@ -8,6 +10,16 @@ IHost host = Host.CreateDefaultBuilder(args)
     })
     .ConfigureServices(services =>
     {
+        Log.Logger = new LoggerConfiguration()
+            .MinimumLevel.Information()
+            .WriteTo.File(
+                path: Path.Join(BeatSaverFileService.AppDataLocation, "logs", "worker-logs", "worker-log-.txt"),
+                rollingInterval: RollingInterval.Day
+            ).CreateLogger();
+
+        services.AddLogging(loggingBuilder =>
+          loggingBuilder.AddSerilog(dispose: true));
+
         services.AddBeatSaberTools();
 
         services.AddHostedService<Worker>();
