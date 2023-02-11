@@ -6,12 +6,12 @@
   xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
   IgnorableNamespaces="uap rescap">
 
-	<Identity Name="maui-package-name-placeholder" Publisher="CN=User Name" Version="0.0.0.0" />
+	<Identity Name="beat-saber-tools" Publisher="CN=User Name" Version="1.0.0.0" />
 
 	<Properties>
-		<DisplayName>$placeholder$</DisplayName>
-		<PublisherDisplayName>User Name</PublisherDisplayName>
-		<Logo>$placeholder$.png</Logo>
+		<DisplayName>Beat Saber Tools</DisplayName>
+		<PublisherDisplayName>DennisvHest</PublisherDisplayName>
+		<Logo>Assets\$placeholder$.png</Logo>
 	</Properties>
 
 	<Dependencies>
@@ -26,13 +26,19 @@
 	<Applications>
 		<Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="$targetentrypoint$">
 			<uap:VisualElements
-			  DisplayName="$placeholder$"
+			  DisplayName="Beat Saber Tools"
 			  Description="$placeholder$"
-			  Square150x150Logo="$placeholder$.png"
-			  Square44x44Logo="$placeholder$.png"
+			  Square150x150Logo="Assets\logo.png"
+			  Square44x44Logo="Assets\$placeholder$.png"
 			  BackgroundColor="transparent">
-				<uap:DefaultTile Square71x71Logo="$placeholder$.png" Wide310x150Logo="$placeholder$.png" Square310x310Logo="$placeholder$.png" />
-				<uap:SplashScreen Image="$placeholder$.png" />
+				<uap:DefaultTile Square71x71Logo="Assets\$placeholder$.png" Wide310x150Logo="Assets\logo.png" Square310x310Logo="Assets\logo.png"  ShortName="Beat Saber Tools">
+					<uap:ShowNameOnTiles>
+						<uap:ShowOn Tile="square150x150Logo"/>
+						<uap:ShowOn Tile="wide310x150Logo"/>
+						<uap:ShowOn Tile="square310x310Logo"/>
+					</uap:ShowNameOnTiles>
+				</uap:DefaultTile >
+				<uap:SplashScreen Image="Assets\$placeholder$.png" />
 			</uap:VisualElements>
 			
 			<Extensions>
