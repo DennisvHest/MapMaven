@@ -25,16 +25,23 @@ namespace BeatSaberTools.Worker
 
             do
             {
-                _logger.LogInformation("Gathering recently added maps...");
-
-                using (var scope = _serviceProvider.CreateScope())
+                try
                 {
-                    var dynamicPlaylistArrangementService = scope.ServiceProvider.GetRequiredService<DynamicPlaylistArrangementService>();
+                    _logger.LogInformation("Arranging dynamic playlists...");
 
-                    await dynamicPlaylistArrangementService.ArrangeDynamicPlaylists();
+                    using (var scope = _serviceProvider.CreateScope())
+                    {
+                        var dynamicPlaylistArrangementService = scope.ServiceProvider.GetRequiredService<DynamicPlaylistArrangementService>();
+
+                        await dynamicPlaylistArrangementService.ArrangeDynamicPlaylists();
+                    }
+
+                    _logger.LogInformation("Done arranging dynamic playlists!");
                 }
-
-                _logger.LogInformation("Created playlist with recently added maps!");
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Error occurred in worker");
+                }
             }
             while (await _timer.WaitForNextTickAsync() && !stoppingToken.IsCancellationRequested);
         }
