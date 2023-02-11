@@ -58,7 +58,8 @@ namespace BeatSaberTools.Components
             {
                 var playerIdMatch = _scoreSaberPlayerIdUrlRegex.Match(PlayerId);
 
-                PlayerId = playerIdMatch.Groups.GetValueOrDefault("playerId")?.Value;
+                if (playerIdMatch.Success)
+                    PlayerId = playerIdMatch.Groups.GetValueOrDefault("playerId")?.Value;
             }
 
             Close();
