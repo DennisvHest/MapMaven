@@ -55,7 +55,7 @@ namespace BeatSaberTools.Core.Services
 
                     do
                     {
-                        var scoreCollection = await _scoreSaber.Scores2Async(
+                        var scoreCollection = await _scoreSaber.ScoresAsync(
                             playerId: playerId,
                             limit: 100,
                             sort: Sort.Top,
