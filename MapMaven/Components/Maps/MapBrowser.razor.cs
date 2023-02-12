@@ -25,6 +25,7 @@ namespace MapMaven.Components.Maps
         [Parameter]
         public IEnumerable<Map> Maps { get; set; } = new List<Map>();
         private bool LoadingMapInfo = false;
+        private bool InitialMapLoad = false;
 
         [Parameter]
         public RenderFragment? HeaderContent { get; set; }
@@ -51,6 +52,7 @@ namespace MapMaven.Components.Maps
             NavigationManager.LocationChanged += LocationChanged;
 
             SubscribeAndBind(BeatSaberDataService.LoadingMapInfo, loading => LoadingMapInfo = loading);
+            SubscribeAndBind(BeatSaberDataService.InitialMapLoad, initialMapLoad => InitialMapLoad = initialMapLoad);
             SubscribeAndBind(PlaylistService.SelectedPlaylist, selectedPlaylist =>
             {
                 SelectedPlaylist = selectedPlaylist;

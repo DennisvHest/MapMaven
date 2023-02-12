@@ -17,6 +17,9 @@ namespace MapMaven.Components
         protected BeatSaberFileService BeatSaberToolFileService { get; set; }
 
         [Inject]
+        protected BeatSaberDataService BeatSaberDataService { get; set; }
+
+        [Inject]
         protected ScoreSaberService ScoreSaberService { get; set; }
 
         [CascadingParameter]
@@ -63,6 +66,8 @@ namespace MapMaven.Components
             }
 
             Close();
+
+            BeatSaberDataService.SetInitialMapLoad(InitialSetup);
 
             await BeatSaberToolFileService.SetBeatSaberInstallLocation(BeatSaberInstallLocation);
             await ScoreSaberService.SetPlayerId(PlayerId);

@@ -14,7 +14,6 @@ using BeatSaberPlaylistsLib.Legacy;
 using MapMaven.Core.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
-using System;
 
 namespace MapMaven.Services
 {
@@ -31,6 +30,7 @@ namespace MapMaven.Services
 
         private readonly BehaviorSubject<Dictionary<string, MapInfo>> _mapInfo = new(new Dictionary<string, MapInfo>());
         private readonly BehaviorSubject<bool> _loadingMapInfo = new(false);
+        private readonly BehaviorSubject<bool> _initialMapLoad = new(false);
 
         private readonly BehaviorSubject<IEnumerable<IPlaylist>> _playlistInfo = new(Array.Empty<IPlaylist>());
         private readonly BehaviorSubject<bool> _loadingPlaylistInfo = new(false);
@@ -38,6 +38,7 @@ namespace MapMaven.Services
         public IObservable<Dictionary<string, MapInfo>> MapInfoByHash => _mapInfo;
         public IObservable<IEnumerable<MapInfo>> MapInfo => _mapInfo.Select(x => x.Values);
         public IObservable<bool> LoadingMapInfo => _loadingMapInfo;
+        public IObservable<bool> InitialMapLoad => _initialMapLoad;
 
         public IObservable<IEnumerable<IPlaylist>> PlaylistInfo => _playlistInfo;
         public IObservable<bool> LoadingPlaylistInfo => _loadingPlaylistInfo;
@@ -81,6 +82,7 @@ namespace MapMaven.Services
             finally
             {
                 _loadingMapInfo.OnNext(false);
+                _initialMapLoad.OnNext(false);
             }
         }
 
@@ -255,6 +257,11 @@ namespace MapMaven.Services
             var mapInfo = _mapInfo.Value[mapId];
 
             return Path.Combine(mapInfo.DirectoryPath, mapInfo.SongFileName);
+        }
+
+        public void SetInitialMapLoad(bool initialMapLoad)
+        {
+            _initialMapLoad.OnNext(initialMapLoad);
         }
 
         /// <summary>

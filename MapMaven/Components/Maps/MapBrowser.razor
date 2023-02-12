@@ -35,6 +35,12 @@
                       Class="mt-0">
         </MudTextField>
     </ToolBarContent>
+    <LoadingContent>
+        @if (InitialMapLoad)
+        {
+            <MudIcon Icon="@Icons.Material.Filled.ManageSearch" Style="vertical-align: middle; margin-bottom: 4px;"></MudIcon> @:Loading maps for first use. Depdending on the number of maps, this might take a minute.
+        }
+    </LoadingContent>
     <HeaderContent>
         @HeaderContent
     </HeaderContent>
