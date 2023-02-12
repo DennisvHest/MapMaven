@@ -19,7 +19,7 @@ namespace MapMaven.Services
     {
         private readonly BeatSaberDataService _beatSaberDataService;
         private readonly ScoreSaberService _scoreSaberService;
-        private readonly BeatSaverFileService _fileService;
+        private readonly BeatSaberFileService _fileService;
 
         private readonly BeatSaver _beatSaver;
 
@@ -46,7 +46,7 @@ namespace MapMaven.Services
             BeatSaberDataService beatSaberDataService,
             ScoreSaberService scoreSaberService,
             BeatSaver beatSaver,
-            BeatSaverFileService fileService,
+            BeatSaberFileService fileService,
             IServiceProvider serviceProvider)
         {
             _beatSaberDataService = beatSaberDataService;

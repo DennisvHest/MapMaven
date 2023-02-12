@@ -20,7 +20,7 @@ namespace MapMaven.Services
 {
     public class BeatSaberDataService
     {
-        private readonly BeatSaverFileService _fileService;
+        private readonly BeatSaberFileService _fileService;
 
         private readonly IBeatmapHasher _beatmapHasher;
         private PlaylistManager _playlistManager;
@@ -42,7 +42,7 @@ namespace MapMaven.Services
         public IObservable<IEnumerable<IPlaylist>> PlaylistInfo => _playlistInfo;
         public IObservable<bool> LoadingPlaylistInfo => _loadingPlaylistInfo;
 
-        public BeatSaberDataService(IBeatmapHasher beatmapHasher, BeatSaverFileService fileService, IServiceProvider serviceProvider)
+        public BeatSaberDataService(IBeatmapHasher beatmapHasher, BeatSaberFileService fileService, IServiceProvider serviceProvider)
         {
             _fileService = fileService;
             _beatmapHasher = beatmapHasher;

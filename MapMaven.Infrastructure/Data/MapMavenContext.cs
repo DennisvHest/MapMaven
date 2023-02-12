@@ -12,12 +12,12 @@ namespace MapMaven.Infrastructure.Data
         public DbSet<HiddenMap> HiddenMaps { get; set; }
         public DbSet<ApplicationSetting> ApplicationSettings { get; set; }
 
-        public static string DbPath => Path.Join(BeatSaverFileService.AppDataLocation, "MapMaven.db");
+        public static string DbPath => Path.Join(BeatSaberFileService.AppDataLocation, "MapMaven.db");
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
         {
-            if (!Directory.Exists(BeatSaverFileService.AppDataLocation))
-                Directory.CreateDirectory(BeatSaverFileService.AppDataLocation);
+            if (!Directory.Exists(BeatSaberFileService.AppDataLocation))
+                Directory.CreateDirectory(BeatSaberFileService.AppDataLocation);
 
             options.UseSqlite($"Data Source={DbPath}");
         }

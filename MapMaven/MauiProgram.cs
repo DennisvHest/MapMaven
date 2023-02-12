@@ -23,7 +23,7 @@ public static class MauiProgram
         Log.Logger = new LoggerConfiguration()
             .MinimumLevel.Information()
             .WriteTo.File(
-                path: Path.Join(BeatSaverFileService.AppDataLocation, "logs", "app-logs", "app-log-.txt"),
+                path: Path.Join(BeatSaberFileService.AppDataLocation, "logs", "app-logs", "app-log-.txt"),
                 rollingInterval: RollingInterval.Day
             ).CreateLogger();
 

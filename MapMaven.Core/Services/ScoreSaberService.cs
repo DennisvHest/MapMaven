@@ -11,7 +11,7 @@ namespace MapMaven.Core.Services
     public class ScoreSaberService
     {
         private readonly ScoreSaberApiClient _scoreSaber;
-        private readonly BeatSaverFileService _fileService;
+        private readonly BeatSaberFileService _fileService;
         private readonly ApplicationSettingService _applicationSettingService;
         private readonly IHttpClientFactory _httpClientFactory;
 
@@ -33,7 +33,7 @@ namespace MapMaven.Core.Services
 
         public ScoreSaberService(
             ScoreSaberApiClient scoreSaber,
-            BeatSaverFileService fileService,
+            BeatSaberFileService fileService,
             IHttpClientFactory httpClientFactory,
             ApplicationSettingService applicationSettingService)
         {
@@ -158,7 +158,7 @@ namespace MapMaven.Core.Services
 
         public string? GetPlayerIdFromReplays(string beatSaberInstallLocation)
         {
-            var scoreSaberReplaysLocation = Path.Combine(BeatSaverFileService.GetUserDataLocation(beatSaberInstallLocation), "ScoreSaber", "Replays");
+            var scoreSaberReplaysLocation = Path.Combine(BeatSaberFileService.GetUserDataLocation(beatSaberInstallLocation), "ScoreSaber", "Replays");
 
             if (!Directory.Exists(scoreSaberReplaysLocation))
                 return null;

@@ -14,7 +14,7 @@ namespace MapMaven.Components
         protected IFolderPicker FolderPicker { get; set; }
 
         [Inject]
-        protected BeatSaverFileService BeatSaberToolFileService { get; set; }
+        protected BeatSaberFileService BeatSaberToolFileService { get; set; }
 
         [Inject]
         protected ScoreSaberService ScoreSaberService { get; set; }

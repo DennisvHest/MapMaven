@@ -13,7 +13,7 @@ IHost host = Host.CreateDefaultBuilder(args)
         Log.Logger = new LoggerConfiguration()
             .MinimumLevel.Information()
             .WriteTo.File(
-                path: Path.Join(BeatSaverFileService.AppDataLocation, "logs", "worker-logs", "worker-log-.txt"),
+                path: Path.Join(BeatSaberFileService.AppDataLocation, "logs", "worker-logs", "worker-log-.txt"),
                 rollingInterval: RollingInterval.Day
             ).CreateLogger();
 

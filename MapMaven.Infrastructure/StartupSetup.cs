@@ -30,7 +30,7 @@ namespace MapMaven.Infrastructure
                 config.BaseAddress = new Uri("https://scoresaber.balibalo.xyz");
             });
 
-            services.AddScoped<BeatSaverFileService>();
+            services.AddScoped<BeatSaberFileService>();
             services.AddScoped<BeatSaberDataService>();
             services.AddScoped<MapService>();
             services.AddScoped<SongPlayerService>();
@@ -56,7 +56,7 @@ namespace MapMaven.Infrastructure
         /// </summary>
         private static void SetDbFullAccessPermissions()
         {
-            var appDataDirectoryInfo = new DirectoryInfo(BeatSaverFileService.AppDataLocation);
+            var appDataDirectoryInfo = new DirectoryInfo(BeatSaberFileService.AppDataLocation);
             var access = appDataDirectoryInfo.GetAccessControl();
 
             var accessRule = new FileSystemAccessRule(

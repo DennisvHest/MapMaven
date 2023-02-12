@@ -2,7 +2,7 @@
 
 namespace MapMaven.Core.Services
 {
-    public class BeatSaverFileService
+    public class BeatSaberFileService
     {
         private readonly ApplicationSettingService _applicationSettingService;
 
@@ -20,7 +20,7 @@ namespace MapMaven.Core.Services
         public virtual IObservable<string> PlaylistsLocationObservable => BeatSaberInstallLocationObservable.Select(location => $"{location}/Playlists");
         public virtual IObservable<string> UserDataLocationObservable => BeatSaberInstallLocationObservable.Select(location => $"{location}/UserData");
 
-        public BeatSaverFileService(ApplicationSettingService applicationSettingService)
+        public BeatSaberFileService(ApplicationSettingService applicationSettingService)
         {
             _applicationSettingService = applicationSettingService;
 
