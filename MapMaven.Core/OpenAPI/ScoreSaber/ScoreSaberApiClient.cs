@@ -2,7 +2,7 @@
 using Newtonsoft.Json;
 using System.Reflection;
 
-namespace BeatSaberTools.Core.ApiClients
+namespace MapMaven.Core.ApiClients
 {
     public partial class ScoreSaberApiClient
     {

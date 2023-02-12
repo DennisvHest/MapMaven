@@ -1,8 +1,8 @@
-﻿using BeatSaberTools.Core.ApiClients;
-using BeatSaberTools.Core.Models.Data.ScoreSaber;
-using BeatSaberTools.Core.Utilities.Scoresaber;
+﻿using MapMaven.Core.ApiClients;
+using MapMaven.Core.Models.Data.ScoreSaber;
+using MapMaven.Core.Utilities.Scoresaber;
 
-namespace BeatSaberTools.Models
+namespace MapMaven.Models
 {
     public class Map
     {

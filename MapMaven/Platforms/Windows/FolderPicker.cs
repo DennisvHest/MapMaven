@@ -1,7 +1,7 @@
-﻿using BeatSaberTools.Services;
+﻿using MapMaven.Services;
 using WindowsFolderPicker = Windows.Storage.Pickers.FolderPicker;
 
-namespace BeatSaberTools.Platforms.Windows
+namespace MapMaven.Platforms.Windows
 {
     public class FolderPicker : IFolderPicker
     {

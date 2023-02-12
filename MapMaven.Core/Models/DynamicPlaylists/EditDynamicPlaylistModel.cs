@@ -1,6 +1,6 @@
-﻿using BeatSaberTools.Models;
+﻿using MapMaven.Models;
 
-namespace BeatSaberTools.Core.Models.DynamicPlaylists
+namespace MapMaven.Core.Models.DynamicPlaylists
 {
     public class EditDynamicPlaylistModel : EditPlaylistModel
     {

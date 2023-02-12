@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace BeatSaberTools.Infrastructure.Migrations
+namespace MapMaven.Infrastructure.Migrations
 {
     /// <inheritdoc />
     public partial class AddedApplicationSettings : Migration

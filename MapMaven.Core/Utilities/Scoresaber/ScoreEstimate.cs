@@ -1,4 +1,4 @@
-﻿namespace BeatSaberTools.Core.Utilities.Scoresaber
+﻿namespace MapMaven.Core.Utilities.Scoresaber
 {
     public class ScoreEstimate
     {

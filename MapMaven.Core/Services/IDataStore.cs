@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace BeatSaberTools.Core.Services
+namespace MapMaven.Core.Services
 {
     public interface IDataStore
     {

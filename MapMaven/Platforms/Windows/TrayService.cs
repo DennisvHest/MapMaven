@@ -1,7 +1,7 @@
 ﻿using Hardcodet.Wpf.TaskbarNotification.Interop;
-using BeatSaberTools.Services;
+using MapMaven.Services;
 
-namespace BeatSaberTools.Platforms.Windows;
+namespace MapMaven.Platforms.Windows;
 public class TrayService : ITrayService
 {
     WindowsTrayIcon tray;

@@ -3,7 +3,7 @@ using Microsoft.ML;
 using Microsoft.ML.Data;
 using System.Reflection;
 
-namespace BeatSaberTools_Core
+namespace MapMaven_Core
 {
     public partial class ScoreEstimateMLModel
     {

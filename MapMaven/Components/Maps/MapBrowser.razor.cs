@@ -1,12 +1,12 @@
 using Microsoft.AspNetCore.Components;
-using BeatSaberTools.Services;
-using Map = BeatSaberTools.Models.Map;
-using BeatSaberTools.Models;
-using BeatSaberTools.Core.Models;
+using MapMaven.Services;
+using Map = MapMaven.Models.Map;
+using MapMaven.Models;
+using MapMaven.Core.Models;
 using Microsoft.AspNetCore.Components.Routing;
 using MudBlazor;
 
-namespace BeatSaberTools.Components.Maps
+namespace MapMaven.Components.Maps
 {
     public partial class MapBrowser : IDisposable
     {

@@ -1,6 +1,6 @@
 ﻿using BeatSaberPlaylistsLib.Types;
 
-namespace BeatSaberTools.Models
+namespace MapMaven.Models
 {
     public class PlaylistMap
     {

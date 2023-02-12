@@ -1,15 +1,15 @@
-using BeatSaberTools.Components.Shared;
-using BeatSaberTools.Core.Models;
-using BeatSaberTools.Core.Models.Data;
-using BeatSaberTools.Models;
-using BeatSaberTools.Services;
+using MapMaven.Components.Shared;
+using MapMaven.Core.Models;
+using MapMaven.Core.Models.Data;
+using MapMaven.Models;
+using MapMaven.Services;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
-using Map = BeatSaberTools.Models.Map;
+using Map = MapMaven.Models.Map;
 
-namespace BeatSaberTools.Components.Maps
+namespace MapMaven.Components.Maps
 {
     public partial class ImprovementTweaker
     {

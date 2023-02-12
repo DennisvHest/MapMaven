@@ -1,10 +1,10 @@
-using BeatSaberTools.Core.Services;
-using BeatSaberTools.Services;
+using MapMaven.Core.Services;
+using MapMaven.Services;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using System.Text.RegularExpressions;
 
-namespace BeatSaberTools.Components
+namespace MapMaven.Components
 {
     public partial class Settings
     {

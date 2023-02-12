@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace BeatSaberTools.Models.Data
+namespace MapMaven.Models.Data
 {
     public class MapInfo
     {

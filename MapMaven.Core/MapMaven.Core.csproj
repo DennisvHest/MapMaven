@@ -9,7 +9,7 @@
     <None Remove="OpenAPI\scoresaber-api.json" />
   </ItemGroup>
   <ItemGroup>
-    <OpenApiReference Include="OpenAPI\scoresaber-api.json" CodeGenerator="NSwagCSharp" Namespace="BeatSaberTools.Core.ApiClients" ClassName="ScoreSaberApiClient" />
+    <OpenApiReference Include="OpenAPI\scoresaber-api.json" CodeGenerator="NSwagCSharp" Namespace="MapMaven.Core.ApiClients" ClassName="ScoreSaberApiClient" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="BeatSaber.SongHashing" Version="1.2.0" />

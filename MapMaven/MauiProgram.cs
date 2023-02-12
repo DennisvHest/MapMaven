@@ -1,12 +1,12 @@
-﻿using BeatSaberTools.Core.Services;
-using BeatSaberTools.Infrastructure;
-using BeatSaberTools.Services;
+﻿using MapMaven.Core.Services;
+using MapMaven.Infrastructure;
+using MapMaven.Services;
 using Microsoft.Maui.LifecycleEvents;
 using MudBlazor;
 using MudBlazor.Services;
 using Serilog;
 
-namespace BeatSaberTools;
+namespace MapMaven;
 
 public static class MauiProgram
 {
@@ -40,7 +40,7 @@ public static class MauiProgram
             config.SnackbarConfiguration.PositionClass = Defaults.Classes.Position.BottomCenter;
         });
 
-        builder.Services.AddBeatSaberTools();
+        builder.Services.AddMapMaven();
 
         builder.ConfigureLifecycleEvents(lifecycle =>
         {
@@ -55,7 +55,7 @@ public static class MauiProgram
 
 #if WINDOWS
         builder.Services.AddTransient<IFolderPicker, Platforms.Windows.FolderPicker>();
-        builder.Services.AddSingleton<ITrayService, BeatSaberTools.Platforms.Windows.TrayService>();
+        builder.Services.AddSingleton<ITrayService, MapMaven.Platforms.Windows.TrayService>();
 #endif
 
         var mauiApp = builder.Build();

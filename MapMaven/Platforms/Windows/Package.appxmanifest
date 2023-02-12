@@ -42,7 +42,7 @@
 			</uap:VisualElements>
 			
 			<Extensions>
-				<desktop6:Extension Category="windows.service" EntryPoint="Windows.FullTrustApplication" Executable="Worker/BeatSaberTools.Worker.exe">
+				<desktop6:Extension Category="windows.service" EntryPoint="Windows.FullTrustApplication" Executable="Worker/MapMaven.Worker.exe">
 					<desktop6:Service Name="Beat Saber Tools Worker" StartAccount="localSystem" StartupType="auto"/>
 				</desktop6:Extension>
 			</Extensions>

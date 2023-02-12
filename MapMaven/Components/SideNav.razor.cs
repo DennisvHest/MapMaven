@@ -1,9 +1,9 @@
-using BeatSaberTools.Services;
+using MapMaven.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor;
 
-namespace BeatSaberTools.Components
+namespace MapMaven.Components
 {
     public partial class SideNav
     {

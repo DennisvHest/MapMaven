@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
-namespace BeatSaberTools.Core.Models.DynamicPlaylists
+namespace MapMaven.Core.Models.DynamicPlaylists
 {
     public class DynamicPlaylistConfiguration
     {

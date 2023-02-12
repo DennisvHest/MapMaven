@@ -1,9 +1,9 @@
-﻿using BeatSaberTools.Core.Models.Data;
-using BeatSaberTools.Core.Services;
-using BeatSaberTools.Models.Data;
+﻿using MapMaven.Core.Models.Data;
+using MapMaven.Core.Services;
+using MapMaven.Models.Data;
 using Microsoft.EntityFrameworkCore;
 
-namespace BeatSaberTools.Infrastructure.Data
+namespace MapMaven.Infrastructure.Data
 {
     public class BSToolsContext : DbContext, IDataStore
     {

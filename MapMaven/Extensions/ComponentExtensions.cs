@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
-namespace BeatSaberTools.Extensions
+namespace MapMaven.Extensions
 {
     public class ReactiveComponent : ComponentBase, IDisposable
     {

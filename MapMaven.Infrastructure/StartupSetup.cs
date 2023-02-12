@@ -1,8 +1,8 @@
 ﻿using BeatSaber.SongHashing;
-using BeatSaberTools.Core.ApiClients;
-using BeatSaberTools.Core.Services;
-using BeatSaberTools.Infrastructure.Data;
-using BeatSaberTools.Services;
+using MapMaven.Core.ApiClients;
+using MapMaven.Core.Services;
+using MapMaven.Infrastructure.Data;
+using MapMaven.Services;
 using BeatSaverSharp;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,11 +10,11 @@ using System.Net;
 using System.Security.AccessControl;
 using System.Security.Principal;
 
-namespace BeatSaberTools.Infrastructure
+namespace MapMaven.Infrastructure
 {
     public static class StartupSetup
     {
-        public static void AddBeatSaberTools(this IServiceCollection services)
+        public static void AddMapMaven(this IServiceCollection services)
         {
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
 
@@ -22,7 +22,7 @@ namespace BeatSaberTools.Infrastructure
             services.AddScoped<IDataStore, BSToolsContext>();
 
             services.AddScoped<IBeatmapHasher, Hasher>();
-            services.AddScoped(_ => new BeatSaver("BeatSaberTools", new Version(1, 0)));
+            services.AddScoped(_ => new BeatSaver("MapMaven", new Version(1, 0)));
 
             services.AddHttpClient<ScoreSaberApiClient>();
             services.AddHttpClient("RankedScoresaber", config =>

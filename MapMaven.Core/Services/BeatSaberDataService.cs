@@ -1,4 +1,4 @@
-﻿using BeatSaberTools.Models.Data;
+﻿using MapMaven.Models.Data;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Text.Json;
@@ -11,12 +11,12 @@ using Image = System.Drawing.Image;
 using BeatSaberPlaylistsLib;
 using BeatSaberPlaylistsLib.Types;
 using BeatSaberPlaylistsLib.Legacy;
-using BeatSaberTools.Core.Services;
+using MapMaven.Core.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using System;
 
-namespace BeatSaberTools.Services
+namespace MapMaven.Services
 {
     public class BeatSaberDataService
     {

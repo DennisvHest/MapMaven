@@ -1,6 +1,6 @@
-﻿using BeatSaberTools.Models;
+﻿using MapMaven.Models;
 
-namespace BeatSaberTools.Core.Models
+namespace MapMaven.Core.Models
 {
     public class MapRowContext
     {

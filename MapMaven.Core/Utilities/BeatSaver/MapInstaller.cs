@@ -1,8 +1,8 @@
-﻿using BeatSaberTools.Models;
+﻿using MapMaven.Models;
 using BeatSaverSharp.Models;
 using System.IO.Compression;
 
-namespace BeatSaberTools.Core.Utilities.BeatSaver
+namespace MapMaven.Core.Utilities.BeatSaver
 {
     /// <summary>
     /// Credit: ModAssistant map install code: https://github.com/Assistant/ModAssistant/blob/f8bd80031df8514f59dc974f855b65f989adb5c7/ModAssistant/Classes/External%20Interfaces/BeatSaver.cs

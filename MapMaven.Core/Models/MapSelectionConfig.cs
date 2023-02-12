@@ -1,4 +1,4 @@
-﻿namespace BeatSaberTools.Core.Models
+﻿namespace MapMaven.Core.Models
 {
     public class MapSelectionConfig
     {

@@ -1,10 +1,10 @@
 ﻿using BeatSaberPlaylistsLib.Types;
-using BeatSaberTools.Core.Models.DynamicPlaylists;
-using BeatSaberTools.Extensions;
+using MapMaven.Core.Models.DynamicPlaylists;
+using MapMaven.Extensions;
 using Newtonsoft.Json.Linq;
 using Image = System.Drawing.Image;
 
-namespace BeatSaberTools.Models
+namespace MapMaven.Models
 {
     public class Playlist
     {

@@ -1,6 +1,6 @@
 ﻿using MudBlazor;
 
-namespace BeatSaberTools
+namespace MapMaven
 {
     public static class BSToolsTheme
     {

@@ -1,6 +1,6 @@
-﻿using BeatSaberTools.Core.ApiClients;
+﻿using MapMaven.Core.ApiClients;
 
-namespace BeatSaberTools.Core.Models.Data.ScoreSaber
+namespace MapMaven.Core.Models.Data.ScoreSaber
 {
     public class RankedMapScorePair
     {

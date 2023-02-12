@@ -1,4 +1,4 @@
-﻿namespace BeatSaberTools.Models.Data.Playlists
+﻿namespace MapMaven.Models.Data.Playlists
 {
     public class PlaylistInfo
     {

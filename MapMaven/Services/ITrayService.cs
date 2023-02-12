@@ -1,4 +1,4 @@
-﻿namespace BeatSaberTools.Services
+﻿namespace MapMaven.Services
 {
     public interface ITrayService
     {

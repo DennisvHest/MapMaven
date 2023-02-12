@@ -1,6 +1,6 @@
-﻿using BeatSaberTools.Models;
+﻿using MapMaven.Models;
 
-namespace BeatSaberTools.Core.Models.Data
+namespace MapMaven.Core.Models.Data
 {
     public class HiddenMap
     {

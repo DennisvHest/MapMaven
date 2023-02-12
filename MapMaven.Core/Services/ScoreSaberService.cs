@@ -1,12 +1,12 @@
-﻿using BeatSaberTools.Core.ApiClients;
-using BeatSaberTools.Core.Models.Data.ScoreSaber;
-using BeatSaberTools.Core.Utilities.Scoresaber;
-using BeatSaberTools_Core;
+﻿using MapMaven.Core.ApiClients;
+using MapMaven.Core.Models.Data.ScoreSaber;
+using MapMaven.Core.Utilities.Scoresaber;
+using MapMaven_Core;
 using System.Net.Http.Json;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 
-namespace BeatSaberTools.Core.Services
+namespace MapMaven.Core.Services
 {
     public class ScoreSaberService
     {

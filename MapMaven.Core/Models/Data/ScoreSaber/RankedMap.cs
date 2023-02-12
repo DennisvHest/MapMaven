@@ -1,8 +1,8 @@
 ﻿
-using BeatSaberTools.Models;
+using MapMaven.Models;
 using System.Text.Json.Serialization;
 
-namespace BeatSaberTools.Core.Models.Data.ScoreSaber
+namespace MapMaven.Core.Models.Data.ScoreSaber
 {
     public class RankedMap
     {

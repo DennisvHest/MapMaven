@@ -2,7 +2,7 @@
 using Image = System.Drawing.Image;
 using ImageFormat = System.Drawing.Imaging.ImageFormat;
 
-namespace BeatSaberTools.Extensions
+namespace MapMaven.Extensions
 {
     public static class ImageExtensions
     {

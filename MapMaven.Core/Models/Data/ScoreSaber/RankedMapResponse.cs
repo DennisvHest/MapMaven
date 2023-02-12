@@ -1,4 +1,4 @@
-﻿namespace BeatSaberTools.Core.Models.Data.ScoreSaber
+﻿namespace MapMaven.Core.Models.Data.ScoreSaber
 {
     public class RankedMapResponse
     {

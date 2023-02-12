@@ -1,11 +1,11 @@
-using BeatSaberTools.Core.Models.DynamicPlaylists;
-using BeatSaberTools.Core.Services;
-using BeatSaberTools.Services;
+using MapMaven.Core.Models.DynamicPlaylists;
+using MapMaven.Core.Services;
+using MapMaven.Services;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
-using SortDirection = BeatSaberTools.Core.Models.DynamicPlaylists.SortDirection;
+using SortDirection = MapMaven.Core.Models.DynamicPlaylists.SortDirection;
 
-namespace BeatSaberTools.Components.Playlists
+namespace MapMaven.Components.Playlists
 {
     public partial class EditDynamicPlaylistDialog
     {

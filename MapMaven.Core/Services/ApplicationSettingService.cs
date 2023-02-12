@@ -1,10 +1,10 @@
-﻿using BeatSaberTools.Core.Extensions;
-using BeatSaberTools.Core.Models.Data;
+﻿using MapMaven.Core.Extensions;
+using MapMaven.Core.Models.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reactive.Subjects;
 
-namespace BeatSaberTools.Core.Services
+namespace MapMaven.Core.Services
 {
     public class ApplicationSettingService
     {

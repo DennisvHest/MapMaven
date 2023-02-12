@@ -1,4 +1,4 @@
-﻿namespace BeatSaberTools;
+﻿namespace MapMaven;
 
 public partial class App : Application
 {

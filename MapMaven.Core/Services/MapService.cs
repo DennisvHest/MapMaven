@@ -1,19 +1,19 @@
-﻿using BeatSaberTools.Core.ApiClients;
-using BeatSaberTools.Core.Models;
-using BeatSaberTools.Core.Models.Data;
-using BeatSaberTools.Core.Models.Data.ScoreSaber;
-using BeatSaberTools.Core.Services;
-using BeatSaberTools.Core.Utilities.BeatSaver;
-using BeatSaberTools.Core.Utilities.Scoresaber;
-using BeatSaberTools.Models.Data;
+﻿using MapMaven.Core.ApiClients;
+using MapMaven.Core.Models;
+using MapMaven.Core.Models.Data;
+using MapMaven.Core.Models.Data.ScoreSaber;
+using MapMaven.Core.Services;
+using MapMaven.Core.Utilities.BeatSaver;
+using MapMaven.Core.Utilities.Scoresaber;
+using MapMaven.Models.Data;
 using BeatSaverSharp;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
-using Map = BeatSaberTools.Models.Map;
+using Map = MapMaven.Models.Map;
 
-namespace BeatSaberTools.Services
+namespace MapMaven.Services
 {
     public class MapService
     {

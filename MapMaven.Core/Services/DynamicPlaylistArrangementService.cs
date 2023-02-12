@@ -1,10 +1,10 @@
-﻿using BeatSaberTools.Core.Models.DynamicPlaylists;
-using BeatSaberTools.Models;
-using BeatSaberTools.Services;
+﻿using MapMaven.Core.Models.DynamicPlaylists;
+using MapMaven.Models;
+using MapMaven.Services;
 using Pather.CSharp;
 using System.Reactive.Linq;
 
-namespace BeatSaberTools.Core.Services
+namespace MapMaven.Core.Services
 {
     public class DynamicPlaylistArrangementService
     {

@@ -1,14 +1,14 @@
 using Microsoft.AspNetCore.Components;
-using BeatSaberTools.Services;
-using BeatSaberTools.Extensions;
+using MapMaven.Services;
+using MapMaven.Extensions;
 using System.Reactive.Linq;
-using Map = BeatSaberTools.Models.Map;
+using Map = MapMaven.Models.Map;
 using MudBlazor;
-using BeatSaberTools.Models;
-using BeatSaberTools.Core.Services;
-using BeatSaberTools.Components.Playlists;
+using MapMaven.Models;
+using MapMaven.Core.Services;
+using MapMaven.Components.Playlists;
 
-namespace BeatSaberTools.Components.Maps
+namespace MapMaven.Components.Maps
 {
     public partial class MapBrowserRow : IDisposable
     {

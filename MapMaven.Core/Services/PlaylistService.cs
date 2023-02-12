@@ -1,16 +1,16 @@
 ﻿using BeatSaberPlaylistsLib.Legacy;
 using BeatSaberPlaylistsLib;
-using BeatSaberTools.Models;
+using MapMaven.Models;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
-using Playlist = BeatSaberTools.Models.Playlist;
-using Map = BeatSaberTools.Models.Map;
-using BeatSaberTools.Core.Services;
+using Playlist = MapMaven.Models.Playlist;
+using Map = MapMaven.Models.Map;
+using MapMaven.Core.Services;
 using BeatSaberPlaylistsLib.Types;
-using BeatSaberTools.Core.Models.DynamicPlaylists;
-using BeatSaberTools.Core.Models.Data;
+using MapMaven.Core.Models.DynamicPlaylists;
+using MapMaven.Core.Models.Data;
 
-namespace BeatSaberTools.Services
+namespace MapMaven.Services
 {
     public class PlaylistService
     {

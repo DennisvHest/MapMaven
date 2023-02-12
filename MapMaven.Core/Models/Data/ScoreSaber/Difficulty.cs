@@ -1,4 +1,4 @@
-﻿namespace BeatSaberTools.Core.ApiClients
+﻿namespace MapMaven.Core.ApiClients
 {
     public partial class Difficulty
     {

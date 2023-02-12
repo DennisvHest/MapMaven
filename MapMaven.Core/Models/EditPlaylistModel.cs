@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace BeatSaberTools.Models
+namespace MapMaven.Models
 {
     public class EditPlaylistModel
     {

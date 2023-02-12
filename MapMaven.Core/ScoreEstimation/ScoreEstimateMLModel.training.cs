@@ -2,7 +2,7 @@
 using Microsoft.ML.Trainers.LightGbm;
 using Microsoft.ML;
 
-namespace BeatSaberTools_Core
+namespace MapMaven_Core
 {
     public partial class ScoreEstimateMLModel
     {

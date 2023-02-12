@@ -1,6 +1,6 @@
-﻿using BeatSaberTools.Core.ApiClients;
+﻿using MapMaven.Core.ApiClients;
 
-namespace BeatSaberTools.Core.Utilities.Scoresaber
+namespace MapMaven.Core.Utilities.Scoresaber
 {
     public static class ScoreSaberExtensions
     {

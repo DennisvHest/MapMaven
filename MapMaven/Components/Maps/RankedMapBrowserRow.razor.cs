@@ -1,9 +1,9 @@
-using BeatSaberTools.Extensions;
-using BeatSaberTools.Services;
+using MapMaven.Extensions;
+using MapMaven.Services;
 using Microsoft.AspNetCore.Components;
-using Map = BeatSaberTools.Models.Map;
+using Map = MapMaven.Models.Map;
 
-namespace BeatSaberTools.Components.Maps
+namespace MapMaven.Components.Maps
 {
     public partial class RankedMapBrowserRow
     {

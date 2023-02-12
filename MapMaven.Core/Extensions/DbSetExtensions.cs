@@ -1,7 +1,7 @@
-﻿using BeatSaberTools.Core.Models.Data;
+﻿using MapMaven.Core.Models.Data;
 using Microsoft.EntityFrameworkCore;
 
-namespace BeatSaberTools.Core.Extensions
+namespace MapMaven.Core.Extensions
 {
     public static class DbSetExtensions
     {

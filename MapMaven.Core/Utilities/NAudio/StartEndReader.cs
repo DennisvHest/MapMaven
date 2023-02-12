@@ -1,6 +1,6 @@
 ﻿using NAudio.Wave;
 
-namespace BeatSaberTools.Utilities.NAudio
+namespace MapMaven.Utilities.NAudio
 {
     public class StartEndReader : IWaveProvider
     {

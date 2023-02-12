@@ -1,6 +1,6 @@
-using BeatSaberTools.Core.Services;
-using BeatSaberTools.Infrastructure;
-using BeatSaberTools.Worker;
+using MapMaven.Core.Services;
+using MapMaven.Infrastructure;
+using MapMaven.Worker;
 using Serilog;
 
 IHost host = Host.CreateDefaultBuilder(args)
@@ -20,7 +20,7 @@ IHost host = Host.CreateDefaultBuilder(args)
         services.AddLogging(loggingBuilder =>
           loggingBuilder.AddSerilog(dispose: true));
 
-        services.AddBeatSaberTools();
+        services.AddMapMaven();
 
         services.AddHostedService<Worker>();
     })

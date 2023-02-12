@@ -1,6 +1,6 @@
 ﻿using System.Reactive.Linq;
 
-namespace BeatSaberTools.Core.Services
+namespace MapMaven.Core.Services
 {
     public class BeatSaverFileService
     {

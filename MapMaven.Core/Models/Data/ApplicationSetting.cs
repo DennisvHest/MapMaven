@@ -1,4 +1,4 @@
-﻿namespace BeatSaberTools.Core.Models.Data
+﻿namespace MapMaven.Core.Models.Data
 {
     public class ApplicationSetting
     {

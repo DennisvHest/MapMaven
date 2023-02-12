@@ -1,7 +1,7 @@
-using BeatSaberTools.Core.Services;
+using MapMaven.Core.Services;
 using System.Diagnostics;
 
-namespace BeatSaberTools.Worker
+namespace MapMaven.Worker
 {
     public class Worker : BackgroundService
     {

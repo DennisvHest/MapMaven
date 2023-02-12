@@ -1,11 +1,11 @@
-﻿using BeatSaberTools.Utilities.NAudio;
+﻿using MapMaven.Utilities.NAudio;
 using NAudio.Vorbis;
 using NAudio.Wave;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
-using Map = BeatSaberTools.Models.Map;
+using Map = MapMaven.Models.Map;
 
-namespace BeatSaberTools.Services
+namespace MapMaven.Services
 {
     public class SongPlayerService
     {

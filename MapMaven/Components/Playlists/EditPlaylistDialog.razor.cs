@@ -1,12 +1,12 @@
-using BeatSaberTools.Extensions;
-using BeatSaberTools.Models;
-using BeatSaberTools.Services;
+using MapMaven.Extensions;
+using MapMaven.Models;
+using MapMaven.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using MudBlazor;
 using Image = System.Drawing.Image;
 
-namespace BeatSaberTools.Components.Playlists
+namespace MapMaven.Components.Playlists
 {
     public partial class EditPlaylistDialog
     {

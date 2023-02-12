@@ -1,11 +1,11 @@
-using BeatSaberTools.Models;
-using BeatSaberTools.Services;
+using MapMaven.Models;
+using MapMaven.Services;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using System.Reactive.Linq;
-using Playlist = BeatSaberTools.Models.Playlist;
+using Playlist = MapMaven.Models.Playlist;
 
-namespace BeatSaberTools.Components.Playlists
+namespace MapMaven.Components.Playlists
 {
     public partial class PlaylistList
     {

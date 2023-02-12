@@ -1,6 +1,6 @@
 ﻿using Colors = MudBlazor.Colors;
 
-namespace BeatSaberTools.Utility
+namespace MapMaven.Utility
 {
     public static class DifficultyColor
     {
