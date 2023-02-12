@@ -2,13 +2,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31611.283
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BeatSaberTools", "BeatSaberTools\BeatSaberTools.csproj", "{9892F9F4-F3AC-4D92-91E4-4FD4A9432B9F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MapMaven", "MapMaven\MapMaven.csproj", "{9892F9F4-F3AC-4D92-91E4-4FD4A9432B9F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BeatSaberTools.Worker", "BeatSaberTools.Worker\BeatSaberTools.Worker.csproj", "{A1F90476-3F79-4BFD-AD29-0B61510F7BAB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MapMaven.Worker", "MapMaven.Worker\MapMaven.Worker.csproj", "{A1F90476-3F79-4BFD-AD29-0B61510F7BAB}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BeatSaberTools.Core", "BeatSaberTools.Core\BeatSaberTools.Core.csproj", "{45CA051A-9230-48D0-A3D6-0BCAD2F5D91A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MapMaven.Core", "MapMaven.Core\MapMaven.Core.csproj", "{45CA051A-9230-48D0-A3D6-0BCAD2F5D91A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BeatSaberTools.Infrastructure", "BeatSaberTools.Infrastructure\BeatSaberTools.Infrastructure.csproj", "{CBC276AA-8E1E-4247-AC5F-EB45AD949687}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MapMaven.Infrastructure", "MapMaven.Infrastructure\MapMaven.Infrastructure.csproj", "{CBC276AA-8E1E-4247-AC5F-EB45AD949687}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

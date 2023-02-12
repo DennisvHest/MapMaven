@@ -98,8 +98,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\BeatSaberTools.Core\BeatSaberTools.Core.csproj" />
-      <ProjectReference Include="..\BeatSaberTools.Infrastructure\BeatSaberTools.Infrastructure.csproj" />
+      <ProjectReference Include="..\MapMaven.Core\MapMaven.Core.csproj" />
+      <ProjectReference Include="..\MapMaven.Infrastructure\MapMaven.Infrastructure.csproj" />
     </ItemGroup>
 
 </Project>

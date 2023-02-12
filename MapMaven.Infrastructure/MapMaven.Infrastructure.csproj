@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\BeatSaberTools.Core\BeatSaberTools.Core.csproj" />
+    <ProjectReference Include="..\MapMaven.Core\MapMaven.Core.csproj" />
   </ItemGroup>
 
 </Project>
