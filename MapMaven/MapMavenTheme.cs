@@ -2,7 +2,7 @@
 
 namespace MapMaven
 {
-    public static class BSToolsTheme
+    public static class MapMavenTheme
     {
         public static readonly MudTheme Theme = new MudTheme()
         {

@@ -16,7 +16,7 @@
         <ApplicationTitle>MapMaven</ApplicationTitle>
 
         <!-- App Identifier -->
-        <ApplicationId>com.companyname.beatsabertools</ApplicationId>
+        <ApplicationId>mapmaven</ApplicationId>
         <ApplicationIdGuid>F8C5DDC3-CC19-4F5C-81C5-0FC69948A580</ApplicationIdGuid>
 
         <!-- Versions -->

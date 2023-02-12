@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace MapMaven.Infrastructure.Migrations
 {
-    [DbContext(typeof(BSToolsContext))]
+    [DbContext(typeof(MapMavenContext))]
     [Migration("20230107194554_AddedPlayerAndHiddenMaps")]
     partial class AddedPlayerAndHiddenMaps
     {

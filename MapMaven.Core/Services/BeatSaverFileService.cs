@@ -15,7 +15,7 @@ namespace MapMaven.Core.Services
         public virtual string PlaylistsLocation => $"{BeatSaberInstallLocation}/Playlists";
         public virtual string UserDataLocation => GetUserDataLocation(BeatSaberInstallLocation);
 
-        public static string AppDataLocation => Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "BSTools");
+        public static string AppDataLocation => Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "MapMaven");
         public virtual IObservable<string> MapsLocationObservable => BeatSaberInstallLocationObservable.Select(location => $"{location}/Beat Saber_Data/CustomLevels");
         public virtual IObservable<string> PlaylistsLocationObservable => BeatSaberInstallLocationObservable.Select(location => $"{location}/Playlists");
         public virtual IObservable<string> UserDataLocationObservable => BeatSaberInstallLocationObservable.Select(location => $"{location}/UserData");

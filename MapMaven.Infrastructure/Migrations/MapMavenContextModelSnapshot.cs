@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace MapMaven.Infrastructure.Migrations
 {
-    [DbContext(typeof(BSToolsContext))]
-    partial class BSToolsContextModelSnapshot : ModelSnapshot
+    [DbContext(typeof(MapMavenContext))]
+    partial class MapMavenContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
         {

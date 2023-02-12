@@ -18,8 +18,8 @@ namespace MapMaven.Infrastructure
         {
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
 
-            services.AddDbContext<BSToolsContext>();
-            services.AddScoped<IDataStore, BSToolsContext>();
+            services.AddDbContext<MapMavenContext>();
+            services.AddScoped<IDataStore, MapMavenContext>();
 
             services.AddScoped<IBeatmapHasher, Hasher>();
             services.AddScoped(_ => new BeatSaver("MapMaven", new Version(1, 0)));
@@ -44,7 +44,7 @@ namespace MapMaven.Infrastructure
         {
             using var scope = serviceProvider.CreateScope();
 
-            var context = scope.ServiceProvider.GetRequiredService<BSToolsContext>();
+            var context = scope.ServiceProvider.GetRequiredService<MapMavenContext>();
 
             context.Database.Migrate();
 

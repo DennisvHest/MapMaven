@@ -6,7 +6,7 @@ using Serilog;
 IHost host = Host.CreateDefaultBuilder(args)
     .UseWindowsService(options =>
     {
-        options.ServiceName = "Beat Saber Tools Worker";
+        options.ServiceName = "Map Maven Worker";
     })
     .ConfigureServices(services =>
     {

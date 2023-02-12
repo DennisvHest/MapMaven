@@ -5,14 +5,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MapMaven.Infrastructure.Data
 {
-    public class BSToolsContext : DbContext, IDataStore
+    public class MapMavenContext : DbContext, IDataStore
     {
         public DbSet<MapInfo> MapInfos { get; set; }
         public DbSet<Player> Players { get; set; }
         public DbSet<HiddenMap> HiddenMaps { get; set; }
         public DbSet<ApplicationSetting> ApplicationSettings { get; set; }
 
-        public static string DbPath => Path.Join(BeatSaverFileService.AppDataLocation, "BSTools.db");
+        public static string DbPath => Path.Join(BeatSaverFileService.AppDataLocation, "MapMaven.db");
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
         {

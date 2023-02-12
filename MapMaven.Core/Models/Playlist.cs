@@ -35,7 +35,7 @@ namespace MapMaven.Models
 
             Maps = playlist.Select(s => new PlaylistMap(s));
 
-            if (playlist.TryGetCustomData("beatSaberTools", out dynamic customData))
+            if (playlist.TryGetCustomData("mapMaven", out dynamic customData))
             {
                 if (customData.dynamicPlaylistConfiguration is DynamicPlaylistConfiguration dynamicPlaylistConfiguration)
                 {

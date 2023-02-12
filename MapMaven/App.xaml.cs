@@ -14,7 +14,7 @@ public partial class App : Application
         var window = base.CreateWindow(activationState);
         if (window != null)
         {
-            window.Title = "Beat Saber Tools";
+            window.Title = "Map Maven";
         }
 
         return window;

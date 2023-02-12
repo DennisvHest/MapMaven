@@ -93,7 +93,7 @@ namespace MapMaven.Services
         {
             IPlaylist addedPlaylist = CreateIPlaylist(editDynamicPlaylistModel, playlistMaps);
 
-            addedPlaylist.SetCustomData("beatSaberTools", new
+            addedPlaylist.SetCustomData("mapMaven", new
             {
                 isDynamicPlaylist = true,
                 dynamicPlaylistConfiguration = editDynamicPlaylistModel.DynamicPlaylistConfiguration
@@ -114,7 +114,7 @@ namespace MapMaven.Services
             var addedPlaylist = _playlistManager.CreatePlaylist(
                 fileName: editPlaylistModel.FileName ?? editPlaylistModel.Name,
                 title: editPlaylistModel.Name,
-                author: "Beat Saber Tools",
+                author: "Map Maven",
                 coverImage: editPlaylistModel.CoverImage,
                 description: editPlaylistModel.Description
             );
