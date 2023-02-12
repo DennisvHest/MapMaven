@@ -79,6 +79,10 @@
 	  <Content Remove="Assets\$placeholder$.targetsize-48.png" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <None Remove="C:\Users\denni\.nuget\packages\naudio.vorbis\1.5.0\contentFiles\any\netstandard2.0\README.md" />
+	</ItemGroup>
+
     <ItemGroup>
       <PackageReference Include="BeatSaber.SongHashing" Version="1.2.0" />
       <PackageReference Include="BeatSaberPlaylistsLib" Version="1.6.6" />
