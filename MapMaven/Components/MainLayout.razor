@@ -45,7 +45,7 @@
         {
             InitialSetupDone = location != null;
 
-            StateHasChanged();
+            InvokeAsync(StateHasChanged);
 
             if (InitialSetupDone)
             {
@@ -58,7 +58,7 @@
 
     protected override void OnAfterRender(bool firstRender)
     {
-        if (BeatSaberToolFileService.BeatSaberInstallLocation == null)
+        if (firstRender && BeatSaberToolFileService.BeatSaberInstallLocation == null)
         {
             DialogService.Show<Settings>(
                 title: null,
@@ -68,9 +68,13 @@
                 },
                 options: new()
                 {
-                    DisableBackdropClick = true
+                    DisableBackdropClick = true,
                 }
-            );
+            ).Result.ContinueWith(_ =>
+            {
+                InitialSetupDone = true;
+                InvokeAsync(StateHasChanged);
+            });
         }
     }
 }

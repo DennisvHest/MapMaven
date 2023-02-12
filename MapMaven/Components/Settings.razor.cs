@@ -69,8 +69,8 @@ namespace MapMaven.Components
 
             BeatSaberDataService.SetInitialMapLoad(InitialSetup);
 
-            await BeatSaberToolFileService.SetBeatSaberInstallLocation(BeatSaberInstallLocation);
-            await ScoreSaberService.SetPlayerId(PlayerId);
+            Task.Run(() => BeatSaberToolFileService.SetBeatSaberInstallLocation(BeatSaberInstallLocation));
+            Task.Run(() => ScoreSaberService.SetPlayerId(PlayerId));
         }
 
         public void Close()
