@@ -82,6 +82,7 @@
     <ItemGroup>
       <PackageReference Include="BeatSaber.SongHashing" Version="1.2.0" />
       <PackageReference Include="BeatSaberPlaylistsLib" Version="1.6.6" />
+      <PackageReference Include="Clowd.Squirrel" Version="2.9.42" />
       <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.1">
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
