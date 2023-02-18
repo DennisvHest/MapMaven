@@ -14,6 +14,12 @@ public static class MauiProgram
 {
     public static MauiApp CreateMauiApp()
     {
+        SquirrelAwareApp.HandleEvents(
+            onInitialInstall: OnAppInstall,
+            onAppUninstall: OnAppUninstall,
+            onEveryRun: OnAppRun
+        );
+
         var builder = MauiApp.CreateBuilder();
         builder
             .UseMauiApp<App>()
@@ -89,5 +95,20 @@ public static class MauiProgram
         {
             logger?.LogError(ex, "Error during update.");
         }
+    }
+
+    private static void OnAppInstall(SemanticVersion version, IAppTools tools)
+    {
+        tools.CreateShortcutForThisExe(ShortcutLocation.StartMenu | ShortcutLocation.Desktop);
+    }
+
+    private static void OnAppUninstall(SemanticVersion version, IAppTools tools)
+    {
+        tools.RemoveShortcutForThisExe(ShortcutLocation.StartMenu | ShortcutLocation.Desktop);
+    }
+
+    private static void OnAppRun(SemanticVersion version, IAppTools tools, bool firstRun)
+    {
+        tools.SetProcessAppUserModelId();
     }
 }
