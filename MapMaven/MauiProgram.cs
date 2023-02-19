@@ -81,7 +81,7 @@ public static class MauiProgram
 
         try
         {
-            using var updateManager = new UpdateManager("C:\\Users\\denni\\Desktop\\BSTools\\releases-test");
+            using var updateManager = new GithubUpdateManager("https://github.com/DennisvHest/MapMaven", prerelease: true);
 
             if (!updateManager.IsInstalledApp)
             {
