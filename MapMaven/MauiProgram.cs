@@ -3,6 +3,9 @@ using MapMaven.Infrastructure;
 using MapMaven.Services;
 using Microsoft.Extensions.Logging;
 using Microsoft.Maui.LifecycleEvents;
+using Microsoft.Maui.Platform;
+using Microsoft.UI.Windowing;
+using Microsoft.UI;
 using MudBlazor;
 using MudBlazor.Services;
 using Serilog;
@@ -14,6 +17,8 @@ public static class MauiProgram
 {
     public static MauiApp CreateMauiApp()
     {
+        MauiApp mauiApp = null;
+
         SquirrelAwareApp.HandleEvents(
             onInitialInstall: OnAppInstall,
             onAppUninstall: OnAppUninstall,
@@ -54,10 +59,27 @@ public static class MauiProgram
         {
 #if WINDOWS
 
-            lifecycle.AddWindows(windows => windows.OnWindowCreated((del) =>
+            lifecycle.AddWindows(windows =>
             {
-                del.ExtendsContentIntoTitleBar = false;
-            }));
+                windows.OnWindowCreated((window) =>
+                {
+                    var trayService = mauiApp.Services.GetService<ITrayService>();
+
+                    window.ExtendsContentIntoTitleBar = false;
+
+                    IntPtr nativeWindowHandle = WinRT.Interop.WindowNative.GetWindowHandle(window);
+                    WindowId win32WindowsId = Win32Interop.GetWindowIdFromWindow(nativeWindowHandle);
+                    AppWindow winuiAppWindow = AppWindow.GetFromWindowId(win32WindowsId);
+
+                    winuiAppWindow.Closing += (w, e) =>
+                    {
+                        e.Cancel = true;
+                        Platforms.Windows.WindowExtensions.MinimizeToTray();
+                    };
+
+                    Platforms.Windows.WindowExtensions.Hwnd = nativeWindowHandle;
+                });
+            });
 #endif
         });
 
@@ -66,7 +88,11 @@ public static class MauiProgram
         builder.Services.AddSingleton<ITrayService, Platforms.Windows.TrayService>();
 #endif
 
-        var mauiApp = builder.Build();
+        mauiApp = builder.Build();
+
+        var trayService = mauiApp.Services.GetService<ITrayService>();
+
+        trayService.Initialize();
 
         Task.Run(() => CheckForUpdates(mauiApp.Services.GetService<ILogger<App>>()));
 
