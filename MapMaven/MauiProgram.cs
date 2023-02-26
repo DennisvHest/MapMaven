@@ -10,6 +10,9 @@ using MudBlazor;
 using MudBlazor.Services;
 using Serilog;
 using Squirrel;
+using IWshRuntimeLibrary;
+using System.Reflection;
+using System.Diagnostics;
 
 namespace MapMaven;
 
@@ -94,19 +97,52 @@ public static class MauiProgram
 
         trayService.Initialize();
 
-        Task.Run(() => CheckForUpdates(mauiApp.Services.GetService<ILogger<App>>()));
+        var logger = mauiApp.Services.GetService<ILogger<App>>();
+
+        AddShortcutToStartupFolder(logger);
+
+        Task.Run(() => CheckForUpdates(logger));
 
         StartupSetup.Initialize(mauiApp.Services);
 
         return mauiApp;
     }
 
-    private static async Task CheckForUpdates(ILogger<App> logger)
+    private static void AddShortcutToStartupFolder(ILogger<App> logger)
     {
-        logger?.LogInformation("Checking for updates...");
-
         try
         {
+            logger?.LogInformation($"Adding shortcut to startup folder...");
+
+            WshShell shell = new WshShell();
+            string shortcutAddress = Environment.GetFolderPath(Environment.SpecialFolder.Startup) + @"\MapMaven.lnk";
+            var currentDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+
+            logger?.LogInformation($"Current directory for shortcut to .exe: {currentDirectory}");
+
+            IWshShortcut shortcut = (IWshShortcut)shell.CreateShortcut(shortcutAddress);
+            shortcut.Description = "Map Maven";
+            shortcut.WorkingDirectory = currentDirectory;
+
+            shortcut.TargetPath = Process.GetCurrentProcess().MainModule.FileName;
+
+            logger?.LogInformation($"TargetPath for shortcut to .exe: {shortcut.TargetPath}");
+
+            shortcut.IconLocation = currentDirectory + @"\Assets\appicon.ico";
+            shortcut.Save();
+        }
+        catch (Exception ex)
+        {
+            logger?.LogError(ex, "Cannot create shortcut in startup folder.");
+        }
+    }
+
+    private static async Task CheckForUpdates(ILogger<App> logger)
+    {
+        try
+        {
+            logger?.LogInformation("Checking for updates...");
+
             using var updateManager = new GithubUpdateManager("https://github.com/DennisvHest/MapMaven", prerelease: true);
 
             if (!updateManager.IsInstalledApp)

@@ -65,7 +65,7 @@ namespace MapMaven_Core
         {
             get
             {
-                var currentDirectory = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
+                var currentDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
                 return Path.Join(currentDirectory, "ScoreEstimation", "ScoreEstimateMLModel.zip");
             }
