@@ -42,6 +42,9 @@ public partial class App : MauiWinUIApplication
         if (e.IsFirstLaunch)
         {
             base.OnLaunched(_launchEventArgs);
+
+            if (e.Arguments.Contains("startupLaunch"))
+                Platforms.Windows.WindowExtensions.MinimizeToTray();
         }
         else
         {

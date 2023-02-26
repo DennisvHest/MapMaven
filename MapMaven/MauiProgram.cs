@@ -139,6 +139,7 @@ public static class MauiProgram
             shortcut.Description = "Map Maven";
             shortcut.WorkingDirectory = currentDirectory;
             shortcut.WindowStyle = 7; // Start minimized
+            shortcut.Arguments = "startupLaunch";
 
             var exePath = Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName);
 
