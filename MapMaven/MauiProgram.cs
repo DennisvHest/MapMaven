@@ -9,9 +9,9 @@ using MudBlazor;
 using MudBlazor.Services;
 using Serilog;
 using Squirrel;
-using IWshRuntimeLibrary;
 using System.Reflection;
 using System.Diagnostics;
+using ShellLink;
 
 namespace MapMaven;
 
@@ -126,17 +126,10 @@ public static class MauiProgram
         {
             logger?.LogInformation($"Adding shortcut to startup folder...");
 
-            WshShell shell = new WshShell();
             string shortcutAddress = Environment.GetFolderPath(Environment.SpecialFolder.Startup) + @"\MapMaven.lnk";
             var currentDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
             logger?.LogInformation($"Current directory for shortcut to .exe: {currentDirectory}");
-
-            IWshShortcut shortcut = (IWshShortcut)shell.CreateShortcut(shortcutAddress);
-            shortcut.Description = "Map Maven";
-            shortcut.WorkingDirectory = currentDirectory;
-            shortcut.WindowStyle = 7; // Start minimized
-            shortcut.Arguments = "startupLaunch";
 
             var exePath = Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName);
 
@@ -147,12 +140,15 @@ public static class MauiProgram
 
             exePath = Path.Combine(exePath, "MapMaven.exe");
 
-            shortcut.TargetPath = exePath;
+            logger?.LogInformation($"TargetPath for shortcut to .exe: {exePath}");
 
-            logger?.LogInformation($"TargetPath for shortcut to .exe: {shortcut.TargetPath}");
-
-            shortcut.IconLocation = currentDirectory + @"\Assets\appicon.ico";
-            shortcut.Save();
+            Shortcut.CreateShortcut(
+                path: exePath,
+                args: "startupLaunch",
+                workdir: currentDirectory,
+                iconpath: currentDirectory + @"\Assets\appicon.ico",
+                iconindex: 0
+            ).WriteToFile(shortcutAddress);
         }
         catch (Exception ex)
         {

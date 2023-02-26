@@ -82,18 +82,6 @@
 	  <None Remove="C:\Users\denni\.nuget\packages\naudio.vorbis\1.5.0\contentFiles\any\netstandard2.0\README.md" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <COMReference Include="IWshRuntimeLibrary">
-	    <WrapperTool>tlbimp</WrapperTool>
-	    <VersionMinor>0</VersionMinor>
-	    <VersionMajor>1</VersionMajor>
-	    <Guid>f935dc20-1cf0-11d0-adb9-00c04fd58a0b</Guid>
-	    <Lcid>0</Lcid>
-	    <Isolated>false</Isolated>
-	    <EmbedInteropTypes>true</EmbedInteropTypes>
-	  </COMReference>
-	</ItemGroup>
-
     <ItemGroup>
       <PackageReference Include="BeatSaber.SongHashing" Version="1.2.0" />
       <PackageReference Include="BeatSaberPlaylistsLib" Version="1.6.6" />
@@ -107,6 +95,7 @@
       <PackageReference Include="NAudio" Version="2.1.0" />
       <PackageReference Include="NAudio.Vorbis" Version="1.5.0" />
       <PackageReference Include="PInvoke.User32" Version="0.7.124" />
+      <PackageReference Include="securifybv.ShellLink" Version="0.1.0" />
       <PackageReference Include="Serilog.Extensions.Hosting" Version="5.0.1" />
       <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
       <PackageReference Include="System.Drawing.Common" Version="7.0.0" />
