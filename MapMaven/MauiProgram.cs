@@ -13,6 +13,8 @@ using Squirrel;
 using IWshRuntimeLibrary;
 using System.Reflection;
 using System.Diagnostics;
+using Serilog.Core;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace MapMaven;
 
@@ -93,22 +95,35 @@ public static class MauiProgram
 
         mauiApp = builder.Build();
 
+        Task.Run(() => ExecuteStartupProcedures(mauiApp));
+
         var trayService = mauiApp.Services.GetService<ITrayService>();
-
         trayService.Initialize();
-
-        var logger = mauiApp.Services.GetService<ILogger<App>>();
-
-        AddShortcutToStartupFolder(logger);
-
-        Task.Run(() => CheckForUpdates(logger));
 
         StartupSetup.Initialize(mauiApp.Services);
 
         return mauiApp;
     }
 
-    private static void AddShortcutToStartupFolder(ILogger<App> logger)
+    private static async Task ExecuteStartupProcedures(MauiApp mauiApp)
+    {
+        var logger = mauiApp.Services.GetService<ILogger<App>>();
+
+        try
+        {
+            using var updateManager = new GithubUpdateManager("https://github.com/DennisvHest/MapMaven", prerelease: true);
+
+            AddShortcutToStartupFolder(logger, updateManager.IsInstalledApp);
+
+            await CheckForUpdates(logger, updateManager);
+        }
+        catch (Exception ex)
+        {
+            logger?.LogError(ex, "Error during startup procedures.");
+        }
+    }
+
+    private static void AddShortcutToStartupFolder(ILogger<App> logger, bool isInstalledApp)
     {
         try
         {
@@ -123,8 +138,18 @@ public static class MauiProgram
             IWshShortcut shortcut = (IWshShortcut)shell.CreateShortcut(shortcutAddress);
             shortcut.Description = "Map Maven";
             shortcut.WorkingDirectory = currentDirectory;
+            shortcut.WindowStyle = 7; // Start minimized
 
-            shortcut.TargetPath = Process.GetCurrentProcess().MainModule.FileName;
+            var exePath = Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName);
+
+            if (isInstalledApp)
+            {
+                exePath = Path.GetFullPath(Path.Combine(exePath, @"..\"));
+            }
+
+            exePath = Path.Combine(exePath, "MapMaven.exe");
+
+            shortcut.TargetPath = exePath;
 
             logger?.LogInformation($"TargetPath for shortcut to .exe: {shortcut.TargetPath}");
 
@@ -137,13 +162,11 @@ public static class MauiProgram
         }
     }
 
-    private static async Task CheckForUpdates(ILogger<App> logger)
+    private static async Task CheckForUpdates(ILogger<App> logger, GithubUpdateManager updateManager)
     {
         try
         {
             logger?.LogInformation("Checking for updates...");
-
-            using var updateManager = new GithubUpdateManager("https://github.com/DennisvHest/MapMaven", prerelease: true);
 
             if (!updateManager.IsInstalledApp)
             {
@@ -151,7 +174,16 @@ public static class MauiProgram
                 return;
             }
 
-            await updateManager.UpdateApp();
+            var update = await updateManager.UpdateApp();
+
+            if (update == null)
+            {
+                logger?.LogInformation("No new update found.");
+            }
+            else
+            {
+                logger?.LogInformation($"Update {update.Version} installed from {update.BaseUrl}.");
+            }
         }
         catch (Exception ex)
         {
