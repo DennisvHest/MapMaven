@@ -1,10 +1,8 @@
 ﻿// To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
-using Hardcodet.Wpf.TaskbarNotification.Interop;
 using MapMaven.Platforms.Windows;
 using Microsoft.UI.Xaml;
-using System.Diagnostics;
 
 namespace MapMaven.WinUI;
 

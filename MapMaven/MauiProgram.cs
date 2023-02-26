@@ -3,7 +3,6 @@ using MapMaven.Infrastructure;
 using MapMaven.Services;
 using Microsoft.Extensions.Logging;
 using Microsoft.Maui.LifecycleEvents;
-using Microsoft.Maui.Platform;
 using Microsoft.UI.Windowing;
 using Microsoft.UI;
 using MudBlazor;
@@ -13,8 +12,6 @@ using Squirrel;
 using IWshRuntimeLibrary;
 using System.Reflection;
 using System.Diagnostics;
-using Serilog.Core;
-using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace MapMaven;
 
