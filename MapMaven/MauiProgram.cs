@@ -14,6 +14,7 @@ using System.Diagnostics;
 using ShellLink;
 using Microsoft.Extensions.Hosting;
 using MapMaven.Utility;
+using Serilog.Events;
 
 namespace MapMaven;
 
@@ -39,6 +40,7 @@ public static class MauiProgram
 
         Log.Logger = new LoggerConfiguration()
             .MinimumLevel.Information()
+            .MinimumLevel.Override("System.Net.Http.HttpClient", LogEventLevel.Warning)
             .WriteTo.File(
                 path: Path.Join(BeatSaberFileService.AppDataLocation, "logs", "app-logs", "app-log-.txt"),
                 rollingInterval: RollingInterval.Day
@@ -59,6 +61,7 @@ public static class MauiProgram
 
         builder.Services.AddMapMaven();
 
+        builder.Services.AddSingleton<UpdateService>();
         builder.Services.AddSingleton<IHostedService, Worker.Worker>();
         builder.Services.AddSingleton<HostedServiceExecutor>();
 
@@ -113,11 +116,9 @@ public static class MauiProgram
 
         try
         {
-            using var updateManager = new GithubUpdateManager("https://github.com/DennisvHest/MapMaven", prerelease: true);
+            using var updateManager = UpdateService.GetUpdateManager();
 
             AddShortcutToStartupFolder(logger, updateManager.IsInstalledApp);
-
-            await CheckForUpdates(logger, updateManager);
         }
         catch (Exception ex)
         {
@@ -158,35 +159,6 @@ public static class MauiProgram
         catch (Exception ex)
         {
             logger?.LogError(ex, "Cannot create shortcut in startup folder.");
-        }
-    }
-
-    private static async Task CheckForUpdates(ILogger<App> logger, GithubUpdateManager updateManager)
-    {
-        try
-        {
-            logger?.LogInformation("Checking for updates...");
-
-            if (!updateManager.IsInstalledApp)
-            {
-                logger?.LogInformation("App is not an installed app. Skipping update check.");
-                return;
-            }
-
-            var update = await updateManager.UpdateApp();
-
-            if (update == null)
-            {
-                logger?.LogInformation("No new update found.");
-            }
-            else
-            {
-                logger?.LogInformation($"Update {update.Version} installed from {update.BaseUrl}.");
-            }
-        }
-        catch (Exception ex)
-        {
-            logger?.LogError(ex, "Error during update.");
         }
     }
 

@@ -1,4 +1,5 @@
 using MapMaven.Core.Services;
+using MapMaven.Services;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics;
@@ -24,6 +25,17 @@ namespace MapMaven.Worker
         {
             while (await _timer.WaitForNextTickAsync() && !stoppingToken.IsCancellationRequested)
             {
+                try
+                {
+                    var updateService = _serviceProvider.GetRequiredService<UpdateService>();
+
+                    await updateService.CheckForUpdates();
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Error occurred during update check.");
+                }
+
                 try
                 {
                     _logger.LogInformation("Arranging dynamic playlists...");
