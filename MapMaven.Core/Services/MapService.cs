@@ -250,5 +250,23 @@ namespace MapMaven.Services
 
             await LoadHiddenMaps();
         }
+
+        public async Task RefreshDataAsync(bool forceRefresh = false)
+        {
+            IEnumerable<Task> tasks = new List<Task>()
+            {
+                _scoreSaberService.LoadRankedMaps(),
+                _beatSaberDataService.LoadAllPlaylists(),
+                LoadHiddenMaps()
+            };
+
+            if (forceRefresh)
+            {
+                tasks = new Task[] { _beatSaberDataService.LoadAllMapInfo() }.Concat(tasks);
+                _scoreSaberService.RefreshPlayerData();
+            }
+
+            await Task.WhenAll(tasks);
+        }
     }
 }

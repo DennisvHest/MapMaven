@@ -49,9 +49,7 @@
 
             if (InitialSetupDone)
             {
-                Task.Run(ScoreSaberService.LoadRankedMaps);
-                Task.Run(BeatSaberDataService.LoadAllPlaylists);
-                Task.Run(MapService.LoadHiddenMaps);
+                Task.Run(() => MapService.RefreshDataAsync());
             }
         });
     }

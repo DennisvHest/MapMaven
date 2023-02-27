@@ -156,6 +156,11 @@ namespace MapMaven.Core.Services
             await _applicationSettingService.AddOrUpdateAsync(PlayerIdSettingKey, playerId);
         }
 
+        public void RefreshPlayerData()
+        {
+            _playerId.OnNext(_playerId.Value);
+        }
+
         public string? GetPlayerIdFromReplays(string beatSaberInstallLocation)
         {
             var scoreSaberReplaysLocation = Path.Combine(BeatSaberFileService.GetUserDataLocation(beatSaberInstallLocation), "ScoreSaber", "Replays");

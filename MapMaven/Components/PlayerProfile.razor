@@ -27,6 +27,7 @@
                     <b>pp</b>
                     @Player.Pp.ToString("#0.##")
                 </span>
+                <MudIconButton Icon="@Icons.Material.Filled.Refresh" OnClick="RefreshData"></MudIconButton>
             </div>
         </div>
     </div>
@@ -36,10 +37,18 @@
     [Inject]
     ScoreSaberService ScoreSaberService { get; set; }
 
+    [Inject]
+    MapService MapService { get; set; }
+
     Player Player { get; set; } = null;
 
     protected override void OnInitialized()
     {
         SubscribeAndBind(ScoreSaberService.PlayerProfile, player => Player = player);
+    }
+
+    void RefreshData()
+    {
+        Task.Run(() => MapService.RefreshDataAsync(forceRefresh: true));
     }
 }
