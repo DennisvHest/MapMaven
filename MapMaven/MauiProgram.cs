@@ -12,6 +12,8 @@ using Squirrel;
 using System.Reflection;
 using System.Diagnostics;
 using ShellLink;
+using Microsoft.Extensions.Hosting;
+using MapMaven.Utility;
 
 namespace MapMaven;
 
@@ -56,6 +58,9 @@ public static class MauiProgram
         });
 
         builder.Services.AddMapMaven();
+
+        builder.Services.AddSingleton<IHostedService, Worker.Worker>();
+        builder.Services.AddSingleton<HostedServiceExecutor>();
 
         builder.ConfigureLifecycleEvents(lifecycle =>
         {

@@ -1,4 +1,6 @@
 using MapMaven.Core.Services;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using System.Diagnostics;
 
 namespace MapMaven.Worker
@@ -10,7 +12,7 @@ namespace MapMaven.Worker
         private readonly IServiceProvider _serviceProvider;
 
         private readonly ILogger<Worker> _logger;
-        
+
 
         public Worker(ILogger<Worker> logger, IServiceProvider serviceProvider)
         {
@@ -20,10 +22,7 @@ namespace MapMaven.Worker
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            if (stoppingToken.IsCancellationRequested)
-                return;
-
-            do
+            while (await _timer.WaitForNextTickAsync() && !stoppingToken.IsCancellationRequested)
             {
                 try
                 {
@@ -43,9 +42,6 @@ namespace MapMaven.Worker
                     _logger.LogError(ex, "Error occurred in worker");
                 }
             }
-            while (await _timer.WaitForNextTickAsync() && !stoppingToken.IsCancellationRequested);
         }
-
-
     }
 }

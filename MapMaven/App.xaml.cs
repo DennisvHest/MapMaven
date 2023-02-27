@@ -1,13 +1,25 @@
-﻿namespace MapMaven;
+﻿using MapMaven.Utility;
+
+namespace MapMaven;
 
 public partial class App : Application
 {
-	public App()
-	{
-		InitializeComponent();
+    private readonly HostedServiceExecutor _hostedServiceExecutor;
 
-		MainPage = new MainPage();
-	}
+    public App(HostedServiceExecutor hostedServiceExecutor)
+    {
+        _hostedServiceExecutor = hostedServiceExecutor;
+
+        InitializeComponent();
+
+        MainPage = new MainPage();
+    }
+
+    protected override void OnStart()
+    {
+        Task.Run(() => _hostedServiceExecutor.StartAsync(new()));
+        base.OnStart();
+    }
 
     protected override Window CreateWindow(IActivationState activationState)
     {
