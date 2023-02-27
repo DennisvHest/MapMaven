@@ -8,7 +8,6 @@ using Microsoft.UI;
 using MudBlazor;
 using MudBlazor.Services;
 using Serilog;
-using Squirrel;
 using System.Reflection;
 using System.Diagnostics;
 using ShellLink;
@@ -23,12 +22,6 @@ public static class MauiProgram
     public static MauiApp CreateMauiApp()
     {
         MauiApp mauiApp = null;
-
-        SquirrelAwareApp.HandleEvents(
-            onInitialInstall: OnAppInstall,
-            onAppUninstall: OnAppUninstall,
-            onEveryRun: OnAppRun
-        );
 
         var builder = MauiApp.CreateBuilder();
         builder
@@ -160,20 +153,5 @@ public static class MauiProgram
         {
             logger?.LogError(ex, "Cannot create shortcut in startup folder.");
         }
-    }
-
-    private static void OnAppInstall(SemanticVersion version, IAppTools tools)
-    {
-        tools.CreateShortcutForThisExe(ShortcutLocation.StartMenu | ShortcutLocation.Desktop);
-    }
-
-    private static void OnAppUninstall(SemanticVersion version, IAppTools tools)
-    {
-        tools.RemoveShortcutForThisExe(ShortcutLocation.StartMenu | ShortcutLocation.Desktop);
-    }
-
-    private static void OnAppRun(SemanticVersion version, IAppTools tools, bool firstRun)
-    {
-        tools.SetProcessAppUserModelId();
     }
 }
