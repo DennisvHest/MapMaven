@@ -48,10 +48,6 @@
     </ItemGroup>
 
 	<ItemGroup>
-		<None Include="Worker\**" CopyToPublishDirectory="PreserveNewest" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<None Update="MapMaven.exe.squirrel">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
