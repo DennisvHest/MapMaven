@@ -6,6 +6,13 @@ using System.Windows.Forms;
 namespace MapMaven.Platforms.Windows;
 public class TrayService : ITrayService
 {
+    private readonly MapService _mapService;
+
+    public TrayService(MapService mapService)
+    {
+        _mapService = mapService;
+    }
+
     public void Initialize()
     {
         var contextMenu = new ContextMenuStrip();
@@ -13,7 +20,7 @@ public class TrayService : ITrayService
         contextMenu.Items.Add(
             text: "Open Map Maven",
             image: null,
-            onClick: (_, _) => WindowExtensions.BringToFront()
+            onClick: (_, _) => BringToFront()
         );
 
         contextMenu.Items.Add(
@@ -29,6 +36,11 @@ public class TrayService : ITrayService
         notifyIcon.Text = "Map Maven";
         notifyIcon.Visible = true;
 
-        notifyIcon.DoubleClick += (_, _) => WindowExtensions.BringToFront();
+        notifyIcon.DoubleClick += (_, _) => BringToFront();
+    }
+
+    public void BringToFront()
+    {
+        WindowExtensions.BringToFront();
     }
 }

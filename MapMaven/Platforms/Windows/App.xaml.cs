@@ -13,6 +13,7 @@ namespace MapMaven.WinUI;
 public partial class App : MauiWinUIApplication
 {
     private readonly SingleInstanceDesktopApp _singleInstanceApp;
+    private MauiApp _app;
 
     private LaunchActivatedEventArgs _launchEventArgs = null;
 
@@ -28,7 +29,12 @@ public partial class App : MauiWinUIApplication
         _singleInstanceApp.Launched += OnSingleInstanceLaunched;
     }
 
-	protected override MauiApp CreateMauiApp() => MauiProgram.CreateMauiApp();
+	protected override MauiApp CreateMauiApp()
+    {
+        _app = MauiProgram.CreateMauiApp();
+
+        return _app;
+    }
 
     protected override void OnLaunched(LaunchActivatedEventArgs args)
     {

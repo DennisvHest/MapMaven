@@ -30,14 +30,14 @@ namespace MapMaven.Infrastructure
                 config.BaseAddress = new Uri("https://scoresaber.balibalo.xyz");
             });
 
-            services.AddScoped<BeatSaberFileService>();
-            services.AddScoped<BeatSaberDataService>();
-            services.AddScoped<MapService>();
-            services.AddScoped<SongPlayerService>();
-            services.AddScoped<PlaylistService>();
-            services.AddScoped<ScoreSaberService>();
-            services.AddScoped<DynamicPlaylistArrangementService>();
-            services.AddScoped<ApplicationSettingService>();
+            services.AddSingleton<BeatSaberFileService>();
+            services.AddSingleton<BeatSaberDataService>();
+            services.AddSingleton<MapService>();
+            services.AddSingleton<SongPlayerService>();
+            services.AddSingleton<PlaylistService>();
+            services.AddSingleton<ScoreSaberService>();
+            services.AddSingleton<DynamicPlaylistArrangementService>();
+            services.AddSingleton<ApplicationSettingService>();
         }
 
         public static void Initialize(IServiceProvider serviceProvider)
