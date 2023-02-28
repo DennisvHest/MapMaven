@@ -2,13 +2,12 @@ using MapMaven.Core.Services;
 using MapMaven.Services;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using System.Diagnostics;
 
 namespace MapMaven.Worker
 {
     public class Worker : BackgroundService
     {
-        private readonly PeriodicTimer _timer = new PeriodicTimer(Debugger.IsAttached ? TimeSpan.FromSeconds(30) : TimeSpan.FromMinutes(5));
+        private readonly PeriodicTimer _timer = new PeriodicTimer(TimeSpan.FromMinutes(5));
 
         private readonly IServiceProvider _serviceProvider;
 

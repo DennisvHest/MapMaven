@@ -3,9 +3,9 @@
 @page "/improve"
 @using MapMaven.Core.Models;
 
-<div class="d-flex full-height">
+<div class="d-flex full-height overflow-hidden">
     <ImprovementTweaker OnMapSelectionChanged="OnMapSelectionChanged"></ImprovementTweaker>
-    <MapBrowser @ref="MapBrowser" Maps="MapList" Selectable="true">
+    <MapBrowser @ref="MapBrowser" Maps="MapList" Selectable="true" Width="calc(100% - 240px)">
         <HeaderContent>
             <RankedMapBrowserHeader></RankedMapBrowserHeader>
         </HeaderContent>

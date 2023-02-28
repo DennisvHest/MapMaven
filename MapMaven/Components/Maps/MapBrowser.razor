@@ -5,7 +5,7 @@
 <MudTable @ref="TableRef"
           T="Map"
           Items="Maps"
-          Height="calc(100% - 116px)"
+          Height="@Height"
           Class="full-height full-width background-transparent"
           Loading="LoadingMapInfo"
           Filter="Filter"
@@ -14,6 +14,8 @@
           SelectOnRowClick="false"
           SelectedItems="SelectedMaps"
           SelectedItemsChanged="OnSelectedItemsChanged"
+          RowsPerPage="25"
+          Style="@Style"
           RowStyle="height: 88px">
     <ToolBarContent>
         @if (SelectedPlaylist != null)

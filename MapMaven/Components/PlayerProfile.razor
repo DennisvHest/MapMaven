@@ -27,7 +27,11 @@
                     <b>pp</b>
                     @Player.Pp.ToString("#0.##")
                 </span>
-                <MudIconButton Icon="@Icons.Material.Filled.Refresh" OnClick="RefreshData"></MudIconButton>
+                <div style="float: right;">
+                    <MudTooltip Text="Refresh all data">
+                        <MudIconButton Icon="@Icons.Material.Filled.Refresh" OnClick="RefreshData" Class="pa-0"></MudIconButton>
+                    </MudTooltip>
+                </div>
             </div>
         </div>
     </div>

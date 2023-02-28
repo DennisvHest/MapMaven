@@ -36,6 +36,14 @@ namespace MapMaven.Components.Maps
         [Parameter]
         public bool Selectable { get; set; } = false;
 
+        [Parameter]
+        public string Width { get; set; } = "100%";
+
+        [Parameter]
+        public string Height { get; set; } = "calc(100% - 116px)";
+
+        string Style => $"width: {Width}";
+
         MudTable<Map> TableRef;
 
         private Playlist SelectedPlaylist = null;
