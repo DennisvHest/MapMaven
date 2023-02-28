@@ -9,6 +9,7 @@ using MapMaven.Core.Services;
 using BeatSaberPlaylistsLib.Types;
 using MapMaven.Core.Models.DynamicPlaylists;
 using MapMaven.Core.Models.Data;
+using System;
 
 namespace MapMaven.Services
 {
@@ -46,6 +47,10 @@ namespace MapMaven.Services
                     return x.playlists.FirstOrDefault(p => p.FileName == x.selectedPlaylistFileName);
                 })
                 .Subscribe(SelectedPlaylist.OnNext); // Subscribing here because of weird behavior with multiple subscriptions triggering multiple reruns of this observable.
+
+            _beatSaverFileService.BeatSaberInstallLocationObservable
+                .DistinctUntilChanged()
+                .Subscribe(_ => ResetPlaylistManager());
         }
 
         public void ResetPlaylistManager()
