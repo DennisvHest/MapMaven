@@ -23,7 +23,7 @@
             </div>
         }
         <PlaylistList></PlaylistList>
-        <div class="absolute full-width" style="bottom: 0">
+        <div class="absolute full-width" style="bottom: 0; z-index: 9999; background-color: var(--mud-palette-drawer-background);">
             <div @onclick="OpenSettings" @onclick:preventDefault="true">
                 <MudNavLink Icon="@Icons.Material.Filled.Settings"
                             Href="#"

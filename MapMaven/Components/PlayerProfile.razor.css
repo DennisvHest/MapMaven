@@ -1,6 +1,7 @@
 ﻿.profile {
     position: relative;
     overflow: hidden;
+    min-height: 80px;
 }
 
 .profile-background-image {
