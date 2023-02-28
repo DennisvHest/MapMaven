@@ -26,38 +26,41 @@
 </MudTd>
 <MudTd DataLabel="MapAuthorName">@Map.MapAuthorName</MudTd>
 <MudTd DataLabel="Duration" Style="width: 130px">@Map.SongDuration.ToString("mm':'ss")</MudTd>
-<MudTd>
-    @if (Map.PlayerScore != null)
-    {
-        <MudChip Color="Color.Primary" Size="Size.Small">@Map.PlayerScore.AccuracyWithMods().ToString("#0.##")%</MudChip>
-    }
-</MudTd>
-<MudTd Style="width: 130px">
-    @if (Map.PlayerScore?.Score?.Pp != null)
-    {
-        <MudChip Color="Color.Primary" Size="Size.Small">@Map.PlayerScore.Score.Pp.ToString("#0.##") pp</MudChip>
-    }
-</MudTd>
-<MudTd Style="width: 130px">
-    @if (Map.ScoreEstimates != null)
-    {
-        @foreach (var scoreEstimate in Map.ScoreEstimates)
+@if (!string.IsNullOrEmpty(PlayerId))
+{
+    <MudTd>
+        @if (Map.PlayerScore != null)
         {
-            <MudChip Color="Color.Primary" Size="Size.Small">
-                @scoreEstimate.Difficulty | 
-                @scoreEstimate.Stars <MudIcon Icon="@Icons.Filled.Star" Size="Size.Small"></MudIcon> |
-                @scoreEstimate.Accuracy.ToString("#0.##") % |
-                +@scoreEstimate.PPIncrease.ToString("#0.##") pp
-            </MudChip>
+            <MudChip Color="Color.Primary" Size="Size.Small">@Map.PlayerScore.AccuracyWithMods().ToString("#0.##")%</MudChip>
         }
-    }
-</MudTd>
-<MudTd>
-    @if (Map.PlayerScore?.Score?.HasReplay == true)
-    {
-        <MudButton Class="replay-button" OnClick="OpenReplay" Style="min-width: 0; border-radius: 100%;"><img src="images/replay-icon.png" style="width: 24px" /></MudButton>
-    }
-</MudTd>
+    </MudTd>
+    <MudTd Style="width: 130px">
+        @if (Map.PlayerScore?.Score?.Pp != null)
+        {
+            <MudChip Color="Color.Primary" Size="Size.Small">@Map.PlayerScore.Score.Pp.ToString("#0.##") pp</MudChip>
+        }
+    </MudTd>
+    <MudTd Style="width: 130px">
+        @if (Map.ScoreEstimates != null)
+        {
+            @foreach (var scoreEstimate in Map.ScoreEstimates)
+            {
+                <MudChip Color="Color.Primary" Size="Size.Small">
+                    @scoreEstimate.Difficulty |
+                    @scoreEstimate.Stars <MudIcon Icon="@Icons.Filled.Star" Size="Size.Small"></MudIcon> |
+                    @scoreEstimate.Accuracy.ToString("#0.##") % |
+                    +@scoreEstimate.PPIncrease.ToString("#0.##") pp
+                </MudChip>
+            }
+        }
+    </MudTd>
+    <MudTd>
+        @if (Map.PlayerScore?.Score?.HasReplay == true)
+        {
+            <MudButton Class="replay-button" OnClick="OpenReplay" Style="min-width: 0; border-radius: 100%;"><img src="images/replay-icon.png" style="width: 24px" /></MudButton>
+        }
+    </MudTd>
+}
 <MudTd Style="width: 130px; position: relative;">
     <MudIconButton Icon="@Icons.Filled.PlaylistAdd" Variant="Variant.Text" Size="Size.Medium" OnClick="OpenAddMapToPlaylistDialog" />
     @if (SelectedPlaylist != null)

@@ -1,4 +1,6 @@
-﻿<MudDrawer Open="true" Elevation="1">
+﻿@inherits ReactiveComponent
+
+<MudDrawer Open="true" Elevation="1">
     <PlayerProfile></PlayerProfile>
     <MudNavMenu Color="Color.Primary" Bordered="true" Class="full-height">
         <div @onclick="OnMapsNavigation">
@@ -9,14 +11,17 @@
                 Maps
             </MudNavLink>
         </div>
-        <div @onclick="OnMapsNavigation">
-            <MudNavLink Icon="@Icons.Filled.KeyboardDoubleArrowUp"
+        @if (!string.IsNullOrEmpty(PlayerId))
+        {
+            <div @onclick="OnMapsNavigation">
+                <MudNavLink Icon="@Icons.Filled.KeyboardDoubleArrowUp"
                         DisableRipple="true"
                         Match="NavLinkMatch.All"
                         Href="/improve">
-                Improve
-            </MudNavLink>
-        </div>
+                    Improve
+                </MudNavLink>
+            </div>
+        }
         <PlaylistList></PlaylistList>
         <div class="absolute full-width" style="bottom: 0">
             <div @onclick="OpenSettings" @onclick:preventDefault="true">

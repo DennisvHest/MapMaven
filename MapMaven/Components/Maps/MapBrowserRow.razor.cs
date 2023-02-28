@@ -41,6 +41,8 @@ namespace MapMaven.Components.Maps
 
         bool ShowConfirmRemoveFromPlaylist = false;
 
+        public string? PlayerId { get; set; } = null;
+
         IDisposable SelectedPlaylistSubscription;
 
         protected override void OnInitialized()
@@ -74,6 +76,8 @@ namespace MapMaven.Components.Maps
             SubscribeAndBind(playbackProgress, x => PlaybackProgress = x.progress);
 
             SelectedPlaylistSubscription = SubscribeAndBind(PlaylistService.SelectedPlaylist, selectedPlaylist => SelectedPlaylist = selectedPlaylist);
+
+            SubscribeAndBind(ScoreSaberService.PlayerIdObservable, playerId => PlayerId = playerId);
         }
 
         void PlayPauseSongPreview()
