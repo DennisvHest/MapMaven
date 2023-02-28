@@ -102,7 +102,7 @@ namespace MapMaven.Core.Services
                         };
                     });
 
-                var scoresaber = new Scoresaber(player, rankedMapPlayerScorePairs.Select(x => x.PlayerScore));
+                var scoresaber = new Scoresaber(player, playerScores);
 
                 return rankedMapPlayerScorePairs.Select(pair =>
                 {
