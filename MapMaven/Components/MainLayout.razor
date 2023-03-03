@@ -1,5 +1,6 @@
 ﻿@using System.Reactive.Threading.Tasks
 @using MapMaven.Core.Services
+@using System.Reactive.Linq;
 
 @inherits LayoutComponentBase
 
@@ -41,7 +42,7 @@
     {
         await ApplicationSettingService.LoadAsync();
 
-        BeatSaberToolFileService.BeatSaberInstallLocationObservable.Subscribe(location =>
+        BeatSaberToolFileService.BeatSaberInstallLocationObservable.DistinctUntilChanged().Subscribe(location =>
         {
             InitialSetupDone = location != null;
 
