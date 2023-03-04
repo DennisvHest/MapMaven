@@ -49,7 +49,7 @@ namespace MapMaven.Components.Maps
         private Playlist SelectedPlaylist = null;
         private IEnumerable<MapFilter> MapFilters = Enumerable.Empty<MapFilter>();
 
-        private IEnumerable<string> MapHashFilter = null;
+        private List<string> MapHashFilter = null;
 
         private HashSet<Map> SelectedMaps = new HashSet<Map>();
 
@@ -64,7 +64,7 @@ namespace MapMaven.Components.Maps
             SubscribeAndBind(PlaylistService.SelectedPlaylist, selectedPlaylist =>
             {
                 SelectedPlaylist = selectedPlaylist;
-                MapHashFilter = selectedPlaylist?.Maps.Select(m => m.Hash);
+                MapHashFilter = selectedPlaylist?.Maps.Select(m => m.Hash).ToList();
             });
             SubscribeAndBind(MapService.MapFilters, mapFilters => MapFilters = mapFilters);
             SubscribeAndBind(MapService.SelectedMaps, selectedMaps => SelectedMaps = selectedMaps);
@@ -81,7 +81,7 @@ namespace MapMaven.Components.Maps
                 searchFilter = $"{map.Name} {map.SongAuthorName} {map.MapAuthorName}".Contains(searchString, StringComparison.OrdinalIgnoreCase);
             }
 
-            var mapHashFilter = MapHashFilter?.ToList() switch
+            var mapHashFilter = MapHashFilter switch
             {
                 null => true,
                 [] => false,
