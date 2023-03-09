@@ -41,7 +41,7 @@ Download the zip file from the [latest release](https://github.com/DennisvHest/M
 **Note:** You might get a Windows SmartScreen warning when using either method. You can click 'More info' and then 'Run anyway' to ignore the warning.
 
 # Why BETA?
-So far, Map Maven has only been tested by me. The map recommendation system works well for me, and in theory, it should recommend good maps for every Beat Saber player. But there is no way for me to actually know if it recommends good maps to player for other players. Within the BETA, the recommendation system can be improved based on feedback.
+So far, Map Maven has only been tested by me. The map recommendation system works well for me, and in theory, it should recommend good maps for every Beat Saber player. But there is no way for me to actually know if it recommends good maps for other players. Within the BETA, the recommendation system can be improved based on feedback.
 
 There are also some improvements that have to be made to make the application run better.
 
