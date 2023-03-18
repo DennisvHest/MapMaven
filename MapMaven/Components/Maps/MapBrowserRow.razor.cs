@@ -7,6 +7,7 @@ using MudBlazor;
 using MapMaven.Models;
 using MapMaven.Core.Services;
 using MapMaven.Components.Playlists;
+using MapMaven.Components.Shared;
 
 namespace MapMaven.Components.Maps
 {
@@ -38,8 +39,6 @@ namespace MapMaven.Components.Maps
         private double PlaybackProgress = 0;
 
         protected string CoverImageUrl { get; set; }
-
-        bool ShowConfirmRemoveFromPlaylist = false;
 
         public string? PlayerId { get; set; } = null;
 
@@ -106,14 +105,18 @@ namespace MapMaven.Components.Maps
             }
         }
 
-        void OpenDeleteFromPlaylistDialog()
+        async Task OpenDeleteFromPlaylistDialog()
         {
-            ShowConfirmRemoveFromPlaylist = true;
-        }
+            var dialog = DialogService.Show<ConfirmationDialog>(null, new DialogParameters
+            {
+                { nameof(ConfirmationDialog.DialogText), $"Are you sure you want to remove \"{Map.Name}\" from the \"{SelectedPlaylist.Title}\" playlist?" },
+                { nameof(ConfirmationDialog.ConfirmText), $"Remove" }
+            });
 
-        void CloseDeleteFromPlaylistDialog()
-        {
-            ShowConfirmRemoveFromPlaylist = false;
+            var result = await dialog.Result;
+
+            if (!result.Cancelled)
+                await RemoveFromPlaylist();
         }
 
         async Task RemoveFromPlaylist()
@@ -121,9 +124,6 @@ namespace MapMaven.Components.Maps
             await PlaylistService.RemoveMapFromPlaylist(Map, SelectedPlaylist);
 
             Snackbar.Add($"Removed map \"{Map.Name}\" from playlist \"{SelectedPlaylist.Title}\"", Severity.Normal, config => config.Icon = Icons.Filled.Check);
-
-            CloseDeleteFromPlaylistDialog();
-            InvokeAsync(() => StateHasChanged());
         }
 
         void OpenReplay()
