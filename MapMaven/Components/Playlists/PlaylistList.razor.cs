@@ -1,3 +1,4 @@
+using MapMaven.Components.Shared;
 using MapMaven.Models;
 using MapMaven.Services;
 using Microsoft.AspNetCore.Components;
@@ -27,8 +28,6 @@ namespace MapMaven.Components.Playlists
 
         private Playlist SelectedPlaylist;
         private object SelectedPlaylistValue;
-
-        private Playlist PlaylistToDelete;
 
         bool ShowConfirmDelete = false;
 
@@ -103,25 +102,25 @@ namespace MapMaven.Components.Playlists
             });
         }
 
-        protected void OpenDeletePlaylistDialog(Playlist playlistToDelete)
+        protected async Task OpenDeletePlaylistDialog(Playlist playlistToDelete)
         {
-            PlaylistToDelete = playlistToDelete;
-            ShowConfirmDelete = true;
+            var dialog = DialogService.Show<ConfirmationDialog>(null, new DialogParameters
+            {
+                { nameof(ConfirmationDialog.DialogText), $"Are you sure you want to delete the \"{playlistToDelete.Title}\" playlist?" },
+                { nameof(ConfirmationDialog.ConfirmText), $"Delete" }
+            });
+
+            var result = await dialog.Result;
+
+            if (!result.Cancelled)
+                await DeletePlaylist(playlistToDelete);
         }
 
-        protected async Task DeletePlaylist()
+        protected async Task DeletePlaylist(Playlist playlistToDelete)
         {
-            await PlaylistService.DeletePlaylist(PlaylistToDelete);
+            await PlaylistService.DeletePlaylist(playlistToDelete);
             
-            Snackbar.Add($"Removed playlist \"{PlaylistToDelete.Title}\"", Severity.Normal, config => config.Icon = Icons.Filled.Check);
-            
-            RemovePlaylistToDelete();
-        }
-
-        protected void RemovePlaylistToDelete()
-        {
-            PlaylistToDelete = null;
-            ShowConfirmDelete = false;
+            Snackbar.Add($"Removed playlist \"{playlistToDelete.Title}\"", Severity.Normal, config => config.Icon = Icons.Filled.Check);
         }
     }
 }

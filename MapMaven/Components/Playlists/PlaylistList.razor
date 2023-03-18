@@ -65,13 +65,3 @@
         </MudListItem>
     }
 </MudList>
-
-<MudDialog @bind-IsVisible="ShowConfirmDelete">
-    <DialogContent>
-        <MudText>Are you sure you want to delete the "@PlaylistToDelete.Title" playlist?</MudText>
-    </DialogContent>
-    <DialogActions>
-        <MudButton OnClick="RemovePlaylistToDelete">Cancel</MudButton>
-        <MudButton Color="@Color.Error" Variant="Variant.Filled" OnClick="DeletePlaylist">Delete</MudButton>
-    </DialogActions>
-</MudDialog>
