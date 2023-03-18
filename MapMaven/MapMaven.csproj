@@ -90,6 +90,7 @@
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
       <PackageReference Include="Microsoft.VisualStudio.Utilities" Version="17.4.33103.184" />
+	  <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.2.230313.1" />
       <PackageReference Include="MudBlazor" Version="6.1.6" />
       <PackageReference Include="NAudio" Version="2.1.0" />
       <PackageReference Include="NAudio.Vorbis" Version="1.5.0" />
