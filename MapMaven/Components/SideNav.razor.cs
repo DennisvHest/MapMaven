@@ -14,9 +14,6 @@ namespace MapMaven.Components
         ScoreSaberService ScoreSaberService { get; set; }
 
         [Inject]
-        public NavigationManager NavigationManager { get; set; }
-
-        [Inject]
         public IDialogService DialogService { get; set; }
 
         public string? PlayerId { get; set; } = null;

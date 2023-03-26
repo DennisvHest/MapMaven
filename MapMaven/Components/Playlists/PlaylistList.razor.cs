@@ -2,6 +2,7 @@ using MapMaven.Components.Shared;
 using MapMaven.Models;
 using MapMaven.Services;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Routing;
 using MudBlazor;
 using System.Reactive.Linq;
 using Playlist = MapMaven.Models.Playlist;
@@ -22,14 +23,15 @@ namespace MapMaven.Components.Playlists
         [Inject]
         ISnackbar Snackbar { get; set; }
 
+        [Inject]
+        public NavigationManager NavigationManager { get; set; }
+
         private IEnumerable<Playlist> Playlists = Array.Empty<Playlist>();
         private IEnumerable<Playlist> DynamicPlaylists = Array.Empty<Playlist>();
         private bool LoadingPlaylists = false;
 
         private Playlist SelectedPlaylist;
         private object SelectedPlaylistValue;
-
-        bool ShowConfirmDelete = false;
 
         protected override void OnInitialized()
         {
@@ -69,7 +71,18 @@ namespace MapMaven.Components.Playlists
 
         protected void OnPlaylistSelect(Playlist playlist)
         {
-            PlaylistService.SetSelectedPlaylist(playlist);
+            NavigationManager.NavigateTo("/");
+
+            SelectedPlaylist = playlist;
+
+            // Set the selected playlist once the navigation to maps page completes (one time event callback) (prevents costly filter execution on current page)
+            NavigationManager.LocationChanged += SetSelectedPlaylistAfterNavigation;
+        }
+
+        private void SetSelectedPlaylistAfterNavigation(object sender, LocationChangedEventArgs e)
+        {
+            PlaylistService.SetSelectedPlaylist(SelectedPlaylist);
+            NavigationManager.LocationChanged -= SetSelectedPlaylistAfterNavigation;
         }
 
         protected void OpenAddPlaylistDialog()
