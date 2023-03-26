@@ -65,9 +65,28 @@ namespace MapMaven.Components.Maps
             {
                 SelectedPlaylist = selectedPlaylist;
                 MapHashFilter = selectedPlaylist?.Maps.Select(m => m.Hash).ToList();
+                SortMapsWithDefaultSort();
             });
             SubscribeAndBind(MapService.MapFilters, mapFilters => MapFilters = mapFilters);
             SubscribeAndBind(MapService.SelectedMaps, selectedMaps => SelectedMaps = selectedMaps);
+        }
+
+        protected override void OnParametersSet()
+        {
+            SortMapsWithDefaultSort();
+        }
+
+        private void SortMapsWithDefaultSort()
+        {
+            // If a playlist is selected, presever the order of the playlist. Otherwise, sort by AddedDateTime.
+            if (MapHashFilter != null)
+            {
+                Maps = Maps.OrderBy(m => MapHashFilter.IndexOf(m.Hash)).ToList();
+            }
+            else
+            {
+                Maps = Maps.OrderByDescending(m => m.AddedDateTime).ToList();
+            }
         }
 
         private bool Filter(Map map)
