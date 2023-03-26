@@ -1,20 +1,19 @@
 using MapMaven.Core.Services;
-using MapMaven.Services;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace MapMaven.Worker
+namespace MapMaven.Services.Workers
 {
-    public class Worker : BackgroundService
+    public class DynamicPlaylistWorker : BackgroundService
     {
         private readonly PeriodicTimer _timer = new PeriodicTimer(TimeSpan.FromMinutes(5));
 
         private readonly IServiceProvider _serviceProvider;
 
-        private readonly ILogger<Worker> _logger;
+        private readonly ILogger<DynamicPlaylistWorker> _logger;
 
 
-        public Worker(ILogger<Worker> logger, IServiceProvider serviceProvider)
+        public DynamicPlaylistWorker(ILogger<DynamicPlaylistWorker> logger, IServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider;
             _logger = logger;
@@ -24,17 +23,6 @@ namespace MapMaven.Worker
         {
             while (await _timer.WaitForNextTickAsync() && !stoppingToken.IsCancellationRequested)
             {
-                try
-                {
-                    var updateService = _serviceProvider.GetRequiredService<UpdateService>();
-
-                    await updateService.CheckForUpdates();
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "Error occurred during update check.");
-                }
-
                 try
                 {
                     _logger.LogInformation("Arranging dynamic playlists...");
