@@ -17,44 +17,33 @@ namespace MapMaven.Components.Maps
         public Map Map { get; set; }
 
         [Parameter]
-        public int RowNumber { get; set; }
+        public IEnumerable<Map> FilteredMaps { get; set; }
 
-        protected string CoverImageUrl { get; set; }
-
-        bool MapInstalled { get; set; }
-
-        protected override void OnInitialized()
+        string GetCoverImageUrl(Map map)
         {
-            if (string.IsNullOrEmpty(Map.CoverImageUrl))
-            {
-                Task.Run(() =>
-                {
-                    var coverImage = BeatSaberDataService.GetMapCoverImage(Map.Hash);
+            if (!string.IsNullOrEmpty(map.CoverImageUrl))
+                return map.CoverImageUrl;
 
-                    CoverImageUrl = coverImage
-                        .GetResizedImage(50, 50)
-                        .ToDataUrl();
+            var coverImage = BeatSaberDataService.GetMapCoverImage(map.Hash);
 
-                    InvokeAsync(StateHasChanged);
-                });
-            }
-            else
-            {
-                CoverImageUrl = Map.CoverImageUrl;
-            }
-
-            MapInstalled = MapService.MapIsInstalled(Map);
+            return coverImage
+                .GetResizedImage(50, 50)
+                .ToDataUrl();
         }
 
-        async Task DownloadMap()
+        bool MapIsInstalled(Map map)
         {
-            await MapService.DownloadMap(Map);
-            MapInstalled = true;
+            return MapService.MapIsInstalled(map);
         }
 
-        async Task HideUnhideMap()
+        async Task DownloadMap(Map map)
         {
-            await MapService.HideUnhideMap(Map);
+            await MapService.DownloadMap(map);
+        }
+
+        async Task HideUnhideMap(Map map)
+        {
+            await MapService.HideUnhideMap(map);
         }
     }
 }

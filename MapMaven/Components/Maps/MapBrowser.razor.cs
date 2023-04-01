@@ -44,7 +44,7 @@ namespace MapMaven.Components.Maps
 
         string Style => $"width: {Width}";
 
-        MudTable<Map> TableRef;
+        MudDataGrid<Map> TableRef;
 
         private Playlist SelectedPlaylist = null;
         private IEnumerable<MapFilter> MapFilters = Enumerable.Empty<MapFilter>();
@@ -74,6 +74,11 @@ namespace MapMaven.Components.Maps
         protected override void OnParametersSet()
         {
             SortMapsWithDefaultSort();
+        }
+
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            await TableRef.SetSortAsync("Name", SortDirection.Descending, x => x.ScoreEstimates.Any() ? x.ScoreEstimates.Max(x => x.PPIncrease) : 0);
         }
 
         private void SortMapsWithDefaultSort()
