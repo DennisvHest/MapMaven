@@ -78,12 +78,12 @@ namespace MapMaven.Components.Maps
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            await TableRef.SetSortAsync("Name", SortDirection.Descending, x => x.ScoreEstimates.Any() ? x.ScoreEstimates.Max(x => x.PPIncrease) : 0);
+            await TableRef.SetSortAsync("ScoreEstimate", SortDirection.Descending, x => x.ScoreEstimates.Any() ? x.ScoreEstimates.Max(x => x.PPIncrease) : 0);
         }
 
         private void SortMapsWithDefaultSort()
         {
-            // If a playlist is selected, presever the order of the playlist. Otherwise, sort by AddedDateTime.
+            // If a playlist is selected, preserve the order of the playlist. Otherwise, sort by AddedDateTime.
             if (MapHashFilter != null)
             {
                 Maps = Maps.OrderBy(m => MapHashFilter.IndexOf(m.Hash)).ToList();

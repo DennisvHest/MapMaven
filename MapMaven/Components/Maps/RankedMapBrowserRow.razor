@@ -1,6 +1,7 @@
 ﻿@using System.Text.Json
 @using MapMaven.Core.Utilities.Scoresaber
 
+<SelectColumn T="Map" />
 <TemplateColumn T="Map" Sortable="false">
     <CellTemplate>
         @(FilteredMaps.TakeWhile(m => m != context.Item).Count() + 1)
@@ -18,13 +19,13 @@
         }
     </CellTemplate>
 </TemplateColumn>
-<PropertyColumn T="Map" TProperty="string" Property="m => m.Name"></PropertyColumn>
-<PropertyColumn T="Map" TProperty="string" Property="m => m.SongAuthorName" Title="Song Author"></PropertyColumn>
-<PropertyColumn T="Map" TProperty="string" Property="m => m.MapAuthorName" Title="Map Author"></PropertyColumn>
-<TemplateColumn T="Map" SortBy="m => m.SongDuration" Style="width: 130px">
+<PropertyColumn T="Map" TProperty="string" Property="m => m.Name" Sortable="false"></PropertyColumn>
+<PropertyColumn T="Map" TProperty="string" Property="m => m.SongAuthorName" Title="Song Author" Sortable="false"></PropertyColumn>
+<PropertyColumn T="Map" TProperty="string" Property="m => m.MapAuthorName" Title="Map Author" Sortable="false"></PropertyColumn>
+<TemplateColumn T="Map" Sortable="false" Title="Duration" Style="width: 130px">
     <CellTemplate>@context.Item.SongDuration.ToString("mm':'ss")</CellTemplate>
 </TemplateColumn>
-<TemplateColumn T="Map" SortBy="m => m.ScoreEstimates.FirstOrDefault()?.Difficulty">
+<TemplateColumn T="Map" Sortable="false" Title="Difficulty">
     <CellTemplate>
         @{
             var difficulty = context.Item.ScoreEstimates.FirstOrDefault()?.Difficulty;
@@ -33,7 +34,10 @@
         <MudChip Size="Size.Small" Variant="Variant.Outlined" Style="@chipStyle">@difficulty</MudChip>
     </CellTemplate>
 </TemplateColumn>
-<TemplateColumn T="Map" SortBy="m => m.ScoreEstimates.FirstOrDefault()?.Stars">
+<TemplateColumn T="Map" Sortable="false">
+    <HeaderTemplate>
+        <MudIcon Icon="@Icons.Filled.Star"></MudIcon>
+    </HeaderTemplate>
     <CellTemplate>
         <MudChip Size="Size.Small">
             @context.Item.ScoreEstimates.FirstOrDefault()?.Stars <MudIcon Icon="@Icons.Filled.Star" Size="Size.Small"></MudIcon>
@@ -49,7 +53,7 @@
         }
     </CellTemplate>
 </TemplateColumn>
-<TemplateColumn T="Map" Sortable="false" Style="width: 130px">
+<TemplateColumn T="Map" Sortable="false" Style="width: 130px" HeaderStyle="justify-content: flex-start">
     <HeaderTemplate>
         <MudIcon Icon="@Icons.Filled.KeyboardDoubleArrowUp"></MudIcon>pp
     </HeaderTemplate>
