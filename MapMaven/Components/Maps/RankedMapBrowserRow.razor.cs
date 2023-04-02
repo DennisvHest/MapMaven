@@ -14,9 +14,6 @@ namespace MapMaven.Components.Maps
         protected MapService MapService { get; set; }
 
         [Parameter]
-        public Map Map { get; set; }
-
-        [Parameter]
         public IEnumerable<Map> FilteredMaps { get; set; }
 
         string GetCoverImageUrl(Map map)
