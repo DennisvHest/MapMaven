@@ -9,7 +9,6 @@ using MapMaven.Core.Services;
 using BeatSaberPlaylistsLib.Types;
 using MapMaven.Core.Models.DynamicPlaylists;
 using MapMaven.Core.Models.Data;
-using System;
 
 namespace MapMaven.Services
 {

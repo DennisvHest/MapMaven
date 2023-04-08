@@ -1,4 +1,3 @@
-using MapMaven.Extensions;
 using MapMaven.Services;
 using Microsoft.AspNetCore.Components;
 using Map = MapMaven.Models.Map;
@@ -15,18 +14,6 @@ namespace MapMaven.Components.Maps
 
         [Parameter]
         public IEnumerable<Map> FilteredMaps { get; set; }
-
-        string GetCoverImageUrl(Map map)
-        {
-            if (!string.IsNullOrEmpty(map.CoverImageUrl))
-                return map.CoverImageUrl;
-
-            var coverImage = BeatSaberDataService.GetMapCoverImage(map.Hash);
-
-            return coverImage
-                .GetResizedImage(50, 50)
-                .ToDataUrl();
-        }
 
         bool MapIsInstalled(Map map)
         {

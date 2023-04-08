@@ -9,14 +9,7 @@
 </TemplateColumn>
 <TemplateColumn T="Map" Class="pa-1" Style="width: 50px" Sortable="false">
     <CellTemplate>
-        @{
-            var coverImageUrl = GetCoverImageUrl(context.Item);
-        }
-
-        @if (!string.IsNullOrEmpty(coverImageUrl))
-        {
-            <img class="cover-image" src="@coverImageUrl" />
-        }
+        <MapCover Map="context.Item"></MapCover>
     </CellTemplate>
 </TemplateColumn>
 <PropertyColumn T="Map" TProperty="string" Property="m => m.Name" Sortable="false"></PropertyColumn>

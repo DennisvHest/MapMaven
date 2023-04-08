@@ -80,3 +80,11 @@ a:hover {
 .mud-checkbox {
     pointer-events: all;
 }
+
+.mud-data-grid .mud-table-cell .column-header {
+    justify-content: flex-start;
+}
+
+.mud-table-cell {
+    vertical-align: middle;
+}

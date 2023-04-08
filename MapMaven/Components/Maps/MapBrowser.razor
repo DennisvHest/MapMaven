@@ -11,11 +11,12 @@
           QuickFilter="Filter"
           FixedHeader="true"
           MultiSelection="Selectable"
+          SortMode="SortMode.Single"
           SelectedItems="SelectedMaps"
           SelectedItemsChanged="OnSelectedItemsChanged"
           RowsPerPage="25"
           Style="@Style"
-          RowStyle="height: 88px; pointer-events: none;">
+          RowStyle="@(Selectable ? "height: 88px; pointer-events: none;" : "height: 88px;")">
     <ToolBarContent>
         @if (SelectedPlaylist != null)
         {
