@@ -40,6 +40,7 @@
     <LoadingContent>
         @if (InitialMapLoad)
         {
+            <MudProgressLinear Color="Color.Primary" Indeterminate="true" Style="position: absolute; top: 0;" />
             <MudIcon Icon="@Icons.Material.Filled.ManageSearch" Style="vertical-align: middle; margin-bottom: 4px;"></MudIcon> @:Loading maps for first use. Depdending on the number of maps, this might take a minute.
         }
     </LoadingContent>
