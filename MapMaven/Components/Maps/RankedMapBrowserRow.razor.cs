@@ -1,4 +1,3 @@
-using MapMaven.Extensions;
 using MapMaven.Services;
 using Microsoft.AspNetCore.Components;
 using Map = MapMaven.Models.Map;
@@ -14,47 +13,21 @@ namespace MapMaven.Components.Maps
         protected MapService MapService { get; set; }
 
         [Parameter]
-        public Map Map { get; set; }
+        public IEnumerable<Map> FilteredMaps { get; set; }
 
-        [Parameter]
-        public int RowNumber { get; set; }
-
-        protected string CoverImageUrl { get; set; }
-
-        bool MapInstalled { get; set; }
-
-        protected override void OnInitialized()
+        bool MapIsInstalled(Map map)
         {
-            if (string.IsNullOrEmpty(Map.CoverImageUrl))
-            {
-                Task.Run(() =>
-                {
-                    var coverImage = BeatSaberDataService.GetMapCoverImage(Map.Hash);
-
-                    CoverImageUrl = coverImage
-                        .GetResizedImage(50, 50)
-                        .ToDataUrl();
-
-                    InvokeAsync(StateHasChanged);
-                });
-            }
-            else
-            {
-                CoverImageUrl = Map.CoverImageUrl;
-            }
-
-            MapInstalled = MapService.MapIsInstalled(Map);
+            return MapService.MapIsInstalled(map);
         }
 
-        async Task DownloadMap()
+        async Task DownloadMap(Map map)
         {
-            await MapService.DownloadMap(Map);
-            MapInstalled = true;
+            await MapService.DownloadMap(map);
         }
 
-        async Task HideUnhideMap()
+        async Task HideUnhideMap(Map map)
         {
-            await MapService.HideUnhideMap(Map);
+            await MapService.HideUnhideMap(map);
         }
     }
 }

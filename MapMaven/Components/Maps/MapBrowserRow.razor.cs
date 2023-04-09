@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Components;
 using MapMaven.Services;
-using MapMaven.Extensions;
 using System.Reactive.Linq;
 using Map = MapMaven.Models.Map;
 using MudBlazor;
@@ -16,8 +15,6 @@ namespace MapMaven.Components.Maps
         [Inject]
         protected BeatSaberDataService BeatSaberDataService { get; set; }
         [Inject]
-        protected SongPlayerService SongPlayerService { get; set; }
-        [Inject]
         protected PlaylistService PlaylistService { get; set; }
         [Inject]
         protected ScoreSaberService ScoreSaberService { get; set; }
@@ -30,13 +27,7 @@ namespace MapMaven.Components.Maps
         [Inject]
         ISnackbar Snackbar { get; set; }
 
-        [Parameter]
-        public Map Map { get; set; }
-
         protected Playlist SelectedPlaylist { get; set; }
-
-        private bool CurrentlyPlaying = false;
-        private double PlaybackProgress = 0;
 
         protected string CoverImageUrl { get; set; }
 
@@ -46,47 +37,14 @@ namespace MapMaven.Components.Maps
 
         protected override void OnInitialized()
         {
-            if (string.IsNullOrEmpty(Map.CoverImageUrl))
-            {
-                Task.Run(() =>
-                {
-                    var coverImage = BeatSaberDataService.GetMapCoverImage(Map.Hash);
-
-                    CoverImageUrl = coverImage
-                        .GetResizedImage(50, 50)
-                        .ToDataUrl();
-
-                    InvokeAsync(StateHasChanged);
-                });
-            }
-            else
-            {
-                CoverImageUrl = Map.CoverImageUrl;
-            }
-
-            var currentlyPlaying = SongPlayerService.CurrentlyPlayingMap
-                .Select(m => m != null && m.Hash == Map?.Hash);
-
-            SubscribeAndBind(currentlyPlaying, currentlyPlaying => CurrentlyPlaying = currentlyPlaying);
-
-            var playbackProgress = currentlyPlaying.CombineLatest(SongPlayerService.PlaybackProgress, (playing, progress) => (playing, progress))
-                .Where(x => x.playing);
-
-            SubscribeAndBind(playbackProgress, x => PlaybackProgress = x.progress);
-
             SelectedPlaylistSubscription = SubscribeAndBind(PlaylistService.SelectedPlaylist, selectedPlaylist => SelectedPlaylist = selectedPlaylist);
 
             SubscribeAndBind(ScoreSaberService.PlayerIdObservable, playerId => PlayerId = playerId);
         }
 
-        void PlayPauseSongPreview()
+        async Task OpenAddMapToPlaylistDialog(Map map)
         {
-            SongPlayerService.PlayStopSongPreview(Map);
-        }
-
-        async Task OpenAddMapToPlaylistDialog()
-        {
-            var dialog = DialogService.Show<PlaylistSelector>("Add map to playlist", new DialogOptions
+            var dialog = await DialogService.ShowAsync<PlaylistSelector>("Add map to playlist", new DialogOptions
             {
                 MaxWidth = MaxWidth.ExtraSmall,
                 FullWidth = true,
@@ -99,38 +57,38 @@ namespace MapMaven.Components.Maps
             {
                 var playlist = (Playlist)result.Data;
 
-                await PlaylistService.AddMapToPlaylist(Map, playlist);
+                await PlaylistService.AddMapToPlaylist(map, playlist);
 
-                Snackbar.Add($"Added map \"{Map.Name}\" to \"{playlist.Title}\"", Severity.Normal, config => config.Icon = Icons.Filled.Check);
+                Snackbar.Add($"Added map \"{map.Name}\" to \"{playlist.Title}\"", Severity.Normal, config => config.Icon = Icons.Filled.Check);
             }
         }
 
-        async Task OpenDeleteFromPlaylistDialog()
+        async Task OpenDeleteFromPlaylistDialog(Map map)
         {
             var dialog = DialogService.Show<ConfirmationDialog>(null, new DialogParameters
             {
-                { nameof(ConfirmationDialog.DialogText), $"Are you sure you want to remove \"{Map.Name}\" from the \"{SelectedPlaylist.Title}\" playlist?" },
+                { nameof(ConfirmationDialog.DialogText), $"Are you sure you want to remove \"{map.Name}\" from the \"{SelectedPlaylist.Title}\" playlist?" },
                 { nameof(ConfirmationDialog.ConfirmText), $"Remove" }
             });
 
             var result = await dialog.Result;
 
             if (!result.Cancelled)
-                await RemoveFromPlaylist();
+                await RemoveFromPlaylist(map);
         }
 
-        async Task RemoveFromPlaylist()
+        async Task RemoveFromPlaylist(Map map)
         {
-            await PlaylistService.RemoveMapFromPlaylist(Map, SelectedPlaylist);
+            await PlaylistService.RemoveMapFromPlaylist(map, SelectedPlaylist);
 
-            Snackbar.Add($"Removed map \"{Map.Name}\" from playlist \"{SelectedPlaylist.Title}\"", Severity.Normal, config => config.Icon = Icons.Filled.Check);
+            Snackbar.Add($"Removed map \"{map.Name}\" from playlist \"{SelectedPlaylist.Title}\"", Severity.Normal, config => config.Icon = Icons.Filled.Check);
         }
 
-        void OpenReplay()
+        void OpenReplay(Map map)
         {
             var parameters = new DialogParameters
             {
-                { nameof(Replay.Map), Map }
+                { nameof(Replay.Map), map }
             };
 
             DialogService.Show<Replay>(null, parameters, new DialogOptions
@@ -141,12 +99,12 @@ namespace MapMaven.Components.Maps
             });
         }
 
-        void SelectSongAuthor()
+        void SelectSongAuthor(Map map)
         {
             MapService.AddMapFilter(new Core.Models.MapFilter
             {
-                Name = Map.SongAuthorName,
-                Filter = map => map.SongAuthorName == Map.SongAuthorName
+                Name = map.SongAuthorName,
+                Filter = otherMap => map.SongAuthorName == otherMap.SongAuthorName
             });
         }
 

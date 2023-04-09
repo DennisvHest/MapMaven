@@ -76,3 +76,15 @@ a:hover {
 .mud-dialog.no-title .mud-dialog-title {
     display: none;
 }
+
+.mud-checkbox {
+    pointer-events: all;
+}
+
+.mud-data-grid .mud-table-cell .column-header {
+    justify-content: flex-start;
+}
+
+.mud-table-cell {
+    vertical-align: middle;
+}

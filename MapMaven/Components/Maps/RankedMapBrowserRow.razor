@@ -1,60 +1,90 @@
 ﻿@using System.Text.Json
 @using MapMaven.Core.Utilities.Scoresaber
 
-<MudTd DataLabel="Name">@RowNumber</MudTd>
-<MudTd Class="pa-1" Style="width: 50px">
-    @if (!string.IsNullOrEmpty(CoverImageUrl))
-    {
-        <img class="cover-image" src="@CoverImageUrl" />
-    }
-</MudTd>
-<MudTd DataLabel="Name">@Map.Name</MudTd>
-<MudTd DataLabel="SongAuthorName">
-    @Map.SongAuthorName
-</MudTd>
-<MudTd DataLabel="MapAuthorName">@Map.MapAuthorName</MudTd>
-<MudTd DataLabel="Duration" Style="width: 130px">@Map.SongDuration.ToString("mm':'ss")</MudTd>
-<MudTd DataLabel="Difficulty">
-    @{
-        var difficulty = Map.ScoreEstimates.FirstOrDefault()?.Difficulty;
-        var chipStyle = $"border: 1px solid {DifficultyColor.Get(difficulty)}";
-    }
-    <MudChip Size="Size.Small" Variant="Variant.Outlined" Style="@chipStyle">@difficulty</MudChip>
-</MudTd>
-<MudTd DataLabel="StarDifficulty">
-    <MudChip Size="Size.Small">
-        @Map.ScoreEstimates.FirstOrDefault()?.Stars <MudIcon Icon="@Icons.Filled.Star" Size="Size.Small"></MudIcon>
-    </MudChip>
-</MudTd>
-<MudTd>
-    @if (Map.PlayerScore != null)
-    {
-        <MudChip Size="Size.Small">@Map.PlayerScore.Accuracy().ToString("#0.##") %</MudChip>
-        <MudChip Size="Size.Small">@Map.PlayerScore.Score.Pp.ToString("#0.##") pp</MudChip>
-    }
-</MudTd>
-<MudTd Style="width: 130px">
-    @if (Map.ScoreEstimates != null)
-    {
-        @foreach (var scoreEstimate in Map.ScoreEstimates)
-        {
-            <MudChip Color="Color.Primary" Size="Size.Small">
-                @scoreEstimate.Accuracy.ToString("#0.##") % |
-                +@scoreEstimate.PPIncrease.ToString("#0.##") pp
-            </MudChip>
+<SelectColumn T="Map" />
+<TemplateColumn T="Map" Sortable="false">
+    <CellTemplate>
+        @(FilteredMaps.TakeWhile(m => m != context.Item).Count() + 1)
+    </CellTemplate>
+</TemplateColumn>
+<TemplateColumn T="Map" Class="pa-1" Style="width: 50px" Sortable="false">
+    <CellTemplate>
+        <MapCover Map="context.Item"></MapCover>
+    </CellTemplate>
+</TemplateColumn>
+<PropertyColumn T="Map" TProperty="string" Property="m => m.Name" Sortable="false"></PropertyColumn>
+<PropertyColumn T="Map" TProperty="string" Property="m => m.SongAuthorName" Title="Song Author" Sortable="false"></PropertyColumn>
+<PropertyColumn T="Map" TProperty="string" Property="m => m.MapAuthorName" Title="Map Author" Sortable="false"></PropertyColumn>
+<TemplateColumn T="Map" Sortable="false" Title="Duration" Style="width: 130px">
+    <CellTemplate>@context.Item.SongDuration.ToString("mm':'ss")</CellTemplate>
+</TemplateColumn>
+<TemplateColumn T="Map" Sortable="false" Title="Difficulty">
+    <CellTemplate>
+        @{
+            var difficulty = context.Item.ScoreEstimates.FirstOrDefault()?.Difficulty;
+            var chipStyle = $"border: 1px solid {DifficultyColor.Get(difficulty)}";
         }
-    }
-</MudTd>
-<MudTd>
-    @if (!MapInstalled)
-    {
-        <MudTooltip Text="Download">
-            <MudIconButton Icon="@Icons.Filled.Download" OnClick="DownloadMap"></MudIconButton>
+        <MudChip Size="Size.Small" Variant="Variant.Outlined" Style="@chipStyle">@difficulty</MudChip>
+    </CellTemplate>
+</TemplateColumn>
+<TemplateColumn T="Map" Sortable="false">
+    <HeaderTemplate>
+        <MudIcon Icon="@Icons.Filled.Star"></MudIcon>
+    </HeaderTemplate>
+    <CellTemplate>
+        <MudChip Size="Size.Small">
+            @context.Item.ScoreEstimates.FirstOrDefault()?.Stars <MudIcon Icon="@Icons.Filled.Star" Size="Size.Small"></MudIcon>
+        </MudChip>
+    </CellTemplate>
+</TemplateColumn>
+<TemplateColumn T="Map" Sortable="false">
+    <CellTemplate>
+        @if (context.Item.PlayerScore != null)
+        {
+            <MudChip Size="Size.Small">@context.Item.PlayerScore.Accuracy().ToString("#0.##") %</MudChip>
+            <MudChip Size="Size.Small">@context.Item.PlayerScore.Score.Pp.ToString("#0.##") pp</MudChip>
+        }
+    </CellTemplate>
+</TemplateColumn>
+<TemplateColumn T="Map" Sortable="false" Style="width: 130px" HeaderStyle="justify-content: flex-start">
+    <HeaderTemplate>
+        <MudIcon Icon="@Icons.Filled.KeyboardDoubleArrowUp"></MudIcon>pp
+    </HeaderTemplate>
+    <CellTemplate>
+        @if (context.Item.ScoreEstimates != null)
+        {
+            @foreach (var scoreEstimate in context.Item.ScoreEstimates)
+            {
+                <MudChip Color="Color.Primary" Size="Size.Small">
+                    @scoreEstimate.Accuracy.ToString("#0.##") % |
+                    +@scoreEstimate.PPIncrease.ToString("#0.##") pp
+                </MudChip>
+            }
+        }
+    </CellTemplate>
+</TemplateColumn>
+<TemplateColumn T="Map" Sortable="false">
+    <CellTemplate>
+        @if (!MapIsInstalled(context.Item))
+        {
+            <MudTooltip Text="Download">
+                <MudIconButton
+                    Icon="@Icons.Filled.Download"
+                    Style="pointer-events: all;"
+                    OnClick="() => DownloadMap(context.Item)">
+                </MudIconButton>
+            </MudTooltip>
+        }
+    </CellTemplate>
+</TemplateColumn>
+<TemplateColumn T="Map" Sortable="false">
+    <CellTemplate>
+        <MudTooltip Text="@(context.Item.Hidden ? "Un-hide map" : "Hide map")">
+            <MudIconButton
+                Icon="@(context.Item.Hidden ? Icons.Filled.RemoveRedEye : Icons.Filled.DisabledVisible)"
+                Style="pointer-events: all;"
+                OnClick="() => HideUnhideMap(context.Item)">
+            </MudIconButton>
         </MudTooltip>
-    }
-</MudTd>
-<MudTd>
-    <MudTooltip Text="@(Map.Hidden ? "Un-hide map" : "Hide map")">
-        <MudIconButton Icon="@(Map.Hidden ? Icons.Filled.RemoveRedEye : Icons.Filled.DisabledVisible)" OnClick="HideUnhideMap"></MudIconButton>
-    </MudTooltip>
-</MudTd>
+    </CellTemplate>
+</TemplateColumn>

@@ -1,0 +1,37 @@
+﻿
+@if (!string.IsNullOrEmpty(CoverImageUrl))
+{
+    <img class="cover-image" src="@CoverImageUrl" />
+}
+
+@code {
+    [Inject]
+    protected BeatSaberDataService BeatSaberDataService { get; set; }
+
+    [Parameter]
+    public Map Map { get; set; }
+
+    public string CoverImageUrl { get; set; }
+
+    protected override void OnInitialized()
+    {
+        if (string.IsNullOrEmpty(Map.CoverImageUrl))
+        {
+            Task.Run(() =>
+            {
+                var coverImage = BeatSaberDataService.GetMapCoverImage(Map.Hash);
+
+                CoverImageUrl = coverImage
+                    .GetResizedImage(50, 50)
+                    .ToDataUrl();
+
+                InvokeAsync(StateHasChanged);
+            });
+        }
+        else
+        {
+            CoverImageUrl = Map.CoverImageUrl;
+        }
+    }
+
+}

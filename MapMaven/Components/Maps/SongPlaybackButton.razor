@@ -1,0 +1,44 @@
+﻿@using System.Reactive.Linq;
+
+@inherits ReactiveComponent
+
+<div class="relative">
+    @if (CurrentlyPlaying)
+    {
+        <div class="playback-progress">
+            <MudProgressCircular Color="Color.Info" Max="1" Value="PlaybackProgress" Style="width: 24px; height: 24px" />
+        </div>
+    }
+    <MudIconButton Icon="@(CurrentlyPlaying ? Icons.Material.Filled.StopCircle : Icons.Material.Filled.PlayCircle)"
+                   OnClick="PlayPauseSongPreview">
+    </MudIconButton>
+</div>
+
+@code {
+    [Inject]
+    protected SongPlayerService SongPlayerService { get; set; }
+
+    [Parameter]
+    public Map Map { get; set; }
+
+    private bool CurrentlyPlaying = false;
+    private double PlaybackProgress = 0;
+
+    protected override void OnInitialized()
+    {
+        var currentlyPlaying = SongPlayerService.CurrentlyPlayingMap
+            .Select(m => m != null && m.Hash == Map?.Hash);
+
+        SubscribeAndBind(currentlyPlaying, currentlyPlaying => CurrentlyPlaying = currentlyPlaying);
+
+        var playbackProgress = currentlyPlaying.CombineLatest(SongPlayerService.PlaybackProgress, (playing, progress) => (playing, progress))
+            .Where(x => x.playing);
+
+        SubscribeAndBind(playbackProgress, x => PlaybackProgress = x.progress);
+    }
+
+    void PlayPauseSongPreview()
+    {
+        SongPlayerService.PlayStopSongPreview(Map);
+    }
+}

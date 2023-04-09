@@ -3,68 +3,85 @@
 @using System.Text.Json
 @using MapMaven.Core.Utilities.Scoresaber
 
-<MudTd Class="pa-0" Style="width: 50px; position: relative;">
-    @if (CurrentlyPlaying)
-    {
-        <div class="playback-progress">
-            <MudProgressCircular Color="Color.Info" Max="1" Value="PlaybackProgress" Style="width: 24px; height: 24px" />
-        </div>
-    }
-    <MudIconButton Icon="@(CurrentlyPlaying ? Icons.Material.Filled.StopCircle : Icons.Material.Filled.PlayCircle)"
-                   OnClick="PlayPauseSongPreview">
-    </MudIconButton>
-</MudTd>
-<MudTd Class="pa-1" Style="width: 50px">
-    @if (!string.IsNullOrEmpty(CoverImageUrl))
-    {
-        <img class="cover-image" src="@CoverImageUrl" />
-    }
-</MudTd>
-<MudTd DataLabel="Name">@Map.Name</MudTd>
-<MudTd DataLabel="SongAuthorName">
-    <MudLink @onclick="SelectSongAuthor" Color="Color.Default" Typo="Typo.body2">@Map.SongAuthorName</MudLink>
-</MudTd>
-<MudTd DataLabel="MapAuthorName">@Map.MapAuthorName</MudTd>
-<MudTd DataLabel="Duration" Style="width: 130px">@Map.SongDuration.ToString("mm':'ss")</MudTd>
+<TemplateColumn T="Map" Sortable="false" Class="pa-0" Style="width: 50px; position: relative;">
+    <CellTemplate>
+        <SongPlaybackButton Map="context.Item"></SongPlaybackButton>
+    </CellTemplate>
+</TemplateColumn>
+<TemplateColumn T="Map" Sortable="false" Class="pa-1" Style="width: 50px">
+    <CellTemplate>
+        <MapCover Map="context.Item"></MapCover>
+    </CellTemplate>
+</TemplateColumn>
+<PropertyColumn T="Map" TProperty="string" Property="m => m.Name" Title="Name"></PropertyColumn>
+<SortableTemplateColumn T="Map" TProperty="string" Property="m => m.SongAuthorName" SortBy="m => m.SongAuthorName" Title="Song Author">
+    <CellTemplate>
+        <MudLink @onclick="() => SelectSongAuthor(context.Item)" Color="Color.Default" Typo="Typo.body2">@context.Item.SongAuthorName</MudLink>
+    </CellTemplate>
+</SortableTemplateColumn>
+<PropertyColumn T="Map" TProperty="string" Property="m => m.MapAuthorName" SortBy="m => m.MapAuthorName" Title="Map Author"></PropertyColumn>
+<SortableTemplateColumn T="Map" TProperty="TimeSpan" Style="width: 130px" Property="m => m.SongDuration" SortBy="m => m.SongDuration" Title="Duration">
+    <CellTemplate>
+        @context.Item.SongDuration.ToString("mm':'ss")
+    </CellTemplate>
+</SortableTemplateColumn>
 @if (!string.IsNullOrEmpty(PlayerId))
 {
-    <MudTd>
-        @if (Map.PlayerScore != null)
-        {
-            <MudChip Color="Color.Primary" Size="Size.Small">@Map.PlayerScore.AccuracyWithMods().ToString("#0.##")%</MudChip>
-        }
-    </MudTd>
-    <MudTd Style="width: 130px">
-        @if (Map.PlayerScore?.Score?.Pp != null)
-        {
-            <MudChip Color="Color.Primary" Size="Size.Small">@Map.PlayerScore.Score.Pp.ToString("#0.##") pp</MudChip>
-        }
-    </MudTd>
-    <MudTd Style="width: 130px">
-        @if (Map.ScoreEstimates != null)
-        {
-            @foreach (var scoreEstimate in Map.ScoreEstimates)
+    <SortableTemplateColumn T="Map" TProperty="decimal" Property="m => m.PlayerScore.AccuracyWithMods()" SortBy="m => m.PlayerScore?.AccuracyWithMods()" Title="%">
+        <CellTemplate>
+            @if (context.Item.PlayerScore != null)
             {
-                <MudChip Color="Color.Primary" Size="Size.Small">
-                    @scoreEstimate.Difficulty |
-                    @scoreEstimate.Stars <MudIcon Icon="@Icons.Filled.Star" Size="Size.Small"></MudIcon> |
-                    @scoreEstimate.Accuracy.ToString("#0.##") % |
-                    +@scoreEstimate.PPIncrease.ToString("#0.##") pp
-                </MudChip>
+                <MudChip Color="Color.Primary" Size="Size.Small">@context.Item.PlayerScore.AccuracyWithMods().ToString("#0.##")%</MudChip>
             }
-        }
-    </MudTd>
-    <MudTd>
-        @if (Map.PlayerScore?.Score?.HasReplay == true)
-        {
-            <MudButton Class="replay-button" OnClick="OpenReplay" Style="min-width: 0; border-radius: 100%;"><img src="images/replay-icon.png" style="width: 24px" /></MudButton>
-        }
-    </MudTd>
+        </CellTemplate>
+    </SortableTemplateColumn>
+    <SortableTemplateColumn T="Map" TProperty="double" Property="m => m.PlayerScore.Score.Pp" SortBy="m => m.PlayerScore?.Score?.Pp" Title="pp" Style="width: 130px">
+        <CellTemplate>
+            @if (context.Item.PlayerScore?.Score?.Pp != null)
+            {
+                <MudChip Color="Color.Primary" Size="Size.Small">@context.Item.PlayerScore.Score.Pp.ToString("#0.##") pp</MudChip>
+            }
+        </CellTemplate>
+    </SortableTemplateColumn>
+    <TemplateColumn T="Map" Sortable="false" Style="width: 130px">
+        <HeaderTemplate>
+            <MudIcon Icon="@Icons.Filled.KeyboardDoubleArrowUp"></MudIcon>pp
+        </HeaderTemplate>
+        <CellTemplate>
+            @if (context.Item.ScoreEstimates != null)
+            {
+                @foreach (var scoreEstimate in context.Item.ScoreEstimates)
+                {
+                    <MudChip Color="Color.Primary" Size="Size.Small">
+                        @scoreEstimate.Difficulty |
+                        @scoreEstimate.Stars <MudIcon Icon="@Icons.Filled.Star" Size="Size.Small"></MudIcon> |
+                        @scoreEstimate.Accuracy.ToString("#0.##") % |
+                        +@scoreEstimate.PPIncrease.ToString("#0.##") pp
+                    </MudChip>
+                }
+            }
+        </CellTemplate>
+    </TemplateColumn>
+    <SortableTemplateColumn T="Map" TProperty="bool" Property="m => m.PlayerScore.Score.HasReplay" SortBy="m => m.PlayerScore?.Score?.HasReplay">
+        <HeaderTemplate>
+            <img src="images/replay-icon.png" style="width: 24px" />
+        </HeaderTemplate>
+        <CellTemplate>
+            @if (context.Item.PlayerScore?.Score?.HasReplay == true)
+            {
+                <MudButton Class="replay-button" OnClick="() => OpenReplay(context.Item)" Style="min-width: 0; border-radius: 100%;"><img src="images/replay-icon.png" style="width: 24px" /></MudButton>
+            }
+        </CellTemplate>
+    </SortableTemplateColumn>
 }
-<MudTd Style="width: 130px; position: relative;">
-    <MudIconButton Icon="@Icons.Filled.PlaylistAdd" Variant="Variant.Text" Size="Size.Medium" OnClick="OpenAddMapToPlaylistDialog" />
-    @if (SelectedPlaylist != null)
-    {
-        <MudIconButton Icon="@Icons.Filled.PlaylistRemove" Variant="Variant.Text" Size="Size.Medium" OnClick="OpenDeleteFromPlaylistDialog" />
-    }
-</MudTd>
+<TemplateColumn T="Map" Sortable="false">
+    <CellTemplate>
+        <div style="min-width: 100px">
+            <MudIconButton Icon="@Icons.Filled.PlaylistAdd" Variant="Variant.Text" Size="Size.Medium" OnClick="() => OpenAddMapToPlaylistDialog(context.Item)" />
+            @if (SelectedPlaylist != null)
+            {
+                <MudIconButton Icon="@Icons.Filled.PlaylistRemove" Variant="Variant.Text" Size="Size.Medium" OnClick="() => OpenDeleteFromPlaylistDialog(context.Item)" />
+            }
+        </div>
+    </CellTemplate>
+</TemplateColumn>

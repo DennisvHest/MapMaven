@@ -2,21 +2,21 @@
 
 @using MapMaven.Core.Utilities.Scoresaber
 
-<MudTable @ref="TableRef"
+<MudDataGrid @ref="TableRef"
           T="Map"
           Items="Maps"
           Height="@Height"
           Class="full-height full-width background-transparent"
           Loading="LoadingMapInfo"
-          Filter="Filter"
+          QuickFilter="Filter"
           FixedHeader="true"
           MultiSelection="Selectable"
-          SelectOnRowClick="false"
+          SortMode="SortMode.Single"
           SelectedItems="SelectedMaps"
           SelectedItemsChanged="OnSelectedItemsChanged"
           RowsPerPage="25"
           Style="@Style"
-          RowStyle="height: 88px">
+          RowStyle="@(Selectable ? "height: 88px; pointer-events: none;" : "height: 88px;")">
     <ToolBarContent>
         @if (SelectedPlaylist != null)
         {
@@ -43,20 +43,17 @@
             <MudIcon Icon="@Icons.Material.Filled.ManageSearch" Style="vertical-align: middle; margin-bottom: 4px;"></MudIcon> @:Loading maps for first use. Depdending on the number of maps, this might take a minute.
         }
     </LoadingContent>
-    <HeaderContent>
-        @HeaderContent
-    </HeaderContent>
-    <RowTemplate>
+    <Columns>
         @if (RowContent != null)
         {
             @RowContent(new Core.Models.MapRowContext
             {
-                RowNumber = TableRef.FilteredItems.TakeWhile(x => x != context).Count() + 1,
-                Map = context
+                FilteredMaps = TableRef.FilteredItems,
+                Map = null
             })
         }
-    </RowTemplate>
+    </Columns>
     <PagerContent>
-        <MudTablePager />
+        <MudDataGridPager T="Map" />
     </PagerContent>
-</MudTable>
+</MudDataGrid>
