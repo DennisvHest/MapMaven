@@ -14,6 +14,7 @@ using BeatSaberPlaylistsLib.Legacy;
 using MapMaven.Core.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace MapMaven.Services
 {
@@ -25,6 +26,8 @@ namespace MapMaven.Services
         private PlaylistManager _playlistManager;
 
         private readonly IServiceProvider _serviceProvider;
+
+        private readonly ILogger<BeatSaberDataService> _logger;
 
         private readonly Regex _mapIdRegex = new Regex(@"^[0-9A-Fa-f]+");
 
@@ -43,11 +46,12 @@ namespace MapMaven.Services
         public IObservable<IEnumerable<IPlaylist>> PlaylistInfo => _playlistInfo;
         public IObservable<bool> LoadingPlaylistInfo => _loadingPlaylistInfo;
 
-        public BeatSaberDataService(IBeatmapHasher beatmapHasher, BeatSaberFileService fileService, IServiceProvider serviceProvider)
+        public BeatSaberDataService(IBeatmapHasher beatmapHasher, BeatSaberFileService fileService, IServiceProvider serviceProvider, ILogger<BeatSaberDataService> logger)
         {
             _fileService = fileService;
             _beatmapHasher = beatmapHasher;
             _serviceProvider = serviceProvider;
+            _logger = logger;
 
             _fileService.PlaylistsLocationObservable.Subscribe(playlistsLocation =>
             {
@@ -176,58 +180,67 @@ namespace MapMaven.Services
         /// <param name="mapInfoCache">MapInfo from the cache.</param>
         private async Task<MapInfo> GetMapInfo(string mapDirectory, Dictionary<string, SongHash>? songHashData = null, Dictionary<string, MapInfo>? mapInfoCache = null)
         {
-            if (songHashData == null)
-                songHashData = new();
-
-            if (mapInfoCache == null)
-                mapInfoCache = new();
-
-            var mapHash = songHashData.GetValueOrDefault(mapDirectory.NormalizePath())?.Hash;
-
-            Debug.WriteLine($"Found hash for {mapDirectory}");
-
-            if (mapHash == null)
+            try
             {
-                Debug.WriteLine($"Dit not find hash for {mapDirectory}");
+                if (songHashData == null)
+                    songHashData = new();
 
-                var hashResult = await _beatmapHasher.HashDirectoryAsync(mapDirectory, new CancellationToken());
+                if (mapInfoCache == null)
+                    mapInfoCache = new();
 
-                if (hashResult.ResultType != HashResultType.Success)
+                var mapHash = songHashData.GetValueOrDefault(mapDirectory.NormalizePath())?.Hash;
+
+                Debug.WriteLine($"Found hash for {mapDirectory}");
+
+                if (mapHash == null)
+                {
+                    Debug.WriteLine($"Dit not find hash for {mapDirectory}");
+
+                    var hashResult = await _beatmapHasher.HashDirectoryAsync(mapDirectory, new CancellationToken());
+
+                    if (hashResult.ResultType != HashResultType.Success)
+                        return null;
+
+                    mapHash = hashResult.Hash;
+                }
+
+                if (mapInfoCache.TryGetValue(mapHash, out var info))
+                {
+                    // Map info was found in cache. No further data retrieval nescessary.
+                    return info;
+                }
+                else
+                {
+                    var infoFilePath = Path.Combine(mapDirectory, "Info.dat");
+                    var mapInfoText = await File.ReadAllTextAsync(infoFilePath);
+
+                    info = JsonSerializer.Deserialize<MapInfo>(mapInfoText);
+                }
+
+                info.Hash = mapHash;
+                info.DirectoryPath = mapDirectory;
+
+                var directoryName = Path.GetFileName(Path.GetDirectoryName(info.DirectoryPath + "/"));
+
+                info.Id = _mapIdRegex.Match(directoryName)?.Value;
+
+                if (string.IsNullOrEmpty(info.Id))
                     return null;
 
-                mapHash = hashResult.Hash;
-            }
+                var mapDirectoryInfo = new DirectoryInfo(mapDirectory);
 
-            if (mapInfoCache.TryGetValue(mapHash, out var info))
-            {
-                // Map info was found in cache. No further data retrieval nescessary.
+                info.AddedDateTime = mapDirectoryInfo.CreationTime;
+
+                FillSongInfo(info);
+
                 return info;
             }
-            else
+            catch (Exception exception)
             {
-                var infoFilePath = Path.Combine(mapDirectory, "Info.dat");
-                var mapInfoText = await File.ReadAllTextAsync(infoFilePath);
+                _logger.LogError(exception, $"Failed to load map info for {mapDirectory}");
 
-                info = JsonSerializer.Deserialize<MapInfo>(mapInfoText);
-            }
-
-            info.Hash = mapHash;
-            info.DirectoryPath = mapDirectory;
-
-            var directoryName = Path.GetFileName(Path.GetDirectoryName(info.DirectoryPath + "/"));
-
-            info.Id = _mapIdRegex.Match(directoryName)?.Value;
-
-            if (string.IsNullOrEmpty(info.Id))
                 return null;
-
-            var mapDirectoryInfo = new DirectoryInfo(mapDirectory);
-
-            info.AddedDateTime = mapDirectoryInfo.CreationTime;
-
-            FillSongInfo(info);
-
-            return info;
+            }
         }
 
         /// <summary>
@@ -235,11 +248,18 @@ namespace MapMaven.Services
         /// </summary>
         private void FillSongInfo(MapInfo info)
         {
-            var audioFilePath = Path.Combine(info.DirectoryPath, info.SongFileName);
-
-            using (var audioFile = new VorbisReader(audioFilePath))
+            try
             {
-                info.SongDuration = audioFile.TotalTime;
+                var audioFilePath = Path.Combine(info.DirectoryPath, info.SongFileName);
+
+                using (var audioFile = new VorbisReader(audioFilePath))
+                {
+                    info.SongDuration = audioFile.TotalTime;
+                }
+            }
+            catch (Exception exception)
+            {
+                _logger.LogError(exception, $"Failed to load additional song info for {info.DirectoryPath}");
             }
         }
 
