@@ -10,7 +10,9 @@
 </TemplateColumn>
 <TemplateColumn T="Map" Sortable="false" Class="pa-1" Style="width: 50px">
     <CellTemplate>
-        <MapCover Map="context.Item"></MapCover>
+        <div style="min-width: 50px">
+            <MapCover Map="context.Item"></MapCover>
+        </div>
     </CellTemplate>
 </TemplateColumn>
 <PropertyColumn T="Map" TProperty="string" Property="m => m.Name" Title="Name"></PropertyColumn>
@@ -43,9 +45,11 @@
             }
         </CellTemplate>
     </SortableTemplateColumn>
-    <TemplateColumn T="Map" Sortable="false" Style="width: 130px">
+    <SortableTemplateColumn T="Map" TProperty="decimal" Style="width: 130px" Property="m => m.ScoreEstimates.Any() ? m.ScoreEstimates.Max(x => x.PPIncrease) : 0" SortBy="m => m.ScoreEstimates.Any() ? m.ScoreEstimates.Max(x => x.PPIncrease) : 0">
         <HeaderTemplate>
-            <MudIcon Icon="@Icons.Filled.KeyboardDoubleArrowUp"></MudIcon>pp
+            <div class="d-flex">
+                <MudIcon Icon="@Icons.Filled.KeyboardDoubleArrowUp"></MudIcon>pp
+            </div>
         </HeaderTemplate>
         <CellTemplate>
             @if (context.Item.ScoreEstimates != null)
@@ -61,10 +65,10 @@
                 }
             }
         </CellTemplate>
-    </TemplateColumn>
+    </SortableTemplateColumn>
     <SortableTemplateColumn T="Map" TProperty="bool" Property="m => m.PlayerScore.Score.HasReplay" SortBy="m => m.PlayerScore?.Score?.HasReplay">
         <HeaderTemplate>
-            <img src="images/replay-icon.png" style="width: 24px" />
+            <img src="images/replay-icon.png" style="width: 24px; vertical-align: middle;" />
         </HeaderTemplate>
         <CellTemplate>
             @if (context.Item.PlayerScore?.Score?.HasReplay == true)

@@ -42,6 +42,9 @@ namespace MapMaven.Components.Maps
         [Parameter]
         public string Height { get; set; } = "calc(100% - 116px)";
 
+        [Parameter]
+        public bool RankedMaps { get; set; } = false;
+
         string Style => $"width: {Width}";
 
         MudDataGrid<Map> TableRef;
@@ -78,11 +81,15 @@ namespace MapMaven.Components.Maps
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            await TableRef.SetSortAsync("ScoreEstimate", SortDirection.Descending, x => x.ScoreEstimates.Any() ? x.ScoreEstimates.Max(x => x.PPIncrease) : 0);
+            if (RankedMaps)
+                await TableRef.SetSortAsync("ScoreEstimate", SortDirection.Descending, x => x.ScoreEstimates.Any() ? x.ScoreEstimates.Max(x => x.PPIncrease) : 0);
         }
 
         private void SortMapsWithDefaultSort()
         {
+            if (RankedMaps)
+                return;
+
             // If a playlist is selected, preserve the order of the playlist. Otherwise, sort by AddedDateTime.
             if (MapHashFilter != null)
             {
