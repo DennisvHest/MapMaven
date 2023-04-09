@@ -1,0 +1,47 @@
+﻿@using Microsoft.Extensions.Logging;
+@inherits ErrorBoundary
+
+@inject ISnackbar Snackbar
+@inject ILogger<LogErrorBoundary> Logger
+
+@if (CurrentException is null)
+{
+    @ChildContent
+}
+else if (ErrorContent is not null)
+{
+    @ErrorContent(CurrentException)
+}
+else
+{
+    @ChildContent
+
+    @foreach (var exception in receivedExceptions)
+    {
+        Snackbar.Add($"An unhandled error has occured: {@exception.Message} <a onclick=\"location.reload()\">Reload</a>", Severity.Error, config =>
+        {
+            config.VisibleStateDuration = int.MaxValue;
+        });
+    }
+
+    Recover();
+}
+
+@code {
+    List<Exception> receivedExceptions = new();
+
+    protected override Task OnErrorAsync(Exception exception)
+    {
+        Logger.LogError(exception, "An unhandled exception has occurred.");
+
+        receivedExceptions.Add(exception);
+
+        return base.OnErrorAsync(exception);
+    }
+
+    public new void Recover()
+    {
+        receivedExceptions.Clear();
+        base.Recover();
+    }
+}
