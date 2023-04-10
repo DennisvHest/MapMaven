@@ -147,9 +147,9 @@ namespace MapMaven.Services
 
         public async Task<IEnumerable<IPlaylist>> GetAllPlaylists()
         {
-            _playlistManager.RefreshPlaylists(false);
+            _playlistManager.RefreshPlaylists(true);
 
-            return _playlistManager.GetAllPlaylists();
+            return _playlistManager.GetAllPlaylists(true);
         }
 
         /// <summary>
