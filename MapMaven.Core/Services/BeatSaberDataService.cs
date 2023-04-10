@@ -83,6 +83,11 @@ namespace MapMaven.Services
 
                 _mapInfo.OnNext(mapInfoDictionary);
             }
+            catch (Exception exception)
+            {
+                _logger.LogError(exception, "Error while loading all map info.");
+                throw;
+            }
             finally
             {
                 _loadingMapInfo.OnNext(false);

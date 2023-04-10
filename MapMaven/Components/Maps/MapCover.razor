@@ -19,13 +19,18 @@
         {
             Task.Run(() =>
             {
-                var coverImage = BeatSaberDataService.GetMapCoverImage(Map.Hash);
+                try
+                {
+                    using (var coverImage = BeatSaberDataService.GetMapCoverImage(Map.Hash))
+                    {
+                        CoverImageUrl = coverImage
+                            .GetResizedImage(50, 50)
+                            .ToDataUrl();
+                    }
 
-                CoverImageUrl = coverImage
-                    .GetResizedImage(50, 50)
-                    .ToDataUrl();
-
-                InvokeAsync(StateHasChanged);
+                    InvokeAsync(StateHasChanged);
+                }
+                catch { /* Ignore invalid cover image */ }
             });
         }
         else
