@@ -24,14 +24,22 @@ namespace MapMaven.Models
             Title = playlist.Title;
             Description = playlist.Description;
 
-            Image coverImage = null;
+            try
+            {
+                Image coverImage = null;
 
-            var coverImageStream = playlist.GetCoverStream();
+                using (var coverImageStream = playlist.GetCoverStream())
+                {
+                    if (coverImageStream != null && playlist.HasCover)
+                        coverImage = Image.FromStream(coverImageStream);
 
-            if (coverImageStream != null && playlist.HasCover)
-                coverImage = Image.FromStream(coverImageStream);
-
-            CoverImage = coverImage?.ToDataUrl();
+                    using (coverImage)
+                    {
+                        CoverImage = coverImage?.ToDataUrl();
+                    }
+                }
+            }
+            catch { /* Ignore invalid cover images */ }
 
             Maps = playlist.Select(s => new PlaylistMap(s));
 
