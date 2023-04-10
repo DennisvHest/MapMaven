@@ -75,6 +75,8 @@ namespace MapMaven.Services
 
                 // Create a dictionary grouping all map info by ID
                 var mapInfoDictionary = mapInfo
+                    .GroupBy(i => i.Id)
+                    .Select(g => g.OrderByDescending(i => i.AddedDateTime).First())
                     .GroupBy(i => i.Hash)
                     .Select(g => g.First())
                     .ToDictionary(i => i.Hash);
