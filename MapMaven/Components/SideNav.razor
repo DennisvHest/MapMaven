@@ -1,6 +1,6 @@
 ﻿@inherits ReactiveComponent
 
-<MudDrawer Open="true" Elevation="1">
+<MudDrawer Open="true" Elevation="1" Class="sidenav">
     <PlayerProfile></PlayerProfile>
     <MudNavMenu Color="Color.Primary" Bordered="true" Class="full-height">
         <div @onclick="OnMapsNavigation">
@@ -23,7 +23,7 @@
             </div>
         }
         <PlaylistList></PlaylistList>
-        <div class="absolute full-width" style="bottom: 0; z-index: 9999; background-color: var(--mud-palette-drawer-background);">
+        <div class="fixed" style="width: 224px; bottom: 0; z-index: 9999; background-color: var(--mud-palette-drawer-background);">
             <div @onclick="OpenSettings" @onclick:preventDefault="true">
                 <MudNavLink Icon="@Icons.Material.Filled.Settings"
                             Href="#"
