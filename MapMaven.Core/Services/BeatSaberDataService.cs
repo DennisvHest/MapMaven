@@ -128,8 +128,11 @@ namespace MapMaven.Services
             var songHashData = await GetSongHashData();
             var mapInfoCache = await GetMapInfoCache();
 
+            var mapsByHash = mapInfoCache.ToDictionary(i => i.Hash);
+            var mapsByDirectoryPath = mapInfoCache.ToDictionary(i => i.DirectoryPath.NormalizePath());
+
             var fileReadTasks = Directory.EnumerateDirectories(_fileService.MapsLocation)
-                .Select(mapDirectory => GetMapInfo(mapDirectory, songHashData, mapInfoCache));
+                .Select(mapDirectory => GetMapInfo(mapDirectory, songHashData, mapsByHash, mapsByDirectoryPath));
 
             var mapInfo = await Task.WhenAll(fileReadTasks);
 
@@ -184,20 +187,26 @@ namespace MapMaven.Services
         /// </summary>
         /// <param name="mapDirectory">The directory path of the map.</param>
         /// <param name="songHashData">All song hashes.</param>
-        /// <param name="mapInfoCache">MapInfo from the cache.</param>
-        private async Task<MapInfo> GetMapInfo(string mapDirectory, Dictionary<string, SongHash>? songHashData = null, Dictionary<string, MapInfo>? mapInfoCache = null)
+        /// <param name="mapsByHashCache">MapInfo from the cache.</param>
+        private async Task<MapInfo> GetMapInfo(string mapDirectory, Dictionary<string, SongHash>? songHashData = null, Dictionary<string, MapInfo>? mapsByHashCache = null, Dictionary<string, MapInfo>? mapsByDirectoryCache = null)
         {
             try
             {
                 if (songHashData == null)
                     songHashData = new();
 
-                if (mapInfoCache == null)
-                    mapInfoCache = new();
+                if (mapsByHashCache == null)
+                    mapsByHashCache = new();
 
-                var mapHash = songHashData.GetValueOrDefault(mapDirectory.NormalizePath())?.Hash;
+                if (mapsByDirectoryCache == null)
+                    mapsByDirectoryCache = new();
 
-                Debug.WriteLine($"Found hash for {mapDirectory}");
+                var normalizedMapDirectory = mapDirectory.NormalizePath();
+
+                var mapHash = mapsByDirectoryCache.GetValueOrDefault(normalizedMapDirectory)?.Hash;
+
+                if (mapHash == null)
+                    mapHash = songHashData.GetValueOrDefault(normalizedMapDirectory)?.Hash;
 
                 if (mapHash == null)
                 {
@@ -211,7 +220,7 @@ namespace MapMaven.Services
                     mapHash = hashResult.Hash;
                 }
 
-                if (mapInfoCache.TryGetValue(mapHash, out var info))
+                if (mapsByHashCache.TryGetValue(mapHash, out var info))
                 {
                     // Map info was found in cache. No further data retrieval nescessary.
                     return info;
@@ -225,7 +234,7 @@ namespace MapMaven.Services
                 }
 
                 info.Hash = mapHash;
-                info.DirectoryPath = mapDirectory;
+                info.DirectoryPath = normalizedMapDirectory;
 
                 var directoryName = Path.GetFileName(Path.GetDirectoryName(info.DirectoryPath + "/"));
 
@@ -293,17 +302,14 @@ namespace MapMaven.Services
 
         /// <summary>
         /// Returns the MapInfo from the cache.
-        /// This is a dictionary with the map hash as the key.
         /// </summary>
-        private async Task<Dictionary<string, MapInfo>> GetMapInfoCache()
+        private async Task<IEnumerable<MapInfo>> GetMapInfoCache()
         {
             using var scope = _serviceProvider.CreateScope();
 
             var dataStore = scope.ServiceProvider.GetService<IDataStore>();
 
-            var mapInfo = await dataStore.Set<MapInfo>().ToListAsync();
-
-            return mapInfo.ToDictionary(i => i.Hash);
+            return await dataStore.Set<MapInfo>().ToListAsync();
         }
 
         /// <summary>
