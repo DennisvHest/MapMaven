@@ -35,7 +35,7 @@ namespace MapMaven.Services
             _mapService = mapService;
             ResetPlaylistManager();
 
-            Playlists = _beatSaberDataService.PlaylistInfo.Select(x => x.Select(i => new Playlist(i)));
+            Playlists = _beatSaberDataService.PlaylistInfo.Select(x => x.Select(i => new Playlist(i)).ToList());
 
             Observable.CombineLatest(Playlists, _selectedPlaylistFileName, (playlists, selectedPlaylistFileName) => (playlists, selectedPlaylistFileName))
                 .Select(x =>

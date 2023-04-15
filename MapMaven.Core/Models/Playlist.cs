@@ -1,4 +1,5 @@
 ﻿using BeatSaberPlaylistsLib.Types;
+using BeatSaverSharp.Models;
 using MapMaven.Core.Models.DynamicPlaylists;
 using MapMaven.Extensions;
 using Newtonsoft.Json.Linq;
@@ -11,35 +12,46 @@ namespace MapMaven.Models
         public string FileName { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
-        public string CoverImage { get; set; }
         public IEnumerable<PlaylistMap> Maps { get; set; }
 
         public DynamicPlaylistConfiguration DynamicPlaylistConfiguration { get; set; }
 
         public bool IsDynamicPlaylist => DynamicPlaylistConfiguration != null;
 
+        public Lazy<string?> CoverImage { get; private set; }
+
+        private IPlaylist _playlist;
+
         public Playlist(IPlaylist playlist)
         {
+            _playlist = playlist;
             FileName = playlist.Filename;
             Title = playlist.Title;
             Description = playlist.Description;
 
-            try
+            CoverImage = new Lazy<string?>(() =>
             {
-                Image coverImage = null;
-
-                using (var coverImageStream = playlist.GetCoverStream())
+                try
                 {
-                    if (coverImageStream != null && playlist.HasCover)
-                        coverImage = Image.FromStream(coverImageStream);
+                    Image coverImage = null;
 
-                    using (coverImage)
+                    using (var coverImageStream = _playlist.GetCoverStream())
                     {
-                        CoverImage = coverImage?.ToDataUrl();
+                        if (coverImageStream != null && _playlist.HasCover)
+                            coverImage = Image.FromStream(coverImageStream);
+
+                        using (coverImage)
+                        {
+                            return coverImage?.ToDataUrl();
+                        }
                     }
                 }
-            }
-            catch { /* Ignore invalid cover images */ }
+                catch
+                {
+                    /* Ignore invalid cover images */
+                    return null;
+                }
+            });
 
             Maps = playlist.Select(s => new PlaylistMap(s));
 

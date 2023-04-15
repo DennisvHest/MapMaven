@@ -17,7 +17,7 @@ namespace MapMaven.Models
             FileName = playlist.FileName;
             Name = playlist.Title;
             Description = playlist.Description;
-            CoverImage = playlist.CoverImage;
+            CoverImage = playlist.CoverImage.Value;
         }
     }
 }
