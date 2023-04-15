@@ -15,6 +15,7 @@ using MapMaven.Core.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using MapMaven.Core.Models.Data;
 
 namespace MapMaven.Services
 {
@@ -126,13 +127,14 @@ namespace MapMaven.Services
                 return Enumerable.Empty<MapInfo>();
 
             var songHashData = await GetSongHashData();
+            var songDurationCache = await GetSongDurationCache();
             var mapInfoCache = await GetMapInfoCache();
 
             var mapsByHash = mapInfoCache.ToDictionary(i => i.Hash);
             var mapsByDirectoryPath = mapInfoCache.ToDictionary(i => i.DirectoryPath.NormalizePath());
 
             var fileReadTasks = Directory.EnumerateDirectories(_fileService.MapsLocation)
-                .Select(mapDirectory => GetMapInfo(mapDirectory, songHashData, mapsByHash, mapsByDirectoryPath));
+                .Select(mapDirectory => GetMapInfo(mapDirectory, songHashData, mapsByHash, mapsByDirectoryPath, songDurationCache));
 
             var mapInfo = await Task.WhenAll(fileReadTasks);
 
@@ -167,19 +169,57 @@ namespace MapMaven.Services
         /// </summary>
         private async Task<Dictionary<string, SongHash>> GetSongHashData()
         {
-            var songHashFilePath = Path.Combine(_fileService.UserDataLocation, "SongCore", "SongHashData.dat");
-
-            if (!File.Exists(songHashFilePath))
-                return new Dictionary<string, SongHash>();
-
-            var songHashJson = await File.ReadAllTextAsync(songHashFilePath);
-
-            var songHashData = JsonSerializer.Deserialize<Dictionary<string, SongHash>>(songHashJson, new JsonSerializerOptions
+            try
             {
-                PropertyNameCaseInsensitive = true
-            });
+                var songHashFilePath = Path.Combine(_fileService.UserDataLocation, "SongCore", "SongHashData.dat");
 
-            return songHashData.ToDictionary(x => x.Key.NormalizePath(), x => x.Value);
+                if (!File.Exists(songHashFilePath))
+                    return new Dictionary<string, SongHash>();
+
+                var songHashJson = await File.ReadAllTextAsync(songHashFilePath);
+
+                var songHashData = JsonSerializer.Deserialize<Dictionary<string, SongHash>>(songHashJson, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+
+                return songHashData.ToDictionary(x => x.Key.NormalizePath(), x => x.Value);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error while loading song hash data.");
+
+                return new();
+            }
+        }
+
+        /// <summary>
+        /// Gets the song duration cache from SongCore.
+        /// </summary>
+        private async Task<Dictionary<string, SongDuration>> GetSongDurationCache()
+        {
+            try
+            {
+                var songHashFilePath = Path.Combine(_fileService.UserDataLocation, "SongCore", "SongDurationCache.dat");
+
+                if (!File.Exists(songHashFilePath))
+                    return new Dictionary<string, SongDuration>();
+
+                var songDurationJson = await File.ReadAllTextAsync(songHashFilePath);
+
+                var songDurationData = JsonSerializer.Deserialize<Dictionary<string, SongDuration>>(songDurationJson, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+
+                return songDurationData.ToDictionary(x => x.Key.NormalizePath(), x => x.Value);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error while loading song duration cache.");
+
+                return new();
+            }
         }
 
         /// <summary>
@@ -188,7 +228,12 @@ namespace MapMaven.Services
         /// <param name="mapDirectory">The directory path of the map.</param>
         /// <param name="songHashData">All song hashes.</param>
         /// <param name="mapsByHashCache">MapInfo from the cache.</param>
-        private async Task<MapInfo> GetMapInfo(string mapDirectory, Dictionary<string, SongHash>? songHashData = null, Dictionary<string, MapInfo>? mapsByHashCache = null, Dictionary<string, MapInfo>? mapsByDirectoryCache = null)
+        private async Task<MapInfo> GetMapInfo(
+            string mapDirectory,
+            Dictionary<string, SongHash>? songHashData = null,
+            Dictionary<string, MapInfo>? mapsByHashCache = null,
+            Dictionary<string, MapInfo>? mapsByDirectoryCache = null,
+            Dictionary<string, SongDuration>? songDurationCache = null)
         {
             try
             {
@@ -200,6 +245,9 @@ namespace MapMaven.Services
 
                 if (mapsByDirectoryCache == null)
                     mapsByDirectoryCache = new();
+
+                if (songDurationCache == null)
+                    songDurationCache = new();
 
                 var normalizedMapDirectory = mapDirectory.NormalizePath();
 
@@ -247,7 +295,7 @@ namespace MapMaven.Services
 
                 info.AddedDateTime = mapDirectoryInfo.CreationTime;
 
-                FillSongInfo(info);
+                FillSongInfo(info, songDurationCache);
 
                 return info;
             }
@@ -262,15 +310,22 @@ namespace MapMaven.Services
         /// <summary>
         /// Fills additional song info of the given map that is not found within the Info.dat file of the map.
         /// </summary>
-        private void FillSongInfo(MapInfo info)
+        private void FillSongInfo(MapInfo info, Dictionary<string, SongDuration> songDurationCache)
         {
             try
             {
-                var audioFilePath = Path.Combine(info.DirectoryPath, info.SongFileName);
-
-                using (var audioFile = new VorbisReader(audioFilePath))
+                if (songDurationCache.TryGetValue(info.DirectoryPath, out var songDuration))
                 {
-                    info.SongDuration = audioFile.TotalTime;
+                    info.SongDuration = TimeSpan.FromSeconds(songDuration.DurationInSeconds);
+                }
+                else
+                {
+                    var audioFilePath = Path.Combine(info.DirectoryPath, info.SongFileName);
+
+                    using (var audioFile = new VorbisReader(audioFilePath))
+                    {
+                        info.SongDuration = audioFile.TotalTime;
+                    }
                 }
             }
             catch (Exception exception)
