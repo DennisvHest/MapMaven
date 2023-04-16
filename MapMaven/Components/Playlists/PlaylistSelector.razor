@@ -5,9 +5,9 @@
             {
                 <MudListItem title="@playlist.Title" OnClick="() => OnPlaylistSelect(playlist)" Value="playlist" Class="py-1 px-2">
                     <div class="playlist-list-item">
-                        @if (!string.IsNullOrEmpty(playlist.CoverImage))
+                        @if (!string.IsNullOrEmpty(playlist.CoverImageSmall.Value))
                         {
-                            <img src="data:image/png;@playlist.CoverImage" class="ml-3 mr-3" />
+                            <img src="data:image/png;@playlist.CoverImageSmall.Value" class="ml-3 mr-3" />
                         }
                         else
                         {

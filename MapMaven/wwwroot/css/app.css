@@ -10,6 +10,12 @@
     background: transparent;
 }
 
+.sidenav .mud-drawer-content {
+    height: initial;
+    max-height: initial;
+    padding-bottom: 50px;
+}
+
 /* MudBlazor overrides */
 .mud-main-content {
     height: 100vh;
