@@ -19,6 +19,7 @@ namespace MapMaven.Models
         public bool IsDynamicPlaylist => DynamicPlaylistConfiguration != null;
 
         public Lazy<string?> CoverImage { get; private set; }
+        public Lazy<string?> CoverImageSmall { get; private set; }
 
         private IPlaylist _playlist;
 
@@ -29,29 +30,8 @@ namespace MapMaven.Models
             Title = playlist.Title;
             Description = playlist.Description;
 
-            CoverImage = new Lazy<string?>(() =>
-            {
-                try
-                {
-                    Image coverImage = null;
-
-                    using (var coverImageStream = _playlist.GetCoverStream())
-                    {
-                        if (coverImageStream != null && _playlist.HasCover)
-                            coverImage = Image.FromStream(coverImageStream);
-
-                        using (coverImage)
-                        {
-                            return coverImage?.ToDataUrl();
-                        }
-                    }
-                }
-                catch
-                {
-                    /* Ignore invalid cover images */
-                    return null;
-                }
-            });
+            CoverImage = new Lazy<string?>(() => GetCoverImage());
+            CoverImageSmall = new Lazy<string?>(() => GetCoverImage(50));
 
             Maps = playlist.Select(s => new PlaylistMap(s));
 
@@ -65,6 +45,33 @@ namespace MapMaven.Models
                 {
                     DynamicPlaylistConfiguration = configuration.ToObject<DynamicPlaylistConfiguration>();
                 }
+            }
+        }
+
+        public string? GetCoverImage(int size = 0)
+        {
+            try
+            {
+                Image? coverImage = null;
+
+                using (var coverImageStream = _playlist.GetCoverStream())
+                {
+                    if (coverImageStream != null && _playlist.HasCover)
+                        coverImage = Image.FromStream(coverImageStream);
+
+                    using (coverImage)
+                    {
+                        if (size > 0)
+                            coverImage = coverImage?.GetResizedImage(size, size);
+
+                        return coverImage?.ToDataUrl();
+                    }
+                }
+            }
+            catch
+            {
+                /* Ignore invalid cover images */
+                return null;
             }
         }
     }
