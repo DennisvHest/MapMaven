@@ -77,7 +77,10 @@ namespace MapMaven.Core.Services
                 await _playlistService.ReplaceMapsInPlaylist(playlistMaps, playlist.Playlist, loadPlaylists: false);
             }
 
-            await _beatSaberDataService.LoadAllPlaylists();
+            await Task.WhenAll(new[] {
+                _beatSaberDataService.LoadAllMapInfo(),
+                _beatSaberDataService.LoadAllPlaylists()
+            });
         }
 
         private IEnumerable<Map> FilterMaps(IEnumerable<Map> maps, DynamicPlaylistConfiguration configuration)
