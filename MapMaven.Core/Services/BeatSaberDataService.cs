@@ -194,6 +194,33 @@ namespace MapMaven.Services
         }
 
         /// <summary>
+        /// Source: https://github.com/Kylemc1413/SongCore
+        /// </summary>
+        public string GetRelativeMapPath(string path)
+        {
+            var fromPath = _fileService.BeatSaberInstallLocation.NormalizePath();
+
+            if (!fromPath.EndsWith(Path.DirectorySeparatorChar.ToString()))
+            {
+                fromPath += Path.DirectorySeparatorChar;
+            }
+
+            if (!path.StartsWith(fromPath)) return path;
+
+            var fromUri = new Uri(fromPath);
+            var toUri = new Uri(path);
+
+            var relativePath = Uri.UnescapeDataString(fromUri.MakeRelativeUri(toUri).ToString());
+
+            if (!relativePath.StartsWith("."))
+            {
+                relativePath = Path.Combine(".", relativePath);
+            }
+
+            return relativePath.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
+        }
+
+        /// <summary>
         /// Gets the song duration cache from SongCore.
         /// </summary>
         private async Task<Dictionary<string, SongDuration>> GetSongDurationCache()
@@ -254,6 +281,14 @@ namespace MapMaven.Services
                 var mapHash = mapsByDirectoryCache.GetValueOrDefault(normalizedMapDirectory)?.Hash;
 
                 if (mapHash == null)
+                {
+                    // Check if hash is found in SongCore cache (from relative map directory)
+                    var relativeMapDirectory = GetRelativeMapPath(normalizedMapDirectory);
+
+                    mapHash = songHashData.GetValueOrDefault(relativeMapDirectory)?.Hash;
+                }
+
+                if (mapHash == null) // Check if hash is found in SongCore cache (from absolute map directory (legacy))
                     mapHash = songHashData.GetValueOrDefault(normalizedMapDirectory)?.Hash;
 
                 if (mapHash == null)
@@ -314,7 +349,17 @@ namespace MapMaven.Services
         {
             try
             {
-                if (songDurationCache.TryGetValue(info.DirectoryPath, out var songDuration))
+                var relativeMapDirectory = GetRelativeMapPath(info.DirectoryPath);
+
+                SongDuration? songDuration;
+
+                // Check if song duration is found in SongCore cache (from relative map directory)
+                if (songDurationCache.TryGetValue(relativeMapDirectory, out songDuration))
+                {
+                    info.SongDuration = TimeSpan.FromSeconds(songDuration.DurationInSeconds);
+                }
+                // Check if song duration is found in SongCore cache (from absolute map directory (legacy))
+                else if (songDurationCache.TryGetValue(info.DirectoryPath, out songDuration))
                 {
                     info.SongDuration = TimeSpan.FromSeconds(songDuration.DurationInSeconds);
                 }
@@ -373,9 +418,6 @@ namespace MapMaven.Services
         /// </summary>
         private async Task CacheMapInfo(Dictionary<string, MapInfo> mapInfoByHash)
         {
-            if (!mapInfoByHash.Any())
-                return;
-
             using var scope = _serviceProvider.CreateScope();
 
             var dataStore = scope.ServiceProvider.GetService<IDataStore>();
