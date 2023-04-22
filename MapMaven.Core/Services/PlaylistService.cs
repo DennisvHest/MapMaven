@@ -148,42 +148,9 @@ namespace MapMaven.Services
         {
             _creatingPlaylist.OnNext(true);
 
-            playlistMaps = playlistMaps.ToList();
-
             try
             {
-                ItemProgress<Map>? totalProgress = null;
-
-                if (progress != null)
-                {
-                    totalProgress = new ItemProgress<Map>
-                    {
-                        TotalItems = playlistMaps.Count()
-                    };
-
-                    progress.Report(totalProgress);
-                }
-
-                foreach (var map in playlistMaps)
-                {
-                    Progress<double>? mapProgress = null;
-
-                    if (totalProgress != null)
-                    {
-                        totalProgress.CurrentItem = map;
-
-                        mapProgress = new Progress<double>(x =>
-                        {
-                            totalProgress.CurrentMapProgress = x;
-                            progress.Report(totalProgress);
-                        });
-                    }
-
-                    await _mapService.DownloadMap(map, progress: mapProgress);
-
-                    if (totalProgress != null)
-                        totalProgress.CompletedItems++;
-                }
+                playlistMaps = await DownloadPlaylistMapsIfNotExist(playlistMaps, progress);
 
                 await AddPlaylist(editPlaylistModel, playlistMaps, loadPlaylists);
             }
@@ -191,6 +158,46 @@ namespace MapMaven.Services
             {
                 _creatingPlaylist.OnNext(false);
             }
+        }
+
+        public async Task<IEnumerable<Map>> DownloadPlaylistMapsIfNotExist(IEnumerable<Map> playlistMaps, IProgress<ItemProgress<Map>>? progress = null, bool loadMapInfo = true)
+        {
+            playlistMaps = playlistMaps.ToList();
+
+            ItemProgress<Map>? totalProgress = null;
+
+            if (progress != null)
+            {
+                totalProgress = new ItemProgress<Map>
+                {
+                    TotalItems = playlistMaps.Count()
+                };
+
+                progress.Report(totalProgress);
+            }
+
+            foreach (var map in playlistMaps)
+            {
+                Progress<double>? mapProgress = null;
+
+                if (totalProgress != null)
+                {
+                    totalProgress.CurrentItem = map;
+
+                    mapProgress = new Progress<double>(x =>
+                    {
+                        totalProgress.CurrentMapProgress = x;
+                        progress?.Report(totalProgress);
+                    });
+                }
+
+                await _mapService.DownloadMap(map, progress: mapProgress, loadMapInfo: loadMapInfo);
+
+                if (totalProgress != null)
+                    totalProgress.CompletedItems++;
+            }
+
+            return playlistMaps;
         }
 
         public async Task DeletePlaylist(Playlist playlist)

@@ -72,6 +72,8 @@ namespace MapMaven.Core.Services
 
                 playlistMaps = playlistMaps.Take(configuration.MapCount);
 
+                await _playlistService.DownloadPlaylistMapsIfNotExist(playlistMaps, loadMapInfo: false);
+
                 await _playlistService.ReplaceMapsInPlaylist(playlistMaps, playlist.Playlist, loadPlaylists: false);
             }
 

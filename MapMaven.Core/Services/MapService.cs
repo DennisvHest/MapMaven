@@ -182,7 +182,7 @@ namespace MapMaven.Services
             _selectedMaps.OnNext(selectedMaps.ToHashSet());
         }
 
-        public async Task DownloadMap(Map map, bool force = false, IProgress<double>? progress = null)
+        public async Task DownloadMap(Map map, bool force = false, IProgress<double>? progress = null, bool loadMapInfo = true)
         {
             if (!force && MapIsInstalled(map))
             {
@@ -194,7 +194,8 @@ namespace MapMaven.Services
 
             await MapInstaller.InstallMap(beatMap, _fileService.MapsLocation, progress);
 
-            await _beatSaberDataService.LoadMapInfo(beatMap.ID);
+            if (loadMapInfo)
+                await _beatSaberDataService.LoadMapInfo(beatMap.ID);
         }
 
         public bool MapIsInstalled(Map map)
