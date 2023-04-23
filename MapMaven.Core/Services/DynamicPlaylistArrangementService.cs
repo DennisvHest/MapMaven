@@ -72,10 +72,15 @@ namespace MapMaven.Core.Services
 
                 playlistMaps = playlistMaps.Take(configuration.MapCount);
 
+                await _playlistService.DownloadPlaylistMapsIfNotExist(playlistMaps, loadMapInfo: false);
+
                 await _playlistService.ReplaceMapsInPlaylist(playlistMaps, playlist.Playlist, loadPlaylists: false);
             }
 
-            await _beatSaberDataService.LoadAllPlaylists();
+            await Task.WhenAll(new[] {
+                _beatSaberDataService.LoadAllMapInfo(),
+                _beatSaberDataService.LoadAllPlaylists()
+            });
         }
 
         private IEnumerable<Map> FilterMaps(IEnumerable<Map> maps, DynamicPlaylistConfiguration configuration)
