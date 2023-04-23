@@ -413,7 +413,7 @@ namespace MapMaven.Services
         }
 
         /// <summary>
-        /// Writes the given MapInfo's as JSON to the AppData cache.
+        /// Writes the given MapInfo's into the cache db.
         /// The MapInfo's are transformed to a dictionary with the hash as the key.
         /// </summary>
         private async Task CacheMapInfo(Dictionary<string, MapInfo> mapInfoByHash)
