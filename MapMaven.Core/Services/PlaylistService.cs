@@ -144,15 +144,16 @@ namespace MapMaven.Services
             return addedPlaylist;
         }
 
-        public async Task AddPlaylistAndDownloadMaps(EditPlaylistModel editPlaylistModel, IEnumerable<Map> playlistMaps, bool loadPlaylists = true, IProgress<ItemProgress<Map>>? progress = null)
+        public async Task AddPlaylistAndDownloadMaps(EditPlaylistModel editPlaylistModel, IEnumerable<Map> playlistMaps, bool loadPlaylists = true, IProgress<ItemProgress<Map>>? progress = null, CancellationToken cancellationToken = default)
         {
             _creatingPlaylist.OnNext(true);
 
             try
             {
-                playlistMaps = await DownloadPlaylistMapsIfNotExist(playlistMaps, progress);
+                playlistMaps = await DownloadPlaylistMapsIfNotExist(playlistMaps, progress, cancellationToken: cancellationToken);
 
-                await AddPlaylist(editPlaylistModel, playlistMaps, loadPlaylists);
+                if (!cancellationToken.IsCancellationRequested)
+                    await AddPlaylist(editPlaylistModel, playlistMaps, loadPlaylists);
             }
             finally
             {
@@ -160,7 +161,7 @@ namespace MapMaven.Services
             }
         }
 
-        public async Task<IEnumerable<Map>> DownloadPlaylistMapsIfNotExist(IEnumerable<Map> playlistMaps, IProgress<ItemProgress<Map>>? progress = null, bool loadMapInfo = true)
+        public async Task<IEnumerable<Map>> DownloadPlaylistMapsIfNotExist(IEnumerable<Map> playlistMaps, IProgress<ItemProgress<Map>>? progress = null, bool loadMapInfo = true, CancellationToken cancellationToken = default)
         {
             playlistMaps = playlistMaps.ToList();
 
@@ -178,6 +179,9 @@ namespace MapMaven.Services
 
             foreach (var map in playlistMaps)
             {
+                if (cancellationToken.IsCancellationRequested == true)
+                    break;
+
                 Progress<double>? mapProgress = null;
 
                 if (totalProgress != null)
@@ -191,7 +195,7 @@ namespace MapMaven.Services
                     });
                 }
 
-                await _mapService.DownloadMap(map, progress: mapProgress, loadMapInfo: loadMapInfo);
+                await _mapService.DownloadMap(map, progress: mapProgress, loadMapInfo: loadMapInfo, cancellationToken: cancellationToken);
 
                 if (totalProgress != null)
                     totalProgress.CompletedItems++;
