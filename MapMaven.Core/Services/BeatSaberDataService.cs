@@ -418,6 +418,9 @@ namespace MapMaven.Services
         /// </summary>
         private async Task CacheMapInfo(Dictionary<string, MapInfo> mapInfoByHash)
         {
+            if (!mapInfoByHash.Any())
+                return;
+
             using var scope = _serviceProvider.CreateScope();
 
             var dataStore = scope.ServiceProvider.GetService<IDataStore>();
