@@ -182,7 +182,7 @@ namespace MapMaven.Services
             _selectedMaps.OnNext(selectedMaps.ToHashSet());
         }
 
-        public async Task DownloadMap(Map map, bool force = false, IProgress<double>? progress = null, bool loadMapInfo = true)
+        public async Task DownloadMap(Map map, bool force = false, IProgress<double>? progress = null, bool loadMapInfo = true, CancellationToken cancellationToken = default)
         {
             if (!force && MapIsInstalled(map))
             {
@@ -192,7 +192,10 @@ namespace MapMaven.Services
 
             var beatMap = await _beatSaver.BeatmapByHash(map.Hash);
 
-            await MapInstaller.InstallMap(beatMap, _fileService.MapsLocation, progress);
+            await MapInstaller.InstallMap(beatMap, _fileService.MapsLocation, progress, cancellationToken: cancellationToken);
+
+            if (cancellationToken.IsCancellationRequested)
+                return;
 
             if (loadMapInfo)
                 await _beatSaberDataService.LoadMapInfo(beatMap.ID);

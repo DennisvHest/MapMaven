@@ -111,10 +111,13 @@ namespace MapMaven.Components.Maps
         {
             var subject = new BehaviorSubject<ItemProgress<Map>>(null);
 
+            var cancellationToken = new CancellationTokenSource();
+
             var snackbar = Snackbar.Add<MapDownloadProgressMessage>(new Dictionary<string, object>
             {
                 { nameof(MapDownloadProgressMessage.ProgressReport), subject.Sample(TimeSpan.FromSeconds(0.2)).AsObservable() },
                 { nameof(MapDownloadProgressMessage.CreatingPlaylist), true },
+                { nameof(MapDownloadProgressMessage.CancellationToken), cancellationToken },
             }, configure: config =>
             {
                 config.RequireInteraction = true;
@@ -129,13 +132,20 @@ namespace MapMaven.Components.Maps
 
             var progress = new Progress<ItemProgress<Map>>(subject.OnNext);
 
-            await PlaylistService.AddPlaylistAndDownloadMaps(playlistModel, SelectedMaps, progress: progress);
+            await PlaylistService.AddPlaylistAndDownloadMaps(playlistModel, SelectedMaps, progress: progress, cancellationToken: cancellationToken.Token);
 
             MapService.ClearSelectedMaps();
 
             Snackbar.Remove(snackbar);
 
-            Snackbar.Add($"Created playlist: {playlistModel.Name}", Severity.Normal, config => config.Icon = Icons.Filled.Check);
+            if (!cancellationToken.IsCancellationRequested)
+            {
+                Snackbar.Add($"Created playlist: {playlistModel.Name}", Severity.Normal, config => config.Icon = Icons.Material.Filled.Check);
+            }
+            else
+            {
+                Snackbar.Add($"Cancelled creating playlist.", Severity.Normal, config => config.Icon = Icons.Material.Filled.Cancel);
+            }
         }
 
         void ClearSelection()

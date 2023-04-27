@@ -12,14 +12,31 @@
         <MudProgressCircular Color="Color.Primary" Size="Size.Small" Class="mr-2" Value="@totalProgressPercentage" />
     }
 
-    @if (CreatingPlaylist)
-    {
-        @:Creating playlist
-    }
+    <span style="width: 300px;">
+        @if (CreatingPlaylist)
+        {
+            @:Creating playlist
+        }
 
-    @if (Progress != null && Progress.TotalItems != Progress.CompletedItems)
+        @if (Progress != null && Progress.TotalItems != Progress.CompletedItems)
+        {
+            <text>
+                @(CreatingPlaylist ? "- " : "")
+                Adding map: @Progress.CurrentItem.Name 
+                @if (Progress.TotalItems > 1)
+                {
+                    @: (@(Progress.CompletedItems + 1) / @Progress.TotalItems) 
+                }
+                (@totalProgressPercentage.ToString("#0") %)
+            </text>
+        }
+    </span>
+
+    @if (CancellationToken != null)
     {
-        @:- Adding map: @Progress.CurrentItem.Name (@(Progress.CompletedItems + 1)/@Progress.TotalItems) (@totalProgressPercentage.ToString("#0") %)
+        <MudTooltip Text="Cancel">
+            <MudIconButton Icon="@Icons.Material.Filled.Cancel" OnClick="Cancel"></MudIconButton>
+        </MudTooltip>
     }
 </div>
 
@@ -30,10 +47,15 @@
     [Parameter]
     public bool CreatingPlaylist { get; set; }
 
+    [Parameter]
+    public CancellationTokenSource? CancellationToken { get; set; }
+
     ItemProgress<Map> Progress { get; set; }
 
     protected override void OnInitialized()
     {
         SubscribeAndBind(ProgressReport, progress => Progress = progress);
     }
+
+    void Cancel() => CancellationToken?.Cancel();
 }
