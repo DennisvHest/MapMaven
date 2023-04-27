@@ -20,7 +20,15 @@
 
         @if (Progress != null && Progress.TotalItems != Progress.CompletedItems)
         {
-            @:- Adding map: @Progress.CurrentItem.Name (@(Progress.CompletedItems + 1)/@Progress.TotalItems) (@totalProgressPercentage.ToString("#0") %)
+            <text>
+                @(CreatingPlaylist ? "- " : "")
+                Adding map: @Progress.CurrentItem.Name 
+                @if (Progress.TotalItems > 1)
+                {
+                    @: (@(Progress.CompletedItems + 1) / @Progress.TotalItems) 
+                }
+                (@totalProgressPercentage.ToString("#0") %)
+            </text>
         }
     </span>
 
