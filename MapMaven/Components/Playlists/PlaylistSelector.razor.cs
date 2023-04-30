@@ -27,7 +27,10 @@ namespace MapMaven.Components.Playlists
 
         protected override void OnInitialized()
         {
-            SubscribeAndBind(Observable.CombineLatest(PlaylistService.Playlists, _playlistSearchText, (playlists, searchText) =>
+            var playlists = PlaylistService.Playlists
+                .Select(playlists => playlists.Where(p => !p.IsDynamicPlaylist));
+
+            SubscribeAndBind(Observable.CombineLatest(playlists, _playlistSearchText, (playlists, searchText) =>
             {
                 if (string.IsNullOrWhiteSpace(searchText))
                     return playlists;

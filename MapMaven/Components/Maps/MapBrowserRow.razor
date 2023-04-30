@@ -82,7 +82,7 @@
     <CellTemplate>
         <div style="min-width: 100px">
             <MudIconButton Icon="@Icons.Filled.PlaylistAdd" Variant="Variant.Text" Size="Size.Medium" OnClick="() => OpenAddMapToPlaylistDialog(context.Item)" />
-            @if (SelectedPlaylist != null)
+            @if (SelectedPlaylist != null && !SelectedPlaylist.IsDynamicPlaylist)
             {
                 <MudIconButton Icon="@Icons.Filled.PlaylistRemove" Variant="Variant.Text" Size="Size.Medium" OnClick="() => OpenDeleteFromPlaylistDialog(context.Item)" />
             }
