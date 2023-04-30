@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Routing;
 using MudBlazor;
 using System.Reactive.Linq;
+using System.Reactive.Subjects;
 using Playlist = MapMaven.Models.Playlist;
 
 namespace MapMaven.Components.Playlists
@@ -33,6 +34,21 @@ namespace MapMaven.Components.Playlists
         private Playlist SelectedPlaylist;
         private object SelectedPlaylistValue;
 
+        private BehaviorSubject<string> _playlistSearchText = new(string.Empty);
+        private BehaviorSubject<string> _dynamicPlaylistSearchText = new(string.Empty);
+
+        private string PlaylistSearchText
+        {
+            get => _playlistSearchText.Value;
+            set => _playlistSearchText.OnNext(value);
+        }
+
+        private string DynamicPlaylistSearchText
+        {
+            get => _dynamicPlaylistSearchText.Value;
+            set => _dynamicPlaylistSearchText.OnNext(value);
+        }
+
         protected override void OnInitialized()
         {
             var allPlaylists = PlaylistService.Playlists;
@@ -43,17 +59,23 @@ namespace MapMaven.Components.Playlists
             var dynamicPlaylists = allPlaylists
                 .Select(playlists => playlists.Where(p => p.IsDynamicPlaylist));
 
-            playlists.Subscribe(playlists =>
+            SubscribeAndBind(Observable.CombineLatest(playlists, _playlistSearchText, (playlists, searchText) =>
             {
-                Playlists = playlists;
-                InvokeAsync(StateHasChanged);
-            });
+                if (string.IsNullOrWhiteSpace(searchText))
+                    return playlists;
 
-            dynamicPlaylists.Subscribe(playlists =>
+                return playlists
+                    .Where(p => p.Title.Contains(searchText, StringComparison.OrdinalIgnoreCase));
+            }), playlists => Playlists = playlists);
+
+            SubscribeAndBind(Observable.CombineLatest(dynamicPlaylists, _dynamicPlaylistSearchText, (dynamicPlaylists, searchText) =>
             {
-                DynamicPlaylists = playlists;
-                InvokeAsync(StateHasChanged);
-            });
+                if (string.IsNullOrWhiteSpace(searchText))
+                    return dynamicPlaylists;
+
+                return dynamicPlaylists
+                    .Where(p => p.Title.Contains(searchText, StringComparison.OrdinalIgnoreCase));
+            }), dynamicPlaylists => DynamicPlaylists = dynamicPlaylists);
 
             BeatSaberDataService.LoadingPlaylistInfo.Subscribe(loading =>
             {
@@ -132,7 +154,7 @@ namespace MapMaven.Components.Playlists
         protected async Task DeletePlaylist(Playlist playlistToDelete)
         {
             await PlaylistService.DeletePlaylist(playlistToDelete);
-            
+
             Snackbar.Add($"Removed playlist \"{playlistToDelete.Title}\"", Severity.Normal, config => config.Icon = Icons.Filled.Check);
         }
     }

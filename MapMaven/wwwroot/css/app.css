@@ -98,3 +98,7 @@ a:hover {
 .mud-table-cell {
     vertical-align: middle;
 }
+
+.small-input .mud-input-root {
+    padding: 8px !important;
+}
