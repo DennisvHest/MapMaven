@@ -11,9 +11,8 @@
 }
 
 .sidenav .mud-drawer-content {
-    height: initial;
+    height: 100vh;
     max-height: initial;
-    padding-bottom: 50px;
 }
 
 /* MudBlazor overrides */
