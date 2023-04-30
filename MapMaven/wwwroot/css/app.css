@@ -11,9 +11,13 @@
 }
 
 .sidenav .mud-drawer-content {
-    height: initial;
+    height: 100vh;
     max-height: initial;
-    padding-bottom: 50px;
+}
+
+.fill-remaining-space {
+    flex: 1;
+    min-height: 0;
 }
 
 /* MudBlazor overrides */
@@ -75,8 +79,9 @@ a:hover {
 }
 
 .playlist-selector-dialog .mud-dialog-content {
-    max-height: 600px;
-    overflow-y: auto;
+    height: 600px;
+    display: flex;
+    flex-direction: column;
 }
 
 .mud-dialog.no-title .mud-dialog-title {
@@ -93,4 +98,8 @@ a:hover {
 
 .mud-table-cell {
     vertical-align: middle;
+}
+
+.small-input .mud-input-root {
+    padding: 8px !important;
 }
