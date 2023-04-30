@@ -3,7 +3,7 @@
 @inherits ReactiveComponent
 
 <div class="fill-remaining-space">
-    <MudList Class="d-flex flex-column" Clickable="true" @bind-SelectedValue="SelectedPlaylistValue" Color="Color.Primary" Style="height: 50%;">
+    <MudList Class="d-flex flex-column" Clickable="true" Color="Color.Primary" Style="height: 50%;">
         <MudListSubheader Class="d-flex align-center justify-space-between py-2" Style="border-top: 1px solid var(--mud-palette-table-lines)">
             <div class="d-flex align-center">
                 <MudIcon Icon="@Icons.Filled.PlaylistPlay"></MudIcon> Playlists
@@ -26,7 +26,7 @@
         <div class="full-height" style="overflow-y: auto;">
             @foreach (var playlist in Playlists)
             {
-                <MudListItem title="@playlist.Title" OnClick="() => OnPlaylistSelect(playlist)" Value="playlist.FileName" Class="py-0 px-1" Style="height: 46px;">
+                <MudListItem title="@playlist.Title" OnClick="() => OnPlaylistSelect(playlist)" Class="@(playlist == SelectedPlaylist ? "mud-selected-item mud-primary-text py-0 px-1" : "py-0 px-1")" Style="height: 46px;">
                     <div class="playlist-list-item">
                         @if (!string.IsNullOrEmpty(playlist.CoverImageSmall.Value))
                         {
@@ -47,7 +47,7 @@
         </div>
     </MudList>
 
-    <MudList Class="d-flex flex-column" Clickable="true" @bind-SelectedValue="SelectedPlaylistValue" Color="Color.Primary" Style="height: 50%;">
+    <MudList Class="d-flex flex-column" Clickable="true" Color="Color.Primary" Style="height: 50%;">
         <MudListSubheader Class="d-flex align-center justify-space-between py-2" Style="border-top: 1px solid var(--mud-palette-table-lines)">
             <div class="d-flex align-center">
                 <MudIcon Icon="@Icons.Filled.PlaylistPlay"></MudIcon> Dynamic Playlists
@@ -70,7 +70,7 @@
         <div class="full-height" style="overflow-y: auto;">
             @foreach (var playlist in DynamicPlaylists)
             {
-                <MudListItem title="@playlist.Title" OnClick="() => OnPlaylistSelect(playlist)" Value="playlist.FileName" Class="py-0 px-1" Style="height: 46px;">
+                <MudListItem title="@playlist.Title" OnClick="() => OnPlaylistSelect(playlist)" Class="@(playlist == SelectedPlaylist ? "mud-selected-item mud-primary-text py-0 px-1" : "py-0 px-1")" Style="height: 46px;">
                     <div class="playlist-list-item">
                         @if (!string.IsNullOrEmpty(playlist.CoverImageSmall.Value))
                         {

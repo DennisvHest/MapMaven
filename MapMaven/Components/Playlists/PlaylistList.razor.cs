@@ -32,7 +32,6 @@ namespace MapMaven.Components.Playlists
         private bool LoadingPlaylists = false;
 
         private Playlist SelectedPlaylist;
-        private object SelectedPlaylistValue;
 
         private BehaviorSubject<string> _playlistSearchText = new(string.Empty);
         private BehaviorSubject<string> _dynamicPlaylistSearchText = new(string.Empty);
@@ -86,7 +85,6 @@ namespace MapMaven.Components.Playlists
             PlaylistService.SelectedPlaylist.Subscribe(playlist =>
             {
                 SelectedPlaylist = playlist;
-                SelectedPlaylistValue = SelectedPlaylist?.FileName;
                 InvokeAsync(StateHasChanged);
             });
         }
