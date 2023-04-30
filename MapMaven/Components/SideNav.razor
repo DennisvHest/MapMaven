@@ -2,7 +2,7 @@
 
 <MudDrawer Open="true" Elevation="1" Class="sidenav">
     <PlayerProfile></PlayerProfile>
-    <MudNavMenu Color="Color.Primary" Bordered="true" Class="full-height" Style="display: flex; flex-direction: column; flex: 1; min-height: 0;">
+    <MudNavMenu Color="Color.Primary" Bordered="true" Class="full-height d-flex flex-column fill-remaining-space">
         <div @onclick="OnMapsNavigation">
             <MudNavLink Icon="@Icons.Filled.LibraryMusic"
                         DisableRipple="true"
@@ -23,14 +23,12 @@
             </div>
         }
         <PlaylistList></PlaylistList>
-        <div class="fixed" style="width: 224px; bottom: 0; z-index: 9999; background-color: var(--mud-palette-drawer-background);">
-            <div @onclick="OpenSettings" @onclick:preventDefault="true">
-                <MudNavLink Icon="@Icons.Material.Filled.Settings"
-                            Href="#"
-                            DisableRipple="true">
-                    Settings
-                </MudNavLink>
-            </div>
+        <div @onclick="OpenSettings" @onclick:preventDefault="true">
+            <MudNavLink Icon="@Icons.Material.Filled.Settings"
+                        Href="#"
+                        DisableRipple="true">
+                Settings
+            </MudNavLink>
         </div>
     </MudNavMenu>
 </MudDrawer>

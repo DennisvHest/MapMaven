@@ -15,6 +15,11 @@
     max-height: initial;
 }
 
+.fill-remaining-space {
+    flex: 1;
+    min-height: 0;
+}
+
 /* MudBlazor overrides */
 .mud-main-content {
     height: 100vh;
