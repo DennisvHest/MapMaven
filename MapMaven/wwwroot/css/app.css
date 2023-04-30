@@ -79,8 +79,9 @@ a:hover {
 }
 
 .playlist-selector-dialog .mud-dialog-content {
-    max-height: 600px;
-    overflow-y: auto;
+    height: 600px;
+    display: flex;
+    flex-direction: column;
 }
 
 .mud-dialog.no-title .mud-dialog-title {

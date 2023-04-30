@@ -1,9 +1,22 @@
-﻿<MudDialog Class="playlist-selector-dialog">
+﻿@inherits ReactiveComponent
+
+<MudDialog Class="playlist-selector-dialog">
     <DialogContent>
-        <MudList Class="d-flex flex-column" Clickable="true">
+        <div>
+            <MudTextField @bind-Value="PlaylistSearchText"
+                          DebounceInterval="300"
+                          Immediate="true"
+                          Variant="Variant.Outlined"
+                          Adornment="Adornment.Start"
+                          AdornmentIcon="@Icons.Material.Filled.Search"
+                          IconSize="Size.Small"
+                          Class="mx-4 mb-4 small-input">
+            </MudTextField>
+        </div>
+        <MudList Class="d-flex flex-column fill-remaining-space" Style="overflow-y: auto;" Clickable="true">
             @foreach (var playlist in Playlists)
             {
-                <MudListItem title="@playlist.Title" OnClick="() => OnPlaylistSelect(playlist)" Value="playlist" Class="py-1 px-2">
+                <MudListItem title="@playlist.Title" OnClick="() => OnPlaylistSelect(playlist)" Value="playlist" Class="py-1 px-2" Style="min-height: 46px;">
                     <div class="playlist-list-item">
                         @if (!string.IsNullOrEmpty(playlist.CoverImageSmall.Value))
                         {

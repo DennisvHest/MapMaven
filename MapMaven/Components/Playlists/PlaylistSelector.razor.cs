@@ -2,6 +2,8 @@ using MapMaven.Models;
 using MapMaven.Services;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
+using System.Reactive.Linq;
+using System.Reactive.Subjects;
 
 namespace MapMaven.Components.Playlists
 {
@@ -15,13 +17,24 @@ namespace MapMaven.Components.Playlists
 
         private IEnumerable<Playlist> Playlists = Array.Empty<Playlist>();
 
+        private BehaviorSubject<string> _playlistSearchText = new(string.Empty);
+
+        private string PlaylistSearchText
+        {
+            get => _playlistSearchText.Value;
+            set => _playlistSearchText.OnNext(value);
+        }
+
         protected override void OnInitialized()
         {
-            PlaylistService.Playlists.Subscribe(playlists =>
+            SubscribeAndBind(Observable.CombineLatest(PlaylistService.Playlists, _playlistSearchText, (playlists, searchText) =>
             {
-                Playlists = playlists;
-                InvokeAsync(StateHasChanged);
-            });
+                if (string.IsNullOrWhiteSpace(searchText))
+                    return playlists;
+
+                return playlists
+                    .Where(p => p.Title.Contains(searchText, StringComparison.OrdinalIgnoreCase));
+            }), playlists => Playlists = playlists);
         }
 
         protected void OnPlaylistSelect(Playlist playlist)
