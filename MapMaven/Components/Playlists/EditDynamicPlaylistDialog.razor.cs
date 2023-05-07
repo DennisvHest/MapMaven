@@ -22,7 +22,7 @@ namespace MapMaven.Components.Playlists
 
         protected EditDynamicPlaylistModel SelectedPlaylist { get; set; }
 
-        private static IEnumerable<EditDynamicPlaylistModel> DynamicPlaylists = new EditDynamicPlaylistModel[]
+        private static List<EditDynamicPlaylistModel> PresetDynamicPlaylists = new List<EditDynamicPlaylistModel>
         {
             new EditDynamicPlaylistModel
             {
@@ -32,7 +32,7 @@ namespace MapMaven.Components.Playlists
                 DynamicPlaylistConfiguration = new DynamicPlaylistConfiguration
                 {
                     MapPool = MapPool.Standard,
-                    SortOperations = new[]
+                    SortOperations = new()
                     {
                         new SortOperation
                         {
@@ -51,7 +51,7 @@ namespace MapMaven.Components.Playlists
                 DynamicPlaylistConfiguration = new DynamicPlaylistConfiguration
                 {
                     MapPool = MapPool.Improvement,
-                    FilterOperations = new[]
+                    FilterOperations = new()
                     {
                         new FilterOperation
                         {
@@ -60,7 +60,7 @@ namespace MapMaven.Components.Playlists
                             Value = false.ToString()
                         }
                     },
-                    SortOperations = new[]
+                    SortOperations = new()
                     {
                         new SortOperation
                         {
@@ -76,6 +76,19 @@ namespace MapMaven.Components.Playlists
         void ConfigureDynamicPlaylist(EditDynamicPlaylistModel dynamicPlaylist)
         {
             SelectedPlaylist = dynamicPlaylist;
+        }
+
+        void ConfigureCustomDynamicPlaylist()
+        {
+            SelectedPlaylist = new()
+            {
+                DynamicPlaylistConfiguration = new()
+            };
+        }
+
+        void AddFilterOperation()
+        {
+            SelectedPlaylist.DynamicPlaylistConfiguration.FilterOperations.Add(new());
         }
 
         async Task AddDynamicPlaylist()

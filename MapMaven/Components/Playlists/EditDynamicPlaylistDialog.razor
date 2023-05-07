@@ -1,25 +1,34 @@
-﻿@using MapMaven.Extensions;
-
+﻿@using MapMaven.Core.Models.DynamicPlaylists;
+@using MapMaven.Extensions;
 
 @if (SelectedPlaylist == null)
 {
     <MudDialog>
         <DialogContent>
-            @foreach (var playlist in DynamicPlaylists)
-            {
-                <MudButton OnClick="() => ConfigureDynamicPlaylist(playlist)" Variant="Variant.Filled">
+            <div id="preset-dynamic-playlists">
+                @foreach (var playlist in PresetDynamicPlaylists)
+                {
+                    <MudButton OnClick="() => ConfigureDynamicPlaylist(playlist)" Variant="Variant.Filled">
+                        <div class="d-flex flex-column align-center justify-center dynamic-playlist-add">
+                            <MudIcon Icon="@Icons.Filled.AccessTime" Size="Size.Large" Class="mb-2"></MudIcon> @playlist.Name
+                        </div>
+                    </MudButton>
+                }
+            </div>
+            <div id="custom-dynamic-playlist" class="pa-4 mt-4 border-t d-flex flex-column flex-center">
+                <MudButton OnClick="ConfigureCustomDynamicPlaylist" Variant="Variant.Filled">
                     <div class="d-flex flex-column align-center justify-center dynamic-playlist-add">
-                        <MudIcon Icon="@Icons.Filled.AccessTime" Size="Size.Large" Class="mb-2"></MudIcon> @playlist.Name
+                        <MudIcon Icon="@Icons.Filled.Settings" Size="Size.Large" Class="mb-2"></MudIcon> Custom
                     </div>
                 </MudButton>
-            }
+            </div>
         </DialogContent>
         <DialogActions>
             <MudButton OnClick="Cancel">Cancel</MudButton>
         </DialogActions>
     </MudDialog>
 }
-else
+else if (PresetDynamicPlaylists.Contains(SelectedPlaylist))
 {
     <EditForm Model="@SelectedPlaylist" OnValidSubmit="AddDynamicPlaylist">
         <MudDialog>
@@ -28,12 +37,71 @@ else
                 <p>@SelectedPlaylist.Description</p>
                 <div class="mt-5">
                     <MudNumericField @bind-Value="SelectedPlaylist.DynamicPlaylistConfiguration.MapCount"
-                        For="() => SelectedPlaylist.DynamicPlaylistConfiguration.MapCount"
-                        Label="Map count"
-                        Variant="Variant.Outlined"
-                        Min="1"
-                    />
+                                     For="() => SelectedPlaylist.DynamicPlaylistConfiguration.MapCount"
+                                     Label="Map count"
+                                     Variant="Variant.Outlined"
+                                     Min="1" />
                 </div>
+            </DialogContent>
+            <DialogActions>
+                <MudButton OnClick="CancelConfiguration">Cancel</MudButton>
+                <MudButton OnClick="AddDynamicPlaylist">Add</MudButton>
+            </DialogActions>
+        </MudDialog>
+    </EditForm>
+}
+else
+{
+    var configuration = SelectedPlaylist.DynamicPlaylistConfiguration;
+
+    <EditForm Model="@SelectedPlaylist" OnValidSubmit="AddDynamicPlaylist">
+        <MudDialog>
+            <DialogContent>
+                <div class="d-flex flex-column align-center">
+                    <MudButtonGroup OverrideStyles="false">
+                        <MudButton
+                            Variant="Variant.Filled"
+                            Color="@(configuration.MapPool == MapPool.Standard ? Color.Primary : Color.Default)"
+                            OnClick="() => configuration.MapPool = MapPool.Standard">
+                            Downloaded maps
+                        </MudButton>
+                        <MudButton
+                            Variant="Variant.Filled"
+                            Color="@(configuration.MapPool == MapPool.Improvement ? Color.Primary : Color.Default)"
+                            OnClick="() => configuration.MapPool = MapPool.Improvement">
+                            Improvement maps
+                        </MudButton>
+                    </MudButtonGroup>
+                </div>
+                <MudPaper Class="my-4" Style="background-color: var(--mud-palette-drawer-background);">
+                    <MudList>
+                        <MudListSubheader Class="d-flex align-center justify-space-between">
+                            Filters
+                            <MudIconButton Icon="@Icons.Filled.Add" Variant="Variant.Outlined" Size="Size.Small" OnClick="AddFilterOperation" />
+                        </MudListSubheader>
+                        @foreach (var filterOperation in configuration.FilterOperations)
+                        {
+                            <MudListItem>
+                                <div class="d-flex align-items-center">
+                                    <MudSelect @bind-Value="filterOperation.Field" Label="Field" Variant="Variant.Outlined">
+                                        <MudSelectItem Value="@("AddedDateTime")" />
+                                        <MudSelectItem Value="@("Hidden")" />
+                                        <MudSelectItem Value="@("ScoreEstimate.PPIncrease")" />
+                                    </MudSelect>
+                                    <MudSelect @bind-Value="filterOperation.Operator" Label="Operator" Variant="Variant.Outlined">
+                                        @foreach (var filterOperator in Enum.GetValues<MapMaven.Core.Models.DynamicPlaylists.FilterOperator>())
+                                        {
+                                            <MudSelectItem Value="filterOperator">
+                                                @filterOperator.ToString()
+                                            </MudSelectItem>
+                                        }
+                                    </MudSelect>
+                                    <MudTextField @bind-Value="filterOperation.Value" Label="Value" Variant="Variant.Outlined" />
+                                </div>
+                            </MudListItem>
+                        }
+                    </MudList>
+                </MudPaper>
             </DialogContent>
             <DialogActions>
                 <MudButton OnClick="CancelConfiguration">Cancel</MudButton>
