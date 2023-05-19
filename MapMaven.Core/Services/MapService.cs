@@ -107,7 +107,7 @@ namespace MapMaven.Services
             {
                 var map = mapInfo.ToMap();
 
-                map.PlayerScore = scores.FirstOrDefault();
+                map.PlayerScore = scores.MaxBy(s => s.Score.Pp);
 
                 return map;
             }).GroupJoin(rankedMaps, map => map.Hash, rankedMap => rankedMap.Id, (map, rankedMap) =>
@@ -141,7 +141,7 @@ namespace MapMaven.Services
                     return map;
                 }).GroupJoin(playerScores, map => map.RankedMap.Id + map.RankedMap.Difficulty, score => score.Leaderboard.SongHash + score.Leaderboard.Difficulty.DifficultyName, (map, scores) =>
                 {
-                    map.PlayerScore = scores.FirstOrDefault();
+                    map.PlayerScore = scores.MaxBy(s => s.Score.Pp);
 
                     return map;
                 }).GroupJoin(hiddenMaps, map => map.Hash + map.RankedMap.Difficulty, hiddenMap => hiddenMap.Hash + hiddenMap.Difficulty, (map, hiddenMap) =>
