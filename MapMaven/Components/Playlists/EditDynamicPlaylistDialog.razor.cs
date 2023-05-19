@@ -74,21 +74,6 @@ namespace MapMaven.Components.Playlists
             }
         };
 
-        IEnumerable<KeyValuePair<string, string>> FieldOptions => GetFieldOptionsForType(typeof(DynamicPlaylistMap));
-
-        private IEnumerable<KeyValuePair<string, string>> GetFieldOptionsForType(Type type)
-        {
-            return type
-                .GetProperties()
-                .SelectMany(property =>
-                {
-                    if (property.PropertyType.IsClass && property.PropertyType != typeof(string))
-                        return GetFieldOptionsForType(property.PropertyType);
-
-                    return new[] { new KeyValuePair<string, string>(property.Name, property.Name) };
-                });
-        }
-
         void ConfigureDynamicPlaylist(EditDynamicPlaylistModel dynamicPlaylist)
         {
             SelectedPlaylist = dynamicPlaylist;
@@ -98,7 +83,13 @@ namespace MapMaven.Components.Playlists
         {
             SelectedPlaylist = new()
             {
+                FileName = $"CUSTOM_PLAYLIST_TEST_{Guid.NewGuid()}",
+                Name = $"Custom Playlist Test {Guid.NewGuid()}",
+                Description = "test",
                 DynamicPlaylistConfiguration = new()
+                {
+                    MapCount = 20
+                },
             };
         }
 

@@ -82,25 +82,7 @@ else
                         @foreach (var filterOperation in configuration.FilterOperations)
                         {
                             <MudListItem>
-                                <div class="d-flex align-items-center">
-                                    <MudSelect @bind-Value="filterOperation.Field" Label="Field" Variant="Variant.Outlined">
-                                        @foreach (var field in FieldOptions)
-                                        {
-                                            <MudSelectItem Value="field.Value">
-                                                @field.Key
-                                            </MudSelectItem>
-                                        }
-                                    </MudSelect>
-                                    <MudSelect @bind-Value="filterOperation.Operator" Label="Operator" Variant="Variant.Outlined">
-                                        @foreach (var filterOperator in Enum.GetValues<MapMaven.Core.Models.DynamicPlaylists.FilterOperator>())
-                                        {
-                                            <MudSelectItem Value="filterOperator">
-                                                @filterOperator.ToString()
-                                            </MudSelectItem>
-                                        }
-                                    </MudSelect>
-                                    <MudTextField @bind-Value="filterOperation.Value" Label="Value" Variant="Variant.Outlined" />
-                                </div>
+                                <FilterOperationInput FilterOperation="filterOperation"></FilterOperationInput>
                             </MudListItem>
                         }
                     </MudList>

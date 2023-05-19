@@ -1,0 +1,60 @@
+﻿@using MapMaven.Core.Models.DynamicPlaylists;
+@using MapMaven.Core.Models.DynamicPlaylists.MapInfo;
+
+<div class="d-flex align-items-center">
+    <MudSelect T="DynamicPlaylistFieldOption" Value="SelectedFieldOption" Text="@(SelectedFieldOption?.Name)" Label="Field" ValueChanged="OnFieldChanged" Variant="Variant.Outlined">
+        @foreach (var field in FieldOptions)
+        {
+            <MudSelectItem Value="field" >
+                @field.Name
+            </MudSelectItem>
+        }
+    </MudSelect>
+    <MudSelect @bind-Value="FilterOperation.Operator" Label="Operator" Variant="Variant.Outlined">
+        @foreach (var filterOperator in Enum.GetValues<MapMaven.Core.Models.DynamicPlaylists.FilterOperator>())
+        {
+            <MudSelectItem Value="filterOperator">
+                @filterOperator.ToString()
+            </MudSelectItem>
+        }
+    </MudSelect>
+    @if (SelectedFieldOption?.Type == typeof(string))
+    {
+        <MudTextField @bind-Value="FilterOperation.Value" Label="Value" Variant="Variant.Outlined" />
+    }
+</div>
+
+@code {
+    [Parameter]
+    public FilterOperation FilterOperation { get; set; }
+
+    DynamicPlaylistFieldOption SelectedFieldOption { get; set; }
+
+    IEnumerable<DynamicPlaylistFieldOption> FieldOptions => GetFieldOptionsForType(typeof(DynamicPlaylistMap));
+
+    private IEnumerable<DynamicPlaylistFieldOption> GetFieldOptionsForType(Type type)
+    {
+        return type
+            .GetProperties()
+            .SelectMany(property =>
+            {
+                if (property.PropertyType.IsClass && property.PropertyType != typeof(string))
+                    return GetFieldOptionsForType(property.PropertyType);
+
+                return new[] {
+                        new DynamicPlaylistFieldOption
+                        {
+                            Value = property.Name,
+                            Name = property.Name,
+                            Type = property.PropertyType
+                        }
+                };
+            });
+    }
+
+    void OnFieldChanged(DynamicPlaylistFieldOption selectedField)
+    {
+        SelectedFieldOption = selectedField;
+        FilterOperation.Field = SelectedFieldOption.Value;
+    }
+}
