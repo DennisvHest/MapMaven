@@ -10,7 +10,6 @@ namespace MapMaven.Services.Workers
 
         private readonly ILogger<MemoryCleaningWorker> _logger;
 
-
         public MemoryCleaningWorker(ILogger<MemoryCleaningWorker> logger)
         {
             _logger = logger;
@@ -22,8 +21,7 @@ namespace MapMaven.Services.Workers
             {
                 try
                 {
-                    GCSettings.LargeObjectHeapCompactionMode = GCLargeObjectHeapCompactionMode.CompactOnce;
-                    GC.Collect();
+                    BeatSaberDataService.CleanLargeObjectHeap();
                 }
                 catch (Exception ex)
                 {

@@ -16,6 +16,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using MapMaven.Core.Models.Data;
+using System.Runtime;
 
 namespace MapMaven.Services
 {
@@ -161,7 +162,11 @@ namespace MapMaven.Services
         {
             _playlistManager.RefreshPlaylists(true);
 
-            return _playlistManager.GetAllPlaylists(true);
+            var playlists = _playlistManager.GetAllPlaylists(true);
+
+            CleanLargeObjectHeap();
+
+            return playlists;
         }
 
         /// <summary>
@@ -429,6 +434,15 @@ namespace MapMaven.Services
             dataStore.Set<MapInfo>().AddRange(mapInfoByHash.Values);
 
             await dataStore.SaveChangesAsync();
+        }
+
+        /// <summary>
+        /// Cleans the large object heap to remove playlist/map cover image data that is otherwise seldom cleaned by the garbage collector.
+        /// </summary>
+        public static void CleanLargeObjectHeap()
+        {
+            GCSettings.LargeObjectHeapCompactionMode = GCLargeObjectHeapCompactionMode.CompactOnce;
+            GC.Collect();
         }
     }
 }
