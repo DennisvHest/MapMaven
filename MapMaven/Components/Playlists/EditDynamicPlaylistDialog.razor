@@ -84,9 +84,12 @@ else
                             <MudListItem>
                                 <div class="d-flex align-items-center">
                                     <MudSelect @bind-Value="filterOperation.Field" Label="Field" Variant="Variant.Outlined">
-                                        <MudSelectItem Value="@("AddedDateTime")" />
-                                        <MudSelectItem Value="@("Hidden")" />
-                                        <MudSelectItem Value="@("ScoreEstimate.PPIncrease")" />
+                                        @foreach (var field in FieldOptions)
+                                        {
+                                            <MudSelectItem Value="field.Value">
+                                                @field.Key
+                                            </MudSelectItem>
+                                        }
                                     </MudSelect>
                                     <MudSelect @bind-Value="filterOperation.Operator" Label="Operator" Variant="Variant.Outlined">
                                         @foreach (var filterOperator in Enum.GetValues<MapMaven.Core.Models.DynamicPlaylists.FilterOperator>())

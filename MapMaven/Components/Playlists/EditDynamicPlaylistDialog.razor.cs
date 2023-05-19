@@ -1,4 +1,5 @@
 using MapMaven.Core.Models.DynamicPlaylists;
+using MapMaven.Core.Models.DynamicPlaylists.MapInfo;
 using MapMaven.Core.Services;
 using MapMaven.Services;
 using Microsoft.AspNetCore.Components;
@@ -72,6 +73,21 @@ namespace MapMaven.Components.Playlists
                 }
             }
         };
+
+        IEnumerable<KeyValuePair<string, string>> FieldOptions => GetFieldOptionsForType(typeof(DynamicPlaylistMap));
+
+        private IEnumerable<KeyValuePair<string, string>> GetFieldOptionsForType(Type type)
+        {
+            return type
+                .GetProperties()
+                .SelectMany(property =>
+                {
+                    if (property.PropertyType.IsClass && property.PropertyType != typeof(string))
+                        return GetFieldOptionsForType(property.PropertyType);
+
+                    return new[] { new KeyValuePair<string, string>(property.Name, property.Name) };
+                });
+        }
 
         void ConfigureDynamicPlaylist(EditDynamicPlaylistModel dynamicPlaylist)
         {
