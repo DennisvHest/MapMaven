@@ -8,41 +8,41 @@ namespace MapMaven.Core.Utilities.Scoresaber
         private readonly Player _player;
         private readonly IEnumerable<PlayerScore> _playerScores;
 
-        public const decimal PPDecay = .965M;
+        public const double PPDecay = .965D;
 
         public static readonly List<PPCurveItem> PPCurve = new List<PPCurveItem>
         {
-            new PPCurveItem { At = 0M, Value = 0M },
-            new PPCurveItem { At = 59.86M, Value = 0.24M },
-            new PPCurveItem { At = 64.9M, Value = 0.31M },
-            new PPCurveItem { At = 69.87M, Value = 0.34M },
-            new PPCurveItem { At = 74.92M, Value = 0.4M },
-            new PPCurveItem { At = 79.89M, Value = 0.47M },
-            new PPCurveItem { At = 82.37M, Value = 0.5M },
-            new PPCurveItem { At = 84.86M, Value = 0.56M },
-            new PPCurveItem { At = 87.42M, Value = 0.65M },
-            new PPCurveItem { At = 89.9M, Value = 0.75M },
-            new PPCurveItem { At = 90.95M, Value = 0.79M },
-            new PPCurveItem { At = 91.91M, Value = 0.83M },
-            new PPCurveItem { At = 92.87M, Value = 0.87M },
-            new PPCurveItem { At = 93.91M, Value = 0.92M },
-            new PPCurveItem { At = 94.95M, Value = 0.99M },
-            new PPCurveItem { At = 95.51M, Value = 1.06M },
-            new PPCurveItem { At = 96.07M, Value = 1.12M },
-            new PPCurveItem { At = 96.55M, Value = 1.21M },
-            new PPCurveItem { At = 96.96M, Value = 1.3M },
-            new PPCurveItem { At = 97.36M, Value = 1.4M },
-            new PPCurveItem { At = 97.68M, Value = 1.5M },
-            new PPCurveItem { At = 98M, Value = 1.62M },
-            new PPCurveItem { At = 98.16M, Value = 1.76M },
-            new PPCurveItem { At = 98.4M, Value = 1.99M },
-            new PPCurveItem { At = 98.72M, Value = 2.32M },
-            new PPCurveItem { At = 98.88M, Value = 2.72M },
-            new PPCurveItem { At = 99.28M, Value = 3.3M },
-            new PPCurveItem { At = 99.52M, Value = 4.13M },
-            new PPCurveItem { At = 99.68M, Value = 5.3M },
-            new PPCurveItem { At = 99.76M, Value = 6.23M },
-            new PPCurveItem { At = 100M, Value = 7M },
+            new PPCurveItem { At = 0D, Value = 0D },
+            new PPCurveItem { At = 59.86D, Value = 0.24D },
+            new PPCurveItem { At = 64.9D, Value = 0.31D },
+            new PPCurveItem { At = 69.87D, Value = 0.34D },
+            new PPCurveItem { At = 74.92D, Value = 0.4D },
+            new PPCurveItem { At = 79.89D, Value = 0.47D },
+            new PPCurveItem { At = 82.37D, Value = 0.5D },
+            new PPCurveItem { At = 84.86D, Value = 0.56D },
+            new PPCurveItem { At = 87.42D, Value = 0.65D },
+            new PPCurveItem { At = 89.9D, Value = 0.75D },
+            new PPCurveItem { At = 90.95D, Value = 0.79D },
+            new PPCurveItem { At = 91.91D, Value = 0.83D },
+            new PPCurveItem { At = 92.87D, Value = 0.87D },
+            new PPCurveItem { At = 93.91D, Value = 0.92D },
+            new PPCurveItem { At = 94.95D, Value = 0.99D },
+            new PPCurveItem { At = 95.51D, Value = 1.06D },
+            new PPCurveItem { At = 96.07D, Value = 1.12D },
+            new PPCurveItem { At = 96.55D, Value = 1.21D },
+            new PPCurveItem { At = 96.96D, Value = 1.3D },
+            new PPCurveItem { At = 97.36D, Value = 1.4D },
+            new PPCurveItem { At = 97.68D, Value = 1.5D },
+            new PPCurveItem { At = 98D, Value = 1.62D },
+            new PPCurveItem { At = 98.16D, Value = 1.76D },
+            new PPCurveItem { At = 98.4D, Value = 1.99D },
+            new PPCurveItem { At = 98.72D, Value = 2.32D },
+            new PPCurveItem { At = 98.88D, Value = 2.72D },
+            new PPCurveItem { At = 99.28D, Value = 3.3D },
+            new PPCurveItem { At = 99.52D, Value = 4.13D },
+            new PPCurveItem { At = 99.68D, Value = 5.3D },
+            new PPCurveItem { At = 99.76D, Value = 6.23D },
+            new PPCurveItem { At = 100D, Value = 7D },
         };
 
         public Scoresaber(Player player, IEnumerable<PlayerScore> playerScores)
@@ -58,7 +58,7 @@ namespace MapMaven.Core.Utilities.Scoresaber
         /// <param name="newPP">New PP score to add to the total.</param>
         /// <param name="replaceMapIds">Map ids of which the PP should not be included in the total.</param>
         /// <returns></returns>
-        public static decimal GetTotalPP(IEnumerable<PlayerScore> scores, decimal newPP = 0, IEnumerable<string>? replaceMapIds = null)
+        public static double GetTotalPP(IEnumerable<PlayerScore> scores, double newPP = 0, IEnumerable<string>? replaceMapIds = null)
         {
             if (replaceMapIds == null)
                 replaceMapIds = Enumerable.Empty<string>();
@@ -66,7 +66,7 @@ namespace MapMaven.Core.Utilities.Scoresaber
             if (replaceMapIds.Any())
                 scores = scores.Where(s => !replaceMapIds.Contains(s.Leaderboard.SongHash));
 
-            var ppDecayMultiplier = 1M;
+            var ppDecayMultiplier = 1D;
 
             /*
              * Total PP is calculated as follows. PP Scores are sorted in descending order and summed.
@@ -74,11 +74,11 @@ namespace MapMaven.Core.Utilities.Scoresaber
              * weigh even less.
              */
             return scores
-                .Select(s => Convert.ToDecimal(s.Score.Pp))
-                .Concat(new decimal[] { newPP })
+                .Select(s => s.Score.Pp)
+                .Concat(new double[] { newPP })
                 .OrderByDescending(pp => pp)
                 .Select((pp, index) => new { PP = pp, Index = index })
-                .Aggregate(0M, (total, score) =>
+                .Aggregate(0D, (total, score) =>
                 {
                     ppDecayMultiplier *= score.Index != 0 ? PPDecay : 1;
 
@@ -86,7 +86,7 @@ namespace MapMaven.Core.Utilities.Scoresaber
                 });
         }
 
-        public ScoreEstimate GetScoreEstimate(RankedMap map, decimal accuracy)
+        public ScoreEstimate GetScoreEstimate(RankedMap map, double accuracy)
         {
             var estimatedPP = map.PP * ApplyCurve(accuracy);
 
@@ -96,9 +96,9 @@ namespace MapMaven.Core.Utilities.Scoresaber
             {
                 MapId = map.Id,
                 Accuracy = accuracy,
-                PP = estimatedPP,
+                Pp = estimatedPP,
                 TotalPP = totalPPEstimate,
-                PPIncrease = Math.Max(totalPPEstimate - Convert.ToDecimal(_player.Pp), 0),
+                PPIncrease = Math.Max(totalPPEstimate - _player.Pp, 0),
                 Difficulty = map.Difficulty,
                 Stars = map.Stars
             };
@@ -109,7 +109,7 @@ namespace MapMaven.Core.Utilities.Scoresaber
         /// </summary>
         /// <param name="accuracy">The accuracy to calculate the multiplication value from.</param>
         /// <returns>The multiplication value.</returns>
-        private static decimal ApplyCurve(decimal accuracy)
+        private static double ApplyCurve(double accuracy)
         {
             var curveItem = PPCurve.FirstOrDefault(x => x.At >= accuracy);
 

@@ -1,5 +1,6 @@
 ﻿@using MapMaven.Core.Models.DynamicPlaylists;
 @using MapMaven.Core.Models.DynamicPlaylists.MapInfo;
+@using MapMaven.Core.Utilities;
 
 <div class="d-flex align-items-center">
     <MudSelect T="DynamicPlaylistFieldOption" Value="SelectedFieldOption" Text="@(SelectedFieldOption?.Name)" Label="Field" ValueChanged="OnFieldChanged" Variant="Variant.Outlined">
@@ -18,9 +19,23 @@
             </MudSelectItem>
         }
     </MudSelect>
-    @if (SelectedFieldOption?.Type == typeof(string))
+    @switch (SelectedFieldOption?.Type)
     {
-        <MudTextField @bind-Value="FilterOperation.Value" Label="Value" Variant="Variant.Outlined" />
+        case Type type when type == typeof(string):
+            <MudTextField @bind-Value="FilterOperation.Value" Label="Value" Variant="Variant.Outlined" />
+            break;
+        case Type type when Numeric.Is(type):
+            <MudNumericField @bind-Value="FilterOperation.Value" Label="Value" Variant="Variant.Outlined" />
+            break;
+        case Type type when type == typeof(bool):
+            <MudSwitch T="bool" Checked="@(bool.TryParse(FilterOperation.Value, out var boolValue) ? boolValue : false)" CheckedChanged="BooleanValueChanged" Color="Color.Primary" />
+            break;
+        case Type type when type == typeof(DateTime):
+            <MudDatePicker @bind-Value="FilterOperation.Value" Label="Value" Variant="Variant.Outlined" />
+            break;
+        default:
+            <MudTextField @bind-Value="FilterOperation.Value" Label="Value" Variant="Variant.Outlined" />
+            break;
     }
 </div>
 
@@ -32,20 +47,23 @@
 
     IEnumerable<DynamicPlaylistFieldOption> FieldOptions => GetFieldOptionsForType(typeof(DynamicPlaylistMap));
 
-    private IEnumerable<DynamicPlaylistFieldOption> GetFieldOptionsForType(Type type)
+    private IEnumerable<DynamicPlaylistFieldOption> GetFieldOptionsForType(Type type, string? parentObjectName = null)
     {
         return type
             .GetProperties()
             .SelectMany(property =>
             {
                 if (property.PropertyType.IsClass && property.PropertyType != typeof(string))
-                    return GetFieldOptionsForType(property.PropertyType);
+                    return GetFieldOptionsForType(property.PropertyType, parentObjectName: property.Name);
+
+                var value = parentObjectName != null ? $"{parentObjectName}.{property.Name}" : property.Name;
+                var name = parentObjectName != null ? $"{property.Name} ({parentObjectName})" : property.Name;
 
                 return new[] {
                         new DynamicPlaylistFieldOption
                         {
-                            Value = property.Name,
-                            Name = property.Name,
+                            Value = value,
+                            Name = name,
                             Type = property.PropertyType
                         }
                 };
@@ -56,5 +74,13 @@
     {
         SelectedFieldOption = selectedField;
         FilterOperation.Field = SelectedFieldOption.Value;
+
+        if (SelectedFieldOption.Type == typeof(bool))
+            BooleanValueChanged(bool.TryParse(FilterOperation.Value, out var boolValue) ? boolValue : false);
+    }
+
+    void BooleanValueChanged(bool value)
+    {
+        FilterOperation.Value = value.ToString();
     }
 }

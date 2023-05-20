@@ -113,7 +113,7 @@ namespace MapMaven.Core.Services
                         TimeSet = DateTime.Now
                     });
 
-                    return scoresaber.GetScoreEstimate(pair.Map, Convert.ToDecimal(output.Score));
+                    return scoresaber.GetScoreEstimate(pair.Map, output.Score);
                 }).ToList();
             }).Replay(1);
 
@@ -137,7 +137,7 @@ namespace MapMaven.Core.Services
                         TimeSet = DateTime.Now
                     });
 
-                    return scoresaber.GetScoreEstimate(map, Convert.ToDecimal(output.Score));
+                    return scoresaber.GetScoreEstimate(map, output.Score);
                 }).ToList();
             }).Replay(1);
 

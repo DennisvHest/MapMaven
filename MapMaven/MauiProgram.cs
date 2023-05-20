@@ -15,6 +15,7 @@ using Microsoft.Extensions.Hosting;
 using MapMaven.Utility;
 using Serilog.Events;
 using MapMaven.Services.Workers;
+using Newtonsoft.Json;
 
 namespace MapMaven;
 
@@ -23,6 +24,8 @@ public static class MauiProgram
     public static MauiApp CreateMauiApp()
     {
         MauiApp mauiApp = null;
+
+        JsonConvert.DefaultSettings = () => new() { DateTimeZoneHandling = DateTimeZoneHandling.Utc };
 
         var builder = MauiApp.CreateBuilder();
         builder
