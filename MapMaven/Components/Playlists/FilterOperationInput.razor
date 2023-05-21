@@ -11,14 +11,17 @@
             </MudSelectItem>
         }
     </MudSelect>
-    <MudSelect @bind-Value="FilterOperation.Operator" Label="Operator" Variant="Variant.Outlined">
-        @foreach (var filterOperator in Enum.GetValues<MapMaven.Core.Models.DynamicPlaylists.FilterOperator>())
-        {
-            <MudSelectItem Value="filterOperator">
-                @filterOperator.ToString()
-            </MudSelectItem>
-        }
-    </MudSelect>
+    @if (SelectedFieldOption?.Type != typeof(bool))
+    {
+        <MudSelect @bind-Value="FilterOperation.Operator" Label="Operator" Variant="Variant.Outlined">
+            @foreach (var filterOperator in Enum.GetValues<MapMaven.Core.Models.DynamicPlaylists.FilterOperator>())
+            {
+                <MudSelectItem Value="filterOperator">
+                    @filterOperator.ToString()
+                </MudSelectItem>
+            }
+        </MudSelect>
+    }
     @switch (SelectedFieldOption?.Type)
     {
         case Type type when type == typeof(string):
@@ -74,9 +77,13 @@
     {
         SelectedFieldOption = selectedField;
         FilterOperation.Field = SelectedFieldOption.Value;
+        FilterOperation.Value = null;
 
         if (SelectedFieldOption.Type == typeof(bool))
-            BooleanValueChanged(bool.TryParse(FilterOperation.Value, out var boolValue) ? boolValue : false);
+        {
+            FilterOperation.Operator = MapMaven.Core.Models.DynamicPlaylists.FilterOperator.Equals;
+            BooleanValueChanged(false);
+        }
     }
 
     void BooleanValueChanged(bool value)
