@@ -3,7 +3,7 @@
 @using MapMaven.Core.Utilities;
 
 <div class="d-flex align-items-center">
-    <MudSelect T="DynamicPlaylistFieldOption" Value="SelectedFieldOption" Text="@(SelectedFieldOption?.Name)" Label="Field" ValueChanged="OnFieldChanged" Variant="Variant.Outlined">
+    <MudSelect T="DynamicPlaylistFieldOption" Value="SelectedFieldOption" ToStringFunc="field => field?.Name" Label="Field" ValueChanged="OnFieldChanged" Variant="Variant.Outlined">
         @foreach (var field in FieldOptions)
         {
             <MudSelectItem Value="field" >
@@ -47,6 +47,12 @@
     public FilterOperation FilterOperation { get; set; }
 
     DynamicPlaylistFieldOption SelectedFieldOption { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        if (FilterOperation.Field != null)
+            SelectedFieldOption = FieldOptions.FirstOrDefault(field => field.Value == FilterOperation.Field);
+    }
 
     IEnumerable<DynamicPlaylistFieldOption> FieldOptions => GetFieldOptionsForType(typeof(DynamicPlaylistMap));
 

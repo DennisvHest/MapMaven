@@ -28,7 +28,7 @@
         </DialogActions>
     </MudDialog>
 }
-else if (PresetDynamicPlaylists.Contains(SelectedPlaylist))
+@*else if (PresetDynamicPlaylists.Contains(SelectedPlaylist))
 {
     <EditForm Model="@SelectedPlaylist" OnValidSubmit="AddDynamicPlaylist">
         <MudDialog>
@@ -49,7 +49,7 @@ else if (PresetDynamicPlaylists.Contains(SelectedPlaylist))
             </DialogActions>
         </MudDialog>
     </EditForm>
-}
+}*@
 else
 {
     var configuration = SelectedPlaylist.DynamicPlaylistConfiguration;
