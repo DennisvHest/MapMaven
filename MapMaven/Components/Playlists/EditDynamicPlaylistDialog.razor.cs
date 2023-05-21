@@ -101,6 +101,11 @@ namespace MapMaven.Components.Playlists
             SelectedPlaylist.DynamicPlaylistConfiguration.FilterOperations.Add(new());
         }
 
+        void RemoveFilterOperation(FilterOperation filterOperation)
+        {
+            SelectedPlaylist.DynamicPlaylistConfiguration.FilterOperations.Remove(filterOperation);
+        }
+
         async Task OnValidSubmit()
         {
             if (NewPlaylist)

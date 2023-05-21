@@ -67,7 +67,7 @@ else
                         @foreach (var filterOperation in configuration.FilterOperations)
                         {
                             <MudListItem>
-                                <FilterOperationInput FilterOperation="filterOperation"></FilterOperationInput>
+                                <FilterOperationInput FilterOperation="filterOperation" OnRemove="() => RemoveFilterOperation(filterOperation)"></FilterOperationInput>
                             </MudListItem>
                         }
                     </MudList>
