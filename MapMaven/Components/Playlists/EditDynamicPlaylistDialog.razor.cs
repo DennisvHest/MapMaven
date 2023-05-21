@@ -1,5 +1,4 @@
 using MapMaven.Core.Models.DynamicPlaylists;
-using MapMaven.Core.Models.DynamicPlaylists.MapInfo;
 using MapMaven.Core.Services;
 using MapMaven.Services;
 using Microsoft.AspNetCore.Components;
@@ -21,7 +20,11 @@ namespace MapMaven.Components.Playlists
         [CascadingParameter]
         MudDialogInstance MudDialog { get; set; }
 
-        protected EditDynamicPlaylistModel SelectedPlaylist { get; set; }
+        [Parameter]
+        public EditDynamicPlaylistModel SelectedPlaylist { get; set; }
+
+        [Parameter]
+        public bool NewPlaylist { get; set; } = true;
 
         private static List<EditDynamicPlaylistModel> PresetDynamicPlaylists = new List<EditDynamicPlaylistModel>
         {
@@ -98,17 +101,35 @@ namespace MapMaven.Components.Playlists
             SelectedPlaylist.DynamicPlaylistConfiguration.FilterOperations.Add(new());
         }
 
-        async Task AddDynamicPlaylist()
+        async Task OnValidSubmit()
         {
-            await PlaylistService.AddDynamicPlaylist(SelectedPlaylist);
+            if (NewPlaylist)
+            {
+                await PlaylistService.AddDynamicPlaylist(SelectedPlaylist);
+                Snackbar.Add($"Added playlist \"{SelectedPlaylist.Name}\"", Severity.Normal, config => config.Icon = Icons.Filled.Check);
+            }
+            else
+            {
+                await PlaylistService.EditDynamicPlaylist(SelectedPlaylist);
+                Snackbar.Add($"Saved playlist \"{SelectedPlaylist.Name}\"", Severity.Normal, config => config.Icon = Icons.Filled.Check);
+            }
+            
             Task.Run(DynamicPlaylistArrangementService.ArrangeDynamicPlaylists);
-
-            Snackbar.Add($"Added playlist \"{SelectedPlaylist.Name}\"", Severity.Normal, config => config.Icon = Icons.Filled.Check);
 
             MudDialog.Close(DialogResult.Ok(SelectedPlaylist));
         }
 
         void Cancel() => MudDialog.Cancel();
-        void CancelConfiguration() => SelectedPlaylist = null;
+        void CancelConfiguration()
+        {
+            if (NewPlaylist)
+            {
+                SelectedPlaylist = null;
+            }
+            else
+            {
+                Cancel();
+            }
+        }
     }
 }

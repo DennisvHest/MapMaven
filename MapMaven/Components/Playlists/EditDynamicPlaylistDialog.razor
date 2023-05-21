@@ -28,35 +28,20 @@
         </DialogActions>
     </MudDialog>
 }
-@*else if (PresetDynamicPlaylists.Contains(SelectedPlaylist))
-{
-    <EditForm Model="@SelectedPlaylist" OnValidSubmit="AddDynamicPlaylist">
-        <MudDialog>
-            <DialogContent>
-                <h1>@SelectedPlaylist.Name</h1>
-                <p>@SelectedPlaylist.Description</p>
-                <div class="mt-5">
-                    <MudNumericField @bind-Value="SelectedPlaylist.DynamicPlaylistConfiguration.MapCount"
-                                     For="() => SelectedPlaylist.DynamicPlaylistConfiguration.MapCount"
-                                     Label="Map count"
-                                     Variant="Variant.Outlined"
-                                     Min="1" />
-                </div>
-            </DialogContent>
-            <DialogActions>
-                <MudButton OnClick="CancelConfiguration">Cancel</MudButton>
-                <MudButton OnClick="AddDynamicPlaylist">Add</MudButton>
-            </DialogActions>
-        </MudDialog>
-    </EditForm>
-}*@
 else
 {
     var configuration = SelectedPlaylist.DynamicPlaylistConfiguration;
 
-    <EditForm Model="@SelectedPlaylist" OnValidSubmit="AddDynamicPlaylist">
+    <EditForm Model="@SelectedPlaylist" OnValidSubmit="OnValidSubmit">
         <MudDialog>
             <DialogContent>
+                <PlaylistEditor EditPlaylistModel="SelectedPlaylist"></PlaylistEditor>
+                <MudNumericField @bind-Value="SelectedPlaylist.DynamicPlaylistConfiguration.MapCount"
+                                 For="() => SelectedPlaylist.DynamicPlaylistConfiguration.MapCount"
+                                 Label="Map count"
+                                 Variant="Variant.Outlined"
+                                 Min="1"
+                                 Class="my-4" />
                 <div class="d-flex flex-column align-center">
                     <MudButtonGroup OverrideStyles="false">
                         <MudButton
@@ -90,7 +75,7 @@ else
             </DialogContent>
             <DialogActions>
                 <MudButton OnClick="CancelConfiguration">Cancel</MudButton>
-                <MudButton OnClick="AddDynamicPlaylist">Add</MudButton>
+                <MudButton ButtonType="ButtonType.Submit">@(NewPlaylist ? "Add" : "Save changes")</MudButton>
             </DialogActions>
         </MudDialog>
     </EditForm>
