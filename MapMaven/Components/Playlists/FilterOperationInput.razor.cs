@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using MapMaven.Core.Models.DynamicPlaylists;
-using MapMaven.Core.Models.DynamicPlaylists.MapInfo;
+using MapMaven.Utility;
 
 namespace MapMaven.Components.Playlists
 {
@@ -17,29 +17,7 @@ namespace MapMaven.Components.Playlists
         protected override void OnParametersSet()
         {
             if (FilterOperation.Field != null)
-                SelectedFieldOption = FieldOptions.FirstOrDefault(field => field.Value == FilterOperation.Field);
-        }
-
-        IEnumerable<DynamicPlaylistFieldOption> FieldOptions => GetFieldOptionsForType(typeof(DynamicPlaylistMap));
-
-        private IEnumerable<DynamicPlaylistFieldOption> GetFieldOptionsForType(Type type, string? parentObjectName = null)
-        {
-            return type.GetProperties().SelectMany(property =>
-            {
-                if (property.PropertyType.IsClass && property.PropertyType != typeof(string))
-                    return GetFieldOptionsForType(property.PropertyType, parentObjectName: property.Name);
-                var value = parentObjectName != null ? $"{parentObjectName}.{property.Name}" : property.Name;
-                var name = parentObjectName != null ? $"{property.Name} ({parentObjectName})" : property.Name;
-                return new[]
-                {
-                    new DynamicPlaylistFieldOption
-                    {
-                        Value = value,
-                        Name = name,
-                        Type = property.PropertyType
-                    }
-                };
-            });
+                SelectedFieldOption = DynamicPlaylistFields.FieldOptions.FirstOrDefault(field => field.Value == FilterOperation.Field);
         }
 
         void OnFieldChanged(DynamicPlaylistFieldOption selectedField)
@@ -49,7 +27,7 @@ namespace MapMaven.Components.Playlists
             FilterOperation.Value = null;
             if (SelectedFieldOption.Type == typeof(bool))
             {
-                FilterOperation.Operator = MapMaven.Core.Models.DynamicPlaylists.FilterOperator.Equals;
+                FilterOperation.Operator = FilterOperator.Equals;
                 BooleanValueChanged(false);
             }
         }

@@ -2,9 +2,17 @@
 @using MapMaven.Core.Models.DynamicPlaylists.MapInfo;
 @using MapMaven.Core.Utilities;
 
-<div class="d-flex align-items-center">
-    <MudSelect T="DynamicPlaylistFieldOption" Value="SelectedFieldOption" ToStringFunc="field => field?.Name" Label="Field" ValueChanged="OnFieldChanged" Variant="Variant.Outlined">
-        @foreach (var field in FieldOptions)
+<div class="d-flex align-center justify-space-between">
+    <MudSelect
+        T="DynamicPlaylistFieldOption"
+        Value="SelectedFieldOption"
+        ToStringFunc="field => field?.Name"
+        Label="Field"
+        ValueChanged="OnFieldChanged"
+        Variant="Variant.Outlined"
+        Margin="Margin.Dense"
+        Class="pr-2">
+        @foreach (var field in DynamicPlaylistFields.FieldOptions)
         {
             <MudSelectItem Value="field" >
                 @field.Name
@@ -13,11 +21,15 @@
     </MudSelect>
     @if (SelectedFieldOption?.Type != typeof(bool))
     {
-        <MudSelect @bind-Value="FilterOperation.Operator" Label="Operator" Variant="Variant.Outlined">
+        <MudSelect
+            @bind-Value="FilterOperation.Operator"
+            Variant="Variant.Outlined"
+            Margin="Margin.Dense"
+            Class="px-2">
             @foreach (var filterOperator in Enum.GetValues<MapMaven.Core.Models.DynamicPlaylists.FilterOperator>())
             {
                 <MudSelectItem Value="filterOperator">
-                    @filterOperator.ToString()
+                    @filterOperator.DisplayName()
                 </MudSelectItem>
             }
         </MudSelect>
@@ -25,20 +37,20 @@
     @switch (SelectedFieldOption?.Type)
     {
         case Type type when type == typeof(string):
-            <MudTextField @bind-Value="FilterOperation.Value" Label="Value" Variant="Variant.Outlined" />
+            <MudTextField @bind-Value="FilterOperation.Value" Label="Value" Variant="Variant.Outlined" Margin="Margin.Dense" Class="pl-2" />
             break;
         case Type type when Numeric.Is(type):
-            <MudNumericField @bind-Value="FilterOperation.Value" Label="Value" Variant="Variant.Outlined" />
+            <MudNumericField @bind-Value="FilterOperation.Value" Label="Value" Variant="Variant.Outlined" Margin="Margin.Dense" Class="pl-2" />
             break;
         case Type type when type == typeof(bool):
-            <MudSwitch T="bool" Checked="@(bool.TryParse(FilterOperation.Value, out var boolValue) ? boolValue : false)" CheckedChanged="BooleanValueChanged" Color="Color.Primary" />
+            <MudSwitch T="bool" Checked="@(bool.TryParse(FilterOperation.Value, out var boolValue) ? boolValue : false)" CheckedChanged="BooleanValueChanged" Color="Color.Primary" Class="pl-2" />
             break;
         case Type type when type == typeof(DateTimeOffset):
-            <MudDatePicker @bind-Value="FilterOperation.Value" Label="Value" Variant="Variant.Outlined" />
+            <MudDatePicker @bind-Value="FilterOperation.Value" Label="Value" Variant="Variant.Outlined" Margin="Margin.Dense" Class="pl-2" />
             break;
         default:
-            <MudTextField @bind-Value="FilterOperation.Value" Label="Value" Variant="Variant.Outlined" />
+            <MudTextField @bind-Value="FilterOperation.Value" Label="Value" Variant="Variant.Outlined" Margin="Margin.Dense" Class="pl-2" />
             break;
     }
-    <MudIconButton Icon="@Icons.Material.Filled.RemoveCircle" OnClick="OnRemove" />
+    <MudIconButton Icon="@Icons.Material.Filled.RemoveCircle" OnClick="OnRemove" Class="pl-2 pr-1" />
 </div>
