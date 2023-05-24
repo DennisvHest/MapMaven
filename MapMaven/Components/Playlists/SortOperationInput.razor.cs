@@ -7,6 +7,9 @@ namespace MapMaven.Components.Playlists
     public partial class SortOperationInput
     {
         [Parameter]
+        public MapPool MapPool { get; set; }
+
+        [Parameter]
         public bool FirstSortOperation { get; set; } = true;
 
         [Parameter]
@@ -20,7 +23,7 @@ namespace MapMaven.Components.Playlists
         protected override void OnParametersSet()
         {
             if (SortOperation.Field != null)
-                SelectedFieldOption = DynamicPlaylistFields.FieldOptions.FirstOrDefault(field => field.Value == SortOperation.Field);
+                SelectedFieldOption = DynamicPlaylistFields.FieldOptions(MapPool).FirstOrDefault(field => field.Value == SortOperation.Field);
         }
 
         void OnFieldChanged(DynamicPlaylistFieldOption selectedField)

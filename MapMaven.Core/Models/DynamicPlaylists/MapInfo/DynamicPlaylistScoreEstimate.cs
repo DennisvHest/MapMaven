@@ -1,4 +1,5 @@
 ﻿using MapMaven.Core.Utilities.Scoresaber;
+using MapMaven.Utilities.DynamicPlaylists;
 using System.ComponentModel;
 
 namespace MapMaven.Core.Models.DynamicPlaylists.MapInfo
@@ -6,12 +7,15 @@ namespace MapMaven.Core.Models.DynamicPlaylists.MapInfo
     public class DynamicPlaylistScoreEstimate
     {
         [DisplayName("Estimated accuracy")]
+        [ApplicableForMapPool(MapPool.Improvement)]
         public double Accuracy { get; set; }
 
-        [DisplayName("PP Value")]
+        [DisplayName("Estimated PP value")]
+        [ApplicableForMapPool(MapPool.Improvement)]
         public double Pp { get; set; }
 
-        [DisplayName("Estimated PP increase")]
+        [DisplayName("Estimated total PP increase")]
+        [ApplicableForMapPool(MapPool.Improvement)]
         public double PPIncrease { get; set; }
 
         public DynamicPlaylistScoreEstimate() { }

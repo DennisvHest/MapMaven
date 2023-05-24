@@ -1,4 +1,5 @@
 ﻿using MapMaven.Models;
+using MapMaven.Utilities.DynamicPlaylists;
 using System.ComponentModel;
 
 namespace MapMaven.Core.Models.DynamicPlaylists.MapInfo
@@ -16,12 +17,20 @@ namespace MapMaven.Core.Models.DynamicPlaylists.MapInfo
 
         [DisplayName("Date added")]
         public DateTime AddedDateTime { get; set; }
+
+        [ApplicableForMapPool(MapPool.Improvement)]
         public bool Hidden { get; set; }
+
         public bool Played { get; set; }
+
+        [ApplicableForMapPool(MapPool.Improvement)]
         public double Stars { get; set; }
+
+        [ApplicableForMapPool(MapPool.Improvement)]
         public string Difficulty { get; set; }
 
-        [DisplayName("PP")]
+        [DisplayName("Max PP")]
+        [ApplicableForMapPool(MapPool.Improvement)]
         public double Pp { get; set; }
         public DynamicPlaylistScore? Score { get; set; }
         public DynamicPlaylistScoreEstimate? ScoreEstimate { get; set; }
@@ -38,7 +47,7 @@ namespace MapMaven.Core.Models.DynamicPlaylists.MapInfo
             Played = map.Played;
             Stars = map.RankedMap?.Stars ?? 0;
             Difficulty = map.RankedMap?.Difficulty ?? "";
-            Pp = map.ScoreEstimate?.Pp ?? 0;
+            Pp = map.RankedMap?.PP ?? 0;
             Score = map.PlayerScore != null
                 ? new DynamicPlaylistScore(map.PlayerScore)
                 : null;

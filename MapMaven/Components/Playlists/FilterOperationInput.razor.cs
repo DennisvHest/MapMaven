@@ -8,6 +8,9 @@ namespace MapMaven.Components.Playlists
     public partial class FilterOperationInput
     {
         [Parameter]
+        public MapPool MapPool { get; set; }
+
+        [Parameter]
         public FilterOperation FilterOperation { get; set; }
 
         [Parameter]
@@ -18,7 +21,7 @@ namespace MapMaven.Components.Playlists
         protected override void OnParametersSet()
         {
             if (FilterOperation.Field != null)
-                SelectedFieldOption = DynamicPlaylistFields.FieldOptions.FirstOrDefault(field => field.Value == FilterOperation.Field);
+                SelectedFieldOption = DynamicPlaylistFields.FieldOptions(MapPool).FirstOrDefault(field => field.Value == FilterOperation.Field);
         }
 
         void OnFieldChanged(DynamicPlaylistFieldOption selectedField)

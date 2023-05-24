@@ -10,7 +10,7 @@
         <MudText Typo="Typo.caption" Style="width: 60px">Then by</MudText>
     }
     <MudSelect T="DynamicPlaylistFieldOption" Value="SelectedFieldOption" ToStringFunc="field => field?.Name" Label="Field" ValueChanged="OnFieldChanged" Variant="Variant.Outlined" Margin="Margin.Dense">
-        @foreach (var field in DynamicPlaylistFields.FieldOptions)
+        @foreach (var field in DynamicPlaylistFields.FieldOptions(MapPool))
         {
             <MudSelectItem Value="field">
                 @field.Name

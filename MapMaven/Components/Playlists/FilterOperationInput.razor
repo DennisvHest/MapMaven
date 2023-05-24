@@ -13,7 +13,7 @@
         Variant="Variant.Outlined"
         Margin="Margin.Dense"
         Class="pr-2">
-        @foreach (var field in DynamicPlaylistFields.FieldOptions)
+        @foreach (var field in DynamicPlaylistFields.FieldOptions(MapPool))
         {
             <MudSelectItem Value="field" >
                 @field.Name

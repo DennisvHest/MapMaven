@@ -68,7 +68,7 @@ else
                         @foreach (var filterOperation in configuration.FilterOperations)
                         {
                             <MudListItem Class="py-0">
-                                <FilterOperationInput FilterOperation="filterOperation" OnRemove="() => RemoveFilterOperation(filterOperation)"></FilterOperationInput>
+                                <FilterOperationInput FilterOperation="filterOperation" MapPool="configuration.MapPool" OnRemove="() => RemoveFilterOperation(filterOperation)"></FilterOperationInput>
                             </MudListItem>
                         }
                     </MudList>
@@ -86,7 +86,7 @@ else
                             var sortOperation = configuration.SortOperations[index];
 
                             <MudListItem Class="py-0">
-                                <SortOperationInput SortOperation="sortOperation" OnRemove="() => RemoveSortOperation(sortOperation)" FirstSortOperation="index == 0"></SortOperationInput>
+                                <SortOperationInput SortOperation="sortOperation" MapPool="configuration.MapPool" OnRemove="() => RemoveSortOperation(sortOperation)" FirstSortOperation="index == 0"></SortOperationInput>
                             </MudListItem>
                         }
                     </MudList>
