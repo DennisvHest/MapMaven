@@ -1,5 +1,7 @@
 ﻿using MapMaven.Core.Models.DynamicPlaylists.MapInfo;
 using MapMaven.Core.Models.DynamicPlaylists;
+using System.Reflection;
+using System.ComponentModel;
 
 namespace MapMaven.Utility
 {
@@ -13,8 +15,13 @@ namespace MapMaven.Utility
             {
                 if (property.PropertyType.IsClass && property.PropertyType != typeof(string))
                     return GetFieldOptionsForType(property.PropertyType, parentObjectName: property.Name);
+
                 var value = parentObjectName != null ? $"{parentObjectName}.{property.Name}" : property.Name;
-                var name = parentObjectName != null ? $"{property.Name} ({parentObjectName})" : property.Name;
+
+                var displayNameAttribute = property.GetCustomAttribute<DisplayNameAttribute>();
+
+                var name = displayNameAttribute?.DisplayName ?? property.Name;
+
                 return new[]
                 {
                     new DynamicPlaylistFieldOption

@@ -1,23 +1,44 @@
 ﻿using MapMaven.Core.ApiClients;
 using MapMaven.Core.Utilities.Scoresaber;
+using System.ComponentModel;
 
 namespace MapMaven.Core.Models.DynamicPlaylists.MapInfo
 {
     public class DynamicPlaylistScore
     {
         public double Rank { get; set; }
+
+        [DisplayName("Base score")]
         public double BaseScore { get; set; }
+
+        [DisplayName("Modified score")]
         public double ModifiedScore { get; set; }
         public double Accuracy { get; set; }
+
+        [DisplayName("PP")]
         public double Pp { get; set; }
         public double Weight { get; set; }
         public double Multiplier { get; set; }
+
+        [DisplayName("Bad cuts")]
         public double BadCuts { get; set; }
+
+        [DisplayName("Missed notes")]
         public double MissedNotes { get; set; }
+
+        [DisplayName("Max combo")]
         public double MaxCombo { get; set; }
+
+        [DisplayName("Full combo")]
         public bool FullCombo { get; set; }
+
+        [DisplayName("HMD")]
         public double Hmd { get; set; }
+
+        [DisplayName("Has replay")]
         public bool HasReplay { get; set; }
+
+        [DisplayName("Time set")]
         public DateTime TimeSet { get; set; }
 
         public DynamicPlaylistScore() { }
