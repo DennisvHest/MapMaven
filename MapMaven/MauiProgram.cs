@@ -25,7 +25,7 @@ public static class MauiProgram
     {
         MauiApp mauiApp = null;
 
-        JsonConvert.DefaultSettings = () => new() { DateTimeZoneHandling = DateTimeZoneHandling.Utc };
+        JsonConvert.DefaultSettings = () => new() { DateParseHandling = DateParseHandling.None };
 
         var builder = MauiApp.CreateBuilder();
         builder

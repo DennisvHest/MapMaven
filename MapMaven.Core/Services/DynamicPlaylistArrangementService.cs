@@ -157,9 +157,9 @@ namespace MapMaven.Core.Services
                 };
             }
 
-            if (value is DateTimeOffset dateTimeValue)
+            if (value is DateTime dateTimeValue)
             {
-                var compareValue = DateTimeOffset.Parse(filterOperation.Value);
+                var compareValue = DateTime.Parse(filterOperation.Value);
 
                 return filterOperation.Operator switch
                 {

@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Components;
 using MapMaven.Core.Models.DynamicPlaylists;
 using MapMaven.Utility;
+using System.Globalization;
 
 namespace MapMaven.Components.Playlists
 {
@@ -35,6 +36,11 @@ namespace MapMaven.Components.Playlists
         void BooleanValueChanged(bool value)
         {
             FilterOperation.Value = value.ToString();
+        }
+        
+        void DateValueChanged(DateTime? value)
+        {
+            FilterOperation.Value = value?.ToString(CultureInfo.InvariantCulture);
         }
     }
 }

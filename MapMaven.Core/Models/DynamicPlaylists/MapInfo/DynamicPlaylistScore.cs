@@ -18,7 +18,7 @@ namespace MapMaven.Core.Models.DynamicPlaylists.MapInfo
         public bool FullCombo { get; set; }
         public double Hmd { get; set; }
         public bool HasReplay { get; set; }
-        public DateTimeOffset TimeSet { get; set; }
+        public DateTime TimeSet { get; set; }
 
         public DynamicPlaylistScore() { }
 
@@ -37,7 +37,7 @@ namespace MapMaven.Core.Models.DynamicPlaylists.MapInfo
             FullCombo = score.Score.FullCombo;
             Hmd = score.Score.Hmd;
             HasReplay = score.Score.HasReplay;
-            TimeSet = score.Score.TimeSet;
+            TimeSet = score.Score.TimeSet.LocalDateTime;
         }
     }
 }
