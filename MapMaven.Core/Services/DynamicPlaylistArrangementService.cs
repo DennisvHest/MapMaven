@@ -1,6 +1,5 @@
 ﻿using MapMaven.Core.Models.DynamicPlaylists;
 using MapMaven.Core.Models.DynamicPlaylists.MapInfo;
-using MapMaven.Core.Utilities;
 using MapMaven.Models;
 using MapMaven.Services;
 using Pather.CSharp;
@@ -17,6 +16,14 @@ namespace MapMaven.Core.Services
         private readonly ApplicationSettingService _applicationSettingService;
 
         private readonly IResolver _resolver;
+
+        public static readonly Dictionary<Type, IEnumerable<FilterOperator>> FilterOperatorsForType = new()
+        {
+            { typeof(string), new[] { FilterOperator.Equals, FilterOperator.NotEquals } },
+            { typeof(bool), new[] { FilterOperator.Equals, FilterOperator.NotEquals } },
+            { typeof(double), new[] { FilterOperator.Equals, FilterOperator.NotEquals, FilterOperator.GreaterThan, FilterOperator.LessThan, FilterOperator.GreaterThanOrEqual, FilterOperator.LessThanOrEqual } },
+            { typeof(DateTime), new[] { FilterOperator.Equals, FilterOperator.NotEquals, FilterOperator.GreaterThan, FilterOperator.LessThan, FilterOperator.GreaterThanOrEqual, FilterOperator.LessThanOrEqual } },
+        };
 
         public DynamicPlaylistArrangementService(BeatSaberDataService beatSaberDataService, MapService mapService, PlaylistService playlistService, ScoreSaberService scoreSaberService, ApplicationSettingService applicationSettingService)
         {
@@ -137,22 +144,6 @@ namespace MapMaven.Core.Services
                     FilterOperator.LessThan => doubleValue < compareValue,
                     FilterOperator.LessThanOrEqual => doubleValue <= compareValue,
                     FilterOperator.GreaterThanOrEqual => doubleValue >= compareValue,
-                    _ => false
-                };
-            }
-
-            if (value is TimeSpan timeSpanValue)
-            {
-                var compareValue = TimeSpan.Parse(filterOperation.Value);
-
-                return filterOperation.Operator switch
-                {
-                    FilterOperator.Equals => timeSpanValue == compareValue,
-                    FilterOperator.NotEquals => timeSpanValue != compareValue,
-                    FilterOperator.GreaterThan => timeSpanValue > compareValue,
-                    FilterOperator.LessThan => timeSpanValue < compareValue,
-                    FilterOperator.LessThanOrEqual => timeSpanValue <= compareValue,
-                    FilterOperator.GreaterThanOrEqual => timeSpanValue >= compareValue,
                     _ => false
                 };
             }

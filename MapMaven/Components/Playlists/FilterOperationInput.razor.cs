@@ -25,7 +25,9 @@ namespace MapMaven.Components.Playlists
         {
             SelectedFieldOption = selectedField;
             FilterOperation.Field = SelectedFieldOption.Value;
+            FilterOperation.Operator = default;
             FilterOperation.Value = null;
+
             if (SelectedFieldOption.Type == typeof(bool))
             {
                 FilterOperation.Operator = FilterOperator.Equals;
