@@ -23,6 +23,7 @@ namespace MapMaven.Core.Models.DynamicPlaylists.MapInfo
 
         public bool Played { get; set; }
 
+        [DisplayName("Star difficulty")]
         [ApplicableForMapPool(MapPool.Improvement)]
         public double Stars { get; set; }
 
