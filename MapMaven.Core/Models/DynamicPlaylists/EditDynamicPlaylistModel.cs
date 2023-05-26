@@ -1,4 +1,5 @@
-﻿using MapMaven.Models;
+﻿using FastDeepCloner;
+using MapMaven.Models;
 using System.ComponentModel.DataAnnotations;
 
 namespace MapMaven.Core.Models.DynamicPlaylists
@@ -12,7 +13,7 @@ namespace MapMaven.Core.Models.DynamicPlaylists
 
         public EditDynamicPlaylistModel(Playlist playlist) : base(playlist)
         {
-            DynamicPlaylistConfiguration = playlist.DynamicPlaylistConfiguration;
+            DynamicPlaylistConfiguration = DeepCloner.Clone(playlist.DynamicPlaylistConfiguration);
         }
     }
 }
