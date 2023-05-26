@@ -2,6 +2,7 @@
 @using MapMaven.Core.Models.DynamicPlaylists.MapInfo;
 @using MapMaven.Core.Services;
 @using MapMaven.Core.Utilities;
+@using System.Globalization;
 
 <div class="d-flex align-center justify-space-between">
     <MudSelect
@@ -51,7 +52,7 @@
             <MudSwitch T="bool" Checked="@(bool.TryParse(FilterOperation.Value, out var boolValue) ? boolValue : false)" CheckedChanged="BooleanValueChanged" Color="Color.Primary" Class="pl-2" />
             break;
         case Type type when type == typeof(DateTime):
-            <MudDatePicker Date="@(DateTime.TryParse(FilterOperation.Value, out var dateValue) ? dateValue : null)" DateChanged="DateValueChanged" Label="Value" Variant="Variant.Outlined" Margin="Margin.Dense" Class="pl-2" />
+            <MudDatePicker Date="@(DateTime.TryParse(FilterOperation.Value, CultureInfo.InvariantCulture, out var dateValue) ? dateValue : null)" DateChanged="DateValueChanged" Label="Value" Variant="Variant.Outlined" Margin="Margin.Dense" Class="pl-2" />
             break;
         default:
             <MudTextField @bind-Value="FilterOperation.Value" Label="Value" Variant="Variant.Outlined" Margin="Margin.Dense" Class="pl-2" />
