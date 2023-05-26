@@ -59,3 +59,7 @@
     }
     <MudIconButton Icon="@Icons.Material.Filled.RemoveCircle" OnClick="OnRemove" Class="pl-2 pr-1" />
 </div>
+<div>
+    <ValidationMessage For="() => FilterOperation.Field" />
+    <ValidationMessage For="() => FilterOperation.Value" />
+</div>
