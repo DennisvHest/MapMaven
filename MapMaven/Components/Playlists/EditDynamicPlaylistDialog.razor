@@ -49,13 +49,13 @@ else
                         <MudButton
                             Variant="Variant.Filled"
                             Color="@(configuration.MapPool == MapPool.Standard ? Color.Primary : Color.Default)"
-                            OnClick="() => configuration.MapPool = MapPool.Standard">
+                            OnClick="() => ChangeMapPool(MapPool.Standard)">
                             Downloaded maps
                         </MudButton>
                         <MudButton
                             Variant="Variant.Filled"
                             Color="@(configuration.MapPool == MapPool.Improvement ? Color.Primary : Color.Default)"
-                            OnClick="() => configuration.MapPool = MapPool.Improvement">
+                            OnClick="() => ChangeMapPool(MapPool.Improvement)">
                             Improvement maps
                         </MudButton>
                     </MudButtonGroup>

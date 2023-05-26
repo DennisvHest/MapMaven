@@ -17,6 +17,9 @@ namespace MapMaven.Components.Playlists
         [Inject]
         ISnackbar Snackbar { get; set; }
 
+        [Inject]
+        IDialogService DialogService { get; set; }
+
         [CascadingParameter]
         MudDialogInstance MudDialog { get; set; }
 
@@ -114,6 +117,36 @@ namespace MapMaven.Components.Playlists
         void RemoveSortOperation(SortOperation sortOperation)
         {
             SelectedPlaylist.DynamicPlaylistConfiguration.SortOperations.Remove(sortOperation);
+        }
+
+        async Task ChangeMapPool(MapPool mapPool)
+        {
+            if (mapPool == SelectedPlaylist.DynamicPlaylistConfiguration.MapPool)
+                return;
+
+            var configuration = SelectedPlaylist.DynamicPlaylistConfiguration;
+
+            if (configuration.FilterOperations.Any() || configuration.SortOperations.Any())
+            {
+                var result = await DialogService.ShowMessageBox(
+                    title: string.Empty,
+                    message: "Changing the map pool will remove all filter operations and sort operations. Are you sure you want to change the map pool?",
+                    yesText: "Yes",
+                    cancelText: "No"
+                );
+
+                if (result == null)
+                {
+                    return;
+                }
+                else
+                {
+                    configuration.FilterOperations.Clear();
+                    configuration.SortOperations.Clear();
+                }
+            }
+
+            configuration.MapPool = mapPool;
         }
 
         async Task OnValidSubmit()
