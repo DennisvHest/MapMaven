@@ -13,6 +13,7 @@ namespace MapMaven.Core.Services
         private readonly ScoreSaberApiClient _scoreSaber;
         private readonly BeatSaberFileService _fileService;
         private readonly ApplicationSettingService _applicationSettingService;
+        private readonly ApplicationEventService _applicationEventService;
         private readonly IHttpClientFactory _httpClientFactory;
 
         private readonly BehaviorSubject<string?> _playerId = new(null);
@@ -35,12 +36,14 @@ namespace MapMaven.Core.Services
             ScoreSaberApiClient scoreSaber,
             BeatSaberFileService fileService,
             IHttpClientFactory httpClientFactory,
-            ApplicationSettingService applicationSettingService)
+            ApplicationSettingService applicationSettingService,
+            ApplicationEventService applicationEventService)
         {
             _scoreSaber = scoreSaber;
             _fileService = fileService;
             _httpClientFactory = httpClientFactory;
             _applicationSettingService = applicationSettingService;
+            _applicationEventService = applicationEventService;
 
             var playerScores = _playerId.Select(playerId =>
             {
@@ -77,7 +80,16 @@ namespace MapMaven.Core.Services
 
             playerScores.Connect();
 
-            PlayerScores = playerScores;
+            PlayerScores = playerScores.Catch((Exception exception) =>
+            {
+                _applicationEventService.RaiseError(new Models.ErrorEvent
+                {
+                    Exception = exception,
+                    Message = "Failed to load player scores from ScoreSaber."
+                });
+
+                return Observable.Return(Enumerable.Empty<PlayerScore>());
+            });
 
             PlayerProfile = _playerId.Select(playerId =>
             {
