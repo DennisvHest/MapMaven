@@ -20,7 +20,7 @@ namespace MapMaven.Core.Services
         private readonly BehaviorSubject<IEnumerable<RankedMap>> _rankedMaps = new(Enumerable.Empty<RankedMap>());
 
         public IObservable<string?> PlayerIdObservable => _playerId;
-        public readonly IObservable<Player> PlayerProfile;
+        public readonly IObservable<Player?> PlayerProfile;
         public readonly IObservable<IEnumerable<PlayerScore>> PlayerScores;
         public readonly IObservable<IEnumerable<ScoreEstimate>> ScoreEstimates;
         public readonly IObservable<IEnumerable<ScoreEstimate>> RankedMapScoreEstimates;
@@ -98,6 +98,18 @@ namespace MapMaven.Core.Services
 
                 return Observable.FromAsync(async () => await _scoreSaber.FullAsync(playerId));
             }).Concat();
+
+
+            PlayerProfile = PlayerProfile.Catch((Exception exception) =>
+            {
+                _applicationEventService.RaiseError(new Models.ErrorEvent
+                {
+                    Exception = exception,
+                    Message = "Failed to load player profile from ScoreSaber."
+                });
+
+                return Observable.Return(null as Player);
+            });
 
             var scoreEstimates = Observable.CombineLatest(PlayerProfile, PlayerScores, RankedMaps, (player, playerScores, rankedMaps) =>
             {
