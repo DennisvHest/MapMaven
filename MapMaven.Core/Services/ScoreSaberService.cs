@@ -208,9 +208,22 @@ namespace MapMaven.Core.Services
 
         public async Task LoadRankedMaps()
         {
-            var rankedMaps = await GetRankedMaps();
+            try
+            {
+                var rankedMaps = await GetRankedMaps();
 
-            _rankedMaps.OnNext(rankedMaps);
+                _rankedMaps.OnNext(rankedMaps);
+            }
+            catch (Exception ex)
+            {
+                _applicationEventService.RaiseError(new()
+                {
+                    Exception = ex,
+                    Message = "Failed to load ranked maps."
+                });
+
+                _rankedMaps.OnNext(Enumerable.Empty<RankedMap>());
+            }
         }
 
         public async Task<IEnumerable<RankedMap>> GetRankedMaps()
