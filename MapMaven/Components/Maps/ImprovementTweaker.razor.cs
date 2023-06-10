@@ -31,6 +31,9 @@ namespace MapMaven.Components.Maps
         string HiddenFilter = "Not hidden";
         MapFilter HiddenMapFilter = null;
 
+        double MinimumPredictedAccuracy = 80;
+        MapFilter MinimumPredictedAccuracyFilter = null;
+
         HashSet<Map> SelectedMaps = new();
 
         bool CreatingPlaylist = false;
@@ -47,6 +50,7 @@ namespace MapMaven.Components.Maps
         protected override void OnAfterRender(bool firstRender)
         {
             OnHiddenFilterChanged(HiddenFilter);
+            OnPredictedAccuracyFilterChanged(MinimumPredictedAccuracy);
         }
 
         void OnPlayedFilterChanged(string value)
@@ -64,7 +68,6 @@ namespace MapMaven.Components.Maps
 
             PlayedMapFilter = new MapFilter
             {
-                Type = MapFilterType.Played,
                 Name = PlayedFilter,
                 Visible = false
             };
@@ -93,7 +96,6 @@ namespace MapMaven.Components.Maps
 
             HiddenMapFilter = new MapFilter
             {
-                Type = MapFilterType.Played,
                 Name = HiddenFilter,
                 Visible = false
             };
@@ -105,6 +107,23 @@ namespace MapMaven.Components.Maps
             };
 
             MapService.AddMapFilter(HiddenMapFilter);
+        }
+
+        void OnPredictedAccuracyFilterChanged(double value)
+        {
+            MinimumPredictedAccuracy = value;
+
+            if (MinimumPredictedAccuracyFilter != null)
+                MapService.RemoveMapFilter(MinimumPredictedAccuracyFilter);
+
+            MinimumPredictedAccuracyFilter = new MapFilter
+            {
+                Name = $"Predicted accuracy >= {MinimumPredictedAccuracy}%",
+                Visible = false,
+                Filter = map => map.ScoreEstimate?.Accuracy >= Convert.ToDecimal(MinimumPredictedAccuracy)
+            };
+
+            MapService.AddMapFilter(MinimumPredictedAccuracyFilter);
         }
 
         async Task CreatePlaylistFromSelectedMaps()
