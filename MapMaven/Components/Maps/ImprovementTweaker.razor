@@ -17,6 +17,15 @@
                 <MudSelectItem Value="@("Hidden")" />
                 <MudSelectItem Value="@("Not hidden")" />
             </MudSelect>
+            <MudNumericField T="double"
+                Value="MinimumPredictedAccuracy"
+                Label="Min predicted accuracy"
+                DebounceInterval="300"
+                Class="mt-5"
+                Variant="Variant.Outlined"
+                Min="0"
+                Max="100"
+                ValueChanged="value => OnPredictedAccuracyFilterChanged(value)" />
             <MudExpansionPanels Class="mt-3">
                 <MudExpansionPanel Text="Select..." Style="background-color: var(--mud-palette-drawer-background);">
                     <MudNumericField @bind-Value="MapSelectNumber" Label="Number of maps" Class="my-3" Min="1" />

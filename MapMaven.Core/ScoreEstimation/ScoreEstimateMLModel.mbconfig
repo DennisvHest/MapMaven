@@ -37,11 +37,11 @@
         "Version": 3
       }
     ],
-    "ConnectionString": "Data Source=(LocalDb)\\MSSQLLocalDB;Initial Catalog=BSScores;Integrated Security=True",
-    "CommandString": "SELECT CAST([PP] as REAL), CAST([StarDifficulty] as REAL), CAST([Accuracy] as REAL), [TimeSet] FROM [dbo].[TrainingData]",
-    "DatabaseName": "BSScores",
+    "ConnectionString": "Data Source=(LocalDb)\\MSSQLLocalDB;Initial Catalog=BSSCores_25-05-2023;Integrated Security=True",
+    "CommandString": "SELECT CAST([PP] as REAL), CAST([StarDifficulty] as REAL), CAST([Accuracy] as REAL), [TimeSet] FROM [dbo].[TrainingData_25-5-2023]",
+    "DatabaseName": "BSSCores_25-05-2023",
     "SelectedTableDbo": "dbo",
-    "TableName": "TrainingData"
+    "TableName": "TrainingData_25-5-2023"
   },
   "Environment": {
     "Type": "LocalCPU",
@@ -55,8 +55,8 @@
         "Version": 1,
         "Type": "Trial",
         "TrainerName": "LightGbmRegression",
-        "Score": 0.47343897605405327,
-        "RuntimeInSeconds": 76.31,
+        "Score": 0.437939443196364,
+        "RuntimeInSeconds": 176.44,
         "Parameter": {
           "_SCHEMA_": "e0 * e1 * e2 * e5",
           "e0": {
@@ -86,15 +86,93 @@
             "OutputColumnName": "Features"
           },
           "e5": {
-            "NumberOfLeaves": 8302,
+            "NumberOfLeaves": 4,
+            "MinimumExampleCountPerLeaf": 38,
+            "LearningRate": 0.050956224568107091,
+            "NumberOfTrees": 7513,
+            "SubsampleFraction": 0.16639780133560289,
+            "MaximumBinCountPerFeature": 307,
+            "FeatureFraction": 0.85584618056225081,
+            "L1Regularization": 5.4608556642223723E-08,
+            "L2Regularization": 0.280650436522046,
+            "LabelColumnName": "Accuracy",
+            "FeatureColumnName": "Features"
+          },
+          "e3": {
+            "NumberOfLeaves": 4,
             "MinimumExampleCountPerLeaf": 20,
-            "LearningRate": 0.37475282747433569,
             "NumberOfTrees": 4,
-            "SubsampleFraction": 0.99999977667298645,
-            "MaximumBinCountPerFeature": 247,
+            "MaximumBinCountPerFeature": 255,
+            "FeatureFraction": 1.0,
+            "LearningRate": 0.099999999999999978,
+            "LabelColumnName": "Accuracy",
+            "FeatureColumnName": "Features"
+          },
+          "e4": {
+            "NumberOfTrees": 4,
+            "NumberOfLeaves": 4,
+            "FeatureFraction": 1.0,
+            "LabelColumnName": "Accuracy",
+            "FeatureColumnName": "Features"
+          },
+          "e6": {
+            "L1Regularization": 1.0,
+            "L2Regularization": 1.0,
+            "LabelColumnName": "Accuracy",
+            "FeatureColumnName": "Features"
+          },
+          "e7": {
+            "L1Regularization": 1.0,
+            "L2Regularization": 0.1,
+            "LabelColumnName": "Accuracy",
+            "FeatureColumnName": "Features"
+          }
+        }
+      },
+      {
+        "Version": 1,
+        "Type": "Trial",
+        "TrainerName": "LightGbmRegression",
+        "Score": 0.42898524989690212,
+        "RuntimeInSeconds": 97.101,
+        "Parameter": {
+          "_SCHEMA_": "e0 * e1 * e2 * e5",
+          "e0": {
+            "OutputColumnNames": [
+              "PP",
+              "StarDifficulty"
+            ],
+            "InputColumnNames": [
+              "PP",
+              "StarDifficulty"
+            ]
+          },
+          "e1": {
+            "OutputColumnNames": [
+              "TimeSet"
+            ],
+            "InputColumnNames": [
+              "TimeSet"
+            ]
+          },
+          "e2": {
+            "InputColumnNames": [
+              "PP",
+              "StarDifficulty",
+              "TimeSet"
+            ],
+            "OutputColumnName": "Features"
+          },
+          "e5": {
+            "NumberOfLeaves": 4,
+            "MinimumExampleCountPerLeaf": 20,
+            "LearningRate": 0.045241090199057983,
+            "NumberOfTrees": 4108,
+            "SubsampleFraction": 0.0082010308608231712,
+            "MaximumBinCountPerFeature": 185,
             "FeatureFraction": 0.99999999,
             "L1Regularization": 2E-10,
-            "L2Regularization": 0.0045577031229970515,
+            "L2Regularization": 0.99999977667298645,
             "LabelColumnName": "Accuracy",
             "FeatureColumnName": "Features"
           },
@@ -133,8 +211,8 @@
         "Version": 1,
         "Type": "Trial",
         "TrainerName": "LightGbmRegression",
-        "Score": 0.46542550232448476,
-        "RuntimeInSeconds": 75.413,
+        "Score": 0.42820677748918179,
+        "RuntimeInSeconds": 29.587,
         "Parameter": {
           "_SCHEMA_": "e0 * e1 * e2 * e5",
           "e0": {
@@ -164,93 +242,15 @@
             "OutputColumnName": "Features"
           },
           "e5": {
-            "NumberOfLeaves": 3042,
-            "MinimumExampleCountPerLeaf": 20,
-            "LearningRate": 0.99999977667298645,
-            "NumberOfTrees": 4,
-            "SubsampleFraction": 0.99999977667298645,
-            "MaximumBinCountPerFeature": 183,
-            "FeatureFraction": 0.92161635633308137,
-            "L1Regularization": 2E-10,
-            "L2Regularization": 0.025677491370911919,
-            "LabelColumnName": "Accuracy",
-            "FeatureColumnName": "Features"
-          },
-          "e3": {
             "NumberOfLeaves": 4,
-            "MinimumExampleCountPerLeaf": 20,
-            "NumberOfTrees": 4,
-            "MaximumBinCountPerFeature": 255,
-            "FeatureFraction": 1.0,
-            "LearningRate": 0.099999999999999978,
-            "LabelColumnName": "Accuracy",
-            "FeatureColumnName": "Features"
-          },
-          "e4": {
-            "NumberOfTrees": 4,
-            "NumberOfLeaves": 4,
-            "FeatureFraction": 1.0,
-            "LabelColumnName": "Accuracy",
-            "FeatureColumnName": "Features"
-          },
-          "e6": {
-            "L1Regularization": 1.0,
-            "L2Regularization": 1.0,
-            "LabelColumnName": "Accuracy",
-            "FeatureColumnName": "Features"
-          },
-          "e7": {
-            "L1Regularization": 1.0,
-            "L2Regularization": 0.1,
-            "LabelColumnName": "Accuracy",
-            "FeatureColumnName": "Features"
-          }
-        }
-      },
-      {
-        "Version": 1,
-        "Type": "Trial",
-        "TrainerName": "LightGbmRegression",
-        "Score": 0.45007686692081583,
-        "RuntimeInSeconds": 77.1,
-        "Parameter": {
-          "_SCHEMA_": "e0 * e1 * e2 * e5",
-          "e0": {
-            "OutputColumnNames": [
-              "PP",
-              "StarDifficulty"
-            ],
-            "InputColumnNames": [
-              "PP",
-              "StarDifficulty"
-            ]
-          },
-          "e1": {
-            "OutputColumnNames": [
-              "TimeSet"
-            ],
-            "InputColumnNames": [
-              "TimeSet"
-            ]
-          },
-          "e2": {
-            "InputColumnNames": [
-              "PP",
-              "StarDifficulty",
-              "TimeSet"
-            ],
-            "OutputColumnName": "Features"
-          },
-          "e5": {
-            "NumberOfLeaves": 7940,
-            "MinimumExampleCountPerLeaf": 26,
-            "LearningRate": 0.99999977667298645,
-            "NumberOfTrees": 4,
-            "SubsampleFraction": 0.083689180760800133,
-            "MaximumBinCountPerFeature": 97,
-            "FeatureFraction": 0.90403272679320468,
-            "L1Regularization": 2E-10,
-            "L2Regularization": 2.1614204854443223E-05,
+            "MinimumExampleCountPerLeaf": 21,
+            "LearningRate": 0.2158882397656316,
+            "NumberOfTrees": 957,
+            "SubsampleFraction": 0.024425431413929874,
+            "MaximumBinCountPerFeature": 139,
+            "FeatureFraction": 0.98415658582941212,
+            "L1Regularization": 3.0404076563247508E-10,
+            "L2Regularization": 0.99999977667298645,
             "LabelColumnName": "Accuracy",
             "FeatureColumnName": "Features"
           },
@@ -289,8 +289,8 @@
         "Version": 1,
         "Type": "Trial",
         "TrainerName": "FastForestRegression",
-        "Score": 0.40963982742337368,
-        "RuntimeInSeconds": 27.776,
+        "Score": 0.36150892168458515,
+        "RuntimeInSeconds": 7.193,
         "Parameter": {
           "_SCHEMA_": "e0 * e1 * e2 * e4",
           "e0": {
@@ -320,8 +320,8 @@
             "OutputColumnName": "Features"
           },
           "e4": {
-            "NumberOfTrees": 19,
-            "NumberOfLeaves": 4,
+            "NumberOfTrees": 16,
+            "NumberOfLeaves": 55,
             "FeatureFraction": 1.0,
             "LabelColumnName": "Accuracy",
             "FeatureColumnName": "Features"
@@ -367,8 +367,8 @@
         "Version": 1,
         "Type": "Trial",
         "TrainerName": "FastForestRegression",
-        "Score": 0.40402564028679711,
-        "RuntimeInSeconds": 22.556,
+        "Score": 0.36138421221624628,
+        "RuntimeInSeconds": 7.971,
         "Parameter": {
           "_SCHEMA_": "e0 * e1 * e2 * e4",
           "e0": {
@@ -398,7 +398,7 @@
             "OutputColumnName": "Features"
           },
           "e4": {
-            "NumberOfTrees": 4,
+            "NumberOfTrees": 22,
             "NumberOfLeaves": 4,
             "FeatureFraction": 1.0,
             "LabelColumnName": "Accuracy",
@@ -460,7 +460,7 @@
   "TrainingOption": {
     "Version": 0,
     "Type": "RegressionTrainingOption",
-    "TrainingTime": 600,
+    "TrainingTime": 1800,
     "OptimizeMetric": "RSquared",
     "LabelColumn": "Accuracy",
     "AvailableTrainers": [
