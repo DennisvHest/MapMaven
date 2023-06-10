@@ -149,7 +149,7 @@ namespace MapMaven.Services
                     map.Hidden = hiddenMap.Any();
 
                     return map;
-                }).Where(m => m.ScoreEstimates.FirstOrDefault()?.Accuracy >= 87).ToList();
+                }).ToList();
         }
 
         public void AddMapFilter(MapFilter filter)

@@ -38,7 +38,7 @@ namespace MapMaven_Core
             var pipeline = mlContext.Transforms.ReplaceMissingValues(new []{new InputOutputColumnPair(@"PP", @"PP"),new InputOutputColumnPair(@"StarDifficulty", @"StarDifficulty")})      
                                     .Append(mlContext.Transforms.Conversion.ConvertType(@"TimeSet", @"TimeSet"))      
                                     .Append(mlContext.Transforms.Concatenate(@"Features", new []{@"PP",@"StarDifficulty",@"TimeSet"}))      
-                                    .Append(mlContext.Regression.Trainers.LightGbm(new LightGbmRegressionTrainer.Options(){NumberOfLeaves=3325,NumberOfIterations=4,MinimumExampleCountPerLeaf=20,LearningRate=0.999999776672986,LabelColumnName=@"Accuracy",FeatureColumnName=@"Features",ExampleWeightColumnName=null,Booster=new GradientBooster.Options(){SubsampleFraction=0.999999776672986,FeatureFraction=0.99999999,L1Regularization=6.70496966044658E-09,L2Regularization=0.000539699019865853},MaximumBinCountPerFeature=778}));
+                                    .Append(mlContext.Regression.Trainers.LightGbm(new LightGbmRegressionTrainer.Options(){NumberOfLeaves=4,NumberOfIterations=7513,MinimumExampleCountPerLeaf=38,LearningRate=0.0509562245681071,LabelColumnName=@"Accuracy",FeatureColumnName=@"Features",ExampleWeightColumnName=null,Booster=new GradientBooster.Options(){SubsampleFraction=0.166397801335603,FeatureFraction=0.855846180562251,L1Regularization=5.46085566422237E-08,L2Regularization=0.280650436522046},MaximumBinCountPerFeature=307}));
 
             return pipeline;
         }
