@@ -1,0 +1,53 @@
+name: Publish Map Maven
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version for new release'
+        required: true
+        type: string
+
+jobs:
+  build:
+
+    runs-on: windows-latest
+    
+    env:
+      PUBLISH_PATH: "${{ github.workspace }}/MapMaven/bin/Release/net7.0-windows10.0.19041.0/win10-x64/publish"
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 7.0.x
+    - name: Restore workloads
+      run: dotnet workload restore
+    - name: Restore dependencies
+      run: dotnet restore
+    - name: Publish
+      run: dotnet publish -f net7.0-windows10.0.19041.0 -c Release
+      working-directory: "${{ github.workspace }}/MapMaven"
+    - name: Zip build
+      uses: TheDoctor0/zip-release@0.7.1
+      with:
+        filename: "${{ runner.temp }}/package/MapMaven-${{ inputs.version }}.zip"
+        path: "${{ env.PUBLISH_PATH }}/**"
+    - name: Package build
+      run: >
+        & "$HOME/.nuget/packages/clowd.squirrel/2.9.42/tools/Squirrel.exe" pack
+        --packId "MapMaven"
+        --packVersion "${{ inputs.version }}"
+        --packDirectory "${{ env.PUBLISH_PATH }}"
+        --releaseDir "${{ runner.temp }}/package"
+        --icon "${{ env.PUBLISH_PATH }}/Platforms/Windows/trayicon.ico"
+        --appIcon "${{ env.PUBLISH_PATH }}/Platforms/Windows/trayicon.ico"
+        --splashImage "${{ env.PUBLISH_PATH }}/Platforms/Windows/installation.gif"
+        --packAuthors "DennisvHest"
+        --packTitle "Map Maven" 
+    - name: Upload build artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: mapmaven-package
+        path: "${{ runner.temp }}/package"
