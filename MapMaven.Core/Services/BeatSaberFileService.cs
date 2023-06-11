@@ -1,10 +1,11 @@
-﻿using System.Reactive.Linq;
+﻿using MapMaven.Core.Services.Interfaces;
+using System.Reactive.Linq;
 
 namespace MapMaven.Core.Services
 {
     public class BeatSaberFileService
     {
-        private readonly ApplicationSettingService _applicationSettingService;
+        private readonly IApplicationSettingService _applicationSettingService;
 
         private const string BeatSaberInstallLocationKey = "BeatSaberInstallLocation";
 
@@ -20,7 +21,7 @@ namespace MapMaven.Core.Services
         public virtual IObservable<string> PlaylistsLocationObservable => BeatSaberInstallLocationObservable.Select(location => $"{location}/Playlists");
         public virtual IObservable<string> UserDataLocationObservable => BeatSaberInstallLocationObservable.Select(location => $"{location}/UserData");
 
-        public BeatSaberFileService(ApplicationSettingService applicationSettingService)
+        public BeatSaberFileService(IApplicationSettingService applicationSettingService)
         {
             _applicationSettingService = applicationSettingService;
 

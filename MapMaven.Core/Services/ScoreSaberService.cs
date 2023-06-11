@@ -1,5 +1,6 @@
 ﻿using MapMaven.Core.ApiClients;
 using MapMaven.Core.Models.Data.ScoreSaber;
+using MapMaven.Core.Services.Interfaces;
 using MapMaven.Core.Utilities.Scoresaber;
 using MapMaven_Core;
 using System.Net.Http.Json;
@@ -8,11 +9,10 @@ using System.Reactive.Subjects;
 
 namespace MapMaven.Core.Services
 {
-    public class ScoreSaberService
+    public class ScoreSaberService : IScoreSaberService
     {
         private readonly ScoreSaberApiClient _scoreSaber;
-        private readonly BeatSaberFileService _fileService;
-        private readonly ApplicationSettingService _applicationSettingService;
+        private readonly IApplicationSettingService _applicationSettingService;
         private readonly ApplicationEventService _applicationEventService;
         private readonly IHttpClientFactory _httpClientFactory;
 
@@ -20,10 +20,10 @@ namespace MapMaven.Core.Services
         private readonly BehaviorSubject<IEnumerable<RankedMap>> _rankedMaps = new(Enumerable.Empty<RankedMap>());
 
         public IObservable<string?> PlayerIdObservable => _playerId;
-        public readonly IObservable<Player?> PlayerProfile;
-        public readonly IObservable<IEnumerable<PlayerScore>> PlayerScores;
-        public readonly IObservable<IEnumerable<ScoreEstimate>> ScoreEstimates;
-        public readonly IObservable<IEnumerable<ScoreEstimate>> RankedMapScoreEstimates;
+        public IObservable<Player?> PlayerProfile { get; private set; }
+        public IObservable<IEnumerable<PlayerScore>> PlayerScores { get; private set; }
+        public IObservable<IEnumerable<ScoreEstimate>> ScoreEstimates { get; private set; }
+        public IObservable<IEnumerable<ScoreEstimate>> RankedMapScoreEstimates { get; private set; }
 
         public IObservable<IEnumerable<RankedMap>> RankedMaps => _rankedMaps;
 
@@ -36,11 +36,10 @@ namespace MapMaven.Core.Services
             ScoreSaberApiClient scoreSaber,
             BeatSaberFileService fileService,
             IHttpClientFactory httpClientFactory,
-            ApplicationSettingService applicationSettingService,
+            IApplicationSettingService applicationSettingService,
             ApplicationEventService applicationEventService)
         {
             _scoreSaber = scoreSaber;
-            _fileService = fileService;
             _httpClientFactory = httpClientFactory;
             _applicationSettingService = applicationSettingService;
             _applicationEventService = applicationEventService;

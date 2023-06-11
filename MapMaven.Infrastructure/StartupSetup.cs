@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System.Net;
 using System.Security.AccessControl;
 using System.Security.Principal;
+using MapMaven.Core.Services.Interfaces;
 
 namespace MapMaven.Infrastructure
 {
@@ -31,13 +32,13 @@ namespace MapMaven.Infrastructure
             });
 
             services.AddSingleton<BeatSaberFileService>();
-            services.AddSingleton<BeatSaberDataService>();
-            services.AddSingleton<MapService>();
+            services.AddSingleton<IBeatSaberDataService, BeatSaberDataService>();
+            services.AddSingleton<IMapService, MapService>();
             services.AddSingleton<SongPlayerService>();
-            services.AddSingleton<PlaylistService>();
-            services.AddSingleton<ScoreSaberService>();
+            services.AddSingleton<IPlaylistService, PlaylistService>();
+            services.AddSingleton<IScoreSaberService, ScoreSaberService>();
             services.AddSingleton<DynamicPlaylistArrangementService>();
-            services.AddSingleton<ApplicationSettingService>();
+            services.AddSingleton<IApplicationSettingService, ApplicationSettingService>();
             services.AddSingleton<ApplicationEventService>();
         }
 

@@ -5,19 +5,20 @@ using MapMaven.Models;
 using MapMaven.Core.Models;
 using Microsoft.AspNetCore.Components.Routing;
 using MudBlazor;
+using MapMaven.Core.Services.Interfaces;
 
 namespace MapMaven.Components.Maps
 {
     public partial class MapBrowser : IDisposable
     {
         [Inject]
-        protected MapService MapService { get; set; }
+        protected IMapService MapService { get; set; }
 
         [Inject]
-        protected PlaylistService PlaylistService { get; set; }
+        protected IPlaylistService PlaylistService { get; set; }
 
         [Inject]
-        protected BeatSaberDataService BeatSaberDataService { get; set; }
+        protected IBeatSaberDataService BeatSaberDataService { get; set; }
 
         [Inject]
         protected NavigationManager NavigationManager { get; set; }

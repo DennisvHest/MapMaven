@@ -1,5 +1,6 @@
 using MapMaven.Core.Models.DynamicPlaylists;
 using MapMaven.Core.Services;
+using MapMaven.Core.Services.Interfaces;
 using MapMaven.Services;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
@@ -10,7 +11,7 @@ namespace MapMaven.Components.Playlists
     public partial class EditDynamicPlaylistDialog
     {
         [Inject]
-        protected PlaylistService PlaylistService { get; set; }
+        protected IPlaylistService PlaylistService { get; set; }
         [Inject]
         protected DynamicPlaylistArrangementService DynamicPlaylistArrangementService { get; set; }
 

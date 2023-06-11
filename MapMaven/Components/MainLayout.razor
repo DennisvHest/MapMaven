@@ -23,16 +23,16 @@
 
 @code {
     [Inject]
-    protected ApplicationSettingService ApplicationSettingService { get; set; }
+    protected IApplicationSettingService ApplicationSettingService { get; set; }
 
     [Inject]
-    protected BeatSaberDataService BeatSaberDataService { get; set; }
+    protected IBeatSaberDataService BeatSaberDataService { get; set; }
 
     [Inject]
-    protected MapService MapService { get; set; }
+    protected IMapService MapService { get; set; }
 
     [Inject]
-    protected ScoreSaberService ScoreSaberService { get; set; }
+    protected IScoreSaberService ScoreSaberService { get; set; }
 
     [Inject]
     protected BeatSaberFileService BeatSaberToolFileService { get; set; }

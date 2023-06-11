@@ -12,13 +12,14 @@ using Microsoft.Extensions.DependencyInjection;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using Map = MapMaven.Models.Map;
+using MapMaven.Core.Services.Interfaces;
 
 namespace MapMaven.Services
 {
-    public class MapService
+    public class MapService : IMapService
     {
-        private readonly BeatSaberDataService _beatSaberDataService;
-        private readonly ScoreSaberService _scoreSaberService;
+        private readonly IBeatSaberDataService _beatSaberDataService;
+        private readonly IScoreSaberService _scoreSaberService;
         private readonly BeatSaberFileService _fileService;
 
         private readonly BeatSaver _beatSaver;
@@ -43,8 +44,8 @@ namespace MapMaven.Services
 
 
         public MapService(
-            BeatSaberDataService beatSaberDataService,
-            ScoreSaberService scoreSaberService,
+            IBeatSaberDataService beatSaberDataService,
+            IScoreSaberService scoreSaberService,
             BeatSaver beatSaver,
             BeatSaberFileService fileService,
             IServiceProvider serviceProvider)

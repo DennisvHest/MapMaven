@@ -1,3 +1,4 @@
+using MapMaven.Core.Services.Interfaces;
 using MapMaven.Extensions;
 using MapMaven.Models;
 using MapMaven.Services;
@@ -11,7 +12,7 @@ namespace MapMaven.Components.Playlists
     public partial class EditPlaylistDialog
     {
         [Inject]
-        protected PlaylistService PlaylistService { get; set; }
+        protected IPlaylistService PlaylistService { get; set; }
 
         [Inject]
         ISnackbar Snackbar { get; set; }

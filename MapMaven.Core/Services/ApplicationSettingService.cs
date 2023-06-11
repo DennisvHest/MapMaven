@@ -1,12 +1,13 @@
 ﻿using MapMaven.Core.Extensions;
 using MapMaven.Core.Models.Data;
+using MapMaven.Core.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reactive.Subjects;
 
 namespace MapMaven.Core.Services
 {
-    public class ApplicationSettingService
+    public class ApplicationSettingService : IApplicationSettingService
     {
         private readonly IServiceProvider _serviceProvider;
 

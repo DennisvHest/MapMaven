@@ -7,19 +7,20 @@ using MapMaven.Models;
 using MapMaven.Core.Services;
 using MapMaven.Components.Playlists;
 using MapMaven.Components.Shared;
+using MapMaven.Core.Services.Interfaces;
 
 namespace MapMaven.Components.Maps
 {
     public partial class MapBrowserRow : IDisposable
     {
         [Inject]
-        protected BeatSaberDataService BeatSaberDataService { get; set; }
+        protected IBeatSaberDataService BeatSaberDataService { get; set; }
         [Inject]
-        protected PlaylistService PlaylistService { get; set; }
+        protected IPlaylistService PlaylistService { get; set; }
         [Inject]
-        protected ScoreSaberService ScoreSaberService { get; set; }
+        protected IScoreSaberService ScoreSaberService { get; set; }
         [Inject]
-        protected MapService MapService { get; set; }
+        protected IMapService MapService { get; set; }
 
         [Inject]
         protected IDialogService DialogService { get; set; }

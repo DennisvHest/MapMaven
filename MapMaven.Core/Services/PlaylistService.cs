@@ -9,26 +9,27 @@ using MapMaven.Core.Services;
 using BeatSaberPlaylistsLib.Types;
 using MapMaven.Core.Models.DynamicPlaylists;
 using MapMaven.Core.Models.Data;
+using MapMaven.Core.Services.Interfaces;
 
 namespace MapMaven.Services
 {
-    public class PlaylistService
+    public class PlaylistService : IPlaylistService
     {
         private readonly BeatSaberFileService _beatSaverFileService;
 
-        private readonly BeatSaberDataService _beatSaberDataService;
-        private readonly MapService _mapService;
+        private readonly IBeatSaberDataService _beatSaberDataService;
+        private readonly IMapService _mapService;
         private PlaylistManager _playlistManager;
 
         private readonly BehaviorSubject<string> _selectedPlaylistFileName = new(null);
 
         public IObservable<IEnumerable<Playlist>> Playlists { get; private set; }
-        public BehaviorSubject<Playlist> SelectedPlaylist = new(null);
+        public BehaviorSubject<Playlist> SelectedPlaylist { get; private set; } = new(null);
 
         private readonly BehaviorSubject<bool> _creatingPlaylist = new(false);
         public IObservable<bool> CreatingPlaylist => _creatingPlaylist;
 
-        public PlaylistService(BeatSaberDataService beatSaberDataService, BeatSaberFileService beatSaverFileService, MapService mapService)
+        public PlaylistService(IBeatSaberDataService beatSaberDataService, BeatSaberFileService beatSaverFileService, IMapService mapService)
         {
             _beatSaverFileService = beatSaverFileService;
             _beatSaberDataService = beatSaberDataService;

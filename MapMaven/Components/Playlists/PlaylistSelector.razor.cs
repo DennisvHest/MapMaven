@@ -1,3 +1,4 @@
+using MapMaven.Core.Services.Interfaces;
 using MapMaven.Models;
 using MapMaven.Services;
 using Microsoft.AspNetCore.Components;
@@ -13,7 +14,7 @@ namespace MapMaven.Components.Playlists
         MudDialogInstance MudDialog { get; set; }
 
         [Inject]
-        protected PlaylistService PlaylistService { get; set; }
+        protected IPlaylistService PlaylistService { get; set; }
 
         private IEnumerable<Playlist> Playlists = Array.Empty<Playlist>();
 

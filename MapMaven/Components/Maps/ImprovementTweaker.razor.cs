@@ -1,6 +1,7 @@
 using MapMaven.Components.Shared;
 using MapMaven.Core.Models;
 using MapMaven.Core.Models.Data;
+using MapMaven.Core.Services.Interfaces;
 using MapMaven.Models;
 using MapMaven.Services;
 using Microsoft.AspNetCore.Components;
@@ -14,10 +15,10 @@ namespace MapMaven.Components.Maps
     public partial class ImprovementTweaker
     {
         [Inject]
-        MapService MapService { get; set; }
+        IMapService MapService { get; set; }
 
         [Inject]
-        PlaylistService PlaylistService { get; set; }
+        IPlaylistService PlaylistService { get; set; }
 
         [Inject]
         ISnackbar Snackbar { get; set; }

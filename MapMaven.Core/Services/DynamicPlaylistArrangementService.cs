@@ -1,7 +1,7 @@
 ﻿using MapMaven.Core.Models.DynamicPlaylists;
+using MapMaven.Core.Services.Interfaces;
 using MapMaven.Core.Models.DynamicPlaylists.MapInfo;
 using MapMaven.Models;
-using MapMaven.Services;
 using Pather.CSharp;
 using System.Reactive.Linq;
 
@@ -9,11 +9,11 @@ namespace MapMaven.Core.Services
 {
     public class DynamicPlaylistArrangementService
     {
-        private readonly BeatSaberDataService _beatSaberDataService;
-        private readonly MapService _mapService;
-        private readonly PlaylistService _playlistService;
-        private readonly ScoreSaberService _scoreSaberService;
-        private readonly ApplicationSettingService _applicationSettingService;
+        private readonly IBeatSaberDataService _beatSaberDataService;
+        private readonly IMapService _mapService;
+        private readonly IPlaylistService _playlistService;
+        private readonly IScoreSaberService _scoreSaberService;
+        private readonly IApplicationSettingService _applicationSettingService;
 
         private readonly IResolver _resolver;
 
@@ -25,7 +25,12 @@ namespace MapMaven.Core.Services
             { typeof(DateTime), new[] { FilterOperator.Equals, FilterOperator.NotEquals, FilterOperator.GreaterThan, FilterOperator.LessThan, FilterOperator.GreaterThanOrEqual, FilterOperator.LessThanOrEqual } },
         };
 
-        public DynamicPlaylistArrangementService(BeatSaberDataService beatSaberDataService, MapService mapService, PlaylistService playlistService, ScoreSaberService scoreSaberService, ApplicationSettingService applicationSettingService)
+        public DynamicPlaylistArrangementService(
+            IBeatSaberDataService beatSaberDataService,
+            IMapService mapService,
+            IPlaylistService playlistService,
+            IScoreSaberService scoreSaberService,
+            IApplicationSettingService applicationSettingService)
         {
             _beatSaberDataService = beatSaberDataService;
             _mapService = mapService;

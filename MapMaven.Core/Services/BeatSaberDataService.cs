@@ -17,10 +17,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using MapMaven.Core.Models.Data;
 using System.Runtime;
+using MapMaven.Core.Services.Interfaces;
 
 namespace MapMaven.Services
 {
-    public class BeatSaberDataService
+    public class BeatSaberDataService : IBeatSaberDataService
     {
         private readonly BeatSaberFileService _fileService;
 
@@ -29,7 +30,7 @@ namespace MapMaven.Services
 
         private readonly IServiceProvider _serviceProvider;
 
-        private readonly ILogger<BeatSaberDataService> _logger;
+        private readonly ILogger<IBeatSaberDataService> _logger;
 
         private readonly Regex _mapIdRegex = new Regex(@"^[0-9A-Fa-f]+");
 
