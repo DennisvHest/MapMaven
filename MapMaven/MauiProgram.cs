@@ -25,8 +25,6 @@ public static class MauiProgram
     {
         MauiApp mauiApp = null;
 
-        JsonConvert.DefaultSettings = () => new() { DateParseHandling = DateParseHandling.None };
-
         var builder = MauiApp.CreateBuilder();
         builder
             .UseMauiApp<App>()

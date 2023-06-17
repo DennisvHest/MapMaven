@@ -156,7 +156,7 @@ namespace MapMaven.Core.Services
 
             if (value is DateTime dateTimeValue)
             {
-                var compareValue = DateTime.Parse(filterOperation.Value);
+                var compareValue = DateTime.Parse(filterOperation.Value, CultureInfo.InvariantCulture);
 
                 return filterOperation.Operator switch
                 {

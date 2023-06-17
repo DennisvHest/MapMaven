@@ -10,6 +10,7 @@ using System.Net;
 using System.Security.AccessControl;
 using System.Security.Principal;
 using MapMaven.Core.Services.Interfaces;
+using Newtonsoft.Json;
 
 namespace MapMaven.Infrastructure
 {
@@ -18,6 +19,8 @@ namespace MapMaven.Infrastructure
         public static void AddMapMaven(this IServiceCollection services)
         {
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
+
+            JsonConvert.DefaultSettings = () => new() { DateParseHandling = DateParseHandling.None };
 
             services.AddDbContext<MapMavenContext>();
             services.AddScoped<IDataStore, MapMavenContext>();

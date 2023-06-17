@@ -1,4 +1,5 @@
 using BeatSaberPlaylistsLib.Types;
+using MapMaven.Core.ApiClients;
 using MapMaven.Core.Models.Data;
 using MapMaven.Core.Models.Data.ScoreSaber;
 using MapMaven.Core.Models.DynamicPlaylists;
@@ -8,6 +9,7 @@ using MapMaven.Core.Services.Interfaces;
 using MapMaven.Models;
 using Moq;
 using Newtonsoft.Json.Linq;
+using System.Globalization;
 using System.Reactive.Linq;
 using Playlist = MapMaven.Models.Playlist;
 
@@ -65,7 +67,7 @@ public class DynamicPlaylistArrangementServiceTests
 
 
     [Fact]
-    public async Task ArrangeDynamicPlaylists_DynamicPlaylistWithMapPool_FiltersStringValue()
+    public async Task ArrangeDynamicPlaylists_DynamicPlaylistWithStringFilters_FiltersStringValue()
     {
         var resultMaps = await CallArrangeDynamicPlaylistWith(new JObject
         {
@@ -100,7 +102,7 @@ public class DynamicPlaylistArrangementServiceTests
     }
 
     [Fact]
-    public async Task ArrangeDynamicPlaylists_DynamicPlaylistWithMapPool_FiltersDoubleRange()
+    public async Task ArrangeDynamicPlaylists_DynamicPlaylistWithDoubleFilters_FiltersDoubleRange()
     {
         var resultMaps = await CallArrangeDynamicPlaylistWith(new JObject
         {
@@ -147,7 +149,7 @@ public class DynamicPlaylistArrangementServiceTests
     }
 
     [Fact]
-    public async Task ArrangeDynamicPlaylists_DynamicPlaylistWithMapPool_FiltersDoubleEqual()
+    public async Task ArrangeDynamicPlaylists_DynamicPlaylistWithDoubleFilters_FiltersDoubleEqual()
     {
         var resultMaps = await CallArrangeDynamicPlaylistWith(new JObject
         {
@@ -179,6 +181,118 @@ public class DynamicPlaylistArrangementServiceTests
 
         Assert.Single(resultMaps);
         Assert.Contains(resultMaps, x => x.Id == "1");
+    }
+
+    [Fact]
+    public async Task ArrangeDynamicPlaylists_DynamicPlaylistWithDateTimeFilters_FiltersDateTimeRange()
+    {
+        var resultMaps = await CallArrangeDynamicPlaylistWith(new JObject
+        {
+            {
+                "dynamicPlaylistConfiguration", new JObject
+                {
+                    { nameof(DynamicPlaylistConfiguration.MapPool), nameof(MapPool.Standard) },
+                    { nameof(DynamicPlaylistConfiguration.MapCount), 100 },
+                    {
+                        nameof(DynamicPlaylistConfiguration.FilterOperations), new JArray
+                        {
+                            new JObject
+                            {
+                                { nameof(FilterOperation.Field), $"{nameof(DynamicPlaylistMap.Score)}.{nameof(DynamicPlaylistScore.TimeSet)}" },
+                                { nameof(FilterOperation.Value), new DateTime(2022, 1, 1).ToString(CultureInfo.InvariantCulture) },
+                                { nameof(FilterOperation.Operator), nameof(FilterOperator.GreaterThan) }
+                            },
+                            new JObject
+                            {
+                                { nameof(FilterOperation.Field), $"{nameof(DynamicPlaylistMap.Score)}.{nameof(DynamicPlaylistScore.TimeSet)}" },
+                                { nameof(FilterOperation.Value), new DateTime(2022, 3, 25).ToString(CultureInfo.InvariantCulture) },
+                                { nameof(FilterOperation.Operator), nameof(FilterOperator.GreaterThanOrEqual) }
+                            },
+                            new JObject
+                            {
+                                { nameof(FilterOperation.Field), $"{nameof(DynamicPlaylistMap.Score)}.{nameof(DynamicPlaylistScore.TimeSet)}" },
+                                { nameof(FilterOperation.Value), new DateTime(2023, 1, 1).ToString(CultureInfo.InvariantCulture) },
+                                { nameof(FilterOperation.Operator), nameof(FilterOperator.LessThan) }
+                            },
+                            new JObject
+                            {
+                                { nameof(FilterOperation.Field), $"{nameof(DynamicPlaylistMap.Score)}.{nameof(DynamicPlaylistScore.TimeSet)}" },
+                                { nameof(FilterOperation.Value), new DateTime(2022, 3, 25).ToString(CultureInfo.InvariantCulture) },
+                                { nameof(FilterOperation.Operator), nameof(FilterOperator.LessThanOrEqual) }
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        Assert.Single(resultMaps);
+        Assert.Contains(resultMaps, x => x.Id == "3");
+    }
+
+    [Fact]
+    public async Task ArrangeDynamicPlaylists_DynamicPlaylistWithDateTimeFilters_FiltersDateTimeEqual()
+    {
+        var resultMaps = await CallArrangeDynamicPlaylistWith(new JObject
+        {
+            {
+                "dynamicPlaylistConfiguration", new JObject
+                {
+                    { nameof(DynamicPlaylistConfiguration.MapPool), nameof(MapPool.Standard) },
+                    { nameof(DynamicPlaylistConfiguration.MapCount), 100 },
+                    {
+                        nameof(DynamicPlaylistConfiguration.FilterOperations), new JArray
+                        {
+                            new JObject
+                            {
+                                { nameof(FilterOperation.Field), $"{nameof(DynamicPlaylistMap.Score)}.{nameof(DynamicPlaylistScore.TimeSet)}" },
+                                { nameof(FilterOperation.Value), new DateTime(2022, 3, 25).ToString(CultureInfo.InvariantCulture) },
+                                { nameof(FilterOperation.Operator), nameof(FilterOperator.Equals) }
+                            },
+                            new JObject
+                            {
+                                { nameof(FilterOperation.Field), $"{nameof(DynamicPlaylistMap.Score)}.{nameof(DynamicPlaylistScore.TimeSet)}" },
+                                { nameof(FilterOperation.Value), new DateTime(2023, 1, 12).ToString(CultureInfo.InvariantCulture) },
+                                { nameof(FilterOperation.Operator), nameof(FilterOperator.NotEquals) }
+                            },
+                        }
+                    }
+                }
+            }
+        });
+
+        Assert.Single(resultMaps);
+        Assert.Contains(resultMaps, x => x.Id == "3");
+    }
+
+    [Fact]
+    public async Task ArrangeDynamicPlaylists_DynamicPlaylistWithBooleanFilters_FiltersBoolean()
+    {
+        var resultMaps = await CallArrangeDynamicPlaylistWith(new JObject
+        {
+            {
+                "dynamicPlaylistConfiguration", new JObject
+                {
+                    { nameof(DynamicPlaylistConfiguration.MapPool), nameof(MapPool.Standard) },
+                    { nameof(DynamicPlaylistConfiguration.MapCount), 100 },
+                    {
+                        nameof(DynamicPlaylistConfiguration.FilterOperations), new JArray
+                        {
+                            new JObject
+                            {
+                                { nameof(FilterOperation.Field), nameof(DynamicPlaylistMap.Played) },
+                                { nameof(FilterOperation.Value), true },
+                                { nameof(FilterOperation.Operator), nameof(FilterOperator.Equals) }
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        Assert.Equal(2, resultMaps.Count());
+        Assert.Contains(resultMaps, x => x.Id == "1");
+        Assert.Contains(resultMaps, x => x.Id == "3");
     }
 
     private async Task<IEnumerable<Map>> CallArrangeDynamicPlaylistWith(object customData)
@@ -224,6 +338,13 @@ public class DynamicPlaylistArrangementServiceTests
                     {
                         Stars = 1,
                         PP = 20
+                    },
+                    PlayerScore = new PlayerScore
+                    {
+                        Score = new Score
+                        {
+                            TimeSet = new DateTime(2023, 1, 12)
+                        }
                     }
                 },
                 new Map
@@ -246,6 +367,13 @@ public class DynamicPlaylistArrangementServiceTests
                     {
                         Stars = 5.2,
                         PP = 43.2
+                    },
+                    PlayerScore = new PlayerScore
+                    {
+                        Score = new Score
+                        {
+                            TimeSet = new DateTime(2022, 3, 25)
+                        }
                     }
                 }
             }));
