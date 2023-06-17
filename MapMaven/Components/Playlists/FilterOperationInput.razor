@@ -46,7 +46,7 @@
             <MudTextField @bind-Value="FilterOperation.Value" Label="Value" Variant="Variant.Outlined" Margin="Margin.Dense" Class="pl-2" />
             break;
         case Type type when Numeric.Is(type):
-            <MudNumericField @bind-Value="FilterOperation.Value" Label="Value" Variant="Variant.Outlined" Margin="Margin.Dense" Class="pl-2" />
+            <MudNumericField Value="FilterOperation.Value" TextChanged="DoubleValueChanged" Label="Value" Variant="Variant.Outlined" Margin="Margin.Dense" Class="pl-2" />
             break;
         case Type type when type == typeof(bool):
             <MudSwitch T="bool" Checked="@(bool.TryParse(FilterOperation.Value, out var boolValue) ? boolValue : false)" CheckedChanged="BooleanValueChanged" Color="Color.Primary" Class="pl-2" />

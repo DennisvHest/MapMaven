@@ -47,5 +47,10 @@ namespace MapMaven.Components.Playlists
         {
             FilterOperation.Value = value?.ToString(CultureInfo.InvariantCulture);
         }
+
+        void DoubleValueChanged(string value)
+        {
+            FilterOperation.Value = value.Replace(',', '.');
+        }
     }
 }

@@ -4,6 +4,7 @@ using MapMaven.Core.Models.DynamicPlaylists.MapInfo;
 using MapMaven.Models;
 using Pather.CSharp;
 using System.Reactive.Linq;
+using System.Globalization;
 
 namespace MapMaven.Core.Services
 {
@@ -139,7 +140,7 @@ namespace MapMaven.Core.Services
 
             if (value is double doubleValue)
             {
-                var compareValue = double.Parse(filterOperation.Value);
+                var compareValue = double.Parse(filterOperation.Value, CultureInfo.InvariantCulture);
 
                 return filterOperation.Operator switch
                 {
