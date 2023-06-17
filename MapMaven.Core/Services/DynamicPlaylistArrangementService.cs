@@ -131,8 +131,8 @@ namespace MapMaven.Core.Services
             {
                 return filterOperation.Operator switch
                 {
-                    FilterOperator.Equals => stringValue == filterOperation.Value,
-                    FilterOperator.NotEquals => stringValue != filterOperation.Value,
+                    FilterOperator.Equals => stringValue.Equals(filterOperation.Value, StringComparison.OrdinalIgnoreCase),
+                    FilterOperator.NotEquals => !stringValue.Equals(filterOperation.Value, StringComparison.OrdinalIgnoreCase),
                     _ => false
                 };
             }
