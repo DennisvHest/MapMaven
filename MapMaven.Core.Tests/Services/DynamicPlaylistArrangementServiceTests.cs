@@ -1,4 +1,5 @@
 using BeatSaberPlaylistsLib.Types;
+using Castle.Core.Logging;
 using MapMaven.Core.ApiClients;
 using MapMaven.Core.Models.Data;
 using MapMaven.Core.Models.Data.ScoreSaber;
@@ -7,6 +8,7 @@ using MapMaven.Core.Models.DynamicPlaylists.MapInfo;
 using MapMaven.Core.Services;
 using MapMaven.Core.Services.Interfaces;
 using MapMaven.Models;
+using Microsoft.Extensions.Logging;
 using Moq;
 using Newtonsoft.Json.Linq;
 using System.Globalization;
@@ -15,11 +17,12 @@ using Playlist = MapMaven.Models.Playlist;
 
 public class DynamicPlaylistArrangementServiceTests
 {
-    private readonly Mock<IApplicationSettingService> _applicationSettingServiceMock = new Mock<IApplicationSettingService>();
-    private readonly Mock<IPlaylistService> _playlistServiceMock = new Mock<IPlaylistService>();
-    private readonly Mock<IBeatSaberDataService> _beatSaberDataServiceMock = new Mock<IBeatSaberDataService>();
-    private readonly Mock<IScoreSaberService> _scoreSaberServiceMock = new Mock<IScoreSaberService>();
-    private readonly Mock<IMapService> _mapServiceMock = new Mock<IMapService>();
+    private readonly Mock<IApplicationSettingService> _applicationSettingServiceMock = new();
+    private readonly Mock<IPlaylistService> _playlistServiceMock = new();
+    private readonly Mock<IBeatSaberDataService> _beatSaberDataServiceMock = new();
+    private readonly Mock<IScoreSaberService> _scoreSaberServiceMock = new();
+    private readonly Mock<IMapService> _mapServiceMock = new();
+    private readonly Mock<ILogger<DynamicPlaylistArrangementService>> _loggerMock = new();
 
     private readonly DynamicPlaylistArrangementService _sut;
 
@@ -30,7 +33,8 @@ public class DynamicPlaylistArrangementServiceTests
             _mapServiceMock.Object,
             _playlistServiceMock.Object,
             _scoreSaberServiceMock.Object,
-            _applicationSettingServiceMock.Object);
+            _applicationSettingServiceMock.Object,
+            _loggerMock.Object);
     }
 
     [Fact]
@@ -460,6 +464,97 @@ public class DynamicPlaylistArrangementServiceTests
         Assert.Equal(mapOrder, resultMaps.Select(x => x.Id));
     }
 
+    [Fact]
+    public async Task ArrangeDynamicPlaylist_OneFailingPlaylist_StillArrangesOtherPlaylist()
+    {
+        var playlistMock1 = new Mock<IPlaylist>();
+
+        object customData1 = new JObject
+        {
+            {
+                "dynamicPlaylistConfiguration", new JObject
+                {
+                    { nameof(DynamicPlaylistConfiguration.MapPool), nameof(MapPool.Standard) },
+                    { nameof(DynamicPlaylistConfiguration.MapCount), 100 },
+                    {
+                        nameof(DynamicPlaylistConfiguration.FilterOperations), new JArray
+                        {
+                            new JObject
+                            {
+                                { nameof(FilterOperation.Field), $"{nameof(DynamicPlaylistMap.Score)}.{nameof(DynamicPlaylistScore.TimeSet)}" },
+                                { nameof(FilterOperation.Value), "99-99-9999 99:99:99" }, // Invalid DateTime
+                                { nameof(FilterOperation.Operator), nameof(FilterOperator.Equals) }
+                            }
+                        }
+                    }
+                }
+            }
+        };
+
+        playlistMock1
+            .Setup(x => x.TryGetCustomData("mapMaven", out customData1))
+            .Returns(true);
+
+        playlistMock1.SetupGet(x => x.Title).Returns("Playlist 1");
+
+        var playlistMock2 = new Mock<IPlaylist>();
+
+        object customData2 = new JObject
+        {
+            {
+                "dynamicPlaylistConfiguration", new JObject
+                {
+                    { nameof(DynamicPlaylistConfiguration.MapPool), nameof(MapPool.Standard) },
+                    { nameof(DynamicPlaylistConfiguration.MapCount), 100 },
+                    {
+                        nameof(DynamicPlaylistConfiguration.FilterOperations), new JArray
+                        {
+                            new JObject
+                            {
+                                { nameof(FilterOperation.Field), nameof(DynamicPlaylistMap.Played) },
+                                { nameof(FilterOperation.Value), true },
+                                { nameof(FilterOperation.Operator), nameof(FilterOperator.Equals) }
+                            }
+                        }
+                    }
+                }
+            }
+        };
+
+        playlistMock2
+            .Setup(x => x.TryGetCustomData("mapMaven", out customData2))
+            .Returns(true);
+
+        playlistMock2.SetupGet(x => x.Title).Returns("Playlist 2");
+
+        SetupMocksAndData(new[] { playlistMock1, playlistMock2 });
+
+        var resultMaps = Enumerable.Empty<Map>();
+
+        _playlistServiceMock
+            .Setup(x => x.ReplaceMapsInPlaylist(It.IsAny<IEnumerable<Map>>(), It.IsAny<Playlist>(), It.IsAny<bool>()))
+            .Callback((IEnumerable<Map> maps, Playlist playlist, bool loadPlaylist) =>
+            {
+                if (playlist.Title == "Playlist 2")
+                    resultMaps = maps;
+            });
+
+        await _sut.ArrangeDynamicPlaylists();
+
+        _loggerMock.Verify(logger => logger.Log(
+            It.Is<LogLevel>(logLevel => logLevel == LogLevel.Error),
+            It.Is<EventId>(eventId => eventId.Id == 0),
+            It.IsAny<It.IsAnyType>(),
+            It.IsAny<Exception>(),
+            It.IsAny<Func<It.IsAnyType, Exception, string>>()),
+            Times.Once
+        );
+
+        Assert.Equal(2, resultMaps.Count());
+        Assert.Contains(resultMaps, x => x.Id == "1");
+        Assert.Contains(resultMaps, x => x.Id == "3");
+    }
+
     private async Task<IEnumerable<Map>> CallArrangeDynamicPlaylistWith(object customData)
     {
         var playlistMock = new Mock<IPlaylist>();
@@ -483,12 +578,14 @@ public class DynamicPlaylistArrangementServiceTests
 
     private void SetupMocksAndData(Mock<IPlaylist> playlistMock)
     {
+        SetupMocksAndData(new[] { playlistMock });
+    }
+
+    private void SetupMocksAndData(Mock<IPlaylist>[] playlistMocks)
+    {
         _beatSaberDataServiceMock
             .Setup(x => x.GetAllPlaylists())
-            .ReturnsAsync(new List<IPlaylist>
-            {
-                playlistMock.Object
-            });
+            .ReturnsAsync(playlistMocks.Select(m => m.Object));
 
         _mapServiceMock
             .SetupGet(x => x.CompleteMapData)

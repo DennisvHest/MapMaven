@@ -5,6 +5,7 @@ using MapMaven.Models;
 using Pather.CSharp;
 using System.Reactive.Linq;
 using System.Globalization;
+using Microsoft.Extensions.Logging;
 
 namespace MapMaven.Core.Services
 {
@@ -15,6 +16,8 @@ namespace MapMaven.Core.Services
         private readonly IPlaylistService _playlistService;
         private readonly IScoreSaberService _scoreSaberService;
         private readonly IApplicationSettingService _applicationSettingService;
+
+        private readonly ILogger<DynamicPlaylistArrangementService> _logger;
 
         private readonly IResolver _resolver;
 
@@ -31,12 +34,15 @@ namespace MapMaven.Core.Services
             IMapService mapService,
             IPlaylistService playlistService,
             IScoreSaberService scoreSaberService,
-            IApplicationSettingService applicationSettingService)
+            IApplicationSettingService applicationSettingService,
+            ILogger<DynamicPlaylistArrangementService> logger)
         {
             _beatSaberDataService = beatSaberDataService;
             _mapService = mapService;
             _playlistService = playlistService;
             _scoreSaberService = scoreSaberService;
+
+            _logger = logger;
 
             _resolver = new Resolver();
             _applicationSettingService = applicationSettingService;
@@ -85,25 +91,34 @@ namespace MapMaven.Core.Services
 
             foreach (var playlist in dynamicPlaylists)
             {
-                var configuration = playlist.Playlist.DynamicPlaylistConfiguration;
-
-                var playlistMaps = configuration.MapPool switch
+                try
                 {
-                    MapPool.Standard => maps,
-                    MapPool.Improvement => rankedMaps,
-                    _ => maps
-                };
+                    var configuration = playlist.Playlist.DynamicPlaylistConfiguration;
 
-                playlistMaps = FilterMaps(playlistMaps, configuration);
-                playlistMaps = SortMaps(playlistMaps, configuration);
+                    var playlistMaps = configuration.MapPool switch
+                    {
+                        MapPool.Standard => maps,
+                        MapPool.Improvement => rankedMaps,
+                        _ => maps
+                    };
 
-                playlistMaps = playlistMaps.Take(configuration.MapCount);
+                    playlistMaps = FilterMaps(playlistMaps, configuration);
+                    playlistMaps = SortMaps(playlistMaps, configuration);
 
-                var resultPlaylistMaps = playlistMaps.Select(m => m.Map);
+                    playlistMaps = playlistMaps.Take(configuration.MapCount);
 
-                await _playlistService.DownloadPlaylistMapsIfNotExist(resultPlaylistMaps, loadMapInfo: false);
+                    var resultPlaylistMaps = playlistMaps
+                        .Select(m => m.Map)
+                        .ToList();
 
-                await _playlistService.ReplaceMapsInPlaylist(resultPlaylistMaps, playlist.Playlist, loadPlaylists: false);
+                    await _playlistService.DownloadPlaylistMapsIfNotExist(resultPlaylistMaps, loadMapInfo: false);
+
+                    await _playlistService.ReplaceMapsInPlaylist(resultPlaylistMaps, playlist.Playlist, loadPlaylists: false);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, $"Error arranging dynamic playlist: {playlist.PlaylistInfo?.Title}");
+                }
             }
 
             await Task.WhenAll(new[] {
