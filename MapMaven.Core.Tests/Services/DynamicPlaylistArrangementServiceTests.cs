@@ -295,6 +295,171 @@ public class DynamicPlaylistArrangementServiceTests
         Assert.Contains(resultMaps, x => x.Id == "3");
     }
 
+    [Fact]
+    public async Task ArrangeDynamicPlaylists_DynamicPlaylistWithStringSort_SortsByString()
+    {
+        var resultMaps = await CallArrangeDynamicPlaylistWith(new JObject
+        {
+            {
+                "dynamicPlaylistConfiguration", new JObject
+                {
+                    { nameof(DynamicPlaylistConfiguration.MapPool), nameof(MapPool.Standard) },
+                    { nameof(DynamicPlaylistConfiguration.MapCount), 100 },
+                    {
+                        nameof(DynamicPlaylistConfiguration.SortOperations), new JArray
+                        {
+                            new JObject
+                            {
+                                { nameof(SortOperation.Field), nameof(DynamicPlaylistMap.Name) },
+                                { nameof(SortOperation.Direction), nameof(SortDirection.Ascending) }
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        var mapOrder = new[] { "2", "3", "1" };
+
+        resultMaps = resultMaps.Where(m => mapOrder.Contains(m.Id));
+
+        Assert.Equal(3, resultMaps.Count());
+        Assert.Equal(mapOrder, resultMaps.Select(x => x.Id));
+    }
+
+    [Fact]
+    public async Task ArrangeDynamicPlaylists_DynamicPlaylistWithMultipleSorts_SortsByAllSorts()
+    {
+        var resultMaps = await CallArrangeDynamicPlaylistWith(new JObject
+        {
+            {
+                "dynamicPlaylistConfiguration", new JObject
+                {
+                    { nameof(DynamicPlaylistConfiguration.MapPool), nameof(MapPool.Standard) },
+                    { nameof(DynamicPlaylistConfiguration.MapCount), 100 },
+                    {
+                        nameof(DynamicPlaylistConfiguration.SortOperations), new JArray
+                        {
+                            new JObject
+                            {
+                                { nameof(SortOperation.Field), nameof(DynamicPlaylistMap.SongAuthorName) },
+                                { nameof(SortOperation.Direction), nameof(SortDirection.Descending) }
+                            },
+                            new JObject
+                            {
+                                { nameof(SortOperation.Field), nameof(DynamicPlaylistMap.Name) },
+                                { nameof(SortOperation.Direction), nameof(SortDirection.Ascending) }
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        var mapOrder = new[] { "3", "2", "1" };
+
+        resultMaps = resultMaps.Where(m => mapOrder.Contains(m.Id));
+
+        Assert.Equal(3, resultMaps.Count());
+        Assert.Equal(mapOrder, resultMaps.Select(x => x.Id));
+    }
+
+    [Fact]
+    public async Task ArrangeDynamicPlaylists_DynamicPlaylistWithDoubleSort_SortsByDouble()
+    {
+        var resultMaps = await CallArrangeDynamicPlaylistWith(new JObject
+        {
+            {
+                "dynamicPlaylistConfiguration", new JObject
+                {
+                    { nameof(DynamicPlaylistConfiguration.MapPool), nameof(MapPool.Standard) },
+                    { nameof(DynamicPlaylistConfiguration.MapCount), 100 },
+                    {
+                        nameof(DynamicPlaylistConfiguration.SortOperations), new JArray
+                        {
+                            new JObject
+                            {
+                                { nameof(SortOperation.Field), nameof(DynamicPlaylistMap.Stars) },
+                                { nameof(SortOperation.Direction), nameof(SortDirection.Ascending) }
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        var mapOrder = new[] { "1", "3", "2" };
+
+        resultMaps = resultMaps.Where(m => mapOrder.Contains(m.Id));
+
+        Assert.Equal(3, resultMaps.Count());
+        Assert.Equal(mapOrder, resultMaps.Select(x => x.Id));
+    }
+
+    [Fact]
+    public async Task ArrangeDynamicPlaylists_DynamicPlaylistWithDateTimeSort_SortsByDateTime()
+    {
+        var resultMaps = await CallArrangeDynamicPlaylistWith(new JObject
+        {
+            {
+                "dynamicPlaylistConfiguration", new JObject
+                {
+                    { nameof(DynamicPlaylistConfiguration.MapPool), nameof(MapPool.Standard) },
+                    { nameof(DynamicPlaylistConfiguration.MapCount), 100 },
+                    {
+                        nameof(DynamicPlaylistConfiguration.SortOperations), new JArray
+                        {
+                            new JObject
+                            {
+                                { nameof(SortOperation.Field), $"{nameof(DynamicPlaylistMap.Score)}.{nameof(DynamicPlaylistScore.TimeSet)}" },
+                                { nameof(SortOperation.Direction), nameof(SortDirection.Descending) }
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        var mapOrder = new[] { "1", "3", "2" };
+
+        resultMaps = resultMaps.Where(m => mapOrder.Contains(m.Id));
+
+        Assert.Equal(3, resultMaps.Count());
+        Assert.Equal(mapOrder, resultMaps.Select(x => x.Id));
+    }
+
+    [Fact]
+    public async Task ArrangeDynamicPlaylists_DynamicPlaylistWithBooleanSort_SortsByBoolean()
+    {
+        var resultMaps = await CallArrangeDynamicPlaylistWith(new JObject
+        {
+            {
+                "dynamicPlaylistConfiguration", new JObject
+                {
+                    { nameof(DynamicPlaylistConfiguration.MapPool), nameof(MapPool.Standard) },
+                    { nameof(DynamicPlaylistConfiguration.MapCount), 100 },
+                    {
+                        nameof(DynamicPlaylistConfiguration.SortOperations), new JArray
+                        {
+                            new JObject
+                            {
+                                { nameof(SortOperation.Field), nameof(DynamicPlaylistMap.Played) },
+                                { nameof(SortOperation.Direction), nameof(SortDirection.Descending) }
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        var mapOrder = new[] { "1", "3", "2" };
+
+        resultMaps = resultMaps.Where(m => mapOrder.Contains(m.Id));
+
+        Assert.Equal(3, resultMaps.Count());
+        Assert.Equal(mapOrder, resultMaps.Select(x => x.Id));
+    }
+
     private async Task<IEnumerable<Map>> CallArrangeDynamicPlaylistWith(object customData)
     {
         var playlistMock = new Mock<IPlaylist>();
