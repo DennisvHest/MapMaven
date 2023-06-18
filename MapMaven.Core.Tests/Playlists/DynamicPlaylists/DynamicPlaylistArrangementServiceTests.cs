@@ -1,12 +1,11 @@
 using BeatSaberPlaylistsLib.Types;
-using Castle.Core.Logging;
 using MapMaven.Core.ApiClients;
-using MapMaven.Core.Models.Data;
 using MapMaven.Core.Models.Data.ScoreSaber;
 using MapMaven.Core.Models.DynamicPlaylists;
 using MapMaven.Core.Models.DynamicPlaylists.MapInfo;
 using MapMaven.Core.Services;
 using MapMaven.Core.Services.Interfaces;
+using MapMaven.Core.Tests.Maps;
 using MapMaven.Models;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -14,6 +13,8 @@ using Newtonsoft.Json.Linq;
 using System.Globalization;
 using System.Reactive.Linq;
 using Playlist = MapMaven.Models.Playlist;
+
+namespace MapMaven.Core.Tests.Playlists.DynamicPlaylists;
 
 public class DynamicPlaylistArrangementServiceTests
 {
@@ -589,56 +590,7 @@ public class DynamicPlaylistArrangementServiceTests
 
         _mapServiceMock
             .SetupGet(x => x.CompleteMapData)
-            .Returns(Observable.Return(new Map[]
-            {
-                new Map
-                {
-                    Id = "1",
-                    Name = "Test Map",
-                    SongAuthorName = "Camellia",
-                    RankedMap = new RankedMap
-                    {
-                        Stars = 1,
-                        PP = 20
-                    },
-                    PlayerScore = new PlayerScore
-                    {
-                        Score = new Score
-                        {
-                            TimeSet = new DateTime(2023, 1, 12)
-                        }
-                    }
-                },
-                new Map
-                {
-                    Id = "2",
-                    Name = "Other test map",
-                    SongAuthorName = "Camellia",
-                    RankedMap = new RankedMap
-                    {
-                        Stars = 10,
-                        PP = 100
-                    }
-                },
-                new Map
-                {
-                    Id = "3",
-                    Name = "sleepparalysis//////////////",
-                    SongAuthorName = "Test song author",
-                    RankedMap = new RankedMap
-                    {
-                        Stars = 5.2,
-                        PP = 43.2
-                    },
-                    PlayerScore = new PlayerScore
-                    {
-                        Score = new Score
-                        {
-                            TimeSet = new DateTime(2022, 3, 25)
-                        }
-                    }
-                }
-            }));
+            .Returns(Observable.Return(MapTestData.Maps));
 
         _mapServiceMock
             .SetupGet(x => x.CompleteRankedMapData)
