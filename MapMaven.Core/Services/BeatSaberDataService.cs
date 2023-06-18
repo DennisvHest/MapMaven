@@ -18,6 +18,7 @@ using Microsoft.Extensions.Logging;
 using MapMaven.Core.Models.Data;
 using System.Runtime;
 using MapMaven.Core.Services.Interfaces;
+using System.IO.Abstractions;
 
 namespace MapMaven.Services
 {
@@ -31,6 +32,8 @@ namespace MapMaven.Services
         private readonly IServiceProvider _serviceProvider;
 
         private readonly ILogger<IBeatSaberDataService> _logger;
+
+        private readonly IFileSystem _fileSystem;
 
         private readonly Regex _mapIdRegex = new Regex(@"^[0-9A-Fa-f]+");
 
@@ -49,12 +52,13 @@ namespace MapMaven.Services
         public IObservable<IEnumerable<IPlaylist>> PlaylistInfo => _playlistInfo;
         public IObservable<bool> LoadingPlaylistInfo => _loadingPlaylistInfo;
 
-        public BeatSaberDataService(IBeatmapHasher beatmapHasher, BeatSaberFileService fileService, IServiceProvider serviceProvider, ILogger<BeatSaberDataService> logger)
+        public BeatSaberDataService(IBeatmapHasher beatmapHasher, BeatSaberFileService fileService, IServiceProvider serviceProvider, ILogger<BeatSaberDataService> logger, IFileSystem fileSystem)
         {
             _fileService = fileService;
             _beatmapHasher = beatmapHasher;
             _serviceProvider = serviceProvider;
             _logger = logger;
+            _fileSystem = fileSystem;
 
             _fileService.PlaylistsLocationObservable.Subscribe(playlistsLocation =>
             {
@@ -102,10 +106,10 @@ namespace MapMaven.Services
 
         public async Task LoadMapInfo(string id)
         {
-            var mapDirectory = Directory.EnumerateDirectories(_fileService.MapsLocation)
+            var mapDirectory = _fileSystem.Directory.EnumerateDirectories(_fileService.MapsLocation)
                 .FirstOrDefault(d =>
                 {
-                    var directoryName = Path.GetFileName(d);
+                    var directoryName = _fileSystem.Path.GetFileName(d);
 
                     return directoryName.StartsWith(id);
                 });
@@ -125,7 +129,7 @@ namespace MapMaven.Services
 
         public async Task<IEnumerable<MapInfo>> GetAllMapInfo()
         {
-            if (!Directory.Exists(_fileService.MapsLocation))
+            if (!_fileSystem.Directory.Exists(_fileService.MapsLocation))
                 return Enumerable.Empty<MapInfo>();
 
             var songHashData = await GetSongHashData();
@@ -135,7 +139,7 @@ namespace MapMaven.Services
             var mapsByHash = mapInfoCache.ToDictionary(i => i.Hash);
             var mapsByDirectoryPath = mapInfoCache.ToDictionary(i => i.DirectoryPath.NormalizePath());
 
-            var fileReadTasks = Directory.EnumerateDirectories(_fileService.MapsLocation)
+            var fileReadTasks = _fileSystem.Directory.EnumerateDirectories(_fileService.MapsLocation)
                 .Select(mapDirectory => GetMapInfo(mapDirectory, songHashData, mapsByHash, mapsByDirectoryPath, songDurationCache));
 
             var mapInfo = await Task.WhenAll(fileReadTasks);
@@ -177,12 +181,12 @@ namespace MapMaven.Services
         {
             try
             {
-                var songHashFilePath = Path.Combine(_fileService.UserDataLocation, "SongCore", "SongHashData.dat");
+                var songHashFilePath = _fileSystem.Path.Combine(_fileService.UserDataLocation, "SongCore", "SongHashData.dat");
 
-                if (!File.Exists(songHashFilePath))
+                if (!_fileSystem.File.Exists(songHashFilePath))
                     return new Dictionary<string, SongHash>();
 
-                var songHashJson = await File.ReadAllTextAsync(songHashFilePath);
+                var songHashJson = await _fileSystem.File.ReadAllTextAsync(songHashFilePath);
 
                 var songHashData = JsonSerializer.Deserialize<Dictionary<string, SongHash>>(songHashJson, new JsonSerializerOptions
                 {
@@ -206,9 +210,9 @@ namespace MapMaven.Services
         {
             var fromPath = _fileService.BeatSaberInstallLocation.NormalizePath();
 
-            if (!fromPath.EndsWith(Path.DirectorySeparatorChar.ToString()))
+            if (!fromPath.EndsWith(_fileSystem.Path.DirectorySeparatorChar.ToString()))
             {
-                fromPath += Path.DirectorySeparatorChar;
+                fromPath += _fileSystem.Path.DirectorySeparatorChar;
             }
 
             if (!path.StartsWith(fromPath)) return path;
@@ -220,10 +224,10 @@ namespace MapMaven.Services
 
             if (!relativePath.StartsWith("."))
             {
-                relativePath = Path.Combine(".", relativePath);
+                relativePath = _fileSystem.Path.Combine(".", relativePath);
             }
 
-            return relativePath.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
+            return relativePath.Replace(_fileSystem.Path.AltDirectorySeparatorChar, _fileSystem.Path.DirectorySeparatorChar);
         }
 
         /// <summary>
@@ -233,12 +237,12 @@ namespace MapMaven.Services
         {
             try
             {
-                var songHashFilePath = Path.Combine(_fileService.UserDataLocation, "SongCore", "SongDurationCache.dat");
+                var songHashFilePath = _fileSystem.Path.Combine(_fileService.UserDataLocation, "SongCore", "SongDurationCache.dat");
 
-                if (!File.Exists(songHashFilePath))
+                if (!_fileSystem.File.Exists(songHashFilePath))
                     return new Dictionary<string, SongDuration>();
 
-                var songDurationJson = await File.ReadAllTextAsync(songHashFilePath);
+                var songDurationJson = await _fileSystem.File.ReadAllTextAsync(songHashFilePath);
 
                 var songDurationData = JsonSerializer.Deserialize<Dictionary<string, SongDuration>>(songDurationJson, new JsonSerializerOptions
                 {
@@ -316,8 +320,8 @@ namespace MapMaven.Services
                 }
                 else
                 {
-                    var infoFilePath = Path.Combine(mapDirectory, "Info.dat");
-                    var mapInfoText = await File.ReadAllTextAsync(infoFilePath);
+                    var infoFilePath = _fileSystem.Path.Combine(mapDirectory, "Info.dat");
+                    var mapInfoText = await _fileSystem.File.ReadAllTextAsync(infoFilePath);
 
                     info = JsonSerializer.Deserialize<MapInfo>(mapInfoText);
                 }
@@ -325,7 +329,7 @@ namespace MapMaven.Services
                 info.Hash = mapHash;
                 info.DirectoryPath = normalizedMapDirectory;
 
-                var directoryName = Path.GetFileName(Path.GetDirectoryName(info.DirectoryPath + "/"));
+                var directoryName = _fileSystem.Path.GetFileName(_fileSystem.Path.GetDirectoryName(info.DirectoryPath + "/"));
 
                 info.Id = _mapIdRegex.Match(directoryName)?.Value;
 
@@ -371,7 +375,7 @@ namespace MapMaven.Services
                 }
                 else
                 {
-                    var audioFilePath = Path.Combine(info.DirectoryPath, info.SongFileName);
+                    var audioFilePath = _fileSystem.Path.Combine(info.DirectoryPath, info.SongFileName);
 
                     using (var audioFile = new VorbisReader(audioFilePath))
                     {
@@ -389,7 +393,7 @@ namespace MapMaven.Services
         {
             var mapInfo = _mapInfo.Value[mapId];
 
-            var imageFilePath = Path.Combine(mapInfo.DirectoryPath, mapInfo.CoverImageFilename);
+            var imageFilePath = _fileSystem.Path.Combine(mapInfo.DirectoryPath, mapInfo.CoverImageFilename);
 
             return Image.FromFile(imageFilePath);
         }
@@ -398,7 +402,7 @@ namespace MapMaven.Services
         {
             var mapInfo = _mapInfo.Value[mapId];
 
-            return Path.Combine(mapInfo.DirectoryPath, mapInfo.SongFileName);
+            return _fileSystem.Path.Combine(mapInfo.DirectoryPath, mapInfo.SongFileName);
         }
 
         public void SetInitialMapLoad(bool initialMapLoad)

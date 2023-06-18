@@ -11,6 +11,7 @@ using System.Security.AccessControl;
 using System.Security.Principal;
 using MapMaven.Core.Services.Interfaces;
 using Newtonsoft.Json;
+using System.IO.Abstractions;
 
 namespace MapMaven.Infrastructure
 {
@@ -24,6 +25,8 @@ namespace MapMaven.Infrastructure
 
             services.AddDbContext<MapMavenContext>();
             services.AddScoped<IDataStore, MapMavenContext>();
+
+            services.AddSingleton<IFileSystem, FileSystem>();
 
             services.AddScoped<IBeatmapHasher, Hasher>();
             services.AddScoped(_ => new BeatSaver("MapMaven", new Version(1, 0)));
