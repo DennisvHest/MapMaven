@@ -12,6 +12,10 @@ using MapMaven.Services;
 using BeatSaber.SongHashing;
 using System.Reactive.Linq;
 using MapMaven.Core.Models.Data;
+using System.IO.Abstractions.TestingHelpers;
+using MapMaven.Core.ApiClients;
+using MapMaven.Core.Models.Data.ScoreSaber;
+using MapMaven.Core.Utilities.Scoresaber;
 
 namespace MapMaven.Core.Tests.Playlists.DynamicPlaylists;
 
@@ -25,9 +29,13 @@ public class DynamicPlaylistArrangementIntegrationTests
     private readonly Mock<ILogger<DynamicPlaylistArrangementService>> _dynamicPlaylistArrangementServiceLoggerMock = new();
     private readonly Mock<ILogger<BeatSaberDataService>> _beatSaberDataServiceLoggerMock = new();
     private readonly Mock<IServiceProvider> _serviceProviderMock = new();
+    private readonly Mock<ScoreSaberApiClient> _scoreSaberApiClientMock = new();
+    private readonly Mock<IHttpClientFactory> _httpClientFactoryMock = new();
+    private readonly Mock<IApplicationEventService> _applicationEventServiceMock = new();
 
     private readonly BeatSaberDataService _beatSaberDataService;
     private readonly BeatSaberFileService _beatSaberFileService;
+    private readonly MapService _mapService;
 
     private readonly DynamicPlaylistArrangementService _sut;
 
@@ -39,7 +47,50 @@ public class DynamicPlaylistArrangementIntegrationTests
 
         _beatSaberFileService = new(_applicationSettingServiceMock.Object);
 
-        _beatSaberDataService = new(new Hasher(), _beatSaberFileService, _serviceProviderMock.Object, _beatSaberDataServiceLoggerMock.Object);
+
+        var fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>
+        {
+        });
+
+        _beatSaberDataService = new(new Hasher(), _beatSaberFileService, _serviceProviderMock.Object, _beatSaberDataServiceLoggerMock.Object, fileSystem);
+
+        _beatSaberDataServiceMock
+            .Setup(x => x.LoadAllMapInfo())
+            .Callback(() => _beatSaberDataService.LoadAllMapInfo());
+
+        _beatSaberDataServiceMock
+            .SetupGet(x => x.MapInfo)
+            .Returns(() => _beatSaberDataService.MapInfo);
+
+        _scoreSaberServiceMock
+            .SetupGet(x => x.PlayerScores)
+            .Returns(() => Observable.Return(Enumerable.Empty<PlayerScore>()));
+
+        _scoreSaberServiceMock
+            .SetupGet(x => x.RankedMaps)
+            .Returns(() => Observable.Return(Enumerable.Empty<RankedMap>()));
+
+        _scoreSaberServiceMock
+            .SetupGet(x => x.ScoreEstimates)
+            .Returns(() => Observable.Return(Enumerable.Empty<ScoreEstimate>()));
+
+        _scoreSaberServiceMock
+            .SetupGet(x => x.RankedMapScoreEstimates)
+            .Returns(() => Observable.Return(Enumerable.Empty<ScoreEstimate>()));
+
+        _scoreSaberServiceMock
+            .SetupGet(x => x.PlayerProfile)
+            .Returns(() => Observable.Return(new ApiClients.Player { Id = "1" }));
+
+        _mapService = new(_beatSaberDataService, _scoreSaberServiceMock.Object, null!, _beatSaberFileService, _serviceProviderMock.Object);
+
+        _mapServiceMock
+            .SetupGet(x => x.CompleteMapData)
+            .Returns(() => _mapService.CompleteMapData);
+
+        _mapServiceMock
+            .SetupGet(x => x.CompleteRankedMapData)
+            .Returns(() => _mapService.CompleteRankedMapData);
 
         _sut = new DynamicPlaylistArrangementService(
             _beatSaberDataServiceMock.Object,
@@ -53,8 +104,6 @@ public class DynamicPlaylistArrangementIntegrationTests
     [Fact]
     public async Task ArrangeDynamicPlaylists_ArrangesPlaylistBasedOnConfig()
     {
-        return; // WIP
-
         var playlistMock = new Mock<IPlaylist>();
 
         object customData = new JObject

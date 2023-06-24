@@ -13,7 +13,7 @@ namespace MapMaven.Core.Services
     {
         private readonly ScoreSaberApiClient _scoreSaber;
         private readonly IApplicationSettingService _applicationSettingService;
-        private readonly ApplicationEventService _applicationEventService;
+        private readonly IApplicationEventService _applicationEventService;
         private readonly IHttpClientFactory _httpClientFactory;
 
         private readonly BehaviorSubject<string?> _playerId = new(null);
@@ -34,10 +34,9 @@ namespace MapMaven.Core.Services
 
         public ScoreSaberService(
             ScoreSaberApiClient scoreSaber,
-            BeatSaberFileService fileService,
             IHttpClientFactory httpClientFactory,
             IApplicationSettingService applicationSettingService,
-            ApplicationEventService applicationEventService)
+            IApplicationEventService applicationEventService)
         {
             _scoreSaber = scoreSaber;
             _httpClientFactory = httpClientFactory;

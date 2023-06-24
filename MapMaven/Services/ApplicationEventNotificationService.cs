@@ -1,11 +1,12 @@
 ﻿using MapMaven.Core.Services;
+using MapMaven.Core.Services.Interfaces;
 using MudBlazor;
 
 namespace MapMaven.Services
 {
     public class ApplicationEventNotificationService
     {
-        public ApplicationEventNotificationService(ApplicationEventService applicationEventService, ISnackbar snackbar)
+        public ApplicationEventNotificationService(IApplicationEventService applicationEventService, ISnackbar snackbar)
         {
             applicationEventService.ErrorRaised.Subscribe(error =>
             {

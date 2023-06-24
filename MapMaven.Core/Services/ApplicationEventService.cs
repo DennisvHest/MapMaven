@@ -1,10 +1,11 @@
 ﻿using System.Reactive.Subjects;
 using MapMaven.Core.Models;
+using MapMaven.Core.Services.Interfaces;
 using Microsoft.Extensions.Logging;
 
 namespace MapMaven.Core.Services
 {
-    public class ApplicationEventService
+    public class ApplicationEventService : IApplicationEventService
     {
         private readonly ILogger<ApplicationEventService> _logger;
 

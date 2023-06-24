@@ -45,7 +45,7 @@ namespace MapMaven.Infrastructure
             services.AddSingleton<IScoreSaberService, ScoreSaberService>();
             services.AddSingleton<DynamicPlaylistArrangementService>();
             services.AddSingleton<IApplicationSettingService, ApplicationSettingService>();
-            services.AddSingleton<ApplicationEventService>();
+            services.AddSingleton<IApplicationEventService, ApplicationEventService>();
         }
 
         public static void Initialize(IServiceProvider serviceProvider)
