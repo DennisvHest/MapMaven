@@ -96,8 +96,8 @@ namespace MapMaven.Services
             CompleteRankedMapData = Observable.CombineLatest(
                 _beatSaberDataService.MapInfo,
                 _scoreSaberService.RankedMaps,
-                _scoreSaberService.RankedMapScoreEstimates.Where(x => x.Any()),
-                _scoreSaberService.PlayerScores.Where(x => x.Any()),
+                _scoreSaberService.RankedMapScoreEstimates,
+                _scoreSaberService.PlayerScores,
                 hiddenMaps,
                 CombineRankedMapData);
         }
