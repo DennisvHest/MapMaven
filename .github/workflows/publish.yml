@@ -27,7 +27,15 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
     - name: Test
-      run: dotnet test
+      run: dotnet test --logger "trx;LogFileName=test-results.trx"
+    - name: Test Report
+      uses: dorny/test-reporter@v1
+      if: always()
+      with:
+        name: Test results
+        path: "**/test-results.trx"                            
+        reporter: dotnet-trx
+        fail-on-error: true
     - name: Publish
       run: dotnet publish -f net7.0-windows10.0.19041.0 -c Release
       working-directory: "${{ github.workspace }}/MapMaven"
