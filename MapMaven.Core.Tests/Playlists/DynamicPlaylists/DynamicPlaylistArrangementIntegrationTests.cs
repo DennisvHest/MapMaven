@@ -16,6 +16,10 @@ using System.IO.Abstractions.TestingHelpers;
 using MapMaven.Core.ApiClients;
 using MapMaven.Core.Models.Data.ScoreSaber;
 using MapMaven.Core.Utilities.Scoresaber;
+using Microsoft.Extensions.DependencyInjection;
+using MapMaven.Models.Data;
+using MockQueryable.Moq;
+using System;
 
 namespace MapMaven.Core.Tests.Playlists.DynamicPlaylists;
 
@@ -45,12 +49,41 @@ public class DynamicPlaylistArrangementIntegrationTests
             .SetupGet(x => x.ApplicationSettings)
             .Returns(Observable.Empty<Dictionary<string, ApplicationSetting>>());
 
+        _applicationSettingServiceMock
+            .SetupGet(x => x.ApplicationSettings)
+            .Returns(Observable.Return(new Dictionary<string, ApplicationSetting>()
+            {
+                { "BeatSaberInstallLocation", new() { StringValue = "C:/" } }
+            }));
+
         _beatSaberFileService = new(_applicationSettingServiceMock.Object);
+        var fileSystem = MockFileSystem();
 
+        var serviceScopeMock = new Mock<IServiceScope>();
 
-        var fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>
-        {
-        });
+        serviceScopeMock
+            .SetupGet(x => x.ServiceProvider)
+            .Returns(_serviceProviderMock.Object);
+
+        var serviceScopeFactory = new Mock<IServiceScopeFactory>();
+
+        serviceScopeFactory
+            .Setup(x => x.CreateScope())
+            .Returns(serviceScopeMock.Object);
+
+        _serviceProviderMock
+            .Setup(x => x.GetService(typeof(IServiceScopeFactory)))
+            .Returns(serviceScopeFactory.Object);
+
+        var dataStoreMock = new Mock<IDataStore>();
+
+        dataStoreMock
+            .Setup(x => x.Set<MapInfo>())
+            .Returns(new List<MapInfo>().AsQueryable().BuildMockDbSet().Object);
+
+        _serviceProviderMock
+            .Setup(x => x.GetService(typeof(IDataStore)))
+            .Returns(dataStoreMock.Object);
 
         _beatSaberDataService = new(new Hasher(), _beatSaberFileService, _serviceProviderMock.Object, _beatSaberDataServiceLoggerMock.Object, fileSystem);
 
@@ -101,11 +134,67 @@ public class DynamicPlaylistArrangementIntegrationTests
             _dynamicPlaylistArrangementServiceLoggerMock.Object);
     }
 
+    private static MockFileSystem MockFileSystem()
+    {
+        var maps = new MapInfo[]
+        {
+            new() { SongName = "KillerToy", SongAuthorName = "Camellia", DirectoryPath = "1A466 ([Queue] Camellia - KillerToy - Jabob)" },
+            new() { SongName = "Nacreous Snowmelt", SongAuthorName = "Camellia", DirectoryPath = "6F01 (Camellia - Nacreous Snowmelt - Dack)" },
+            new() { SongName = "Come Alive", SongAuthorName = "Pendulum", DirectoryPath = "188b1 (Come Alive - Fatalution)" },
+        };
+
+        var songHashData = GetMockSongHashData(maps);
+
+        var mockFiles = new Dictionary<string, MockFileData>
+        {
+            { "/UserData/SongCore/SongHashData.dat", new MockFileData(songHashData) },
+        };
+
+        AddMockMapInfo(mockFiles, maps);
+
+        return new MockFileSystem(mockFiles);
+    }
+
+    private static string GetMockSongHashData(IEnumerable<MapInfo> maps)
+    {
+        var mapsJson = maps.Select(m => $$"""
+            ".\\Beat Saber_Data\\CustomLevels\\{{m.DirectoryPath}}": {
+                "directoryHash": 1,
+                "songHash": "{{Guid.NewGuid()}}"
+            }
+        """);
+
+        return $$"""
+        {
+            {{string.Join(",", mapsJson)}}
+        }
+        """;
+    }
+
+    private static void AddMockMapInfo(Dictionary<string, MockFileData> mockFiles, MapInfo[] maps)
+    {
+        foreach (var map in maps)
+        {
+            AddMockMapInfo(mockFiles, map);
+        }
+    }
+
+    private static void AddMockMapInfo(Dictionary<string, MockFileData> mapInfoDictionary, MapInfo mapInfo)
+    {
+        var mapInfoJson =
+        $$"""
+        {
+          "_songName": "{{mapInfo.SongName}}",
+          "_songAuthorName": "{{mapInfo.SongAuthorName}}"
+        }
+        """;
+
+        mapInfoDictionary.Add($"/Beat Saber_Data/CustomLevels/{mapInfo.DirectoryPath}/Info.dat", new MockFileData(mapInfoJson));
+    }
+
     [Fact]
     public async Task ArrangeDynamicPlaylists_ArrangesPlaylistBasedOnConfig()
     {
-        return; //WIP
-
         var playlistMock = new Mock<IPlaylist>();
 
         object customData = new JObject
@@ -114,7 +203,7 @@ public class DynamicPlaylistArrangementIntegrationTests
                 "dynamicPlaylistConfiguration", new JObject
                 {
                     { nameof(DynamicPlaylistConfiguration.MapPool), nameof(MapPool.Standard) },
-                    { nameof(DynamicPlaylistConfiguration.MapCount), 1 },
+                    { nameof(DynamicPlaylistConfiguration.MapCount), 20 },
                     {
                         nameof(DynamicPlaylistConfiguration.FilterOperations), new JArray
                         {
