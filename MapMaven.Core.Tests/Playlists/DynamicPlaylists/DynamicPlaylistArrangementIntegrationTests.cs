@@ -36,6 +36,7 @@ public class DynamicPlaylistArrangementIntegrationTests
     private readonly Mock<ScoreSaberApiClient> _scoreSaberApiClientMock = new();
     private readonly Mock<IHttpClientFactory> _httpClientFactoryMock = new();
     private readonly Mock<IApplicationEventService> _applicationEventServiceMock = new();
+    private readonly Mock<IBeatmapHasher> _hasherMock = new();
 
     private readonly BeatSaberDataService _beatSaberDataService;
     private readonly BeatSaberFileService _beatSaberFileService;
@@ -77,7 +78,9 @@ public class DynamicPlaylistArrangementIntegrationTests
 
         MockMapInfoCache();
 
-        _beatSaberDataService = new(new Hasher(), _beatSaberFileService, _serviceProviderMock.Object, _beatSaberDataServiceLoggerMock.Object, fileSystem);
+        _hasherMock = new Mock<IBeatmapHasher>();
+
+        _beatSaberDataService = new(_hasherMock.Object, _beatSaberFileService, _serviceProviderMock.Object, _beatSaberDataServiceLoggerMock.Object, fileSystem);
 
         _beatSaberDataServiceMock
             .Setup(x => x.LoadAllMapInfo())
@@ -164,6 +167,11 @@ public class DynamicPlaylistArrangementIntegrationTests
             {
                 MapInfo = new() { SongName = "Come Alive", SongAuthorName = "Pendulum", DirectoryPath = "188b1 (Come Alive - Fatalution)" },
                 Hash = "test123"
+            },
+            new()
+            {
+                MapInfo = new() { SongName = "Halcyon", SongAuthorName = "xi", DirectoryPath = "235b (Halcyon - splake)" },
+                HasSongCoreHash = false
             }
         };
 
@@ -181,7 +189,7 @@ public class DynamicPlaylistArrangementIntegrationTests
 
     private static string GetMockSongHashData(IEnumerable<TestMap> maps)
     {
-        var mapsJson = maps.Select(m => $$"""
+        var mapsJson = maps.Where(m => m.HasSongCoreHash).Select(m => $$"""
             ".\\Beat Saber_Data\\CustomLevels\\{{m.MapInfo.DirectoryPath}}": {
                 "directoryHash": 1,
                 "songHash": "{{m.Hash ?? Guid.NewGuid().ToString()}}"
@@ -303,6 +311,55 @@ public class DynamicPlaylistArrangementIntegrationTests
         Assert.Equal("test123", resultMap.SongAuthorName);
     }
 
+    [Fact]
+    public async Task ArrangeDynamicPlaylists_HashesDirectory_IfHashWasNotFoundSongCoreHash()
+    {
+        AddMockPlaylistWithConfig(new JObject
+        {
+            {
+                "dynamicPlaylistConfiguration", new JObject
+                {
+                    { nameof(DynamicPlaylistConfiguration.MapPool), nameof(MapPool.Standard) },
+                    { nameof(DynamicPlaylistConfiguration.MapCount), 20 },
+                    {
+                        nameof(DynamicPlaylistConfiguration.FilterOperations), new JArray
+                        {
+                            new JObject
+                            {
+                                { nameof(FilterOperation.Field), nameof(DynamicPlaylistMap.Name) },
+                                { nameof(FilterOperation.Value), "Halcyon" },
+                                { nameof(FilterOperation.Operator), nameof(FilterOperator.Equals) }
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        const string songDirectory = "C:\\Beat Saber_Data\\CustomLevels\\235b (Halcyon - splake)";
+
+        _hasherMock
+            .Setup(x => x.HashDirectoryAsync(songDirectory, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new HashResult { ResultType = HashResultType.Success, Hash = "112233" });
+
+        var resultMaps = Enumerable.Empty<Map>();
+
+        _playlistServiceMock
+            .Setup(x => x.ReplaceMapsInPlaylist(It.IsAny<IEnumerable<Map>>(), It.IsAny<Playlist>(), It.IsAny<bool>()))
+            .Callback((IEnumerable<Map> maps, Playlist playlist, bool loadPlaylist) => resultMaps = maps);
+
+        await _sut.ArrangeDynamicPlaylists();
+
+        _hasherMock.Verify(x => x.HashDirectoryAsync(songDirectory, It.IsAny<CancellationToken>()), Times.AtLeastOnce());
+
+        Assert.Single(resultMaps);
+
+        var resultMap = resultMaps.First();
+
+        Assert.Equal("112233", resultMap.Hash);
+        Assert.Equal("Halcyon", resultMap.Name);
+    }
+
     private void AddMockPlaylistWithConfig(object customData)
     {
         var playlistMock = new Mock<IPlaylist>();
@@ -320,5 +377,6 @@ public class DynamicPlaylistArrangementIntegrationTests
     {
         public MapInfo MapInfo { get; set; }
         public string? Hash { get; set; }
+        public bool HasSongCoreHash { get; set; } = true;
     }
 }
