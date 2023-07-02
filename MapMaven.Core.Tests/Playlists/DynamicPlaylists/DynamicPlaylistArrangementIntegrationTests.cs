@@ -75,21 +75,17 @@ public class DynamicPlaylistArrangementIntegrationTests
             .Setup(x => x.GetService(typeof(IServiceScopeFactory)))
             .Returns(serviceScopeFactory.Object);
 
-        var dataStoreMock = new Mock<IDataStore>();
-
-        dataStoreMock
-            .Setup(x => x.Set<MapInfo>())
-            .Returns(new List<MapInfo>().AsQueryable().BuildMockDbSet().Object);
-
-        _serviceProviderMock
-            .Setup(x => x.GetService(typeof(IDataStore)))
-            .Returns(dataStoreMock.Object);
+        MockMapInfoCache();
 
         _beatSaberDataService = new(new Hasher(), _beatSaberFileService, _serviceProviderMock.Object, _beatSaberDataServiceLoggerMock.Object, fileSystem);
 
         _beatSaberDataServiceMock
             .Setup(x => x.LoadAllMapInfo())
-            .Callback(() => _beatSaberDataService.LoadAllMapInfo());
+            .Returns(() =>
+            {
+                MockMapInfoCache();
+                return _beatSaberDataService.LoadAllMapInfo();
+            });
 
         _beatSaberDataServiceMock
             .SetupGet(x => x.MapInfo)
@@ -134,13 +130,41 @@ public class DynamicPlaylistArrangementIntegrationTests
             _dynamicPlaylistArrangementServiceLoggerMock.Object);
     }
 
+    private void MockMapInfoCache()
+    {
+        var dataStoreMock = new Mock<IDataStore>();
+
+        var mockMapInfoCache = new List<MapInfo>
+        {
+            new() { Hash = "test123", SongName = "Come Alive", SongAuthorName = "test123", DirectoryPath = "188b1 (Come Alive - Fatalution)" }
+        };
+
+        dataStoreMock
+            .Setup(x => x.Set<MapInfo>())
+            .Returns(mockMapInfoCache.AsQueryable().BuildMockDbSet().Object);
+
+        _serviceProviderMock
+            .Setup(x => x.GetService(typeof(IDataStore)))
+            .Returns(dataStoreMock.Object);
+    }
+
     private static MockFileSystem MockFileSystem()
     {
-        var maps = new MapInfo[]
+        var maps = new TestMap[]
         {
-            new() { SongName = "KillerToy", SongAuthorName = "Camellia", DirectoryPath = "1A466 ([Queue] Camellia - KillerToy - Jabob)" },
-            new() { SongName = "Nacreous Snowmelt", SongAuthorName = "Camellia", DirectoryPath = "6F01 (Camellia - Nacreous Snowmelt - Dack)" },
-            new() { SongName = "Come Alive", SongAuthorName = "Pendulum", DirectoryPath = "188b1 (Come Alive - Fatalution)" },
+            new()
+            {
+                MapInfo = new() { SongName = "KillerToy", SongAuthorName = "Camellia", DirectoryPath = "1A466 ([Queue] Camellia - KillerToy - Jabob)" },
+            },
+            new()
+            {
+                MapInfo = new() { SongName = "Nacreous Snowmelt", SongAuthorName = "Camellia", DirectoryPath = "6F01 (Camellia - Nacreous Snowmelt - Dack)" },
+            },
+            new()
+            {
+                MapInfo = new() { SongName = "Come Alive", SongAuthorName = "Pendulum", DirectoryPath = "188b1 (Come Alive - Fatalution)" },
+                Hash = "test123"
+            }
         };
 
         var songHashData = GetMockSongHashData(maps);
@@ -155,12 +179,12 @@ public class DynamicPlaylistArrangementIntegrationTests
         return new MockFileSystem(mockFiles);
     }
 
-    private static string GetMockSongHashData(IEnumerable<MapInfo> maps)
+    private static string GetMockSongHashData(IEnumerable<TestMap> maps)
     {
         var mapsJson = maps.Select(m => $$"""
-            ".\\Beat Saber_Data\\CustomLevels\\{{m.DirectoryPath}}": {
+            ".\\Beat Saber_Data\\CustomLevels\\{{m.MapInfo.DirectoryPath}}": {
                 "directoryHash": 1,
-                "songHash": "{{Guid.NewGuid()}}"
+                "songHash": "{{m.Hash ?? Guid.NewGuid().ToString()}}"
             }
         """);
 
@@ -171,7 +195,7 @@ public class DynamicPlaylistArrangementIntegrationTests
         """;
     }
 
-    private static void AddMockMapInfo(Dictionary<string, MockFileData> mockFiles, MapInfo[] maps)
+    private static void AddMockMapInfo(Dictionary<string, MockFileData> mockFiles, TestMap[] maps)
     {
         foreach (var map in maps)
         {
@@ -179,25 +203,23 @@ public class DynamicPlaylistArrangementIntegrationTests
         }
     }
 
-    private static void AddMockMapInfo(Dictionary<string, MockFileData> mapInfoDictionary, MapInfo mapInfo)
+    private static void AddMockMapInfo(Dictionary<string, MockFileData> mapInfoDictionary, TestMap mapInfo)
     {
         var mapInfoJson =
         $$"""
         {
-          "_songName": "{{mapInfo.SongName}}",
-          "_songAuthorName": "{{mapInfo.SongAuthorName}}"
+          "_songName": "{{mapInfo.MapInfo.SongName}}",
+          "_songAuthorName": "{{mapInfo.MapInfo.SongAuthorName}}"
         }
         """;
 
-        mapInfoDictionary.Add($"/Beat Saber_Data/CustomLevels/{mapInfo.DirectoryPath}/Info.dat", new MockFileData(mapInfoJson));
+        mapInfoDictionary.Add($"/Beat Saber_Data/CustomLevels/{mapInfo.MapInfo.DirectoryPath}/Info.dat", new MockFileData(mapInfoJson));
     }
 
     [Fact]
     public async Task ArrangeDynamicPlaylists_ArrangesPlaylistBasedOnConfig()
     {
-        var playlistMock = new Mock<IPlaylist>();
-
-        object customData = new JObject
+        AddMockPlaylistWithConfig(new JObject
         {
             {
                 "dynamicPlaylistConfiguration", new JObject
@@ -227,15 +249,7 @@ public class DynamicPlaylistArrangementIntegrationTests
                     }
                 }
             }
-        };
-
-        playlistMock
-            .Setup(x => x.TryGetCustomData("mapMaven", out customData))
-            .Returns(true);
-
-        _beatSaberDataServiceMock
-            .Setup(x => x.GetAllPlaylists())
-            .ReturnsAsync(new[] { playlistMock.Object });
+        });
 
         var resultMaps = Enumerable.Empty<Map>();
 
@@ -246,5 +260,65 @@ public class DynamicPlaylistArrangementIntegrationTests
         await _sut.ArrangeDynamicPlaylists();
 
         Assert.Equal(2, resultMaps.Count());
+    }
+
+    [Fact]
+    public async Task ArrangeDynamicPlaylists_FetchesMapsFromCache_IfHashIsFoundInCache()
+    {
+        AddMockPlaylistWithConfig(new JObject
+        {
+            {
+                "dynamicPlaylistConfiguration", new JObject
+                {
+                    { nameof(DynamicPlaylistConfiguration.MapPool), nameof(MapPool.Standard) },
+                    { nameof(DynamicPlaylistConfiguration.MapCount), 20 },
+                    {
+                        nameof(DynamicPlaylistConfiguration.FilterOperations), new JArray
+                        {
+                            new JObject
+                            {
+                                { nameof(FilterOperation.Field), nameof(DynamicPlaylistMap.Name) },
+                                { nameof(FilterOperation.Value), "Come Alive" },
+                                { nameof(FilterOperation.Operator), nameof(FilterOperator.Equals) }
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        var resultMaps = Enumerable.Empty<Map>();
+
+        _playlistServiceMock
+            .Setup(x => x.ReplaceMapsInPlaylist(It.IsAny<IEnumerable<Map>>(), It.IsAny<Playlist>(), It.IsAny<bool>()))
+            .Callback((IEnumerable<Map> maps, Playlist playlist, bool loadPlaylist) => resultMaps = maps);
+
+        await _sut.ArrangeDynamicPlaylists();
+
+        Assert.Single(resultMaps);
+
+        var resultMap = resultMaps.First();
+
+        Assert.Equal("Come Alive", resultMap.Name);
+        Assert.Equal("test123", resultMap.SongAuthorName);
+    }
+
+    private void AddMockPlaylistWithConfig(object customData)
+    {
+        var playlistMock = new Mock<IPlaylist>();
+
+        playlistMock
+            .Setup(x => x.TryGetCustomData("mapMaven", out customData))
+            .Returns(true);
+
+        _beatSaberDataServiceMock
+            .Setup(x => x.GetAllPlaylists())
+            .ReturnsAsync(new[] { playlistMock.Object });
+    }
+
+    private class TestMap
+    {
+        public MapInfo MapInfo { get; set; }
+        public string? Hash { get; set; }
     }
 }
