@@ -97,9 +97,6 @@ namespace MapMaven.Components.Playlists
         {
             SelectedPlaylist = new()
             {
-                FileName = $"CUSTOM_PLAYLIST_TEST_{Guid.NewGuid()}",
-                Name = $"Custom Playlist Test {Guid.NewGuid()}",
-                Description = "test",
                 DynamicPlaylistConfiguration = new()
                 {
                     MapCount = 20

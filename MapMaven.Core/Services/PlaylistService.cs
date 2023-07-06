@@ -138,8 +138,11 @@ namespace MapMaven.Services
             if (playlistMaps == null)
                 playlistMaps = Array.Empty<Map>();
 
+            var fileName = editPlaylistModel.FileName ?? editPlaylistModel.Name;
+            fileName = string.Join("_", fileName.Split(Path.GetInvalidFileNameChars()));
+
             var addedPlaylist = _playlistManager.CreatePlaylist(
-                fileName: editPlaylistModel.FileName ?? editPlaylistModel.Name,
+                fileName: fileName,
                 title: editPlaylistModel.Name,
                 author: "Map Maven",
                 coverImage: editPlaylistModel.CoverImage,
