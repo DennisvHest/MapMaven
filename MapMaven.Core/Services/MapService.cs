@@ -79,7 +79,6 @@ namespace MapMaven.Services
             });
 
             RankedMaps = Observable.CombineLatest(
-                _beatSaberDataService.MapInfo,
                 _scoreSaberService.RankedMaps,
                 _scoreSaberService.RankedMapScoreEstimates,
                 _scoreSaberService.PlayerScores,
@@ -94,7 +93,6 @@ namespace MapMaven.Services
                 CombineMapData);
 
             CompleteRankedMapData = Observable.CombineLatest(
-                _beatSaberDataService.MapInfo,
                 _scoreSaberService.RankedMaps,
                 _scoreSaberService.RankedMapScoreEstimates,
                 _scoreSaberService.PlayerScores,
@@ -125,7 +123,6 @@ namespace MapMaven.Services
         }
 
         private IEnumerable<Map> CombineRankedMapData(
-            IEnumerable<MapInfo> maps,
             IEnumerable<RankedMap> rankedMaps,
             IEnumerable<ScoreEstimate> scoreEstimates,
             IEnumerable<PlayerScore> playerScores,
