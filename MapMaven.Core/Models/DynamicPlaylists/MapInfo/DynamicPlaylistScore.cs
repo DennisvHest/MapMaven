@@ -32,9 +32,6 @@ namespace MapMaven.Core.Models.DynamicPlaylists.MapInfo
         [DisplayName("Full combo")]
         public bool FullCombo { get; set; }
 
-        [DisplayName("HMD")]
-        public double Hmd { get; set; }
-
         [DisplayName("Has replay")]
         public bool HasReplay { get; set; }
 
@@ -56,7 +53,6 @@ namespace MapMaven.Core.Models.DynamicPlaylists.MapInfo
             MissedNotes = score.Score.MissedNotes;
             MaxCombo = score.Score.MaxCombo;
             FullCombo = score.Score.FullCombo;
-            Hmd = score.Score.Hmd;
             HasReplay = score.Score.HasReplay;
             TimeSet = score.Score.TimeSet.LocalDateTime;
         }

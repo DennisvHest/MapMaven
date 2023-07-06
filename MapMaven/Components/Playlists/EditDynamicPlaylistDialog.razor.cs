@@ -1,4 +1,5 @@
 using MapMaven.Core.Models.DynamicPlaylists;
+using MapMaven.Core.Models.DynamicPlaylists.MapInfo;
 using MapMaven.Core.Services;
 using MapMaven.Core.Services.Interfaces;
 using MapMaven.Services;
@@ -44,7 +45,7 @@ namespace MapMaven.Components.Playlists
                     {
                         new SortOperation
                         {
-                            Field = "AddedDateTime",
+                            Field = nameof(DynamicPlaylistMap.AddedDateTime),
                             Direction = SortDirection.Descending
                         }
                     },
@@ -63,16 +64,22 @@ namespace MapMaven.Components.Playlists
                     {
                         new FilterOperation
                         {
-                            Field = "Hidden",
+                            Field = nameof(DynamicPlaylistMap.Hidden),
                             Operator = Core.Models.DynamicPlaylists.FilterOperator.Equals,
                             Value = false.ToString()
+                        },
+                        new FilterOperation
+                        {
+                            Field = $"{nameof(DynamicPlaylistMap.ScoreEstimate)}.{nameof(DynamicPlaylistScoreEstimate.Accuracy)}",
+                            Operator = Core.Models.DynamicPlaylists.FilterOperator.GreaterThanOrEqual,
+                            Value = 80.ToString()
                         }
                     },
                     SortOperations = new()
                     {
                         new SortOperation
                         {
-                            Field = "ScoreEstimate.PPIncrease",
+                            Field = $"{nameof(DynamicPlaylistMap.ScoreEstimate)}.{nameof(DynamicPlaylistScoreEstimate.PPIncrease)}",
                             Direction = SortDirection.Descending
                         }
                     },
