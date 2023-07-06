@@ -100,13 +100,7 @@ public class DynamicPlaylistArrangementIntegrationTests
 
         MockRankedMaps();
 
-        _scoreSaberServiceMock
-            .SetupGet(x => x.ScoreEstimates)
-            .Returns(() => Observable.Return(Enumerable.Empty<ScoreEstimate>()));
-
-        _scoreSaberServiceMock
-            .SetupGet(x => x.RankedMapScoreEstimates)
-            .Returns(() => Observable.Return(Enumerable.Empty<ScoreEstimate>()));
+        MockScoreEstimates();
 
         _scoreSaberServiceMock
             .SetupGet(x => x.PlayerProfile)
@@ -131,12 +125,29 @@ public class DynamicPlaylistArrangementIntegrationTests
             _dynamicPlaylistArrangementServiceLoggerMock.Object);
     }
 
+    private void MockScoreEstimates()
+    {
+        var scoreEstimates = new ScoreEstimate[]
+        {
+            new() { MapId = "1", PPIncrease = 5 },
+            new() { MapId = "2", PPIncrease = 10 },
+        };
+
+        _scoreSaberServiceMock
+            .SetupGet(x => x.ScoreEstimates)
+            .Returns(() => Observable.Return(scoreEstimates));
+
+        _scoreSaberServiceMock
+            .SetupGet(x => x.RankedMapScoreEstimates)
+            .Returns(() => Observable.Return(scoreEstimates));
+    }
+
     private void MockRankedMaps()
     {
         var rankedMaps = new RankedMap[]
         {
-            new() { Id = "1", PP = 45, DurationSeconds = 60 },
-            new() { Id = "2", PP = 100, DurationSeconds = 125 },
+            new() { Id = "1", Name = "KillerToy", PP = 45, DurationSeconds = 60 },
+            new() { Id = "2", Name = "Nacreous Snowmelt", PP = 100, DurationSeconds = 125 },
         };
 
         _scoreSaberServiceMock
@@ -430,6 +441,47 @@ public class DynamicPlaylistArrangementIntegrationTests
         var resultMap = resultMaps.First();
 
         Assert.Equal("TEST 2", resultMap.SongAuthorName);
+    }
+
+    [Fact]
+    public async Task ArrangeDynamicPlaylists_ArrangesRankedMaps_IfImprovementMapPoolIsConfigured()
+    {
+        AddMockPlaylistWithConfig(new JObject
+        {
+            {
+                "dynamicPlaylistConfiguration", new JObject
+                {
+                    { nameof(DynamicPlaylistConfiguration.MapPool), nameof(MapPool.Improvement) },
+                    { nameof(DynamicPlaylistConfiguration.MapCount), 20 },
+                    {
+                        nameof(DynamicPlaylistConfiguration.SortOperations), new JArray
+                        {
+                            new JObject
+                            {
+                                { nameof(SortOperation.Field), $"{nameof(DynamicPlaylistMap.ScoreEstimate)}.{nameof(DynamicPlaylistScoreEstimate.PPIncrease)}" },
+                                { nameof(SortOperation.Direction), nameof(SortDirection.Descending) },
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        var resultMaps = Enumerable.Empty<Map>();
+
+        _playlistServiceMock
+            .Setup(x => x.ReplaceMapsInPlaylist(It.IsAny<IEnumerable<Map>>(), It.IsAny<Playlist>(), It.IsAny<bool>()))
+            .Callback((IEnumerable<Map> maps, Playlist playlist, bool loadPlaylist) => resultMaps = maps);
+
+        await _sut.ArrangeDynamicPlaylists();
+
+        Assert.Equal(2, resultMaps.Count());
+
+        var firstMap = resultMaps.First();
+        var secondMap = resultMaps.Last();
+
+        Assert.Equal("Nacreous Snowmelt", firstMap.Name);
+        Assert.Equal("KillerToy", secondMap.Name);
     }
 
     private void AddMockPlaylistWithConfig(object customData)
