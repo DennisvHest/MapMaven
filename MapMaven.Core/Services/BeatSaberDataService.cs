@@ -336,7 +336,7 @@ namespace MapMaven.Services
                 if (string.IsNullOrEmpty(info.Id))
                     return null;
 
-                var mapDirectoryInfo = new DirectoryInfo(mapDirectory);
+                var mapDirectoryInfo = _fileSystem.DirectoryInfo.New(mapDirectory);
 
                 info.AddedDateTime = mapDirectoryInfo.CreationTime;
 

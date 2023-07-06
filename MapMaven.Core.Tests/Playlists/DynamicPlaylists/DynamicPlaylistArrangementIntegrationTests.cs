@@ -98,9 +98,7 @@ public class DynamicPlaylistArrangementIntegrationTests
             .SetupGet(x => x.PlayerScores)
             .Returns(() => Observable.Return(Enumerable.Empty<PlayerScore>()));
 
-        _scoreSaberServiceMock
-            .SetupGet(x => x.RankedMaps)
-            .Returns(() => Observable.Return(Enumerable.Empty<RankedMap>()));
+        MockRankedMaps();
 
         _scoreSaberServiceMock
             .SetupGet(x => x.ScoreEstimates)
@@ -133,6 +131,19 @@ public class DynamicPlaylistArrangementIntegrationTests
             _dynamicPlaylistArrangementServiceLoggerMock.Object);
     }
 
+    private void MockRankedMaps()
+    {
+        var rankedMaps = new RankedMap[]
+        {
+            new() { Id = "1", PP = 45, DurationSeconds = 60 },
+            new() { Id = "2", PP = 100, DurationSeconds = 125 },
+        };
+
+        _scoreSaberServiceMock
+            .SetupGet(x => x.RankedMaps)
+            .Returns(() => Observable.Return(rankedMaps));
+    }
+
     private void MockMapInfoCache()
     {
         var dataStoreMock = new Mock<IDataStore>();
@@ -158,10 +169,12 @@ public class DynamicPlaylistArrangementIntegrationTests
             new()
             {
                 MapInfo = new() { SongName = "KillerToy", SongAuthorName = "Camellia", DirectoryPath = "1A466 ([Queue] Camellia - KillerToy - Jabob)" },
+                Hash = "1"
             },
             new()
             {
                 MapInfo = new() { SongName = "Nacreous Snowmelt", SongAuthorName = "Camellia", DirectoryPath = "6F01 (Camellia - Nacreous Snowmelt - Dack)" },
+                Hash = "2"
             },
             new()
             {
@@ -172,6 +185,16 @@ public class DynamicPlaylistArrangementIntegrationTests
             {
                 MapInfo = new() { SongName = "Halcyon", SongAuthorName = "xi", DirectoryPath = "235b (Halcyon - splake)" },
                 HasSongCoreHash = false
+            },
+            new()
+            {
+                MapInfo = new() { SongName = "Duplicate ID", SongAuthorName = "TEST 1", DirectoryPath = "ABCD1 (Duplicate ID 1)" },
+                CreatedDateTime = new DateTime(2023, 02, 10, 0, 0, 0)
+            },
+            new()
+            {
+                MapInfo = new() { SongName = "Duplicate ID", SongAuthorName = "TEST 2", DirectoryPath = "ABCD1 (Duplicate ID 2)" },
+                CreatedDateTime = new DateTime(2023, 02, 11, 12, 30, 0)
             }
         };
 
@@ -221,6 +244,9 @@ public class DynamicPlaylistArrangementIntegrationTests
         }
         """;
 
+        var mockDirectoryData = new MockDirectoryData { CreationTime = mapInfo.CreatedDateTime };
+
+        mapInfoDictionary.Add($"/Beat Saber_Data/CustomLevels/{mapInfo.MapInfo.DirectoryPath}/", mockDirectoryData);
         mapInfoDictionary.Add($"/Beat Saber_Data/CustomLevels/{mapInfo.MapInfo.DirectoryPath}/Info.dat", new MockFileData(mapInfoJson));
     }
 
@@ -268,6 +294,12 @@ public class DynamicPlaylistArrangementIntegrationTests
         await _sut.ArrangeDynamicPlaylists();
 
         Assert.Equal(2, resultMaps.Count());
+
+        var firstMap = resultMaps.First();
+        var secondMap = resultMaps.Last();
+
+        Assert.Equal("Nacreous Snowmelt", firstMap.Name);
+        Assert.Equal("KillerToy", secondMap.Name);
     }
 
     [Fact]
@@ -360,6 +392,46 @@ public class DynamicPlaylistArrangementIntegrationTests
         Assert.Equal("Halcyon", resultMap.Name);
     }
 
+    [Fact]
+    public async Task ArrangeDynamicPlaylists_AddsLatestAddedMap_IfContainsMapsWithDuplicateIds()
+    {
+        AddMockPlaylistWithConfig(new JObject
+        {
+            {
+                "dynamicPlaylistConfiguration", new JObject
+                {
+                    { nameof(DynamicPlaylistConfiguration.MapPool), nameof(MapPool.Standard) },
+                    { nameof(DynamicPlaylistConfiguration.MapCount), 20 },
+                    {
+                        nameof(DynamicPlaylistConfiguration.FilterOperations), new JArray
+                        {
+                            new JObject
+                            {
+                                { nameof(FilterOperation.Field), nameof(DynamicPlaylistMap.Name) },
+                                { nameof(FilterOperation.Value), "Duplicate ID" },
+                                { nameof(FilterOperation.Operator), nameof(FilterOperator.Equals) }
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        var resultMaps = Enumerable.Empty<Map>();
+
+        _playlistServiceMock
+            .Setup(x => x.ReplaceMapsInPlaylist(It.IsAny<IEnumerable<Map>>(), It.IsAny<Playlist>(), It.IsAny<bool>()))
+            .Callback((IEnumerable<Map> maps, Playlist playlist, bool loadPlaylist) => resultMaps = maps);
+
+        await _sut.ArrangeDynamicPlaylists();
+
+        Assert.Single(resultMaps);
+
+        var resultMap = resultMaps.First();
+
+        Assert.Equal("TEST 2", resultMap.SongAuthorName);
+    }
+
     private void AddMockPlaylistWithConfig(object customData)
     {
         var playlistMock = new Mock<IPlaylist>();
@@ -378,5 +450,6 @@ public class DynamicPlaylistArrangementIntegrationTests
         public MapInfo MapInfo { get; set; }
         public string? Hash { get; set; }
         public bool HasSongCoreHash { get; set; } = true;
+        public DateTimeOffset CreatedDateTime { get; set; } = DateTimeOffset.Now;
     }
 }
