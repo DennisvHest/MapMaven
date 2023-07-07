@@ -13,6 +13,7 @@
         ValueChanged="OnFieldChanged"
         Variant="Variant.Outlined"
         Margin="Margin.Dense"
+        title="@SelectedFieldOption?.Name"
         Class="pr-2 d-block" Style="max-width: 168px;">
         @foreach (var field in DynamicPlaylistFields.FieldOptions(MapPool))
         {
