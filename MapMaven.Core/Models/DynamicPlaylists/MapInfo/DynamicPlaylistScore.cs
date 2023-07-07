@@ -35,7 +35,7 @@ namespace MapMaven.Core.Models.DynamicPlaylists.MapInfo
         [DisplayName("Has replay")]
         public bool HasReplay { get; set; }
 
-        [DisplayName("Time set")]
+        [DisplayName("Score: Time set")]
         public DateTime TimeSet { get; set; }
 
         public DynamicPlaylistScore() { }
