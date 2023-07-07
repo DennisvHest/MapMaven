@@ -38,28 +38,27 @@ else
         <MudDialog>
             <DialogContent>
                 <PlaylistEditor EditPlaylistModel="SelectedPlaylist"></PlaylistEditor>
-                <MudNumericField @bind-Value="SelectedPlaylist.DynamicPlaylistConfiguration.MapCount"
-                                 For="() => SelectedPlaylist.DynamicPlaylistConfiguration.MapCount"
-                                 Label="Map count"
-                                 Variant="Variant.Outlined"
-                                 Min="1"
-                                 Class="my-4" />
-                <div class="d-flex flex-column align-center">
-                    <MudButtonGroup OverrideStyles="false">
-                        <MudButton
-                            Variant="Variant.Filled"
-                            Color="@(configuration.MapPool == MapPool.Standard ? Color.Primary : Color.Default)"
-                            OnClick="() => ChangeMapPool(MapPool.Standard)">
-                            Downloaded maps
-                        </MudButton>
-                        <MudButton
-                            Variant="Variant.Filled"
-                            Color="@(configuration.MapPool == MapPool.Improvement ? Color.Primary : Color.Default)"
-                            OnClick="() => ChangeMapPool(MapPool.Improvement)">
-                            Improvement maps
-                        </MudButton>
-                    </MudButtonGroup>
-                </div>
+                <MudPaper Class="my-4" Style="background-color: var(--mud-palette-drawer-background);">
+                    <MudList>
+                        <MudListItem Class="py-0">
+                            <div class="d-flex flex-row align-center justify-space-between">
+                                <b class="mud-list-subheader pa-0">Map pool</b>
+                                <MudButtonGroup OverrideStyles="false">
+                                    <MudButton Variant="Variant.Filled"
+                                               Color="@(configuration.MapPool == MapPool.Standard ? Color.Primary : Color.Default)"
+                                               OnClick="() => ChangeMapPool(MapPool.Standard)">
+                                        Downloaded maps
+                                    </MudButton>
+                                    <MudButton Variant="Variant.Filled"
+                                               Color="@(configuration.MapPool == MapPool.Improvement ? Color.Primary : Color.Default)"
+                                               OnClick="() => ChangeMapPool(MapPool.Improvement)">
+                                        Improvement maps
+                                    </MudButton>
+                                </MudButtonGroup>
+                            </div>
+                        </MudListItem>
+                    </MudList>
+                </MudPaper>
                 <MudPaper Class="my-4" Style="background-color: var(--mud-palette-drawer-background);">
                     <MudList>
                         <MudListSubheader Class="d-flex align-center justify-space-between">
@@ -92,6 +91,12 @@ else
                         }
                     </MudList>
                 </MudPaper>
+                <MudNumericField @bind-Value="SelectedPlaylist.DynamicPlaylistConfiguration.MapCount"
+                                 For="() => SelectedPlaylist.DynamicPlaylistConfiguration.MapCount"
+                                 Label="Map count"
+                                 Variant="Variant.Outlined"
+                                 Min="1"
+                                 Class="my-4" />
             </DialogContent>
             <DialogActions>
                 <MudButton OnClick="CancelConfiguration">Cancel</MudButton>
