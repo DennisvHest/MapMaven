@@ -31,63 +31,6 @@ namespace MapMaven.Components.Playlists
         [Parameter]
         public bool NewPlaylist { get; set; } = true;
 
-        private static List<EditDynamicPlaylistModel> PresetDynamicPlaylists = new List<EditDynamicPlaylistModel>
-        {
-            new EditDynamicPlaylistModel
-            {
-                FileName = "RECENTLY_ADDED_MAPS",
-                Name = "Recently added maps",
-                Description = "The most recently downloaded maps.",
-                DynamicPlaylistConfiguration = new DynamicPlaylistConfiguration
-                {
-                    MapPool = MapPool.Standard,
-                    SortOperations = new()
-                    {
-                        new SortOperation
-                        {
-                            Field = nameof(DynamicPlaylistMap.AddedDateTime),
-                            Direction = SortDirection.Descending
-                        }
-                    },
-                    MapCount = 20
-                }
-            },
-            new EditDynamicPlaylistModel
-            {
-                FileName = "IMPROVEMENT_MAPS",
-                Name = "Improvement maps",
-                Description = "Maps recommended to play for maximum pp gain.",
-                DynamicPlaylistConfiguration = new DynamicPlaylistConfiguration
-                {
-                    MapPool = MapPool.Improvement,
-                    FilterOperations = new()
-                    {
-                        new FilterOperation
-                        {
-                            Field = nameof(DynamicPlaylistMap.Hidden),
-                            Operator = Core.Models.DynamicPlaylists.FilterOperator.Equals,
-                            Value = false.ToString()
-                        },
-                        new FilterOperation
-                        {
-                            Field = $"{nameof(DynamicPlaylistMap.ScoreEstimate)}.{nameof(DynamicPlaylistScoreEstimate.Accuracy)}",
-                            Operator = Core.Models.DynamicPlaylists.FilterOperator.GreaterThanOrEqual,
-                            Value = 80.ToString()
-                        }
-                    },
-                    SortOperations = new()
-                    {
-                        new SortOperation
-                        {
-                            Field = $"{nameof(DynamicPlaylistMap.ScoreEstimate)}.{nameof(DynamicPlaylistScoreEstimate.PPIncrease)}",
-                            Direction = SortDirection.Descending
-                        }
-                    },
-                    MapCount = 20
-                }
-            }
-        };
-
         void ConfigureDynamicPlaylist(EditDynamicPlaylistModel dynamicPlaylist)
         {
             SelectedPlaylist = dynamicPlaylist;

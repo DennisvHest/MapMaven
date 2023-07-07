@@ -7,11 +7,12 @@
     <MudDialog>
         <DialogContent>
             <div id="preset-dynamic-playlists">
-                @foreach (var playlist in PresetDynamicPlaylists)
+                @foreach (var playlist in PresetDynamicPlaylists.Playlists)
                 {
-                    <MudButton OnClick="() => ConfigureDynamicPlaylist(playlist)" Variant="Variant.Filled">
+                    <MudButton OnClick="() => ConfigureDynamicPlaylist(playlist)" Variant="Variant.Filled" Class="pa-0 mx-2" Style="background-color: var(--mud-palette-drawer-background);">
                         <div class="d-flex flex-column align-center justify-center dynamic-playlist-add">
-                            <MudIcon Icon="@Icons.Filled.AccessTime" Size="Size.Large" Class="mb-2"></MudIcon> @playlist.Name
+                            <img src="@playlist.CoverImage" class="mb-1" />
+                            <MudText Typo="Typo.body2" Class="pa-1">@playlist.Name</MudText>
                         </div>
                     </MudButton>
                 }

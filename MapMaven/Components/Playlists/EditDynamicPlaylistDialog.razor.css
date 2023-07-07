@@ -1,4 +1,11 @@
 .dynamic-playlist-add {
-    width: 120px;
-    height: 120px;
+    width: 90px;
+}
+
+    .dynamic-playlist-add:hover {
+        filter: brightness(1.2);
+    }
+
+.dynamic-playlist-add img {
+    width: 100%;
 }
