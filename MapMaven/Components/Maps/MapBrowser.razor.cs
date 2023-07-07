@@ -6,6 +6,8 @@ using MapMaven.Core.Models;
 using Microsoft.AspNetCore.Components.Routing;
 using MudBlazor;
 using MapMaven.Core.Services.Interfaces;
+using MapMaven.Core.Services;
+using System.Reactive.Linq;
 
 namespace MapMaven.Components.Maps
 {
@@ -19,6 +21,9 @@ namespace MapMaven.Components.Maps
 
         [Inject]
         protected IBeatSaberDataService BeatSaberDataService { get; set; }
+
+        [Inject]
+        protected DynamicPlaylistArrangementService DynamicPlaylistArrangementService { get; set; }
 
         [Inject]
         protected NavigationManager NavigationManager { get; set; }
@@ -63,7 +68,14 @@ namespace MapMaven.Components.Maps
         {
             NavigationManager.LocationChanged += LocationChanged;
 
-            SubscribeAndBind(BeatSaberDataService.LoadingMapInfo, loading => LoadingMapInfo = loading);
+            var loadingObservable = Observable.CombineLatest(
+                BeatSaberDataService.LoadingMapInfo,
+                DynamicPlaylistArrangementService.ArrangingDynamicPlaylists,
+                PlaylistService.SelectedPlaylist,
+                (loadingMapInfo, arrangingDynamicPlaylists, selectedPlaylist) => loadingMapInfo || arrangingDynamicPlaylists && selectedPlaylist?.IsDynamicPlaylist == true
+            );
+
+            SubscribeAndBind(loadingObservable, loading => LoadingMapInfo = loading);
             SubscribeAndBind(BeatSaberDataService.InitialMapLoad, initialMapLoad => InitialMapLoad = initialMapLoad);
             SubscribeAndBind(PlaylistService.SelectedPlaylist, selectedPlaylist =>
             {

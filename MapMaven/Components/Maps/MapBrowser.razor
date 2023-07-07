@@ -43,14 +43,12 @@
             <MudProgressLinear Color="Color.Primary" Indeterminate="true" Style="position: absolute; top: 0;" />
             <MudIcon Icon="@Icons.Material.Filled.ManageSearch" Style="vertical-align: middle; margin-bottom: 4px;"></MudIcon> @:Loading maps for first use. Depdending on the number of maps, this might take a minute.
         }
-    </LoadingContent>
-    <NoRecordsContent>
-        @if (SelectedPlaylist?.IsDynamicPlaylist == true && string.IsNullOrEmpty(SearchString))
+        else if (TableRef.GetFilteredItemsCount() == 0 && SelectedPlaylist?.IsDynamicPlaylist == true && string.IsNullOrEmpty(SearchString))
         {
             <MudProgressLinear Color="Color.Primary" Indeterminate="true" Style="position: absolute; top: 0;" />
             <MudIcon Icon="@Icons.Material.Filled.ManageSearch" Style="vertical-align: middle; margin-bottom: 4px;"></MudIcon> @:Nothing yet. Dynamic playlist is still being generated. Maps will appear once all the maps have been downloaded.
         }
-    </NoRecordsContent>
+    </LoadingContent>
     <Columns>
         @if (RowContent != null)
         {

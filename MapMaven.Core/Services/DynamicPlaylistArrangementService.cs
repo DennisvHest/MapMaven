@@ -6,6 +6,7 @@ using Pather.CSharp;
 using System.Reactive.Linq;
 using System.Globalization;
 using Microsoft.Extensions.Logging;
+using System.Reactive.Subjects;
 
 namespace MapMaven.Core.Services
 {
@@ -20,6 +21,9 @@ namespace MapMaven.Core.Services
         private readonly ILogger<DynamicPlaylistArrangementService> _logger;
 
         private readonly IResolver _resolver;
+
+        private readonly BehaviorSubject<bool> _loadingMapInfo = new(false);
+        public IObservable<bool> ArrangingDynamicPlaylists => _loadingMapInfo;
 
         public static readonly Dictionary<Type, IEnumerable<FilterOperator>> FilterOperatorsForType = new()
         {
@@ -50,81 +54,95 @@ namespace MapMaven.Core.Services
 
         public async Task ArrangeDynamicPlaylists()
         {
-            await _applicationSettingService.LoadAsync();
-
-            _playlistService.ResetPlaylistManager();
-
-            var playlists = await _beatSaberDataService.GetAllPlaylists();
-
-            var dynamicPlaylists = playlists
-                .Select(p => new
-                {
-                    Playlist = new Playlist(p),
-                    PlaylistInfo = p
-                })
-                .Where(x => x.Playlist.IsDynamicPlaylist);
-
-            await Task.WhenAll(new[] {
-                _beatSaberDataService.LoadAllMapInfo(),
-                _scoreSaberService.LoadRankedMaps(),
-                _beatSaberDataService.LoadAllPlaylists(),
-                _mapService.LoadHiddenMaps()
-            });
-
-            if (!dynamicPlaylists.Any())
-                return;
-
-            var mapData = await _mapService.CompleteMapData.FirstAsync();
-            var rankedMapData = await _mapService.CompleteRankedMapData.FirstAsync();
-
-            var maps = mapData.Select(m => new DynamicPlaylistMapPair
+            try
             {
-                DynamicPlaylistMap = new DynamicPlaylistMap(m),
-                Map = m
-            });
+                _loadingMapInfo.OnNext(true);
 
-            var rankedMaps = rankedMapData.Select(m => new DynamicPlaylistMapPair
-            {
-                DynamicPlaylistMap = new DynamicPlaylistMap(m),
-                Map = m
-            });
+                await _applicationSettingService.LoadAsync();
 
-            foreach (var playlist in dynamicPlaylists)
-            {
-                try
-                {
-                    var configuration = playlist.Playlist.DynamicPlaylistConfiguration;
+                _playlistService.ResetPlaylistManager();
 
-                    var playlistMaps = configuration.MapPool switch
+                var playlists = await _beatSaberDataService.GetAllPlaylists();
+
+                var dynamicPlaylists = playlists
+                    .Select(p => new
                     {
-                        MapPool.Standard => maps,
-                        MapPool.Improvement => rankedMaps,
-                        _ => maps
-                    };
+                        Playlist = new Playlist(p),
+                        PlaylistInfo = p
+                    })
+                    .Where(x => x.Playlist.IsDynamicPlaylist);
 
-                    playlistMaps = FilterMaps(playlistMaps, configuration);
-                    playlistMaps = SortMaps(playlistMaps, configuration);
+                await Task.WhenAll(new[] {
+                    _beatSaberDataService.LoadAllMapInfo(),
+                    _scoreSaberService.LoadRankedMaps(),
+                    _beatSaberDataService.LoadAllPlaylists(),
+                    _mapService.LoadHiddenMaps()
+                });
 
-                    playlistMaps = playlistMaps.Take(configuration.MapCount);
+                if (!dynamicPlaylists.Any())
+                    return;
 
-                    var resultPlaylistMaps = playlistMaps
-                        .Select(m => m.Map)
-                        .ToList();
+                var mapData = await _mapService.CompleteMapData.FirstAsync();
+                var rankedMapData = await _mapService.CompleteRankedMapData.FirstAsync();
 
-                    await _playlistService.DownloadPlaylistMapsIfNotExist(resultPlaylistMaps, loadMapInfo: false);
-
-                    await _playlistService.ReplaceMapsInPlaylist(resultPlaylistMaps, playlist.Playlist, loadPlaylists: false);
-                }
-                catch (Exception ex)
+                var maps = mapData.Select(m => new DynamicPlaylistMapPair
                 {
-                    _logger.LogError(ex, $"Error arranging dynamic playlist: {playlist.PlaylistInfo?.Title}");
-                }
-            }
+                    DynamicPlaylistMap = new DynamicPlaylistMap(m),
+                    Map = m
+                });
 
-            await Task.WhenAll(new[] {
-                _beatSaberDataService.LoadAllMapInfo(),
-                _beatSaberDataService.LoadAllPlaylists()
-            });
+                var rankedMaps = rankedMapData.Select(m => new DynamicPlaylistMapPair
+                {
+                    DynamicPlaylistMap = new DynamicPlaylistMap(m),
+                    Map = m
+                });
+
+                foreach (var playlist in dynamicPlaylists)
+                {
+                    try
+                    {
+                        var configuration = playlist.Playlist.DynamicPlaylistConfiguration;
+
+                        var playlistMaps = configuration.MapPool switch
+                        {
+                            MapPool.Standard => maps,
+                            MapPool.Improvement => rankedMaps,
+                            _ => maps
+                        };
+
+                        playlistMaps = FilterMaps(playlistMaps, configuration);
+                        playlistMaps = SortMaps(playlistMaps, configuration);
+
+                        playlistMaps = playlistMaps.Take(configuration.MapCount);
+
+                        var resultPlaylistMaps = playlistMaps
+                            .Select(m => m.Map)
+                            .ToList();
+
+                        await _playlistService.DownloadPlaylistMapsIfNotExist(resultPlaylistMaps, loadMapInfo: false);
+
+                        await _playlistService.ReplaceMapsInPlaylist(resultPlaylistMaps, playlist.Playlist, loadPlaylists: false);
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, $"Error arranging dynamic playlist: {playlist.PlaylistInfo?.Title}");
+                    }
+                }
+
+                await Task.WhenAll(new[] {
+                    _beatSaberDataService.LoadAllMapInfo(),
+                    _beatSaberDataService.LoadAllPlaylists()
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error arranging dynamic playlist.");
+                throw;
+            }
+            finally
+            {
+                _loadingMapInfo.OnNext(false);
+            }
         }
 
         private IEnumerable<DynamicPlaylistMapPair> FilterMaps(IEnumerable<DynamicPlaylistMapPair> maps, DynamicPlaylistConfiguration configuration)
