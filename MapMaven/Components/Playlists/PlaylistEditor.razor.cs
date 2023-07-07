@@ -11,17 +11,10 @@ namespace MapMaven.Components.Playlists
         [Parameter]
         public EditPlaylistModel EditPlaylistModel { get; set; }
 
-        string CoverImage;
-
         protected override void OnInitialized()
         {
             if (EditPlaylistModel == null)
                 EditPlaylistModel = new EditPlaylistModel();
-        }
-
-        protected override void OnParametersSet()
-        {
-            CoverImage = EditPlaylistModel.CoverImage;
         }
 
         private async Task OnInputFileChanged(InputFileChangeEventArgs e)
@@ -34,13 +27,12 @@ namespace MapMaven.Components.Playlists
                 {
                     await imageFile.CopyToAsync(ms);
                     var coverImage = Image.FromStream(ms);
-                    CoverImage = coverImage.ToDataUrl();
-                    EditPlaylistModel.CoverImage = coverImage.ToBase64PrependedString();
+                    var coverImageBase64 = coverImage.ToDataUrl();
+                    EditPlaylistModel.CoverImage = coverImageBase64;
                 }
             }
             else
             {
-                CoverImage = null;
                 EditPlaylistModel.CoverImage = null;
             }
         }

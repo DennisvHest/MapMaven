@@ -1,3 +1,4 @@
+using FastDeepCloner;
 using MapMaven.Core.Models.DynamicPlaylists;
 using MapMaven.Core.Models.DynamicPlaylists.MapInfo;
 using MapMaven.Core.Services;
@@ -33,7 +34,7 @@ namespace MapMaven.Components.Playlists
 
         void ConfigureDynamicPlaylist(EditDynamicPlaylistModel dynamicPlaylist)
         {
-            SelectedPlaylist = dynamicPlaylist;
+            SelectedPlaylist = DeepCloner.Clone(dynamicPlaylist);
         }
 
         void ConfigureCustomDynamicPlaylist()

@@ -2,9 +2,9 @@
     <MudItem xs="6">
         <MudPaper Height="300px" Outlined="true" Class="relative rounded-lg border-2 border-dashed pa-4 mud-width-full mud-height-full d-flex align-center flex-column justify-center">
             <InputFile OnChange="OnInputFileChanged" class="absolute mud-width-full mud-height-full overflow-hidden z-2" style="opacity:0;" />
-            @if (!string.IsNullOrEmpty(CoverImage))
+            @if (!string.IsNullOrEmpty(EditPlaylistModel.CoverImage))
             {
-                <img src="@CoverImage" class="full-width" />
+                <img src="@EditPlaylistModel.CoverImage" class="full-width" />
             }
             else
             {

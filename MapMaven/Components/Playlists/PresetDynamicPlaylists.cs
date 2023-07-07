@@ -61,6 +61,76 @@ namespace MapMaven.Components.Playlists
                     },
                     MapCount = 20
                 }
+            },
+            new EditDynamicPlaylistModel
+            {
+                FileName = "SCORE_IMPROVEMENT",
+                Name = "Score improvement",
+                Description = "Maps played long ago with scores that have potential for improvement.",
+                CoverImage = "data:image/png;base64,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",
+                DynamicPlaylistConfiguration = new DynamicPlaylistConfiguration
+                {
+                    MapPool = MapPool.Improvement,
+                    FilterOperations = new()
+                    {
+                        new FilterOperation
+                        {
+                            Field = nameof(DynamicPlaylistMap.Hidden),
+                            Operator = FilterOperator.Equals,
+                            Value = false.ToString()
+                        },
+                        new FilterOperation
+                        {
+                            Field = $"{nameof(DynamicPlaylistMap.ScoreEstimate)}.{nameof(DynamicPlaylistScoreEstimate.PPIncrease)}",
+                            Operator = FilterOperator.GreaterThanOrEqual,
+                            Value = "0.01"
+                        },
+                        new FilterOperation
+                        {
+                            Field = nameof(DynamicPlaylistMap.Played),
+                            Operator = FilterOperator.Equals,
+                            Value = true.ToString()
+                        },
+                    },
+                    SortOperations = new()
+                    {
+                        new SortOperation
+                        {
+                            Field = $"{nameof(DynamicPlaylistMap.Score)}.{nameof(DynamicPlaylistScore.TimeSet)}",
+                            Direction = SortDirection.Ascending
+                        }
+                    },
+                    MapCount = 20
+                }
+            },
+            new EditDynamicPlaylistModel
+            {
+                FileName = "LATEST_REPLAYS",
+                Name = "Latest replays",
+                Description = "The most recently scored maps that have a replay.",
+                CoverImage = "data:image/png;base64,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",
+                DynamicPlaylistConfiguration = new DynamicPlaylistConfiguration
+                {
+                    MapPool = MapPool.Standard,
+                    FilterOperations = new()
+                    {
+                        new FilterOperation
+                        {
+                            Field = $"{nameof(DynamicPlaylistMap.Score)}.{nameof(DynamicPlaylistScore.HasReplay)}",
+                            Operator = FilterOperator.Equals,
+                            Value = true.ToString()
+                        }
+                    },
+                    SortOperations = new()
+                    {
+                        new SortOperation
+                        {
+                            Field = $"{nameof(DynamicPlaylistMap.Score)}.{nameof(DynamicPlaylistScore.TimeSet)}",
+                            Direction = SortDirection.Descending
+                        }
+                    },
+                    MapCount = 20
+                }
             }
         };
     }
