@@ -14,22 +14,26 @@ Map Maven is an application for managing Beat Saber playlists, discovering new m
 ## Playlist Management
 Easily create and manage your Beat Saber playlists. You can add, edit, and delete maps from your playlists with just a few clicks.
 
-https://user-images.githubusercontent.com/18610083/221981419-ebba528f-5ef6-4167-bd2d-bb2f24776fa4.mp4
+https://github.com/DennisvHest/MapMaven/assets/18610083/758ffeef-5870-4cb7-9465-05a63aaf814f
 
 ## Dynamic playlists
-Dynamic playlists are playlists that are periodically updated with new maps. For example: a "Recently added maps" playlist always contains the most recently added maps.
+Dynamic playlists are playlists that are periodically updated with new maps. For example: the "Recently added maps" playlist always contains the most recently added maps. The "Improvement maps" playlist always contains the latest maps from the improvement page (see "Map recommendation" below).
 
-https://user-images.githubusercontent.com/18610083/221982726-f263d27f-06ce-4ade-8d86-053cdf97f7b1.mp4
+https://github.com/DennisvHest/MapMaven/assets/18610083/885518cd-d13a-41b2-95f1-bbedad7aa922
+
+Dynamic playlists can be completely customized by creating a custom dynamic playlist. The custom dynamic playlist will be periodically updated with maps based on filters and sortings you configure. For example, you can create a dynamic playlists that will always contain maps from your favourite mapper, by adding a filter for the map author. Then you can sort by the added date, so the latest map is always at the top of the playlist! Custom dynamic playlists can be created from maps that you have downloaded, or from improvement (ranked) maps.
+
+https://github.com/DennisvHest/MapMaven/assets/18610083/f913604d-7213-4eb0-b6ae-8b05f2725308
 
 ## Map recommendation
 The "improve" page shows maps that are recommended for you to improve your skills. It recommends maps based on a machine learning model trained on almost every score on ScoreSaber, predicting what accuracy you can get and how much pp you can gain. You can create a playlist with the recommended maps. Maps that you don't have on your PC will be downloaded.
 
-https://user-images.githubusercontent.com/18610083/221984230-58c98d96-d435-4824-a749-0c1bf84e052a.mp4
+https://github.com/DennisvHest/MapMaven/assets/18610083/7f379c4e-0e71-44ea-bb7e-0f31e429af35
 
 ## Map browsing
 Browse and search through your maps and add maps to a playlist or watch one of your replays.
 
-https://user-images.githubusercontent.com/18610083/221987688-b9aa801e-f56f-4bb0-a4b4-d4353a8bb19b.mp4
+https://github.com/DennisvHest/MapMaven/assets/18610083/4bf22b8a-8ac8-4484-9ff1-92b2808c69d9
 
 # Installation
 ## Method 1: Installer (recommended)
@@ -39,10 +43,3 @@ Download MapMavenSetup.exe from the [latest release](https://github.com/DennisvH
 Download the zip file from the [latest release](https://github.com/DennisvHest/MapMaven/releases) and extract it somewhere on your PC. Run MapMaven.exe to launch Map Maven. Future updates will not be automatically installed.
 
 **Note:** You might get a Windows SmartScreen warning when using either method. You can click 'More info' and then 'Run anyway' to ignore the warning.
-
-# Why BETA?
-So far, Map Maven has only been tested by me. The map recommendation system works well for me, and in theory, it should recommend good maps for every Beat Saber player. But there is no way for me to actually know if it recommends good maps for other players. Within the BETA, the recommendation system can be improved based on feedback.
-
-There are also some improvements that have to be made to make the application run better.
-
-Also, there are some known [issues](https://github.com/DennisvHest/MapMaven/issues) that have to be resolved.
