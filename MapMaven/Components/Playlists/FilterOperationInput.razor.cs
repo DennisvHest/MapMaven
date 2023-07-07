@@ -53,7 +53,7 @@ namespace MapMaven.Components.Playlists
 
         void DoubleValueChanged(string value)
         {
-            FilterOperation.Value = value.Replace(',', '.');
+            FilterOperation.Value = value?.Replace(',', '.');
         }
     }
 }
