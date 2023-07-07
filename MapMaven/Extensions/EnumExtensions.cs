@@ -14,6 +14,7 @@ namespace MapMaven.Extensions
                 FilterOperator.GreaterThanOrEqual => ">=",
                 FilterOperator.LessThan => "<",
                 FilterOperator.LessThanOrEqual => "<=",
+                FilterOperator.Contains => "contains",
                 _ => string.Empty
             };
         }

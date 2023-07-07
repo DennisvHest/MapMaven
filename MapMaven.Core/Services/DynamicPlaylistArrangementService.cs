@@ -27,7 +27,7 @@ namespace MapMaven.Core.Services
 
         public static readonly Dictionary<Type, IEnumerable<FilterOperator>> FilterOperatorsForType = new()
         {
-            { typeof(string), new[] { FilterOperator.Equals, FilterOperator.NotEquals } },
+            { typeof(string), new[] { FilterOperator.Equals, FilterOperator.NotEquals, FilterOperator.Contains } },
             { typeof(bool), new[] { FilterOperator.Equals, FilterOperator.NotEquals } },
             { typeof(double), new[] { FilterOperator.Equals, FilterOperator.NotEquals, FilterOperator.GreaterThan, FilterOperator.LessThan, FilterOperator.GreaterThanOrEqual, FilterOperator.LessThanOrEqual } },
             { typeof(DateTime), new[] { FilterOperator.Equals, FilterOperator.NotEquals, FilterOperator.GreaterThan, FilterOperator.LessThan, FilterOperator.GreaterThanOrEqual, FilterOperator.LessThanOrEqual } },
@@ -167,6 +167,7 @@ namespace MapMaven.Core.Services
                 {
                     FilterOperator.Equals => stringValue.Equals(filterOperation.Value, StringComparison.OrdinalIgnoreCase),
                     FilterOperator.NotEquals => !stringValue.Equals(filterOperation.Value, StringComparison.OrdinalIgnoreCase),
+                    FilterOperator.Contains => stringValue.Contains(filterOperation.Value, StringComparison.OrdinalIgnoreCase),
                     _ => false
                 };
             }
