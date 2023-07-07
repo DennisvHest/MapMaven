@@ -12,7 +12,7 @@ namespace MapMaven.Services
             _logger = logger;
         }
 
-        public static UpdateManager GetUpdateManager() => new GithubUpdateManager("https://github.com/DennisvHest/MapMaven", prerelease: true);
+        public static UpdateManager GetUpdateManager() => new GithubUpdateManager("https://github.com/DennisvHest/MapMaven");
 
         public async Task CheckForUpdates()
         {
