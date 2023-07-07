@@ -5,6 +5,7 @@
 @inherits LayoutComponentBase
 
 @inject IDialogService DialogService
+@inject IServiceProvider ServiceProvider
 
 <MudThemeProvider Theme="MapMavenTheme.Theme" />
 <MudDialogProvider />
@@ -22,24 +23,34 @@
 
 @code {
     [Inject]
-    protected ApplicationSettingService ApplicationSettingService { get; set; }
+    protected IApplicationSettingService ApplicationSettingService { get; set; }
 
     [Inject]
-    protected BeatSaberDataService BeatSaberDataService { get; set; }
+    protected IBeatSaberDataService BeatSaberDataService { get; set; }
 
     [Inject]
-    protected MapService MapService { get; set; }
+    protected IMapService MapService { get; set; }
 
     [Inject]
-    protected ScoreSaberService ScoreSaberService { get; set; }
+    protected IScoreSaberService ScoreSaberService { get; set; }
 
     [Inject]
     protected BeatSaberFileService BeatSaberToolFileService { get; set; }
+
+    [Inject]
+    protected IApplicationEventService ApplicationEventService { get; set; }
+
+    [Inject]
+    protected ISnackbar Snackbar { get; set; }
+
+    protected ApplicationEventNotificationService ApplicationEventNotificationService { get; private set; }
 
     protected bool InitialSetupDone { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
+        ApplicationEventNotificationService = new ApplicationEventNotificationService(ApplicationEventService, Snackbar);
+
         await ApplicationSettingService.LoadAsync();
 
         BeatSaberToolFileService.BeatSaberInstallLocationObservable.DistinctUntilChanged().Subscribe(location =>

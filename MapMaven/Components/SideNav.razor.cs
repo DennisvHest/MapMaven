@@ -1,4 +1,5 @@
 using MapMaven.Core.Services;
+using MapMaven.Core.Services.Interfaces;
 using MapMaven.Services;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
@@ -8,10 +9,10 @@ namespace MapMaven.Components
     public partial class SideNav
     {
         [Inject]
-        protected PlaylistService PlaylistService { get; set; }
+        protected IPlaylistService PlaylistService { get; set; }
 
         [Inject]
-        ScoreSaberService ScoreSaberService { get; set; }
+        IScoreSaberService ScoreSaberService { get; set; }
 
         [Inject]
         public IDialogService DialogService { get; set; }

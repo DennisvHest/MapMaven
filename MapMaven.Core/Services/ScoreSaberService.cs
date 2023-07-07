@@ -1,5 +1,6 @@
 ﻿using MapMaven.Core.ApiClients;
 using MapMaven.Core.Models.Data.ScoreSaber;
+using MapMaven.Core.Services.Interfaces;
 using MapMaven.Core.Utilities.Scoresaber;
 using MapMaven_Core;
 using System.Net.Http.Json;
@@ -8,21 +9,21 @@ using System.Reactive.Subjects;
 
 namespace MapMaven.Core.Services
 {
-    public class ScoreSaberService
+    public class ScoreSaberService : IScoreSaberService
     {
         private readonly ScoreSaberApiClient _scoreSaber;
-        private readonly BeatSaberFileService _fileService;
-        private readonly ApplicationSettingService _applicationSettingService;
+        private readonly IApplicationSettingService _applicationSettingService;
+        private readonly IApplicationEventService _applicationEventService;
         private readonly IHttpClientFactory _httpClientFactory;
 
         private readonly BehaviorSubject<string?> _playerId = new(null);
         private readonly BehaviorSubject<IEnumerable<RankedMap>> _rankedMaps = new(Enumerable.Empty<RankedMap>());
 
         public IObservable<string?> PlayerIdObservable => _playerId;
-        public readonly IObservable<Player> PlayerProfile;
-        public readonly IObservable<IEnumerable<PlayerScore>> PlayerScores;
-        public readonly IObservable<IEnumerable<ScoreEstimate>> ScoreEstimates;
-        public readonly IObservable<IEnumerable<ScoreEstimate>> RankedMapScoreEstimates;
+        public IObservable<Player?> PlayerProfile { get; private set; }
+        public IObservable<IEnumerable<PlayerScore>> PlayerScores { get; private set; }
+        public IObservable<IEnumerable<ScoreEstimate>> ScoreEstimates { get; private set; }
+        public IObservable<IEnumerable<ScoreEstimate>> RankedMapScoreEstimates { get; private set; }
 
         public IObservable<IEnumerable<RankedMap>> RankedMaps => _rankedMaps;
 
@@ -33,14 +34,14 @@ namespace MapMaven.Core.Services
 
         public ScoreSaberService(
             ScoreSaberApiClient scoreSaber,
-            BeatSaberFileService fileService,
             IHttpClientFactory httpClientFactory,
-            ApplicationSettingService applicationSettingService)
+            IApplicationSettingService applicationSettingService,
+            IApplicationEventService applicationEventService)
         {
             _scoreSaber = scoreSaber;
-            _fileService = fileService;
             _httpClientFactory = httpClientFactory;
             _applicationSettingService = applicationSettingService;
+            _applicationEventService = applicationEventService;
 
             var playerScores = _playerId.Select(playerId =>
             {
@@ -77,7 +78,16 @@ namespace MapMaven.Core.Services
 
             playerScores.Connect();
 
-            PlayerScores = playerScores;
+            PlayerScores = playerScores.Catch((Exception exception) =>
+            {
+                _applicationEventService.RaiseError(new Models.ErrorEvent
+                {
+                    Exception = exception,
+                    Message = "Failed to load player scores from ScoreSaber."
+                });
+
+                return Observable.Return(Enumerable.Empty<PlayerScore>());
+            });
 
             PlayerProfile = _playerId.Select(playerId =>
             {
@@ -86,6 +96,18 @@ namespace MapMaven.Core.Services
 
                 return Observable.FromAsync(async () => await _scoreSaber.FullAsync(playerId));
             }).Concat();
+
+
+            PlayerProfile = PlayerProfile.Catch((Exception exception) =>
+            {
+                _applicationEventService.RaiseError(new Models.ErrorEvent
+                {
+                    Exception = exception,
+                    Message = "Failed to load player profile from ScoreSaber."
+                });
+
+                return Observable.Return(null as Player);
+            });
 
             var scoreEstimates = Observable.CombineLatest(PlayerProfile, PlayerScores, RankedMaps, (player, playerScores, rankedMaps) =>
             {
@@ -113,7 +135,7 @@ namespace MapMaven.Core.Services
                         TimeSet = DateTime.Now
                     });
 
-                    return scoresaber.GetScoreEstimate(pair.Map, Convert.ToDecimal(output.Score));
+                    return scoresaber.GetScoreEstimate(pair.Map, output.Score);
                 }).ToList();
             }).Replay(1);
 
@@ -137,7 +159,7 @@ namespace MapMaven.Core.Services
                         TimeSet = DateTime.Now
                     });
 
-                    return scoresaber.GetScoreEstimate(map, Convert.ToDecimal(output.Score));
+                    return scoresaber.GetScoreEstimate(map, output.Score);
                 }).ToList();
             }).Replay(1);
 
@@ -184,9 +206,22 @@ namespace MapMaven.Core.Services
 
         public async Task LoadRankedMaps()
         {
-            var rankedMaps = await GetRankedMaps();
+            try
+            {
+                var rankedMaps = await GetRankedMaps();
 
-            _rankedMaps.OnNext(rankedMaps);
+                _rankedMaps.OnNext(rankedMaps);
+            }
+            catch (Exception ex)
+            {
+                _applicationEventService.RaiseError(new()
+                {
+                    Exception = ex,
+                    Message = "Failed to load ranked maps."
+                });
+
+                _rankedMaps.OnNext(Enumerable.Empty<RankedMap>());
+            }
         }
 
         public async Task<IEnumerable<RankedMap>> GetRankedMaps()

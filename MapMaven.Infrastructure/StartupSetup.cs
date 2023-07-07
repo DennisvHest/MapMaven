@@ -9,6 +9,9 @@ using Microsoft.Extensions.DependencyInjection;
 using System.Net;
 using System.Security.AccessControl;
 using System.Security.Principal;
+using MapMaven.Core.Services.Interfaces;
+using Newtonsoft.Json;
+using System.IO.Abstractions;
 
 namespace MapMaven.Infrastructure
 {
@@ -18,8 +21,12 @@ namespace MapMaven.Infrastructure
         {
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
 
+            JsonConvert.DefaultSettings = () => new() { DateParseHandling = DateParseHandling.None };
+
             services.AddDbContext<MapMavenContext>();
             services.AddScoped<IDataStore, MapMavenContext>();
+
+            services.AddSingleton<IFileSystem, FileSystem>();
 
             services.AddScoped<IBeatmapHasher, Hasher>();
             services.AddScoped(_ => new BeatSaver("MapMaven", new Version(1, 0)));
@@ -31,13 +38,14 @@ namespace MapMaven.Infrastructure
             });
 
             services.AddSingleton<BeatSaberFileService>();
-            services.AddSingleton<BeatSaberDataService>();
-            services.AddSingleton<MapService>();
+            services.AddSingleton<IBeatSaberDataService, BeatSaberDataService>();
+            services.AddSingleton<IMapService, MapService>();
             services.AddSingleton<SongPlayerService>();
-            services.AddSingleton<PlaylistService>();
-            services.AddSingleton<ScoreSaberService>();
+            services.AddSingleton<IPlaylistService, PlaylistService>();
+            services.AddSingleton<IScoreSaberService, ScoreSaberService>();
             services.AddSingleton<DynamicPlaylistArrangementService>();
-            services.AddSingleton<ApplicationSettingService>();
+            services.AddSingleton<IApplicationSettingService, ApplicationSettingService>();
+            services.AddSingleton<IApplicationEventService, ApplicationEventService>();
         }
 
         public static void Initialize(IServiceProvider serviceProvider)

@@ -5,19 +5,25 @@ using MapMaven.Models;
 using MapMaven.Core.Models;
 using Microsoft.AspNetCore.Components.Routing;
 using MudBlazor;
+using MapMaven.Core.Services.Interfaces;
+using MapMaven.Core.Services;
+using System.Reactive.Linq;
 
 namespace MapMaven.Components.Maps
 {
     public partial class MapBrowser : IDisposable
     {
         [Inject]
-        protected MapService MapService { get; set; }
+        protected IMapService MapService { get; set; }
 
         [Inject]
-        protected PlaylistService PlaylistService { get; set; }
+        protected IPlaylistService PlaylistService { get; set; }
 
         [Inject]
-        protected BeatSaberDataService BeatSaberDataService { get; set; }
+        protected IBeatSaberDataService BeatSaberDataService { get; set; }
+
+        [Inject]
+        protected DynamicPlaylistArrangementService DynamicPlaylistArrangementService { get; set; }
 
         [Inject]
         protected NavigationManager NavigationManager { get; set; }
@@ -62,7 +68,14 @@ namespace MapMaven.Components.Maps
         {
             NavigationManager.LocationChanged += LocationChanged;
 
-            SubscribeAndBind(BeatSaberDataService.LoadingMapInfo, loading => LoadingMapInfo = loading);
+            var loadingObservable = Observable.CombineLatest(
+                BeatSaberDataService.LoadingMapInfo,
+                DynamicPlaylistArrangementService.ArrangingDynamicPlaylists,
+                PlaylistService.SelectedPlaylist,
+                (loadingMapInfo, arrangingDynamicPlaylists, selectedPlaylist) => loadingMapInfo || arrangingDynamicPlaylists && selectedPlaylist?.IsDynamicPlaylist == true
+            );
+
+            SubscribeAndBind(loadingObservable, loading => LoadingMapInfo = loading);
             SubscribeAndBind(BeatSaberDataService.InitialMapLoad, initialMapLoad => InitialMapLoad = initialMapLoad);
             SubscribeAndBind(PlaylistService.SelectedPlaylist, selectedPlaylist =>
             {

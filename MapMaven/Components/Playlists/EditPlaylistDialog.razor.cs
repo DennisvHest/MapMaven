@@ -1,3 +1,4 @@
+using MapMaven.Core.Services.Interfaces;
 using MapMaven.Extensions;
 using MapMaven.Models;
 using MapMaven.Services;
@@ -11,7 +12,7 @@ namespace MapMaven.Components.Playlists
     public partial class EditPlaylistDialog
     {
         [Inject]
-        protected PlaylistService PlaylistService { get; set; }
+        protected IPlaylistService PlaylistService { get; set; }
 
         [Inject]
         ISnackbar Snackbar { get; set; }
@@ -24,38 +25,10 @@ namespace MapMaven.Components.Playlists
 
         bool NewPlaylist => EditPlaylistModel.FileName == null;
 
-        string CoverImage;
-
         protected override void OnInitialized()
         {
             if (EditPlaylistModel == null)
                 EditPlaylistModel = new EditPlaylistModel();
-        }
-
-        protected override void OnParametersSet()
-        {
-            CoverImage = EditPlaylistModel.CoverImage;
-        }
-
-        private async Task OnInputFileChanged(InputFileChangeEventArgs e)
-        {
-            if (e.File != null)
-            {
-                var imageFile = e.File.OpenReadStream(maxAllowedSize: long.MaxValue);
-
-                using (var ms = new MemoryStream())
-                {
-                    await imageFile.CopyToAsync(ms);
-                    var coverImage = Image.FromStream(ms);
-                    CoverImage = coverImage.ToDataUrl();
-                    EditPlaylistModel.CoverImage = coverImage.ToBase64PrependedString();
-                }
-            }
-            else
-            {
-                CoverImage = null;
-                EditPlaylistModel.CoverImage = null;
-            }
         }
 
         async Task OnValidSubmit(EditContext context)

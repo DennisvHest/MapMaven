@@ -1,4 +1,5 @@
-﻿using MapMaven.Utilities.NAudio;
+﻿using MapMaven.Core.Services.Interfaces;
+using MapMaven.Utilities.NAudio;
 using NAudio.Vorbis;
 using NAudio.Wave;
 using System.Reactive.Linq;
@@ -9,7 +10,7 @@ namespace MapMaven.Services
 {
     public class SongPlayerService
     {
-        private readonly BeatSaberDataService _beatSaberDataService;
+        private readonly IBeatSaberDataService _beatSaberDataService;
 
         private VorbisWaveReader _audioFile;
         private WaveOutEvent _outputDevice;
@@ -19,7 +20,7 @@ namespace MapMaven.Services
         public IObservable<Map> CurrentlyPlayingMap => _currentlyPlayingMap;
         public IObservable<double> PlaybackProgress;
 
-        public SongPlayerService(BeatSaberDataService beatSaberDataService)
+        public SongPlayerService(IBeatSaberDataService beatSaberDataService)
         {
             _beatSaberDataService = beatSaberDataService;
             InitializePlaybackProgressObservable();

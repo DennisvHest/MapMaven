@@ -29,7 +29,7 @@
 </SortableTemplateColumn>
 @if (!string.IsNullOrEmpty(PlayerId))
 {
-    <SortableTemplateColumn T="Map" TProperty="decimal" Property="m => m.PlayerScore.AccuracyWithMods()" SortBy="m => m.PlayerScore?.AccuracyWithMods()" Title="%">
+    <SortableTemplateColumn T="Map" TProperty="double" Property="m => m.PlayerScore.AccuracyWithMods()" SortBy="m => m.PlayerScore?.AccuracyWithMods()" Title="%">
         <CellTemplate>
             @if (context.Item.PlayerScore != null)
             {
@@ -45,7 +45,7 @@
             }
         </CellTemplate>
     </SortableTemplateColumn>
-    <SortableTemplateColumn T="Map" TProperty="decimal" Style="width: 130px" Property="m => m.ScoreEstimates.Any() ? m.ScoreEstimates.Max(x => x.PPIncrease) : 0" SortBy="m => m.ScoreEstimates.Any() ? m.ScoreEstimates.Max(x => x.PPIncrease) : 0">
+    <SortableTemplateColumn T="Map" TProperty="double" Style="width: 130px" Property="m => m.ScoreEstimates.Any() ? m.ScoreEstimates.Max(x => x.PPIncrease) : 0" SortBy="m => m.ScoreEstimates.Any() ? m.ScoreEstimates.Max(x => x.PPIncrease) : 0">
         <HeaderTemplate>
             <div class="d-flex">
                 <MudIcon Icon="@Icons.Filled.KeyboardDoubleArrowUp"></MudIcon>pp

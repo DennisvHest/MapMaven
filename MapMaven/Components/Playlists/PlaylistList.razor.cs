@@ -1,4 +1,6 @@
 using MapMaven.Components.Shared;
+using MapMaven.Core.Models.DynamicPlaylists;
+using MapMaven.Core.Services.Interfaces;
 using MapMaven.Models;
 using MapMaven.Services;
 using Microsoft.AspNetCore.Components;
@@ -13,10 +15,10 @@ namespace MapMaven.Components.Playlists
     public partial class PlaylistList
     {
         [Inject]
-        protected PlaylistService PlaylistService { get; set; }
+        protected IPlaylistService PlaylistService { get; set; }
 
         [Inject]
-        protected BeatSaberDataService BeatSaberDataService { get; set; }
+        protected IBeatSaberDataService BeatSaberDataService { get; set; }
 
         [Inject]
         protected IDialogService DialogService { get; set; }
@@ -125,10 +127,27 @@ namespace MapMaven.Components.Playlists
 
         protected void OpenEditPlaylistDialog(Playlist playlist)
         {
-            var parameters = new DialogParameters();
-            parameters.Add("EditPlaylistModel", new EditPlaylistModel(playlist));
+            var parameters = new DialogParameters
+            {
+                { "EditPlaylistModel", new EditPlaylistModel(playlist) }
+            };
 
             DialogService.Show<EditPlaylistDialog>("Edit playlist", parameters, new DialogOptions
+            {
+                MaxWidth = MaxWidth.Small,
+                FullWidth = true
+            });
+        }
+
+        protected void OpenEditDynamicPlaylistDialog(Playlist playlist)
+        {
+            var parameters = new DialogParameters
+            {
+                { "SelectedPlaylist", new EditDynamicPlaylistModel(playlist) },
+                { "NewPlaylist", false }
+            };
+
+            DialogService.Show<EditDynamicPlaylistDialog>("Edit playlist", parameters, new DialogOptions
             {
                 MaxWidth = MaxWidth.Small,
                 FullWidth = true

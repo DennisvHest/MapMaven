@@ -1,18 +1,29 @@
-﻿@using MapMaven.Extensions;
-
+﻿@using MapMaven.Core.Models.DynamicPlaylists;
+@using MapMaven.Extensions;
+@using MapMaven.Components.Playlists;
 
 @if (SelectedPlaylist == null)
 {
     <MudDialog>
         <DialogContent>
-            @foreach (var playlist in DynamicPlaylists)
-            {
-                <MudButton OnClick="() => ConfigureDynamicPlaylist(playlist)" Variant="Variant.Filled">
+            <div id="preset-dynamic-playlists">
+                @foreach (var playlist in PresetDynamicPlaylists.Playlists)
+                {
+                    <MudButton OnClick="() => ConfigureDynamicPlaylist(playlist)" Variant="Variant.Filled" Class="pa-0 mx-2" Style="background-color: var(--mud-palette-drawer-background);">
+                        <div class="d-flex flex-column align-center justify-center dynamic-playlist-add">
+                            <img src="@playlist.CoverImage" class="mb-1" />
+                            <MudText Typo="Typo.body2" Class="pa-1">@playlist.Name</MudText>
+                        </div>
+                    </MudButton>
+                }
+            </div>
+            <div id="custom-dynamic-playlist" class="pa-4 mt-4 border-t d-flex flex-column flex-center">
+                <MudButton OnClick="ConfigureCustomDynamicPlaylist" Variant="Variant.Filled">
                     <div class="d-flex flex-column align-center justify-center dynamic-playlist-add">
-                        <MudIcon Icon="@Icons.Filled.AccessTime" Size="Size.Large" Class="mb-2"></MudIcon> @playlist.Name
+                        <MudIcon Icon="@Icons.Filled.Settings" Size="Size.Large" Class="mb-2"></MudIcon> Custom
                     </div>
                 </MudButton>
-            }
+            </div>
         </DialogContent>
         <DialogActions>
             <MudButton OnClick="Cancel">Cancel</MudButton>
@@ -21,23 +32,90 @@
 }
 else
 {
-    <EditForm Model="@SelectedPlaylist" OnValidSubmit="AddDynamicPlaylist">
+    var configuration = SelectedPlaylist.DynamicPlaylistConfiguration;
+
+    <EditForm Model="@SelectedPlaylist" OnValidSubmit="OnValidSubmit">
+        <ObjectGraphDataAnnotationsValidator />
         <MudDialog>
             <DialogContent>
-                <h1>@SelectedPlaylist.Name</h1>
-                <p>@SelectedPlaylist.Description</p>
-                <div class="mt-5">
-                    <MudNumericField @bind-Value="SelectedPlaylist.DynamicPlaylistConfiguration.MapCount"
-                        For="() => SelectedPlaylist.DynamicPlaylistConfiguration.MapCount"
-                        Label="Map count"
-                        Variant="Variant.Outlined"
-                        Min="1"
-                    />
-                </div>
+                <PlaylistEditor EditPlaylistModel="SelectedPlaylist"></PlaylistEditor>
+                <MudPaper Class="my-4" Style="background-color: var(--mud-palette-drawer-background);">
+                    <MudList>
+                        <MudListItem Class="py-0">
+                            <div class="d-flex flex-row align-center">
+                                <b class="mud-list-subheader pa-0 mr-1">Map pool</b>
+                                <MudTooltip RootClass="d-flex">
+                                    <ChildContent>
+                                        <MudIcon Icon="@Icons.Material.Filled.Info" Size="Size.Small" />
+                                    </ChildContent>
+                                    <TooltipContent>
+                                        <p style="text-align: left; max-width: 300px;">
+                                            The pool of maps the dynamic playlist should pull maps from.<br />
+                                            <br />
+                                            <b>Downloaded maps:</b> Includes all downloaded maps.<br />
+                                            <b>Improvement maps:</b> Includes all ranked maps. Ranked maps can, in addition to the standard map filters/sortings, be filtered on/sorted by estimated scores.
+                                            Ranked maps will be downloaded to your PC if they are not already downloaded.
+                                        </p>
+                                    </TooltipContent>
+                                </MudTooltip>
+                                <MudButtonGroup OverrideStyles="false" Class="ml-auto">
+                                    <MudButton Variant="Variant.Filled"
+                                               Color="@(configuration.MapPool == MapPool.Standard ? Color.Primary : Color.Default)"
+                                               OnClick="() => ChangeMapPool(MapPool.Standard)">
+                                        Downloaded maps
+                                    </MudButton>
+                                    <MudButton Variant="Variant.Filled"
+                                               Color="@(configuration.MapPool == MapPool.Improvement ? Color.Primary : Color.Default)"
+                                               OnClick="() => ChangeMapPool(MapPool.Improvement)">
+                                        Improvement maps
+                                    </MudButton>
+                                </MudButtonGroup>
+                            </div>
+                        </MudListItem>
+                    </MudList>
+                </MudPaper>
+                <MudPaper Class="my-4" Style="background-color: var(--mud-palette-drawer-background);">
+                    <MudList>
+                        <MudListSubheader Class="d-flex align-center justify-space-between">
+                            Filters
+                            <MudIconButton Icon="@Icons.Filled.Add" Variant="Variant.Outlined" Size="Size.Small" OnClick="AddFilterOperation" />
+                        </MudListSubheader>
+                        @foreach (var filterOperation in configuration.FilterOperations)
+                        {
+                            <MudListItem Class="py-0">
+                                <FilterOperationInput FilterOperation="filterOperation" MapPool="configuration.MapPool" OnRemove="() => RemoveFilterOperation(filterOperation)"></FilterOperationInput>
+                            </MudListItem>
+                        }
+                    </MudList>
+                </MudPaper>
+
+                <MudPaper Class="my-4" Style="background-color: var(--mud-palette-drawer-background);">
+                    <MudList>
+                        <MudListSubheader Class="d-flex align-center justify-space-between">
+                            Sorting
+                            <MudIconButton Icon="@Icons.Filled.Add" Variant="Variant.Outlined" Size="Size.Small" OnClick="AddSortOperation" />
+                        </MudListSubheader>
+                        @for (var i = 0; i < configuration.SortOperations.Count; i++)
+                        {
+                            var index = i;
+                            var sortOperation = configuration.SortOperations[index];
+
+                            <MudListItem Class="py-0">
+                                <SortOperationInput SortOperation="sortOperation" MapPool="configuration.MapPool" OnRemove="() => RemoveSortOperation(sortOperation)" FirstSortOperation="index == 0"></SortOperationInput>
+                            </MudListItem>
+                        }
+                    </MudList>
+                </MudPaper>
+                <MudNumericField @bind-Value="SelectedPlaylist.DynamicPlaylistConfiguration.MapCount"
+                                 For="() => SelectedPlaylist.DynamicPlaylistConfiguration.MapCount"
+                                 Label="Map count"
+                                 Variant="Variant.Outlined"
+                                 Min="1"
+                                 Class="my-4" />
             </DialogContent>
             <DialogActions>
                 <MudButton OnClick="CancelConfiguration">Cancel</MudButton>
-                <MudButton OnClick="AddDynamicPlaylist">Add</MudButton>
+                <MudButton ButtonType="ButtonType.Submit">@(NewPlaylist ? "Add" : "Save changes")</MudButton>
             </DialogActions>
         </MudDialog>
     </EditForm>

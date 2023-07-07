@@ -1,4 +1,5 @@
-﻿using MapMaven.Services;
+﻿using MapMaven.Core.Services.Interfaces;
+using MapMaven.Services;
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
@@ -6,9 +7,9 @@ using System.Windows.Forms;
 namespace MapMaven.Platforms.Windows;
 public class TrayService : ITrayService
 {
-    private readonly MapService _mapService;
+    private readonly IMapService _mapService;
 
-    public TrayService(MapService mapService)
+    public TrayService(IMapService mapService)
     {
         _mapService = mapService;
     }

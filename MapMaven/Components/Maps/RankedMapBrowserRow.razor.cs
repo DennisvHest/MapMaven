@@ -1,5 +1,6 @@
 using MapMaven.Components.Shared;
 using MapMaven.Core.Models.Data;
+using MapMaven.Core.Services.Interfaces;
 using MapMaven.Services;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
@@ -12,10 +13,10 @@ namespace MapMaven.Components.Maps
     public partial class RankedMapBrowserRow
     {
         [Inject]
-        protected BeatSaberDataService BeatSaberDataService { get; set; }
+        protected IBeatSaberDataService BeatSaberDataService { get; set; }
 
         [Inject]
-        protected MapService MapService { get; set; }
+        protected IMapService MapService { get; set; }
 
         [Inject]
         ISnackbar Snackbar { get; set; }

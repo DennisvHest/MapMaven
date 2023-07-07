@@ -1,0 +1,32 @@
+﻿@using MapMaven.Core.Models.DynamicPlaylists;
+
+<div class="d-flex align-center justify-space-between">
+    @if (FirstSortOperation)
+    {
+        <MudText Typo="Typo.caption" Style="width: 60px">Sort by</MudText>
+    }
+    else
+    {
+        <MudText Typo="Typo.caption" Style="width: 60px">Then by</MudText>
+    }
+    <MudSelect T="DynamicPlaylistFieldOption" Value="SelectedFieldOption" ToStringFunc="field => field?.Name" Label="Field" title="@SelectedFieldOption?.Name" ValueChanged="OnFieldChanged" Variant="Variant.Outlined" Margin="Margin.Dense">
+        @foreach (var field in DynamicPlaylistFields.FieldOptions(MapPool))
+        {
+            <MudSelectItem Value="field">
+                @field.Name
+            </MudSelectItem>
+        }
+    </MudSelect>
+    <MudSelect @bind-Value="SortOperation.Direction" Label="Direction" Variant="Variant.Outlined" Margin="Margin.Dense">
+        @foreach (var sortOperator in Enum.GetValues<MapMaven.Core.Models.DynamicPlaylists.SortDirection>())
+        {
+            <MudSelectItem Value="sortOperator">
+                @sortOperator.ToString()
+            </MudSelectItem>
+        }
+    </MudSelect>
+    <MudIconButton Icon="@Icons.Material.Filled.RemoveCircle" OnClick="OnRemove" Class="pa-1" />
+</div>
+<div>
+    <ValidationMessage For="() => SortOperation.Field" />
+</div>

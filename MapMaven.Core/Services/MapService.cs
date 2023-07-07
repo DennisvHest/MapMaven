@@ -12,13 +12,14 @@ using Microsoft.Extensions.DependencyInjection;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using Map = MapMaven.Models.Map;
+using MapMaven.Core.Services.Interfaces;
 
 namespace MapMaven.Services
 {
-    public class MapService
+    public class MapService : IMapService
     {
-        private readonly BeatSaberDataService _beatSaberDataService;
-        private readonly ScoreSaberService _scoreSaberService;
+        private readonly IBeatSaberDataService _beatSaberDataService;
+        private readonly IScoreSaberService _scoreSaberService;
         private readonly BeatSaberFileService _fileService;
 
         private readonly BeatSaver _beatSaver;
@@ -43,8 +44,8 @@ namespace MapMaven.Services
 
 
         public MapService(
-            BeatSaberDataService beatSaberDataService,
-            ScoreSaberService scoreSaberService,
+            IBeatSaberDataService beatSaberDataService,
+            IScoreSaberService scoreSaberService,
             BeatSaver beatSaver,
             BeatSaberFileService fileService,
             IServiceProvider serviceProvider)
@@ -78,7 +79,6 @@ namespace MapMaven.Services
             });
 
             RankedMaps = Observable.CombineLatest(
-                _beatSaberDataService.MapInfo,
                 _scoreSaberService.RankedMaps,
                 _scoreSaberService.RankedMapScoreEstimates,
                 _scoreSaberService.PlayerScores,
@@ -93,10 +93,9 @@ namespace MapMaven.Services
                 CombineMapData);
 
             CompleteRankedMapData = Observable.CombineLatest(
-                _beatSaberDataService.MapInfo,
                 _scoreSaberService.RankedMaps,
-                _scoreSaberService.RankedMapScoreEstimates.Where(x => x.Any()),
-                _scoreSaberService.PlayerScores.Where(x => x.Any()),
+                _scoreSaberService.RankedMapScoreEstimates,
+                _scoreSaberService.PlayerScores,
                 hiddenMaps,
                 CombineRankedMapData);
         }
@@ -107,7 +106,7 @@ namespace MapMaven.Services
             {
                 var map = mapInfo.ToMap();
 
-                map.PlayerScore = scores.FirstOrDefault();
+                map.PlayerScore = scores.MaxBy(s => s.Score.Pp);
 
                 return map;
             }).GroupJoin(rankedMaps, map => map.Hash, rankedMap => rankedMap.Id, (map, rankedMap) =>
@@ -124,7 +123,6 @@ namespace MapMaven.Services
         }
 
         private IEnumerable<Map> CombineRankedMapData(
-            IEnumerable<MapInfo> maps,
             IEnumerable<RankedMap> rankedMaps,
             IEnumerable<ScoreEstimate> scoreEstimates,
             IEnumerable<PlayerScore> playerScores,
@@ -141,7 +139,7 @@ namespace MapMaven.Services
                     return map;
                 }).GroupJoin(playerScores, map => map.RankedMap.Id + map.RankedMap.Difficulty, score => score.Leaderboard.SongHash + score.Leaderboard.Difficulty.DifficultyName, (map, scores) =>
                 {
-                    map.PlayerScore = scores.FirstOrDefault();
+                    map.PlayerScore = scores.MaxBy(s => s.Score.Pp);
 
                     return map;
                 }).GroupJoin(hiddenMaps, map => map.Hash + map.RankedMap.Difficulty, hiddenMap => hiddenMap.Hash + hiddenMap.Difficulty, (map, hiddenMap) =>

@@ -1,0 +1,30 @@
+﻿<MudGrid>
+    <MudItem xs="6">
+        <MudPaper Height="300px" Outlined="true" Class="relative rounded-lg border-2 border-dashed pa-4 mud-width-full mud-height-full d-flex align-center flex-column justify-center">
+            <InputFile OnChange="OnInputFileChanged" class="absolute mud-width-full mud-height-full overflow-hidden z-2" style="opacity:0;" />
+            @if (!string.IsNullOrEmpty(EditPlaylistModel.CoverImage))
+            {
+                <img src="@EditPlaylistModel.CoverImage" class="full-width" />
+            }
+            else
+            {
+                <MudIcon Icon="@Icons.Filled.Image" Size="Size.Large"></MudIcon>
+                <MudText Typo="Typo.subtitle2">Click to browse for cover images...</MudText>
+            }
+        </MudPaper>
+    </MudItem>
+    <MudItem xs="6">
+        <MudTextField
+            Label="Name"
+            Variant="Variant.Outlined"
+            @bind-Value="EditPlaylistModel.Name"
+            For="() => EditPlaylistModel.Name"
+            Class="mb-4 mt-0" />
+        <MudTextField
+            Label="Description"
+            Variant="Variant.Outlined"
+            @bind-Value="EditPlaylistModel.Description"
+            For="() => EditPlaylistModel.Description"
+            Lines="3" />
+    </MudItem>
+</MudGrid>

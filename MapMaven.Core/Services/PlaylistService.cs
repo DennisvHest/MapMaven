@@ -9,26 +9,27 @@ using MapMaven.Core.Services;
 using BeatSaberPlaylistsLib.Types;
 using MapMaven.Core.Models.DynamicPlaylists;
 using MapMaven.Core.Models.Data;
+using MapMaven.Core.Services.Interfaces;
 
 namespace MapMaven.Services
 {
-    public class PlaylistService
+    public class PlaylistService : IPlaylistService
     {
         private readonly BeatSaberFileService _beatSaverFileService;
 
-        private readonly BeatSaberDataService _beatSaberDataService;
-        private readonly MapService _mapService;
+        private readonly IBeatSaberDataService _beatSaberDataService;
+        private readonly IMapService _mapService;
         private PlaylistManager _playlistManager;
 
         private readonly BehaviorSubject<string> _selectedPlaylistFileName = new(null);
 
         public IObservable<IEnumerable<Playlist>> Playlists { get; private set; }
-        public BehaviorSubject<Playlist> SelectedPlaylist = new(null);
+        public BehaviorSubject<Playlist> SelectedPlaylist { get; private set; } = new(null);
 
         private readonly BehaviorSubject<bool> _creatingPlaylist = new(false);
         public IObservable<bool> CreatingPlaylist => _creatingPlaylist;
 
-        public PlaylistService(BeatSaberDataService beatSaberDataService, BeatSaberFileService beatSaverFileService, MapService mapService)
+        public PlaylistService(IBeatSaberDataService beatSaberDataService, BeatSaberFileService beatSaverFileService, IMapService mapService)
         {
             _beatSaverFileService = beatSaverFileService;
             _beatSaberDataService = beatSaberDataService;
@@ -70,16 +71,6 @@ namespace MapMaven.Services
             _selectedPlaylistFileName.OnNext(playlist?.FileName);
         }
 
-        public async Task<Playlist> AddDynamicPlaylist(EditDynamicPlaylistModel editPlaylistModel, IEnumerable<Map>? playlistMaps = null, bool loadPlaylists = true)
-        {
-            var playlist = await CreateDynamicPlaylist(editPlaylistModel, playlistMaps);
-
-            if (loadPlaylists)
-                await _beatSaberDataService.LoadAllPlaylists();
-
-            return playlist;
-        }
-
         public async Task<Playlist> AddPlaylist(EditPlaylistModel editPlaylistModel, IEnumerable<Map>? playlistMaps = null, bool loadPlaylists = true)
         {
             var playlist = await CreatePlaylist(editPlaylistModel, playlistMaps);
@@ -101,9 +92,9 @@ namespace MapMaven.Services
             return playlist;
         }
 
-        private async Task<Playlist> CreateDynamicPlaylist(EditDynamicPlaylistModel editDynamicPlaylistModel, IEnumerable<Map>? playlistMaps)
+        public async Task<Playlist> AddDynamicPlaylist(EditDynamicPlaylistModel editDynamicPlaylistModel)
         {
-            IPlaylist addedPlaylist = CreateIPlaylist(editDynamicPlaylistModel, playlistMaps);
+            IPlaylist addedPlaylist = CreateIPlaylist(editDynamicPlaylistModel, null);
 
             addedPlaylist.SetCustomData("mapMaven", new
             {
@@ -118,13 +109,40 @@ namespace MapMaven.Services
             return playlist;
         }
 
+        public async Task EditDynamicPlaylist(EditDynamicPlaylistModel editPlaylistModel)
+        {
+            var playlistToModify = _playlistManager.GetPlaylist(editPlaylistModel.FileName);
+            
+            UpdatePlaylist(editPlaylistModel, playlistToModify);
+
+            playlistToModify.SetCustomData("mapMaven", new
+            {
+                isDynamicPlaylist = true,
+                dynamicPlaylistConfiguration = editPlaylistModel.DynamicPlaylistConfiguration
+            });
+
+            _playlistManager.StorePlaylist(playlistToModify);
+
+            await _beatSaberDataService.LoadAllPlaylists();
+        }
+
+        private static void UpdatePlaylist(EditPlaylistModel editPlaylistModel, IPlaylist? playlistToModify)
+        {
+            playlistToModify.Title = editPlaylistModel.Name;
+            playlistToModify.Description = editPlaylistModel.Description;
+            playlistToModify.SetCover(editPlaylistModel.CoverImage);
+        }
+
         private IPlaylist CreateIPlaylist(EditPlaylistModel editPlaylistModel, IEnumerable<Map>? playlistMaps)
         {
             if (playlistMaps == null)
                 playlistMaps = Array.Empty<Map>();
 
+            var fileName = editPlaylistModel.FileName ?? editPlaylistModel.Name;
+            fileName = string.Join("_", fileName.Split(Path.GetInvalidFileNameChars()));
+
             var addedPlaylist = _playlistManager.CreatePlaylist(
-                fileName: editPlaylistModel.FileName ?? editPlaylistModel.Name,
+                fileName: fileName,
                 title: editPlaylistModel.Name,
                 author: "Map Maven",
                 coverImage: editPlaylistModel.CoverImage,
@@ -219,9 +237,7 @@ namespace MapMaven.Services
         {
             var playlistToModify = _playlistManager.GetPlaylist(editPlaylistModel.FileName);
 
-            playlistToModify.Title = editPlaylistModel.Name;
-            playlistToModify.Description = editPlaylistModel.Description;
-            playlistToModify.SetCover(editPlaylistModel.CoverImage);
+            UpdatePlaylist(editPlaylistModel, playlistToModify);
 
             _playlistManager.StorePlaylist(playlistToModify);
 

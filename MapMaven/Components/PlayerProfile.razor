@@ -39,10 +39,10 @@
 
 @code {
     [Inject]
-    ScoreSaberService ScoreSaberService { get; set; }
+    IScoreSaberService ScoreSaberService { get; set; }
 
     [Inject]
-    MapService MapService { get; set; }
+    IMapService MapService { get; set; }
 
     Player Player { get; set; } = null;
 
