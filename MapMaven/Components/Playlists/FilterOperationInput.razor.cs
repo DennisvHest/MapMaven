@@ -26,6 +26,9 @@ namespace MapMaven.Components.Playlists
 
         void OnFieldChanged(DynamicPlaylistFieldOption selectedField)
         {
+            if (SelectedFieldOption?.Value == selectedField.Value)
+                return;
+
             SelectedFieldOption = selectedField;
             FilterOperation.Field = SelectedFieldOption.Value;
             FilterOperation.Operator = default;
