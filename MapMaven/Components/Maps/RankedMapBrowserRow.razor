@@ -22,7 +22,7 @@
     <CellTemplate>
         @{
             var difficulty = context.Item.ScoreEstimates.FirstOrDefault()?.Difficulty;
-            var chipStyle = $"border: 1px solid {DifficultyColor.Get(difficulty)}";
+            var chipStyle = $"border: 1px solid {DifficultyDisplayUtils.GetColor(difficulty)}";
         }
         <MudChip Size="Size.Small" Variant="Variant.Outlined" Style="@chipStyle">@difficulty</MudChip>
     </CellTemplate>
@@ -39,10 +39,10 @@
 </TemplateColumn>
 <TemplateColumn T="Map" Sortable="false">
     <CellTemplate>
-        @if (context.Item.PlayerScore != null)
+        @if (context.Item.HighestPlayerScore != null)
         {
-            <MudChip Size="Size.Small">@context.Item.PlayerScore.Accuracy().ToString("#0.##") %</MudChip>
-            <MudChip Size="Size.Small">@context.Item.PlayerScore.Score.Pp.ToString("#0.##") pp</MudChip>
+            <MudChip Size="Size.Small">@context.Item.HighestPlayerScore.Accuracy().ToString("#0.##") %</MudChip>
+            <MudChip Size="Size.Small">@context.Item.HighestPlayerScore.Score.Pp.ToString("#0.##") pp</MudChip>
         }
     </CellTemplate>
 </TemplateColumn>

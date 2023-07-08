@@ -29,19 +29,25 @@
 </SortableTemplateColumn>
 @if (!string.IsNullOrEmpty(PlayerId))
 {
-    <SortableTemplateColumn T="Map" TProperty="double" Property="m => m.PlayerScore.AccuracyWithMods()" SortBy="m => m.PlayerScore?.AccuracyWithMods()" Title="%">
+    <SortableTemplateColumn T="Map" TProperty="double" Property="m => m.AllPlayerScores.Any() ? m.AllPlayerScores.Max(x => x.AccuracyWithMods()) : 0" SortBy="m => m.AllPlayerScores.Any() ? m.AllPlayerScores.Max(x => x.AccuracyWithMods()) : 0" Title="%">
         <CellTemplate>
-            @if (context.Item.PlayerScore != null)
+            @foreach (var playerScore in context.Item.AllPlayerScores)
             {
-                <MudChip Color="Color.Primary" Size="Size.Small">@context.Item.PlayerScore.AccuracyWithMods().ToString("#0.##")%</MudChip>
+                var chipStyle = $"border: 1px solid {DifficultyDisplayUtils.GetColor(playerScore.Leaderboard?.Difficulty?.DifficultyName)}";
+                <MudChip Size="Size.Small" Variant="Variant.Outlined" Style="@chipStyle">
+                    @DifficultyDisplayUtils.GetShortName(playerScore.Leaderboard?.Difficulty?.DifficultyName) | @playerScore.AccuracyWithMods().ToString("#0.##")%
+                </MudChip>
             }
         </CellTemplate>
     </SortableTemplateColumn>
-    <SortableTemplateColumn T="Map" TProperty="double" Property="m => m.PlayerScore.Score.Pp" SortBy="m => m.PlayerScore?.Score?.Pp" Title="pp" Style="width: 130px">
+    <SortableTemplateColumn T="Map" TProperty="double" Property="m => m.AllPlayerScores.Any() ? m.AllPlayerScores.Max(x => x.Score.Pp) : 0" SortBy="m => m.AllPlayerScores.Any() ? m.AllPlayerScores.Max(x => x.Score.Pp) : 0" Title="pp" Style="width: 130px">
         <CellTemplate>
-            @if (context.Item.PlayerScore?.Score?.Pp != null)
+            @foreach (var playerScore in context.Item.AllPlayerScores)
             {
-                <MudChip Color="Color.Primary" Size="Size.Small">@context.Item.PlayerScore.Score.Pp.ToString("#0.##") pp</MudChip>
+                var chipStyle = $"border: 1px solid {DifficultyDisplayUtils.GetColor(playerScore.Leaderboard?.Difficulty?.DifficultyName)}";
+                <MudChip Size="Size.Small" Variant="Variant.Outlined" Style="@chipStyle">
+                    @DifficultyDisplayUtils.GetShortName(playerScore.Leaderboard?.Difficulty?.DifficultyName) | @playerScore.Score.Pp.ToString("#0.##") pp
+                </MudChip>
             }
         </CellTemplate>
     </SortableTemplateColumn>
@@ -56,8 +62,9 @@
             {
                 @foreach (var scoreEstimate in context.Item.ScoreEstimates)
                 {
-                    <MudChip Color="Color.Primary" Size="Size.Small">
-                        @scoreEstimate.Difficulty |
+                    var chipStyle = $"border: 1px solid {DifficultyDisplayUtils.GetColor(scoreEstimate.Difficulty)}";
+                    <MudChip Size="Size.Small" Variant="Variant.Outlined" Style="@chipStyle">
+                        @DifficultyDisplayUtils.GetShortName(scoreEstimate.Difficulty) |
                         @scoreEstimate.Stars <MudIcon Icon="@Icons.Filled.Star" Size="Size.Small"></MudIcon> |
                         @scoreEstimate.Accuracy.ToString("#0.##") % |
                         +@scoreEstimate.PPIncrease.ToString("#0.##") pp
@@ -66,12 +73,12 @@
             }
         </CellTemplate>
     </SortableTemplateColumn>
-    <SortableTemplateColumn T="Map" TProperty="bool" Property="m => m.PlayerScore.Score.HasReplay" SortBy="m => m.PlayerScore?.Score?.HasReplay">
+    <SortableTemplateColumn T="Map" TProperty="bool" Property="m => m.HighestPlayerScore.Score.HasReplay" SortBy="m => m.HighestPlayerScore?.Score?.HasReplay">
         <HeaderTemplate>
             <img src="images/replay-icon.png" style="width: 24px; vertical-align: middle;" />
         </HeaderTemplate>
         <CellTemplate>
-            @if (context.Item.PlayerScore?.Score?.HasReplay == true)
+            @if (context.Item.HighestPlayerScore?.Score?.HasReplay == true)
             {
                 <MudButton Class="replay-button" OnClick="() => OpenReplay(context.Item)" Style="min-width: 0; border-radius: 100%;"><img src="images/replay-icon.png" style="width: 24px" /></MudButton>
             }

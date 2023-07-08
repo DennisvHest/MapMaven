@@ -18,7 +18,7 @@ namespace MapMaven.Core.Tests.Maps
                     Stars = 1,
                     PP = 20
                 },
-                PlayerScore = new PlayerScore
+                HighestPlayerScore = new PlayerScore
                 {
                     Score = new Score
                     {
@@ -47,7 +47,7 @@ namespace MapMaven.Core.Tests.Maps
                     Stars = 5.2,
                     PP = 43.2
                 },
-                PlayerScore = new PlayerScore
+                HighestPlayerScore = new PlayerScore
                 {
                     Score = new Score
                     {

@@ -13,6 +13,7 @@ using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using Map = MapMaven.Models.Map;
 using MapMaven.Core.Services.Interfaces;
+using MapMaven.Core.Utilities;
 
 namespace MapMaven.Services
 {
@@ -106,7 +107,8 @@ namespace MapMaven.Services
             {
                 var map = mapInfo.ToMap();
 
-                map.PlayerScore = scores.MaxBy(s => s.Score.Pp);
+                map.AllPlayerScores = scores.OrderByDescending(s => s.Leaderboard.Difficulty.Difficulty1).ToList();
+                map.HighestPlayerScore = scores.MaxBy(s => s.Score.Pp);
 
                 return map;
             }).GroupJoin(rankedMaps, map => map.Hash, rankedMap => rankedMap.Id, (map, rankedMap) =>
@@ -116,7 +118,7 @@ namespace MapMaven.Services
                 return map;
             }).GroupJoin(scoreEstimates, map => map.Hash, scoreEstimate => scoreEstimate.MapId, (map, scoreEstimate) =>
             {
-                map.ScoreEstimates = scoreEstimate;
+                map.ScoreEstimates = scoreEstimate.OrderByDescending(s => DifficultyUtils.GetOrder(s.Difficulty));
 
                 return map;
             }).ToList();
@@ -133,13 +135,13 @@ namespace MapMaven.Services
                 {
                     var map = rankedMap.ToMap();
 
-                    map.ScoreEstimates = scoreEstimates;
+                    map.ScoreEstimates = scoreEstimates.OrderByDescending(s => DifficultyUtils.GetOrder(s.Difficulty));
                     map.RankedMap = rankedMap;
 
                     return map;
                 }).GroupJoin(playerScores, map => map.RankedMap.Id + map.RankedMap.Difficulty, score => score.Leaderboard.SongHash + score.Leaderboard.Difficulty.DifficultyName, (map, scores) =>
                 {
-                    map.PlayerScore = scores.MaxBy(s => s.Score.Pp);
+                    map.HighestPlayerScore = scores.MaxBy(s => s.Score.Pp);
 
                     return map;
                 }).GroupJoin(hiddenMaps, map => map.Hash + map.RankedMap.Difficulty, hiddenMap => hiddenMap.Hash + hiddenMap.Difficulty, (map, hiddenMap) =>

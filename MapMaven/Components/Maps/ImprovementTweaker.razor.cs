@@ -75,8 +75,8 @@ namespace MapMaven.Components.Maps
 
             PlayedMapFilter.Filter = PlayedFilter switch
             {
-                "Not played" => map => map.PlayerScore == null,
-                "Played" => map => map.PlayerScore != null
+                "Not played" => map => map.HighestPlayerScore == null,
+                "Played" => map => map.HighestPlayerScore != null
             };
 
             MapService.AddMapFilter(PlayedMapFilter);

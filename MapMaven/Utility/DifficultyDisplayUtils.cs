@@ -2,9 +2,9 @@
 
 namespace MapMaven.Utility
 {
-    public static class DifficultyColor
+    public static class DifficultyDisplayUtils
     {
-        public static string Get(string difficulty)
+        public static string GetColor(string difficulty)
         {
             return difficulty switch
             {
@@ -14,6 +14,19 @@ namespace MapMaven.Utility
                 "Normal" => Colors.Blue.Darken3,
                 "Easy" => Colors.Green.Darken3,
                 _ => Colors.Shades.Black
+            };
+        }
+
+        public static string GetShortName(string difficulty)
+        {
+            return difficulty switch
+            {
+                "ExpertPlus" => "EX+",
+                "Expert" => "EX",
+                "Hard" => "HD",
+                "Normal" => "NM",
+                "Easy" => "EZ",
+                _ => "??"
             };
         }
     }

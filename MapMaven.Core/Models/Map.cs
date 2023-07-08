@@ -18,11 +18,13 @@ namespace MapMaven.Models
         public TimeSpan PreviewEndTime => PreviewStartTime + PreviewDuration;
         public string CoverImageUrl { get; set; }
         public bool Hidden { get; set; }
-        public bool Played => PlayerScore != null;
+        public bool Played => HighestPlayerScore != null;
 
-        public PlayerScore? PlayerScore { get; set; }
+        public PlayerScore? HighestPlayerScore { get; set; }
+        public IEnumerable<PlayerScore> AllPlayerScores { get; set; } = Enumerable.Empty<PlayerScore>();
         public RankedMap? RankedMap { get; set; }
         public IEnumerable<ScoreEstimate> ScoreEstimates { get; set; } = Enumerable.Empty<ScoreEstimate>();
         public ScoreEstimate? ScoreEstimate => ScoreEstimates.FirstOrDefault();
+
     }
 }
