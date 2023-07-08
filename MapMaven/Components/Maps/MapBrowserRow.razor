@@ -96,9 +96,15 @@
             <img src="images/replay-icon.png" style="width: 24px; vertical-align: middle;" />
         </HeaderTemplate>
         <CellTemplate>
-            @if (context.Item.HighestPlayerScore?.Score?.HasReplay == true)
+            @foreach (var playerScore in context.Item.AllPlayerScores.Where(s => s.Score.HasReplay))
             {
-                <MudButton Class="replay-button" OnClick="() => OpenReplay(context.Item)" Style="min-width: 0; border-radius: 100%;"><img src="images/replay-icon.png" style="width: 24px" /></MudButton>
+                var chipStyle = $"cursor: pointer; border: 1px solid {DifficultyDisplayUtils.GetColor(playerScore.Leaderboard?.Difficulty?.DifficultyName)}";
+                <MudButton Class="replay-button pa-0" OnClick="() => OpenReplay(context.Item, playerScore)" Style="min-width: 0; border-radius: 100%;">
+                    <MudChip Size="Size.Small" Variant="Variant.Text" Style="@chipStyle">
+                        @DifficultyDisplayUtils.GetShortName(playerScore.Leaderboard?.Difficulty?.DifficultyName)
+                        <img src="images/replay-icon.png" class="ml-1" style="width: 18px" />
+                    </MudChip>
+                </MudButton>
             }
         </CellTemplate>
     </SortableTemplateColumn>

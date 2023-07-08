@@ -8,6 +8,7 @@ using MapMaven.Core.Services;
 using MapMaven.Components.Playlists;
 using MapMaven.Components.Shared;
 using MapMaven.Core.Services.Interfaces;
+using MapMaven.Core.ApiClients;
 
 namespace MapMaven.Components.Maps
 {
@@ -85,11 +86,12 @@ namespace MapMaven.Components.Maps
             Snackbar.Add($"Removed map \"{map.Name}\" from playlist \"{SelectedPlaylist.Title}\"", Severity.Normal, config => config.Icon = Icons.Filled.Check);
         }
 
-        void OpenReplay(Map map)
+        void OpenReplay(Map map, PlayerScore playerScore)
         {
             var parameters = new DialogParameters
             {
-                { nameof(Replay.Map), map }
+                { nameof(Replay.MapId), map.Id },
+                { nameof(Replay.PlayerScore), playerScore },
             };
 
             DialogService.Show<Replay>(null, parameters, new DialogOptions

@@ -1,4 +1,5 @@
-﻿@using MapMaven.Core.Services
+﻿@using MapMaven.Core.ApiClients;
+@using MapMaven.Core.Services
 
 <iframe src="@GetScoreSaberReplayUrl()" style="height: 80vh"></iframe>
 
@@ -7,10 +8,13 @@
     protected IScoreSaberService ScoreSaberService { get; set; }
 
     [Parameter]
-    public Map Map { get; set; }
+    public string MapId { get; set; }
+
+    [Parameter]
+    public PlayerScore PlayerScore { get; set; }
 
     string GetScoreSaberReplayUrl()
     {
-        return ScoreSaberService.GetScoreSaberReplayUrl(Map.Id, Map.HighestPlayerScore);
+        return ScoreSaberService.GetScoreSaberReplayUrl(MapId, PlayerScore);
     }
 }
