@@ -3,33 +3,39 @@
 @using System.Text.Json
 @using MapMaven.Core.Utilities.Scoresaber
 
-<TemplateColumn T="Map" Sortable="false" Class="pa-0" Style="width: 50px; position: relative;">
+<TemplateColumn T="Map" Sortable="false" Class="pa-0" CellStyle="width: 50px; position: relative;">
     <CellTemplate>
         <SongPlaybackButton Map="context.Item"></SongPlaybackButton>
     </CellTemplate>
 </TemplateColumn>
-<TemplateColumn T="Map" Sortable="false" Class="pa-1" Style="width: 50px">
+<TemplateColumn T="Map" Sortable="false" Class="pa-1" CellStyle="width: 50px">
     <CellTemplate>
         <div style="min-width: 50px">
             <MapCover Map="context.Item"></MapCover>
         </div>
     </CellTemplate>
 </TemplateColumn>
-<PropertyColumn T="Map" TProperty="string" Property="m => m.Name" Title="Name"></PropertyColumn>
-<SortableTemplateColumn T="Map" TProperty="string" Property="m => m.SongAuthorName" SortBy="m => m.SongAuthorName" Title="Song Author">
+<PropertyColumn T="Map" TProperty="string" Property="m => m.Name" Title="Name" CellStyle="max-width: 200px; min-width: 200px;"></PropertyColumn>
+<SortableTemplateColumn T="Map" TProperty="string" Property="m => m.SongAuthorName" SortBy="m => m.SongAuthorName" Title="Song Author" CellStyle="max-width: 130px; min-width: 130px;">
     <CellTemplate>
         <MudLink @onclick="() => SelectSongAuthor(context.Item)" Color="Color.Default" Typo="Typo.body2">@context.Item.SongAuthorName</MudLink>
     </CellTemplate>
 </SortableTemplateColumn>
-<PropertyColumn T="Map" TProperty="string" Property="m => m.MapAuthorName" SortBy="m => m.MapAuthorName" Title="Map Author"></PropertyColumn>
-<SortableTemplateColumn T="Map" TProperty="TimeSpan" Style="width: 130px" Property="m => m.SongDuration" SortBy="m => m.SongDuration" Title="Duration">
+<PropertyColumn T="Map" TProperty="string" Property="m => m.MapAuthorName" SortBy="m => m.MapAuthorName" Title="Map Author" CellStyle="max-width: 130px; min-width: 130px;"></PropertyColumn>
+<SortableTemplateColumn T="Map" TProperty="TimeSpan" CellStyle="max-width: 130px; min-width: 130px" Property="m => m.SongDuration" SortBy="m => m.SongDuration" Title="Duration">
     <CellTemplate>
         @context.Item.SongDuration.ToString("mm':'ss")
     </CellTemplate>
 </SortableTemplateColumn>
 @if (!string.IsNullOrEmpty(PlayerId))
 {
-    <SortableTemplateColumn T="Map" TProperty="double" Property="m => m.AllPlayerScores.Any() ? m.AllPlayerScores.Max(x => x.AccuracyWithMods()) : 0" SortBy="m => m.AllPlayerScores.Any() ? m.AllPlayerScores.Max(x => x.AccuracyWithMods()) : 0" Title="%">
+    <SortableTemplateColumn
+        T="Map"
+        TProperty="double"
+        Property="m => m.AllPlayerScores.Any() ? m.AllPlayerScores.Max(x => x.AccuracyWithMods()) : 0"
+        SortBy="m => m.AllPlayerScores.Any() ? m.AllPlayerScores.Max(x => x.AccuracyWithMods()) : 0"
+        Title="%"
+        CellStyle="max-width: 150px; min-width: 150px;">
         <CellTemplate>
             @foreach (var playerScore in context.Item.AllPlayerScores)
             {
@@ -40,7 +46,13 @@
             }
         </CellTemplate>
     </SortableTemplateColumn>
-    <SortableTemplateColumn T="Map" TProperty="double" Property="m => m.AllPlayerScores.Any() ? m.AllPlayerScores.Max(x => x.Score.Pp) : 0" SortBy="m => m.AllPlayerScores.Any() ? m.AllPlayerScores.Max(x => x.Score.Pp) : 0" Title="pp" Style="width: 130px">
+    <SortableTemplateColumn
+        T="Map"
+        TProperty="double"
+        Property="m => m.AllPlayerScores.Any() ? m.AllPlayerScores.Max(x => x.Score.Pp) : 0"
+        SortBy="m => m.AllPlayerScores.Any() ? m.AllPlayerScores.Max(x => x.Score.Pp) : 0"
+        Title="pp"
+        CellStyle="max-width: 150px; min-width: 150px;">
         <CellTemplate>
             @foreach (var playerScore in context.Item.AllPlayerScores)
             {
@@ -51,7 +63,13 @@
             }
         </CellTemplate>
     </SortableTemplateColumn>
-    <SortableTemplateColumn T="Map" TProperty="double" Style="width: 130px" Property="m => m.ScoreEstimates.Any() ? m.ScoreEstimates.Max(x => x.PPIncrease) : 0" SortBy="m => m.ScoreEstimates.Any() ? m.ScoreEstimates.Max(x => x.PPIncrease) : 0">
+    <SortableTemplateColumn
+        T="Map"
+        TProperty="double"
+        Property="m => m.ScoreEstimates.Any() ? m.ScoreEstimates.Max(x => x.PPIncrease) : 0"
+        SortBy="m => m.ScoreEstimates.Any() ? m.ScoreEstimates.Max(x => x.PPIncrease) : 0"
+        Title="Score estimates"
+        CellStyle="max-width: 230px; min-width: 230px;">
         <HeaderTemplate>
             <div class="d-flex">
                 <MudIcon Icon="@Icons.Filled.KeyboardDoubleArrowUp"></MudIcon>pp
@@ -85,7 +103,7 @@
         </CellTemplate>
     </SortableTemplateColumn>
 }
-<TemplateColumn T="Map" Sortable="false">
+<TemplateColumn T="Map" Sortable="false" CellStyle="width: 100px">
     <CellTemplate>
         <div style="min-width: 100px">
             <MudIconButton Icon="@Icons.Filled.PlaylistAdd" Variant="Variant.Text" Size="Size.Medium" OnClick="() => OpenAddMapToPlaylistDialog(context.Item)" />
