@@ -1,7 +1,21 @@
 ﻿
 @if (!string.IsNullOrEmpty(CoverImageUrl))
 {
-    <img class="cover-image" src="@CoverImageUrl" />
+    string style = Style;
+
+    if (string.IsNullOrEmpty(style))
+    {
+        if (Size.HasValue)
+        {
+            style = $"width: {Size}px; height: {Size}px;";
+        }
+        else
+        {
+            style = "width: 100%";
+        }
+    }
+
+    <img class="cover-image @Class" src="@CoverImageUrl" style="@style" />
 }
 
 @code {
@@ -10,6 +24,15 @@
 
     [Parameter]
     public Map Map { get; set; }
+
+    [Parameter]
+    public int? Size { get; set; } = null; // Not resized by default
+
+    [Parameter]
+    public string Class { get; set; } = string.Empty;
+
+    [Parameter]
+    public string Style { get; set; } = string.Empty;
 
     public string CoverImageUrl { get; set; }
 
@@ -23,9 +46,12 @@
                 {
                     using (var coverImage = BeatSaberDataService.GetMapCoverImage(Map.Hash))
                     {
-                        CoverImageUrl = coverImage
-                            .GetResizedImage(50, 50)
-                            .ToDataUrl();
+                        var resizedImage = coverImage;
+
+                        if (Size.HasValue)
+                            resizedImage = coverImage.GetResizedImage(Size.Value, Size.Value);
+
+                        CoverImageUrl = resizedImage.ToDataUrl();
                     }
 
                     InvokeAsync(StateHasChanged);

@@ -10,7 +10,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MapMaven.Infrastructure", "
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{AEA01E80-C7DA-4D45-AAD5-8DC9510BB0AA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MapMaven.Core.Tests", "MapMaven.Core.Tests\MapMaven.Core.Tests.csproj", "{64D846D6-23E4-4293-A4E5-7A906BBBBAB7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MapMaven.Core.Tests", "MapMaven.Core.Tests\MapMaven.Core.Tests.csproj", "{64D846D6-23E4-4293-A4E5-7A906BBBBAB7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

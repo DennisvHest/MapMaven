@@ -111,6 +111,20 @@ namespace MapMaven.Components.Maps
             });
         }
 
+        void OpenDetails(Map map)
+        {
+            DialogService.Show<MapDetail>(
+                title: null,
+                parameters: new() { { nameof(MapDetail.Map), map } },
+                options: new()
+                {
+                    MaxWidth = MaxWidth.Small,
+                    FullWidth = true,
+                    CloseButton = true
+                }
+            );
+        }
+
         public void Dispose()
         {
             SelectedPlaylistSubscription?.Dispose();

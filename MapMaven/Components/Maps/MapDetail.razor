@@ -1,0 +1,18 @@
+﻿<MudDialog>
+    <DialogContent>
+        <MapCover Map="Map" Class="blurred-background-image" Style="height: 150px; top: -50px" />
+        <MudGrid>
+            <MudItem xs="4">
+                <MapCover Map="Map" />
+            </MudItem>
+            <MudItem xs="8">
+                <h1>@Map.Name</h1>
+            </MudItem>
+        </MudGrid>
+    </DialogContent>
+</MudDialog>
+
+@code {
+    [Parameter]
+    public Map Map { get; set; }
+}
