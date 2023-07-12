@@ -26,7 +26,7 @@ namespace MapMaven.Infrastructure
             services.AddDbContext<MapMavenContext>();
             services.AddScoped<IDataStore, MapMavenContext>();
 
-            services.AddSingleton<IFileSystem, FileSystem>();
+            services.AddScoped<IFileSystem, FileSystem>();
 
             services.AddScoped<IBeatmapHasher, Hasher>();
             services.AddScoped(_ => new BeatSaver("MapMaven", new Version(1, 0)));
@@ -37,15 +37,15 @@ namespace MapMaven.Infrastructure
                 config.BaseAddress = new Uri("https://scoresaber.balibalo.xyz");
             });
 
-            services.AddSingleton<BeatSaberFileService>();
-            services.AddSingleton<IBeatSaberDataService, BeatSaberDataService>();
-            services.AddSingleton<IMapService, MapService>();
-            services.AddSingleton<SongPlayerService>();
-            services.AddSingleton<IPlaylistService, PlaylistService>();
-            services.AddSingleton<IScoreSaberService, ScoreSaberService>();
-            services.AddSingleton<DynamicPlaylistArrangementService>();
-            services.AddSingleton<IApplicationSettingService, ApplicationSettingService>();
-            services.AddSingleton<IApplicationEventService, ApplicationEventService>();
+            services.AddScoped<BeatSaberFileService>();
+            services.AddScoped<IBeatSaberDataService, BeatSaberDataService>();
+            services.AddScoped<IMapService, MapService>();
+            services.AddScoped<SongPlayerService>();
+            services.AddScoped<IPlaylistService, PlaylistService>();
+            services.AddScoped<IScoreSaberService, ScoreSaberService>();
+            services.AddScoped<DynamicPlaylistArrangementService>();
+            services.AddScoped<IApplicationSettingService, ApplicationSettingService>();
+            services.AddScoped<IApplicationEventService, ApplicationEventService>();
         }
 
         public static void Initialize(IServiceProvider serviceProvider)
