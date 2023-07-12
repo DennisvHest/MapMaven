@@ -32,6 +32,7 @@ namespace MapMaven.Infrastructure
             services.AddScoped(_ => new BeatSaver("MapMaven", new Version(1, 0)));
 
             services.AddHttpClient<ScoreSaberApiClient>();
+
             services.AddHttpClient("RankedScoresaber", config =>
             {
                 config.BaseAddress = new Uri("https://scoresaber.balibalo.xyz");
