@@ -1,10 +1,13 @@
-﻿using ComposableAsync;
+﻿using Azure.Storage.Blobs;
+using ComposableAsync;
 using MapMaven.Core.ApiClients;
 using MapMaven.Core.Models.Data;
 using MapMaven.Core.Utilities.Scoresaber;
 using MapMaven.RankedMapUpdater.Models.ScoreSaber;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using RateLimiter;
+using System.Text;
 
 namespace MapMaven.RankedMapUpdater.Services
 {
@@ -14,15 +17,18 @@ namespace MapMaven.RankedMapUpdater.Services
 
         private readonly ScoreSaberApiClient _scoreSaberApiClient;
 
-        public RankedMapService(ScoreSaberApiClient scoreSaberApiClient, ILogger<RankedMapService> logger)
+        private readonly BlobContainerClient _mapMavenBlobContainerClient;
+
+        public RankedMapService(ScoreSaberApiClient scoreSaberApiClient, ILogger<RankedMapService> logger, BlobContainerClient mapMavenBlobContainerClient)
         {
             _scoreSaberApiClient = scoreSaberApiClient;
             _logger = logger;
+            _mapMavenBlobContainerClient = mapMavenBlobContainerClient;
         }
 
-        public async Task UpdateRankedMaps(CancellationToken? cancellationToken = null)
+        public async Task UpdateRankedMaps(CancellationToken cancellationToken = default)
         {
-            var rankedMaps = new List<LeaderboardInfo>();
+            var rankedMaps = new List<RankedMapInfoItem>();
 
             int totalMaps;
             double itemsPerPage;
@@ -49,19 +55,27 @@ namespace MapMaven.RankedMapUpdater.Services
                     unique: default,
                     page: page,
                     withMetadata: true,
-                    cancellationToken: cancellationToken ?? CancellationToken.None
+                    cancellationToken: cancellationToken
                 );
 
                 itemsPerPage = rankedMapsCollection.Metadata.ItemsPerPage;
                 totalMaps = rankedMapsCollection.Metadata.Total;
 
-                rankedMaps.AddRange(rankedMapsCollection.Leaderboards);
+                var rankedMapInfo = rankedMapsCollection.Leaderboards.Select(l => new RankedMapInfoItem { Leaderboard = l });
+
+                rankedMaps.AddRange(rankedMapInfo);
 
                 _logger.LogInformation($"Fetched page {page} out of {Math.Ceiling(totalMaps / itemsPerPage)} ({rankedMaps.Count}/{totalMaps} maps).");
 
                 page++;
             }
-            while ((page - 1) * itemsPerPage < totalMaps);            
+            while ((page - 1) * itemsPerPage < totalMaps);
+
+            var rankedMapInfoJson = JsonConvert.SerializeObject(new RankedMapInfo { RankedMaps = rankedMaps });
+
+            using var jsonStream = new MemoryStream(Encoding.UTF8.GetBytes(rankedMapInfoJson));
+
+            await _mapMavenBlobContainerClient.UploadBlobAsync("scoresaber/ranked-maps.json", jsonStream, cancellationToken);
         }
     }
 }

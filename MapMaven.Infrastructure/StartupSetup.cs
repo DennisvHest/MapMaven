@@ -21,7 +21,10 @@ namespace MapMaven.Infrastructure
         {
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
 
-            JsonConvert.DefaultSettings = () => new() { DateParseHandling = DateParseHandling.None };
+            JsonConvert.DefaultSettings = () => new() {
+                DateParseHandling = DateParseHandling.None,
+                NullValueHandling = NullValueHandling.Ignore
+            };
 
             services.AddDbContext<MapMavenContext>();
             services.AddScoped<IDataStore, MapMavenContext>();
