@@ -75,7 +75,9 @@ namespace MapMaven.RankedMapUpdater.Services
 
             using var jsonStream = new MemoryStream(Encoding.UTF8.GetBytes(rankedMapInfoJson));
 
-            await _mapMavenBlobContainerClient.UploadBlobAsync("scoresaber/ranked-maps.json", jsonStream, cancellationToken);
+            var rankedMapsBlob = _mapMavenBlobContainerClient.GetBlobClient("scoresaber/ranked-maps.json");
+
+            await rankedMapsBlob.UploadAsync(jsonStream, overwrite: true, cancellationToken);
         }
     }
 }
