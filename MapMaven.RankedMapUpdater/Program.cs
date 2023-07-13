@@ -5,7 +5,6 @@ using MapMaven.Infrastructure;
 using Microsoft.Extensions.Azure;
 using Azure.Identity;
 using Azure.Storage.Blobs;
-using Microsoft.Extensions.Configuration;
 
 var host = new HostBuilder()
     .ConfigureFunctionsWorkerDefaults()
@@ -15,7 +14,14 @@ var host = new HostBuilder()
         {
             var blobConnection = builder.Configuration["MapMavenStorageConnection"];
 
-            clientBuilder.AddBlobServiceClient(blobConnection);
+            if (builder.HostingEnvironment.IsDevelopment())
+            {
+                clientBuilder.AddBlobServiceClient(blobConnection);
+            }
+            else
+            {
+                clientBuilder.AddBlobServiceClient(new Uri(blobConnection));
+            }
             clientBuilder.UseCredential(new DefaultAzureCredential());
         });
 
