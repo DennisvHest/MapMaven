@@ -1,4 +1,5 @@
 ﻿using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Models;
 using ComposableAsync;
 using MapMaven.Core.ApiClients;
 using MapMaven.Core.Models.Data;
@@ -77,7 +78,10 @@ namespace MapMaven.RankedMapUpdater.Services
 
             var rankedMapsBlob = _mapMavenBlobContainerClient.GetBlobClient("scoresaber/ranked-maps.json");
 
-            await rankedMapsBlob.UploadAsync(jsonStream, overwrite: true, cancellationToken);
+            await rankedMapsBlob.UploadAsync(jsonStream, new BlobUploadOptions
+            {
+                HttpHeaders = new() { ContentType = "application/json" }
+            });
         }
     }
 }
