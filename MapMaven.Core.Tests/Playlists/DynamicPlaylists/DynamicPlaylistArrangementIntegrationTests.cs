@@ -116,6 +116,14 @@ public class DynamicPlaylistArrangementIntegrationTests
             .SetupGet(x => x.CompleteRankedMapData)
             .Returns(() => _mapService.CompleteRankedMapData);
 
+        _mapServiceMock
+            .Setup(x => x.RefreshDataAsync(true))
+            .Returns(() =>
+            {
+                MockMapInfoCache();
+                return _mapService.RefreshDataAsync(true);
+            });
+
         _sut = new DynamicPlaylistArrangementService(
             _beatSaberDataServiceMock.Object,
             _mapServiceMock.Object,
@@ -167,6 +175,10 @@ public class DynamicPlaylistArrangementIntegrationTests
         dataStoreMock
             .Setup(x => x.Set<MapInfo>())
             .Returns(mockMapInfoCache.AsQueryable().BuildMockDbSet().Object);
+
+        dataStoreMock
+            .Setup(x => x.Set<HiddenMap>())
+            .Returns(Enumerable.Empty<HiddenMap>().AsQueryable().BuildMockDbSet().Object);
 
         _serviceProviderMock
             .Setup(x => x.GetService(typeof(IDataStore)))
