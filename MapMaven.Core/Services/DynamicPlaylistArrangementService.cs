@@ -72,12 +72,7 @@ namespace MapMaven.Core.Services
                     })
                     .Where(x => x.Playlist.IsDynamicPlaylist);
 
-                await Task.WhenAll(new[] {
-                    _beatSaberDataService.LoadAllMapInfo(),
-                    _scoreSaberService.LoadRankedMaps(),
-                    _beatSaberDataService.LoadAllPlaylists(),
-                    _mapService.LoadHiddenMaps()
-                });
+                await _mapService.RefreshDataAsync(forceRefresh: true);
 
                 if (!dynamicPlaylists.Any())
                     return;
