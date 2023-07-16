@@ -19,9 +19,11 @@ namespace MapMaven.Models
         public string CoverImageUrl { get; set; }
         public bool Hidden { get; set; }
         public bool Played => HighestPlayerScore != null;
+        public bool Ranked => RankedMap != null;
 
         public PlayerScore? HighestPlayerScore { get; set; }
         public IEnumerable<PlayerScore> AllPlayerScores { get; set; } = Enumerable.Empty<PlayerScore>();
+        public IEnumerable<RankedMap> RankedMaps { get; set; }
         public RankedMap? RankedMap { get; set; }
         public IEnumerable<ScoreEstimate> ScoreEstimates { get; set; } = Enumerable.Empty<ScoreEstimate>();
         public ScoreEstimate? ScoreEstimate => ScoreEstimates.FirstOrDefault();

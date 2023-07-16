@@ -111,9 +111,10 @@ namespace MapMaven.Services
                 map.HighestPlayerScore = scores.MaxBy(s => s.Score.Pp);
 
                 return map;
-            }).GroupJoin(rankedMaps, map => map.Hash, rankedMap => rankedMap.Id, (map, rankedMap) =>
+            }).GroupJoin(rankedMaps, map => map.Hash, rankedMap => rankedMap.Id, (map, rankedMaps) =>
             {
-                map.RankedMap = rankedMap.FirstOrDefault();
+                map.RankedMap = rankedMaps.FirstOrDefault();
+                map.RankedMaps = rankedMaps;
 
                 return map;
             }).GroupJoin(scoreEstimates, map => map.Hash, scoreEstimate => scoreEstimate.MapId, (map, scoreEstimate) =>
