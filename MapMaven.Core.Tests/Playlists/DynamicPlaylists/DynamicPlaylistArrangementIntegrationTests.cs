@@ -13,7 +13,7 @@ using BeatSaber.SongHashing;
 using System.Reactive.Linq;
 using MapMaven.Core.Models.Data;
 using System.IO.Abstractions.TestingHelpers;
-using MapMaven.Core.ApiClients;
+using MapMaven.Core.ApiClients.ScoreSaber;
 using MapMaven.Core.Models.Data.ScoreSaber;
 using MapMaven.Core.Utilities.Scoresaber;
 using Microsoft.Extensions.DependencyInjection;

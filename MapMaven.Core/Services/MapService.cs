@@ -1,4 +1,4 @@
-﻿using MapMaven.Core.ApiClients;
+﻿using MapMaven.Core.ApiClients.ScoreSaber;
 using MapMaven.Core.Models;
 using MapMaven.Core.Models.Data;
 using MapMaven.Core.Models.Data.ScoreSaber;

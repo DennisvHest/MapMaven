@@ -2,7 +2,7 @@
 using Newtonsoft.Json;
 using System.Reflection;
 
-namespace MapMaven.Core.ApiClients
+namespace MapMaven.Core.ApiClients.ScoreSaber
 {
     public partial class ScoreSaberApiClient
     {

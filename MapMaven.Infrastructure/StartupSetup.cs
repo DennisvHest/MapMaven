@@ -1,5 +1,5 @@
 ﻿using BeatSaber.SongHashing;
-using MapMaven.Core.ApiClients;
+using MapMaven.Core.ApiClients.ScoreSaber;
 using MapMaven.Core.Services;
 using MapMaven.Infrastructure.Data;
 using MapMaven.Services;

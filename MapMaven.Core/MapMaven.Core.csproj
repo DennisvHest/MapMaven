@@ -6,10 +6,12 @@
   </PropertyGroup>
   <ItemGroup>
     <None Remove="C:\Users\denni\.nuget\packages\naudio.vorbis\1.5.0\contentFiles\any\netstandard2.0\README.md" />
+    <None Remove="OpenAPI\beatsaver-api.json" />
     <None Remove="OpenAPI\scoresaber-api.json" />
   </ItemGroup>
   <ItemGroup>
-    <OpenApiReference Include="OpenAPI\scoresaber-api.json" CodeGenerator="NSwagCSharp" Namespace="MapMaven.Core.ApiClients" ClassName="ScoreSaberApiClient" />
+    <OpenApiReference Include="OpenAPI\beatsaver-api.json" CodeGenerator="NSwagCSharp" Namespace="MapMaven.Core.ApiClients.BeatSaver" ClassName="BeatSaverApiClient" />
+    <OpenApiReference Include="OpenAPI\scoresaber-api.json" CodeGenerator="NSwagCSharp" Namespace="MapMaven.Core.ApiClients.ScoreSaber" ClassName="ScoreSaberApiClient" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="BeatSaber.SongHashing" Version="1.2.0" />

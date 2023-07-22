@@ -1,7 +1,7 @@
 ﻿using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using ComposableAsync;
-using MapMaven.Core.ApiClients;
+using MapMaven.Core.ApiClients.ScoreSaber;
 using MapMaven.Core.Models.Data;
 using MapMaven.Core.Utilities.Scoresaber;
 using MapMaven.RankedMapUpdater.Models.ScoreSaber;
@@ -28,6 +28,22 @@ namespace MapMaven.RankedMapUpdater.Services
         }
 
         public async Task UpdateRankedMaps(CancellationToken cancellationToken = default)
+        {
+            var rankedMapsBlob = _mapMavenBlobContainerClient.GetBlobClient("scoresaber/ranked-maps.json");
+
+            var rankedMaps = await GetAllRankedMaps(cancellationToken);
+
+            var rankedMapInfoJson = JsonConvert.SerializeObject(new RankedMapInfo { RankedMaps = rankedMaps });
+
+            using var jsonStream = new MemoryStream(Encoding.UTF8.GetBytes(rankedMapInfoJson));
+
+            await rankedMapsBlob.UploadAsync(jsonStream, new BlobUploadOptions
+            {
+                HttpHeaders = new() { ContentType = "application/json" }
+            });
+        }
+
+        private async Task<List<RankedMapInfoItem>> GetAllRankedMaps(CancellationToken cancellationToken)
         {
             var rankedMaps = new List<RankedMapInfoItem>();
 
@@ -72,16 +88,7 @@ namespace MapMaven.RankedMapUpdater.Services
             }
             while ((page - 1) * itemsPerPage < totalMaps);
 
-            var rankedMapInfoJson = JsonConvert.SerializeObject(new RankedMapInfo { RankedMaps = rankedMaps });
-
-            using var jsonStream = new MemoryStream(Encoding.UTF8.GetBytes(rankedMapInfoJson));
-
-            var rankedMapsBlob = _mapMavenBlobContainerClient.GetBlobClient("scoresaber/ranked-maps.json");
-
-            await rankedMapsBlob.UploadAsync(jsonStream, new BlobUploadOptions
-            {
-                HttpHeaders = new() { ContentType = "application/json" }
-            });
+            return rankedMaps;
         }
     }
 }
