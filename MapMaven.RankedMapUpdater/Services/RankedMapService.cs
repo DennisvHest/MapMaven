@@ -31,6 +31,15 @@ namespace MapMaven.RankedMapUpdater.Services
         {
             var rankedMapsBlob = _mapMavenBlobContainerClient.GetBlobClient("scoresaber/ranked-maps.json");
 
+            using (var stream = await rankedMapsBlob.OpenReadAsync())
+            using (var sr = new StreamReader(stream))
+            using (var jr = new JsonTextReader(sr))
+            {
+                // Parse the JSON into an object
+                var serializer = new JsonSerializer();
+                serializer.Deserialize<RankedMapInfoItem>(jr);
+            }
+
             var rankedMaps = await GetAllRankedMaps(cancellationToken);
 
             var rankedMapInfoJson = JsonConvert.SerializeObject(new RankedMapInfo { RankedMaps = rankedMaps });
