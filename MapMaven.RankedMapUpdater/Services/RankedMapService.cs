@@ -20,6 +20,7 @@ namespace MapMaven.RankedMapUpdater.Services
         private readonly BeatSaverApiClient _beatSaverApiClient;
 
         private readonly BlobContainerClient _mapMavenBlobContainerClient;
+        private readonly BlobClient _rankedMapsBlob;
 
         public RankedMapService(ScoreSaberApiClient scoreSaberApiClient, ILogger<RankedMapService> logger, BlobContainerClient mapMavenBlobContainerClient, BeatSaverApiClient beatSaverApiClient)
         {
@@ -27,33 +28,86 @@ namespace MapMaven.RankedMapUpdater.Services
             _logger = logger;
             _mapMavenBlobContainerClient = mapMavenBlobContainerClient;
             _beatSaverApiClient = beatSaverApiClient;
+
+            _rankedMapsBlob = _mapMavenBlobContainerClient.GetBlobClient("scoresaber/ranked-maps.json");
         }
 
-        public async Task UpdateRankedMaps(DateTime lastRunDate, CancellationToken cancellationToken = default)
+        public async Task UpdateRankedMapsAsync(DateTime lastRunDate, CancellationToken cancellationToken = default)
         {
-            var rankedMapsBlob = _mapMavenBlobContainerClient.GetBlobClient("scoresaber/ranked-maps.json");
+            var rankedMapInfo = await GetExistingRankedMapInfoAsync();
+            var rankedMaps = await GetAllRankedMapsAsync(cancellationToken);
 
-            var existingRankedMapInfo = await GetExistingRankedMapInfo(rankedMapsBlob);
-            var updatedMaps = await GetUpdatedMaps(lastRunDate, cancellationToken);
-
-            var rankedMaps = await GetAllRankedMaps(cancellationToken);
-
-            var rankedMapInfoJson = JsonConvert.SerializeObject(new RankedMapInfo { RankedMaps = rankedMaps });
-
-            using var jsonStream = new MemoryStream(Encoding.UTF8.GetBytes(rankedMapInfoJson));
-
-            await rankedMapsBlob.UploadAsync(jsonStream, new BlobUploadOptions
+            // Join the existing ranked maps with the new ranked maps to preserve the map details
+            rankedMapInfo.RankedMaps = rankedMaps.GroupJoin(rankedMapInfo.RankedMaps, m => m.Leaderboard.Id, m => m.Leaderboard.Id, (updated, existing) =>
             {
-                HttpHeaders = new() { ContentType = "application/json" }
-            });
+                if (existing.Any())
+                {
+                    var existingMap = existing.First();
+                    updated.MapDetail = existingMap.MapDetail;
+                }
+
+                return updated;
+            }).ToList();
+
+            await UpdateMapDetailForExistingMapInfoAsync(lastRunDate, rankedMapInfo, cancellationToken);
+
+            var mapInfoWithoutDetails = rankedMapInfo.RankedMaps
+                .Where(m => m.MapDetail is null)
+                .ToList();
+
+            await GetMapDetailForMapInfoAsync(mapInfoWithoutDetails, cancellationToken);
+
+            await UploadRankedMapInfoAsync(rankedMapInfo);
         }
 
-        private static async Task<RankedMapInfo?> GetExistingRankedMapInfo(BlobClient rankedMapsBlob)
+        private async Task UpdateMapDetailForExistingMapInfoAsync(DateTime lastRunDate, RankedMapInfo rankedMapInfo, CancellationToken cancellationToken)
         {
-            if (!await rankedMapsBlob.ExistsAsync())
-                return null;
+            var updatedMaps = await GetUpdatedMapsAsync(lastRunDate, cancellationToken);
 
-            using var stream = await rankedMapsBlob.OpenReadAsync();
+            var mapInfoWithUpdatedDetails = rankedMapInfo.RankedMaps
+                .Where(m => m.MapDetail is not null)
+                .Join(updatedMaps, m => m.MapDetail.Id, m => m.Id, (mapInfo, mapDetail) => (mapInfo, mapDetail))
+                .ToList();
+
+            _logger.LogInformation("{mapInfoWithUpdatedDetailsCount} Ranked maps have updated details.", mapInfoWithUpdatedDetails.Count());
+
+            foreach (var (mapInfo, mapDetail) in mapInfoWithUpdatedDetails)
+            {
+                mapInfo.MapDetail = mapDetail;
+            }
+        }
+
+        private async Task GetMapDetailForMapInfoAsync(IEnumerable<RankedMapInfoItem> mapInfoWithoutDetails, CancellationToken cancellationToken)
+        {
+            var count = mapInfoWithoutDetails.Count();
+
+            _logger.LogInformation("{count} Maps do not yet have any map details from Beat Saver.", count);
+
+            var rateLimit = TimeLimiter.GetFromMaxCountByInterval(8, TimeSpan.FromSeconds(1));
+
+            foreach (var (mapInfo, index) in mapInfoWithoutDetails.Select((mapInfo, index) => (mapInfo, index)))
+            {
+                await rateLimit;
+
+                var mapDetail = await _beatSaverApiClient.HashAsync(mapInfo.Leaderboard.SongHash, cancellationToken);
+
+                mapInfo.MapDetail = mapDetail;
+
+                var doneCount = index + 1;
+
+                _logger.LogInformation("({doneCount} / {count}) Fetched map details for map with hash: {SongHash}...", doneCount, count, mapInfo.Leaderboard.SongHash);
+            }
+        }
+
+        private async Task<RankedMapInfo> GetExistingRankedMapInfoAsync()
+        {
+            if (!await _rankedMapsBlob.ExistsAsync())
+            {
+                _logger.LogInformation("No existing ranked maps JSON found.");
+                return new();
+            }
+
+            using var stream = await _rankedMapsBlob.OpenReadAsync();
             using var streamReader = new StreamReader(stream);
             using var jsonReader = new JsonTextReader(streamReader);
 
@@ -62,7 +116,7 @@ namespace MapMaven.RankedMapUpdater.Services
             return serializer.Deserialize<RankedMapInfo>(jsonReader);
         }
 
-        private async Task<IEnumerable<RankedMapInfoItem>> GetAllRankedMaps(CancellationToken cancellationToken = default)
+        private async Task<IEnumerable<RankedMapInfoItem>> GetAllRankedMapsAsync(CancellationToken cancellationToken = default)
         {
             var rankedMaps = new List<RankedMapInfoItem>();
 
@@ -110,17 +164,35 @@ namespace MapMaven.RankedMapUpdater.Services
             return rankedMaps;
         }
 
-        private async Task<IEnumerable<MapDetail>> GetUpdatedMaps(DateTime lastRunDate, CancellationToken cancellationToken = default)
+        private async Task<IEnumerable<MapDetail>> GetUpdatedMapsAsync(DateTime lastRunDate, CancellationToken cancellationToken = default)
         {
+            var updatedDate = lastRunDate.AddDays(-1);
+
+            _logger.LogInformation("Fetching latest maps updated after: {updatedDate}...", updatedDate);
+
             var response = await _beatSaverApiClient.LatestAsync(
-                after: lastRunDate.AddDays(-2).ToString("yyyy-MM-ddTHH:mm:sszzz"),
+                after: updatedDate.ToString("yyyy-MM-ddTHH:mm:sszzz"),
                 automapper: default,
                 before: default,
                 sort: Core.ApiClients.BeatSaver.Sort.UPDATED,
                 cancellationToken: cancellationToken
             );
 
+            _logger.LogInformation("Found {updatedCount} maps with updated details.", response.Docs.Count);
+
             return response.Docs;
+        }
+
+        private async Task UploadRankedMapInfoAsync(RankedMapInfo rankedMapInfo)
+        {
+            var rankedMapInfoJson = JsonConvert.SerializeObject(rankedMapInfo);
+
+            using var jsonStream = new MemoryStream(Encoding.UTF8.GetBytes(rankedMapInfoJson));
+
+            await _rankedMapsBlob.UploadAsync(jsonStream, new BlobUploadOptions
+            {
+                HttpHeaders = new() { ContentType = "application/json" }
+            });
         }
     }
 }

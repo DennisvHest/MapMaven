@@ -337,11 +337,8 @@
           {
             "name": "maxBpm",
             "in": "query",
-            "description": "Float",
-            "required": false,
-            "schema": {
-              "$ref": "#/definitions/Float"
-            }
+            "type": "number",
+            "required": false
           },
           {
             "name": "maxDuration",
@@ -354,20 +351,14 @@
           {
             "name": "maxNps",
             "in": "query",
-            "description": "Float",
-            "required": false,
-            "schema": {
-              "$ref": "#/definitions/Float"
-            }
+            "type": "number",
+            "required": false
           },
           {
             "name": "maxRating",
             "in": "query",
-            "description": "Float",
-            "required": false,
-            "schema": {
-              "$ref": "#/definitions/Float"
-            }
+            "type": "number",
+            "required": false
           },
           {
             "name": "me",
@@ -379,11 +370,8 @@
           {
             "name": "minBpm",
             "in": "query",
-            "description": "Float",
-            "required": false,
-            "schema": {
-              "$ref": "#/definitions/Float"
-            }
+            "type": "number",
+            "required": false
           },
           {
             "name": "minDuration",
@@ -396,20 +384,14 @@
           {
             "name": "minNps",
             "in": "query",
-            "description": "Float",
-            "required": false,
-            "schema": {
-              "$ref": "#/definitions/Float"
-            }
+            "type": "number",
+            "required": false
           },
           {
             "name": "minRating",
             "in": "query",
-            "description": "Float",
-            "required": false,
-            "schema": {
-              "$ref": "#/definitions/Float"
-            }
+            "type": "number",
+            "required": false
           },
           {
             "name": "noodle",
@@ -673,20 +655,14 @@
           {
             "name": "maxNps",
             "in": "query",
-            "description": "Float",
-            "required": false,
-            "schema": {
-              "$ref": "#/definitions/Float"
-            }
+            "type": "number",
+            "required": false
           },
           {
             "name": "minNps",
             "in": "query",
-            "description": "Float",
-            "required": false,
-            "schema": {
-              "$ref": "#/definitions/Float"
-            }
+            "type": "number",
+            "required": false
           },
           {
             "name": "page",
@@ -920,53 +896,7 @@
         "tags": {
           "type": "array",
           "items": {
-            "type": "string",
-            "enum": [
-              "None",
-              "Tech",
-              "DanceStyle",
-              "Speed",
-              "Balanced",
-              "Challenge",
-              "Accuracy",
-              "Fitness",
-              "Swing",
-              "Nightcore",
-              "Folk",
-              "Family",
-              "Ambient",
-              "Funk",
-              "Jazz",
-              "Classical",
-              "Soul",
-              "Speedcore",
-              "Punk",
-              "RB",
-              "Holiday",
-              "Vocaloid",
-              "JRock",
-              "Trance",
-              "DrumBass",
-              "Comedy",
-              "Instrumental",
-              "Hardcore",
-              "KPop",
-              "Indie",
-              "Techno",
-              "House",
-              "Game",
-              "Film",
-              "Alt",
-              "Dubstep",
-              "Metal",
-              "Anime",
-              "HipHop",
-              "JPop",
-              "Dance",
-              "Rock",
-              "Pop",
-              "Electronic"
-            ]
+            "type": "string"
           }
         },
         "updatedAt": {
@@ -1073,16 +1003,13 @@
     "UserStats": {
       "properties": {
         "avgBpm": {
-          "description": "Float",
-          "$ref": "#/definitions/Float"
+          "type": "number"
         },
         "avgDuration": {
-          "description": "Float",
-          "$ref": "#/definitions/Float"
+          "type": "number"
         },
         "avgScore": {
-          "description": "Float",
-          "$ref": "#/definitions/Float"
+          "type": "number"
         },
         "diffStats": {
           "description": "UserDiffStats",
@@ -1113,9 +1040,6 @@
           "format": "int32"
         }
       }
-    },
-    "Float": {
-      "properties": {}
     },
     "UserDiffStats": {
       "properties": {
@@ -1148,8 +1072,7 @@
     "MapDetailMetadata": {
       "properties": {
         "bpm": {
-          "description": "Float",
-          "$ref": "#/definitions/Float"
+          "type": "number"
         },
         "duration": {
           "type": "integer",
@@ -1188,12 +1111,10 @@
           "format": "int32"
         },
         "score": {
-          "description": "Float",
-          "$ref": "#/definitions/Float"
+          "type": "number"
         },
         "scoreOneDP": {
-          "description": "Float",
-          "$ref": "#/definitions/Float"
+          "type": "number"
         },
         "sentiment": {
           "type": "string",
@@ -1244,8 +1165,7 @@
           "type": "string"
         },
         "sageScore": {
-          "description": "Short",
-          "$ref": "#/definitions/Short"
+          "type": "number"
         },
         "scheduledAt": {
           "type": "string",
@@ -1330,8 +1250,7 @@
           "type": "boolean"
         },
         "njs": {
-          "description": "Float",
-          "$ref": "#/definitions/Float"
+          "type": "number"
         },
         "notes": {
           "type": "integer",
@@ -1346,8 +1265,7 @@
           "format": "int32"
         },
         "offset": {
-          "description": "Float",
-          "$ref": "#/definitions/Float"
+          "type": "number"
         },
         "paritySummary": {
           "description": "MapParitySummary",
@@ -1358,8 +1276,7 @@
           "format": "double"
         },
         "stars": {
-          "description": "Float",
-          "$ref": "#/definitions/Float"
+          "type": "number"
         }
       }
     },
@@ -1378,9 +1295,6 @@
           "format": "int32"
         }
       }
-    },
-    "Short": {
-      "properties": {}
     },
     "MapTestplay": {
       "properties": {
@@ -1576,8 +1490,7 @@
     "PlaylistStats": {
       "properties": {
         "avgScore": {
-          "description": "Float",
-          "$ref": "#/definitions/Float"
+          "type": "number"
         },
         "downVotes": {
           "type": "integer",
@@ -1604,8 +1517,7 @@
           "format": "double"
         },
         "scoreOneDP": {
-          "description": "Float",
-          "$ref": "#/definitions/Float"
+          "type": "number"
         },
         "totalDuration": {
           "type": "integer",
@@ -1643,8 +1555,7 @@
           "$ref": "#/definitions/MapDetail"
         },
         "order": {
-          "description": "Float",
-          "$ref": "#/definitions/Float"
+          "type": "number"
         }
       }
     },

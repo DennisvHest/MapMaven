@@ -29,7 +29,7 @@ namespace MapMaven.RankedMapUpdater
 
             var lastRunDate = timerInfo.ScheduleStatus?.Last ?? DateTime.Now.AddDays(-1);
 
-            await _rankedMapService.UpdateRankedMaps(lastRunDate, cancellationToken);
+            await _rankedMapService.UpdateRankedMapsAsync(lastRunDate, cancellationToken);
 
             _logger.LogInformation($"Next ranked maps update at: {timerInfo.ScheduleStatus?.Next}");
         }

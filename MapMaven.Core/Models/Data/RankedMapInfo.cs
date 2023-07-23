@@ -2,6 +2,6 @@
 {
     public class RankedMapInfo
     {
-        public IEnumerable<RankedMapInfoItem> RankedMaps { get; set; }
+        public IEnumerable<RankedMapInfoItem> RankedMaps { get; set; } = Array.Empty<RankedMapInfoItem>();
     }
 }
