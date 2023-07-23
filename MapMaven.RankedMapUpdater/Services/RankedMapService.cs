@@ -1,9 +1,9 @@
 ﻿using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using ComposableAsync;
+using MapMaven.Core.ApiClients.BeatSaver;
 using MapMaven.Core.ApiClients.ScoreSaber;
 using MapMaven.Core.Models.Data;
-using MapMaven.Core.Utilities.Scoresaber;
 using MapMaven.RankedMapUpdater.Models.ScoreSaber;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -17,28 +17,24 @@ namespace MapMaven.RankedMapUpdater.Services
         private readonly ILogger<RankedMapService> _logger;
 
         private readonly ScoreSaberApiClient _scoreSaberApiClient;
+        private readonly BeatSaverApiClient _beatSaverApiClient;
 
         private readonly BlobContainerClient _mapMavenBlobContainerClient;
 
-        public RankedMapService(ScoreSaberApiClient scoreSaberApiClient, ILogger<RankedMapService> logger, BlobContainerClient mapMavenBlobContainerClient)
+        public RankedMapService(ScoreSaberApiClient scoreSaberApiClient, ILogger<RankedMapService> logger, BlobContainerClient mapMavenBlobContainerClient, BeatSaverApiClient beatSaverApiClient)
         {
             _scoreSaberApiClient = scoreSaberApiClient;
             _logger = logger;
             _mapMavenBlobContainerClient = mapMavenBlobContainerClient;
+            _beatSaverApiClient = beatSaverApiClient;
         }
 
-        public async Task UpdateRankedMaps(CancellationToken cancellationToken = default)
+        public async Task UpdateRankedMaps(DateTime lastRunDate, CancellationToken cancellationToken = default)
         {
             var rankedMapsBlob = _mapMavenBlobContainerClient.GetBlobClient("scoresaber/ranked-maps.json");
 
-            using (var stream = await rankedMapsBlob.OpenReadAsync())
-            using (var sr = new StreamReader(stream))
-            using (var jr = new JsonTextReader(sr))
-            {
-                // Parse the JSON into an object
-                var serializer = new JsonSerializer();
-                serializer.Deserialize<RankedMapInfoItem>(jr);
-            }
+            var existingRankedMapInfo = await GetExistingRankedMapInfo(rankedMapsBlob);
+            var updatedMaps = await GetUpdatedMaps(lastRunDate, cancellationToken);
 
             var rankedMaps = await GetAllRankedMaps(cancellationToken);
 
@@ -52,7 +48,21 @@ namespace MapMaven.RankedMapUpdater.Services
             });
         }
 
-        private async Task<List<RankedMapInfoItem>> GetAllRankedMaps(CancellationToken cancellationToken)
+        private static async Task<RankedMapInfo?> GetExistingRankedMapInfo(BlobClient rankedMapsBlob)
+        {
+            if (!await rankedMapsBlob.ExistsAsync())
+                return null;
+
+            using var stream = await rankedMapsBlob.OpenReadAsync();
+            using var streamReader = new StreamReader(stream);
+            using var jsonReader = new JsonTextReader(streamReader);
+
+            var serializer = JsonSerializer.CreateDefault();
+
+            return serializer.Deserialize<RankedMapInfo>(jsonReader);
+        }
+
+        private async Task<IEnumerable<RankedMapInfoItem>> GetAllRankedMaps(CancellationToken cancellationToken = default)
         {
             var rankedMaps = new List<RankedMapInfoItem>();
 
@@ -98,6 +108,19 @@ namespace MapMaven.RankedMapUpdater.Services
             while ((page - 1) * itemsPerPage < totalMaps);
 
             return rankedMaps;
+        }
+
+        private async Task<IEnumerable<MapDetail>> GetUpdatedMaps(DateTime lastRunDate, CancellationToken cancellationToken = default)
+        {
+            var response = await _beatSaverApiClient.LatestAsync(
+                after: lastRunDate.AddDays(-2).ToString("yyyy-MM-ddTHH:mm:sszzz"),
+                automapper: default,
+                before: default,
+                sort: Core.ApiClients.BeatSaver.Sort.UPDATED,
+                cancellationToken: cancellationToken
+            );
+
+            return response.Docs;
         }
     }
 }

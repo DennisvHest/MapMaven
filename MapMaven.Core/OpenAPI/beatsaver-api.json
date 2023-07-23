@@ -137,8 +137,7 @@
             "in": "query",
             "description": "Like`before`butwillgetyoumapsmorerecentthanthetimesupplied.\nYYYY-MM-DDTHH:MM:SS+00:00",
             "required": false,
-            "type": "string",
-            "format": "date-time"
+            "type": "string"
           },
           {
             "name": "automapper",
@@ -152,8 +151,7 @@
             "in": "query",
             "description": "Youprobablywantthis.Supplyingtheuploadedtimeofthelastmapinthepreviouspagewillgetyouanotherpage.\nYYYY-MM-DDTHH:MM:SS+00:00",
             "required": false,
-            "type": "string",
-            "format": "date-time"
+            "type": "string"
           },
           {
             "name": "sort",

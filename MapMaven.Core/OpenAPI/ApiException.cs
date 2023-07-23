@@ -40,7 +40,10 @@
             }
         }
     }
+}
 
+namespace MapMaven.Core.ApiClients.BeatSaver
+{
     /// <summary>
     /// https://github.com/RicoSuter/NSwag/issues/2839
     /// </summary>

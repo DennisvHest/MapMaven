@@ -21,13 +21,15 @@ namespace MapMaven.RankedMapUpdater
 #if DEBUG
             [TimerTrigger("0 */5 * * * *", RunOnStartup = true)]
 #else
-            [TimerTrigger("0 0 3 * * *")]
+            [TimerTrigger($"0 0 3 * * *")]
 #endif
             TimerInfo timerInfo, CancellationToken cancellationToken)
         {
             _logger.LogInformation($"Updating ranked maps data at: {DateTime.Now}");
 
-            await _rankedMapService.UpdateRankedMaps(cancellationToken);
+            var lastRunDate = timerInfo.ScheduleStatus?.Last ?? DateTime.Now.AddDays(-1);
+
+            await _rankedMapService.UpdateRankedMaps(lastRunDate, cancellationToken);
 
             _logger.LogInformation($"Next ranked maps update at: {timerInfo.ScheduleStatus?.Next}");
         }

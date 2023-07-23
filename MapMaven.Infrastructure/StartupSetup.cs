@@ -12,6 +12,8 @@ using System.Security.Principal;
 using MapMaven.Core.Services.Interfaces;
 using Newtonsoft.Json;
 using System.IO.Abstractions;
+using MapMaven.Core.OpenAPI;
+using MapMaven.Core.ApiClients.BeatSaver;
 
 namespace MapMaven.Infrastructure
 {
@@ -23,7 +25,8 @@ namespace MapMaven.Infrastructure
 
             JsonConvert.DefaultSettings = () => new() {
                 DateParseHandling = DateParseHandling.None,
-                NullValueHandling = NullValueHandling.Ignore
+                MissingMemberHandling = MissingMemberHandling.Ignore,
+                ContractResolver = new SafeContractResolver()
             };
 
             services.AddDbContext<MapMavenContext>();
@@ -34,12 +37,9 @@ namespace MapMaven.Infrastructure
             services.AddScoped<IBeatmapHasher, Hasher>();
             services.AddScoped(_ => new BeatSaver("MapMaven", new Version(1, 0)));
 
-            services.AddHttpClient<ScoreSaberApiClient>();
-
-            services.AddHttpClient("RankedScoresaber", config =>
-            {
-                config.BaseAddress = new Uri("https://scoresaber.balibalo.xyz");
-            });
+            services.AddHttpClient<ScoreSaberApiClient>(client => client.BaseAddress = new Uri("https://scoresaber.com"));
+            services.AddHttpClient<BeatSaverApiClient>(client => client.BaseAddress = new Uri("https://api.beatsaver.com"));
+            services.AddHttpClient("RankedScoresaber", client => client.BaseAddress = new Uri("https://scoresaber.balibalo.xyz"));
 
             services.AddScoped<BeatSaberFileService>();
             services.AddScoped<IBeatSaberDataService, BeatSaberDataService>();

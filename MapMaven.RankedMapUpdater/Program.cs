@@ -39,6 +39,6 @@ var host = new HostBuilder()
     .Build();
 
 var mapMavenContainerClient = host.Services.GetRequiredService<BlobContainerClient>();
-mapMavenContainerClient.CreateIfNotExists();
+await mapMavenContainerClient.CreateIfNotExistsAsync();
 
 host.Run();
