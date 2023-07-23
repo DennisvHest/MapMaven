@@ -166,12 +166,10 @@ namespace MapMaven.RankedMapUpdater.Services
 
         private async Task<IEnumerable<MapDetail>> GetUpdatedMapsAsync(DateTime lastRunDate, CancellationToken cancellationToken = default)
         {
-            var updatedDate = lastRunDate.AddDays(-1);
-
-            _logger.LogInformation("Fetching latest maps updated after: {updatedDate}...", updatedDate);
+            _logger.LogInformation("Fetching latest maps updated after: {lastRunDate}...", lastRunDate);
 
             var response = await _beatSaverApiClient.LatestAsync(
-                after: updatedDate.ToString("yyyy-MM-ddTHH:mm:sszzz"),
+                after: lastRunDate.ToString("yyyy-MM-ddTHH:mm:sszzz"),
                 automapper: default,
                 before: default,
                 sort: Core.ApiClients.BeatSaver.Sort.UPDATED,
