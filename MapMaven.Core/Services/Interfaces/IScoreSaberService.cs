@@ -11,7 +11,6 @@ namespace MapMaven.Core.Services.Interfaces
         IObservable<IEnumerable<RankedMap>> RankedMaps { get; }
         IObservable<Player?> PlayerProfile { get; }
         IObservable<IEnumerable<PlayerScore>> PlayerScores { get; }
-        IObservable<IEnumerable<ScoreEstimate>> ScoreEstimates { get; }
         IObservable<IEnumerable<ScoreEstimate>> RankedMapScoreEstimates { get; }
 
         string? GetPlayerIdFromReplays(string beatSaberInstallLocation);

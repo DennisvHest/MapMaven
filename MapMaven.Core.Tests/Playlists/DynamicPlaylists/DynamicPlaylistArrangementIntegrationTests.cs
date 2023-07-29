@@ -142,10 +142,6 @@ public class DynamicPlaylistArrangementIntegrationTests
         };
 
         _scoreSaberServiceMock
-            .SetupGet(x => x.ScoreEstimates)
-            .Returns(() => Observable.Return(scoreEstimates));
-
-        _scoreSaberServiceMock
             .SetupGet(x => x.RankedMapScoreEstimates)
             .Returns(() => Observable.Return(scoreEstimates));
     }
