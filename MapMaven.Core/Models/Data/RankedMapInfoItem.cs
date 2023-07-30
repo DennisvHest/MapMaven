@@ -5,7 +5,8 @@ namespace MapMaven.Core.Models.Data
 {
     public class RankedMapInfoItem
     {
-        public LeaderboardInfo Leaderboard { get; set; }
+        public string SongHash { get; set; }
         public MapDetail MapDetail { get; set; }
+        public IEnumerable<LeaderboardInfo> Leaderboards { get; set; } = Enumerable.Empty<LeaderboardInfo>();
     }
 }

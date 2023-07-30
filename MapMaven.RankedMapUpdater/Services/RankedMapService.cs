@@ -37,16 +37,24 @@ namespace MapMaven.RankedMapUpdater.Services
             var rankedMapInfo = await GetExistingRankedMapInfoAsync();
             var rankedMaps = await GetAllRankedMapsAsync(cancellationToken);
 
+            var rankedMapsBySongHash = rankedMaps.GroupBy(m => m.SongHash);
+
             // Join the existing ranked maps with the new ranked maps to preserve the map details
-            rankedMapInfo.RankedMaps = rankedMaps.GroupJoin(rankedMapInfo.RankedMaps, m => m.Leaderboard.Id, m => m.Leaderboard.Id, (updated, existing) =>
+            rankedMapInfo.RankedMaps = rankedMapsBySongHash.GroupJoin(rankedMapInfo.RankedMaps, m => m.Key, m => m.SongHash, (updatedLeaderboardInfo, existingRankedMapInfo) =>
             {
-                if (existing.Any())
+                var rankedMapInfoItem = new RankedMapInfoItem
                 {
-                    var existingMap = existing.First();
-                    updated.MapDetail = existingMap.MapDetail;
+                    SongHash = updatedLeaderboardInfo.Key,
+                    Leaderboards = updatedLeaderboardInfo
+                };
+
+                if (existingRankedMapInfo.Any())
+                {
+                    var existingMap = existingRankedMapInfo.First();
+                    rankedMapInfoItem.MapDetail = existingMap.MapDetail;
                 }
 
-                return updated;
+                return rankedMapInfoItem;
             }).ToList();
 
             await UpdateMapDetailForExistingMapInfoAsync(lastRunDate, rankedMapInfo, cancellationToken);
@@ -89,13 +97,13 @@ namespace MapMaven.RankedMapUpdater.Services
             {
                 await rateLimit;
 
-                var mapDetail = await _beatSaverApiClient.HashAsync(mapInfo.Leaderboard.SongHash, cancellationToken);
+                var mapDetail = await _beatSaverApiClient.HashAsync(mapInfo.SongHash, cancellationToken);
 
                 mapInfo.MapDetail = mapDetail;
 
                 var doneCount = index + 1;
 
-                _logger.LogInformation("({doneCount} / {count}) Fetched map details for map with hash: {SongHash}...", doneCount, count, mapInfo.Leaderboard.SongHash);
+                _logger.LogInformation("({doneCount} / {count}) Fetched map details for map with hash: {SongHash}...", doneCount, count, mapInfo.SongHash);
             }
         }
 
@@ -116,9 +124,9 @@ namespace MapMaven.RankedMapUpdater.Services
             return serializer.Deserialize<RankedMapInfo>(jsonReader);
         }
 
-        private async Task<IEnumerable<RankedMapInfoItem>> GetAllRankedMapsAsync(CancellationToken cancellationToken = default)
+        private async Task<IEnumerable<LeaderboardInfo>> GetAllRankedMapsAsync(CancellationToken cancellationToken = default)
         {
-            var rankedMaps = new List<RankedMapInfoItem>();
+            var rankedMaps = new List<LeaderboardInfo>();
 
             int totalMaps;
             double itemsPerPage;
@@ -151,9 +159,7 @@ namespace MapMaven.RankedMapUpdater.Services
                 itemsPerPage = rankedMapsCollection.Metadata.ItemsPerPage;
                 totalMaps = rankedMapsCollection.Metadata.Total;
 
-                var rankedMapInfo = rankedMapsCollection.Leaderboards.Select(l => new RankedMapInfoItem { Leaderboard = l });
-
-                rankedMaps.AddRange(rankedMapInfo);
+                rankedMaps.AddRange(rankedMapsCollection.Leaderboards);
 
                 _logger.LogInformation($"Fetched page {page} out of {Math.Ceiling(totalMaps / itemsPerPage)} ({rankedMaps.Count}/{totalMaps} maps).");
 
