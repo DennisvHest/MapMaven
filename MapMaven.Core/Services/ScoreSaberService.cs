@@ -22,7 +22,6 @@ namespace MapMaven.Core.Services
         public IObservable<string?> PlayerIdObservable => _playerId;
         public IObservable<Player?> PlayerProfile { get; private set; }
         public IObservable<IEnumerable<PlayerScore>> PlayerScores { get; private set; }
-        public IObservable<IEnumerable<ScoreEstimate>> ScoreEstimates { get; private set; }
         public IObservable<IEnumerable<ScoreEstimate>> RankedMapScoreEstimates { get; private set; }
 
         public IObservable<IEnumerable<RankedMap>> RankedMaps => _rankedMaps;
@@ -108,40 +107,6 @@ namespace MapMaven.Core.Services
 
                 return Observable.Return(null as Player);
             });
-
-            var scoreEstimates = Observable.CombineLatest(PlayerProfile, PlayerScores, RankedMaps, (player, playerScores, rankedMaps) =>
-            {
-                if (player == null)
-                    return Enumerable.Empty<ScoreEstimate>();
-
-                var rankedMapPlayerScorePairs = playerScores
-                    .Join(rankedMaps, playerScore => playerScore.Leaderboard.SongHash + playerScore.Leaderboard.Difficulty.DifficultyName.ToLower(), rankedMap => rankedMap.Id + rankedMap.Difficulty.ToLower(), (playerScore, rankedMap) =>
-                    {
-                        return new RankedMapScorePair
-                        {
-                            Map = rankedMap,
-                            PlayerScore = playerScore
-                        };
-                    });
-
-                var scoresaber = new Scoresaber(player, playerScores);
-
-                return rankedMapPlayerScorePairs.Select(pair =>
-                {
-                    var output = ScoreEstimateMLModel.Predict(new ScoreEstimateMLModel.ModelInput
-                    {
-                        PP = Convert.ToSingle(player.Pp),
-                        StarDifficulty = Convert.ToSingle(pair.Map.Stars),
-                        TimeSet = DateTime.Now
-                    });
-
-                    return scoresaber.GetScoreEstimate(pair.Map, output.Score);
-                }).ToList();
-            }).Replay(1);
-
-            scoreEstimates.Connect();
-
-            ScoreEstimates = scoreEstimates;
 
             var rankedMapScoreEstimates = Observable.CombineLatest(PlayerProfile, PlayerScores, RankedMaps, (player, playerScores, rankedMaps) =>
             {

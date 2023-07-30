@@ -78,7 +78,7 @@
         <CellTemplate>
             @if (context.Item.ScoreEstimates != null)
             {
-                @foreach (var scoreEstimate in context.Item.ScoreEstimates)
+                @foreach (var scoreEstimate in context.Item.ScoreEstimates.Where(s => s.PPIncrease >= 0.005))
                 {
                     var chipStyle = $"border: 1px solid {DifficultyDisplayUtils.GetColor(scoreEstimate.Difficulty)}";
                     <MudChip Size="Size.Small" Variant="Variant.Outlined" Style="@chipStyle">

@@ -68,7 +68,7 @@ namespace MapMaven.Services
                 _beatSaberDataService.MapInfo,
                 _scoreSaberService.PlayerScores.StartWith(Enumerable.Empty<PlayerScore>()),
                 _scoreSaberService.RankedMaps,
-                _scoreSaberService.ScoreEstimates.StartWith(Enumerable.Empty<ScoreEstimate>()),
+                _scoreSaberService.RankedMapScoreEstimates.StartWith(Enumerable.Empty<ScoreEstimate>()),
                 CombineMapData);
 
             var hiddenMaps = Observable.CombineLatest(_hiddenMaps, _scoreSaberService.PlayerProfile, (hiddenMaps, player) =>
@@ -90,7 +90,7 @@ namespace MapMaven.Services
                 _beatSaberDataService.MapInfo,
                 _scoreSaberService.PlayerScores,
                 _scoreSaberService.RankedMaps,
-                _scoreSaberService.ScoreEstimates,
+                _scoreSaberService.RankedMapScoreEstimates,
                 CombineMapData);
 
             CompleteRankedMapData = Observable.CombineLatest(
