@@ -3,7 +3,7 @@ using Azure.Storage.Blobs.Models;
 using ComposableAsync;
 using MapMaven.Core.ApiClients.BeatSaver;
 using MapMaven.Core.ApiClients.ScoreSaber;
-using MapMaven.Core.Models.Data;
+using MapMaven.Core.Models.Data.RankedMaps;
 using MapMaven.RankedMapUpdater.Models.ScoreSaber;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -42,7 +42,7 @@ namespace MapMaven.RankedMapUpdater.Services
             // Join the existing ranked maps with the new ranked maps to preserve the map details
             rankedMapInfo.RankedMaps = rankedMapsBySongHash.GroupJoin(rankedMapInfo.RankedMaps, m => m.Key, m => m.SongHash, (updatedLeaderboardInfo, existingRankedMapInfo) =>
             {
-                var rankedMapInfoItem = new RankedMapInfoItem
+                var rankedMapInfoItem = new FullRankedMapInfoItem
                 {
                     SongHash = updatedLeaderboardInfo.Key,
                     Leaderboards = updatedLeaderboardInfo
@@ -68,7 +68,7 @@ namespace MapMaven.RankedMapUpdater.Services
             await UploadRankedMapInfoAsync(rankedMapInfo);
         }
 
-        private async Task UpdateMapDetailForExistingMapInfoAsync(DateTime lastRunDate, RankedMapInfo rankedMapInfo, CancellationToken cancellationToken)
+        private async Task UpdateMapDetailForExistingMapInfoAsync(DateTime lastRunDate, FullRankedMapInfo rankedMapInfo, CancellationToken cancellationToken)
         {
             var updatedMaps = await GetUpdatedMapsAsync(lastRunDate, cancellationToken);
 
@@ -85,7 +85,7 @@ namespace MapMaven.RankedMapUpdater.Services
             }
         }
 
-        private async Task GetMapDetailForMapInfoAsync(IEnumerable<RankedMapInfoItem> mapInfoWithoutDetails, CancellationToken cancellationToken)
+        private async Task GetMapDetailForMapInfoAsync(IEnumerable<FullRankedMapInfoItem> mapInfoWithoutDetails, CancellationToken cancellationToken)
         {
             var count = mapInfoWithoutDetails.Count();
 
@@ -107,7 +107,7 @@ namespace MapMaven.RankedMapUpdater.Services
             }
         }
 
-        private async Task<RankedMapInfo> GetExistingRankedMapInfoAsync()
+        private async Task<FullRankedMapInfo> GetExistingRankedMapInfoAsync()
         {
             if (!await _rankedMapsBlob.ExistsAsync())
             {
@@ -121,7 +121,7 @@ namespace MapMaven.RankedMapUpdater.Services
 
             var serializer = JsonSerializer.CreateDefault();
 
-            return serializer.Deserialize<RankedMapInfo>(jsonReader);
+            return serializer.Deserialize<FullRankedMapInfo>(jsonReader);
         }
 
         private async Task<IEnumerable<LeaderboardInfo>> GetAllRankedMapsAsync(CancellationToken cancellationToken = default)
@@ -187,7 +187,7 @@ namespace MapMaven.RankedMapUpdater.Services
             return response.Docs;
         }
 
-        private async Task UploadRankedMapInfoAsync(RankedMapInfo rankedMapInfo)
+        private async Task UploadRankedMapInfoAsync(FullRankedMapInfo rankedMapInfo)
         {
             var rankedMapInfoJson = JsonConvert.SerializeObject(rankedMapInfo);
 

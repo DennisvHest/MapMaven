@@ -1,9 +1,9 @@
 ﻿using MapMaven.Core.ApiClients.BeatSaver;
 using MapMaven.Core.ApiClients.ScoreSaber;
 
-namespace MapMaven.Core.Models.Data
+namespace MapMaven.Core.Models.Data.RankedMaps
 {
-    public class RankedMapInfoItem
+    public class FullRankedMapInfoItem
     {
         public string SongHash { get; set; }
         public MapDetail MapDetail { get; set; }
