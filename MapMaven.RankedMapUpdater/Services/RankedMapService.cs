@@ -20,6 +20,7 @@ namespace MapMaven.RankedMapUpdater.Services
         private readonly BeatSaverApiClient _beatSaverApiClient;
 
         private readonly BlobContainerClient _mapMavenBlobContainerClient;
+        private readonly BlobClient _fullRankedMapsBlob;
         private readonly BlobClient _rankedMapsBlob;
 
         public RankedMapService(ScoreSaberApiClient scoreSaberApiClient, ILogger<RankedMapService> logger, BlobContainerClient mapMavenBlobContainerClient, BeatSaverApiClient beatSaverApiClient)
@@ -29,18 +30,19 @@ namespace MapMaven.RankedMapUpdater.Services
             _mapMavenBlobContainerClient = mapMavenBlobContainerClient;
             _beatSaverApiClient = beatSaverApiClient;
 
+            _fullRankedMapsBlob = _mapMavenBlobContainerClient.GetBlobClient("scoresaber/ranked-maps-full.json");
             _rankedMapsBlob = _mapMavenBlobContainerClient.GetBlobClient("scoresaber/ranked-maps.json");
         }
 
         public async Task UpdateRankedMapsAsync(DateTime lastRunDate, CancellationToken cancellationToken = default)
         {
-            var rankedMapInfo = await GetExistingRankedMapInfoAsync();
+            var fullRankedMapInfo = await GetExistingFullRankedMapInfoAsync();
             var rankedMaps = await GetAllRankedMapsAsync(cancellationToken);
 
             var rankedMapsBySongHash = rankedMaps.GroupBy(m => m.SongHash);
 
             // Join the existing ranked maps with the new ranked maps to preserve the map details
-            rankedMapInfo.RankedMaps = rankedMapsBySongHash.GroupJoin(rankedMapInfo.RankedMaps, m => m.Key, m => m.SongHash, (updatedLeaderboardInfo, existingRankedMapInfo) =>
+            fullRankedMapInfo.RankedMaps = rankedMapsBySongHash.GroupJoin(fullRankedMapInfo.RankedMaps, m => m.Key, m => m.SongHash, (updatedLeaderboardInfo, existingRankedMapInfo) =>
             {
                 var rankedMapInfoItem = new FullRankedMapInfoItem
                 {
@@ -57,15 +59,24 @@ namespace MapMaven.RankedMapUpdater.Services
                 return rankedMapInfoItem;
             }).ToList();
 
-            await UpdateMapDetailForExistingMapInfoAsync(lastRunDate, rankedMapInfo, cancellationToken);
+            await UpdateMapDetailForExistingMapInfoAsync(lastRunDate, fullRankedMapInfo, cancellationToken);
 
-            var mapInfoWithoutDetails = rankedMapInfo.RankedMaps
+            var mapInfoWithoutDetails = fullRankedMapInfo.RankedMaps
                 .Where(m => m.MapDetail is null)
                 .ToList();
 
             await GetMapDetailForMapInfoAsync(mapInfoWithoutDetails, cancellationToken);
 
-            await UploadRankedMapInfoAsync(rankedMapInfo);
+            await SerializeJsonAndUpload(_fullRankedMapsBlob, fullRankedMapInfo);
+
+            var rankedMapInfo = new RankedMapInfo
+            {
+                RankedMaps = fullRankedMapInfo.RankedMaps
+                    .Select(m => new RankedMapInfoItem(m))
+                    .ToDictionary(m => m.SongHash)
+            };
+
+            await SerializeJsonAndUpload(_rankedMapsBlob, rankedMapInfo);
         }
 
         private async Task UpdateMapDetailForExistingMapInfoAsync(DateTime lastRunDate, FullRankedMapInfo rankedMapInfo, CancellationToken cancellationToken)
@@ -107,15 +118,15 @@ namespace MapMaven.RankedMapUpdater.Services
             }
         }
 
-        private async Task<FullRankedMapInfo> GetExistingRankedMapInfoAsync()
+        private async Task<FullRankedMapInfo> GetExistingFullRankedMapInfoAsync()
         {
-            if (!await _rankedMapsBlob.ExistsAsync())
+            if (!await _fullRankedMapsBlob.ExistsAsync())
             {
                 _logger.LogInformation("No existing ranked maps JSON found.");
                 return new();
             }
 
-            using var stream = await _rankedMapsBlob.OpenReadAsync();
+            using var stream = await _fullRankedMapsBlob.OpenReadAsync();
             using var streamReader = new StreamReader(stream);
             using var jsonReader = new JsonTextReader(streamReader);
 
@@ -187,13 +198,13 @@ namespace MapMaven.RankedMapUpdater.Services
             return response.Docs;
         }
 
-        private async Task UploadRankedMapInfoAsync(FullRankedMapInfo rankedMapInfo)
+        private async Task SerializeJsonAndUpload(BlobClient blob, object value)
         {
-            var rankedMapInfoJson = JsonConvert.SerializeObject(rankedMapInfo);
+            var json = JsonConvert.SerializeObject(value);
 
-            using var jsonStream = new MemoryStream(Encoding.UTF8.GetBytes(rankedMapInfoJson));
+            using var jsonStream = new MemoryStream(Encoding.UTF8.GetBytes(json));
 
-            await _rankedMapsBlob.UploadAsync(jsonStream, new BlobUploadOptions
+            await blob.UploadAsync(jsonStream, new BlobUploadOptions
             {
                 HttpHeaders = new() { ContentType = "application/json" }
             });

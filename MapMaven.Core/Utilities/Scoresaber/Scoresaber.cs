@@ -9,6 +9,7 @@ namespace MapMaven.Core.Utilities.Scoresaber
         private readonly IEnumerable<PlayerScore> _playerScores;
 
         public const double PPDecay = .965D;
+        public const double PPPerStar = 42.114296; // Approximation
 
         public static readonly List<PPCurveItem> PPCurve = new List<PPCurveItem>
         {
