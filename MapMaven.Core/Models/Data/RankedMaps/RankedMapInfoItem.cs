@@ -19,11 +19,13 @@ namespace MapMaven.Core.Models.Data.RankedMaps
 
         public RankedMapInfoItem(FullRankedMapInfoItem fullRankedMapInfoItem)
         {
+            var leaderboard = fullRankedMapInfoItem.Leaderboards.First();
+
             SongHash = fullRankedMapInfoItem.SongHash;
             BeatSaverId = fullRankedMapInfoItem.MapDetail.Id;
-            Name = fullRankedMapInfoItem.MapDetail.Name;
-            SongAuthorName = fullRankedMapInfoItem.MapDetail.Metadata.SongAuthorName;
-            MapAuthorName = fullRankedMapInfoItem.MapDetail.Metadata.LevelAuthorName;
+            Name = leaderboard.SongName;
+            SongAuthorName = leaderboard.SongAuthorName;
+            MapAuthorName = leaderboard.LevelAuthorName;
             Duration = TimeSpan.FromSeconds(fullRankedMapInfoItem.MapDetail.Metadata.Duration ?? 0);
 
             var mapVersion = fullRankedMapInfoItem.MapDetail.Versions.First(x => x.Hash.Equals(SongHash, StringComparison.OrdinalIgnoreCase));
