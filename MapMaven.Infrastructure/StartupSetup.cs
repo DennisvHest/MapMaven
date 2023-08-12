@@ -39,7 +39,7 @@ namespace MapMaven.Infrastructure
 
             services.AddHttpClient<ScoreSaberApiClient>(client => client.BaseAddress = new Uri("https://scoresaber.com"));
             services.AddHttpClient<BeatSaverApiClient>(client => client.BaseAddress = new Uri("https://api.beatsaver.com"));
-            services.AddHttpClient("RankedScoresaber", client => client.BaseAddress = new Uri("https://scoresaber.balibalo.xyz"));
+            services.AddHttpClient("MapMavenFiles", client => client.BaseAddress = new Uri("http://files.map-maven.com"));
 
             services.AddScoped<BeatSaberFileService>();
             services.AddScoped<IBeatSaberDataService, BeatSaberDataService>();

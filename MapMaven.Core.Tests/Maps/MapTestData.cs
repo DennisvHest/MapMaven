@@ -13,7 +13,7 @@ namespace MapMaven.Core.Tests.Maps
                 Id = "1",
                 Name = "Test Map",
                 SongAuthorName = "Camellia",
-                RankedMap = new RankedMap
+                Difficulty = new RankedMap
                 {
                     Stars = 1,
                     PP = 20
@@ -31,7 +31,7 @@ namespace MapMaven.Core.Tests.Maps
                 Id = "2",
                 Name = "Other test map",
                 SongAuthorName = "Camellia",
-                RankedMap = new RankedMap
+                Difficulty = new RankedMap
                 {
                     Stars = 10,
                     PP = 100
@@ -42,7 +42,7 @@ namespace MapMaven.Core.Tests.Maps
                 Id = "3",
                 Name = "sleepparalysis//////////////",
                 SongAuthorName = "Test song author",
-                RankedMap = new RankedMap
+                Difficulty = new RankedMap
                 {
                     Stars = 5.2,
                     PP = 43.2

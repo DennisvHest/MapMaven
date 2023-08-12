@@ -1,4 +1,5 @@
 ﻿using MapMaven.Core.Utilities.Scoresaber;
+using MapMaven.Models;
 
 namespace MapMaven.Core.Models.Data.RankedMaps
 {
@@ -35,6 +36,20 @@ namespace MapMaven.Core.Models.Data.RankedMaps
                 MaxPP = x.Stars * Scoresaber.PPPerStar,
                 Difficulty = x.Difficulty.DifficultyName
             });
+        }
+
+        public Map ToMap()
+        {
+            return new Map
+            {
+                Id = BeatSaverId,
+                Hash = SongHash,
+                Name = Name,
+                SongAuthorName = SongAuthorName,
+                MapAuthorName = MapAuthorName,
+                SongDuration = Duration,
+                CoverImageUrl = CoverImageUrl
+            };
         }
     }
 }

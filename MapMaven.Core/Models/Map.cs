@@ -1,4 +1,5 @@
 ﻿using MapMaven.Core.ApiClients.ScoreSaber;
+using MapMaven.Core.Models.Data.RankedMaps;
 using MapMaven.Core.Models.Data.ScoreSaber;
 using MapMaven.Core.Utilities.Scoresaber;
 
@@ -22,7 +23,7 @@ namespace MapMaven.Models
 
         public PlayerScore? HighestPlayerScore { get; set; }
         public IEnumerable<PlayerScore> AllPlayerScores { get; set; } = Enumerable.Empty<PlayerScore>();
-        public RankedMap? RankedMap { get; set; }
+        public RankedMapDifficultyInfo? Difficulty { get; set; }
         public IEnumerable<ScoreEstimate> ScoreEstimates { get; set; } = Enumerable.Empty<ScoreEstimate>();
         public ScoreEstimate? ScoreEstimate => ScoreEstimates.FirstOrDefault();
 

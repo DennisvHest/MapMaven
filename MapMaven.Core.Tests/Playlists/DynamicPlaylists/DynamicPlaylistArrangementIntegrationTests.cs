@@ -137,8 +137,8 @@ public class DynamicPlaylistArrangementIntegrationTests
     {
         var scoreEstimates = new ScoreEstimate[]
         {
-            new() { MapId = "1", PPIncrease = 5 },
-            new() { MapId = "2", PPIncrease = 10 },
+            new() { MapHash = "1", PPIncrease = 5 },
+            new() { MapHash = "2", PPIncrease = 10 },
         };
 
         _scoreSaberServiceMock
