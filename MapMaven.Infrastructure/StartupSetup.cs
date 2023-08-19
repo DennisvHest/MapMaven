@@ -32,7 +32,7 @@ namespace MapMaven.Infrastructure
             services.AddDbContext<MapMavenContext>();
             services.AddScoped<IDataStore, MapMavenContext>();
 
-            services.AddScoped<IFileSystem, FileSystem>();
+            services.AddSingleton<IFileSystem, FileSystem>();
 
             services.AddScoped<IBeatmapHasher, Hasher>();
             services.AddScoped(_ => new BeatSaver("MapMaven", new Version(1, 0)));
@@ -41,15 +41,15 @@ namespace MapMaven.Infrastructure
             services.AddHttpClient<BeatSaverApiClient>(client => client.BaseAddress = new Uri("https://api.beatsaver.com"));
             services.AddHttpClient("MapMavenFiles", client => client.BaseAddress = new Uri("http://files.map-maven.com"));
 
-            services.AddScoped<BeatSaberFileService>();
-            services.AddScoped<IBeatSaberDataService, BeatSaberDataService>();
-            services.AddScoped<IMapService, MapService>();
-            services.AddScoped<SongPlayerService>();
-            services.AddScoped<IPlaylistService, PlaylistService>();
-            services.AddScoped<IScoreSaberService, ScoreSaberService>();
-            services.AddScoped<DynamicPlaylistArrangementService>();
-            services.AddScoped<IApplicationSettingService, ApplicationSettingService>();
-            services.AddScoped<IApplicationEventService, ApplicationEventService>();
+            services.AddSingleton<BeatSaberFileService>();
+            services.AddSingleton<IBeatSaberDataService, BeatSaberDataService>();
+            services.AddSingleton<IMapService, MapService>();
+            services.AddSingleton<SongPlayerService>();
+            services.AddSingleton<IPlaylistService, PlaylistService>();
+            services.AddSingleton<IScoreSaberService, ScoreSaberService>();
+            services.AddSingleton<DynamicPlaylistArrangementService>();
+            services.AddSingleton<IApplicationSettingService, ApplicationSettingService>();
+            services.AddSingleton<IApplicationEventService, ApplicationEventService>();
         }
 
         public static void Initialize(IServiceProvider serviceProvider)
