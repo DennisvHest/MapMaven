@@ -1201,16 +1201,7 @@
           "format": "int32"
         },
         "characteristic": {
-          "type": "string",
-          "enum": [
-            "Standard",
-            "OneSaber",
-            "NoArrows",
-            "90Degree",
-            "360Degree",
-            "Lightshow",
-            "Lawless"
-          ]
+          "type": "string"
         },
         "chroma": {
           "type": "boolean"
