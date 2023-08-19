@@ -23,6 +23,13 @@ namespace MapMaven.RankedMapUpdater.Services
         private readonly BlobClient _fullRankedMapsBlob;
         private readonly BlobClient _rankedMapsBlob;
 
+        private const string _leaderBoardProviderName = "scoresaber";
+        private const string _fullRankedMapsBlobFileName = "ranked-maps-full";
+        private const string _rankedMapsBlobFileName = "ranked-maps";
+
+        private const string _fullRankedMapsBlobPath = $"{_leaderBoardProviderName}/{_fullRankedMapsBlobFileName}.json";
+        private const string _rankedMapsBlobPath = $"{_leaderBoardProviderName}/{_rankedMapsBlobFileName}.json";
+
         public RankedMapService(ScoreSaberApiClient scoreSaberApiClient, ILogger<RankedMapService> logger, BlobContainerClient mapMavenBlobContainerClient, BeatSaverApiClient beatSaverApiClient)
         {
             _scoreSaberApiClient = scoreSaberApiClient;
@@ -30,12 +37,14 @@ namespace MapMaven.RankedMapUpdater.Services
             _mapMavenBlobContainerClient = mapMavenBlobContainerClient;
             _beatSaverApiClient = beatSaverApiClient;
 
-            _fullRankedMapsBlob = _mapMavenBlobContainerClient.GetBlobClient("scoresaber/ranked-maps-full.json");
-            _rankedMapsBlob = _mapMavenBlobContainerClient.GetBlobClient("scoresaber/ranked-maps.json");
+            _fullRankedMapsBlob = _mapMavenBlobContainerClient.GetBlobClient(_fullRankedMapsBlobPath);
+            _rankedMapsBlob = _mapMavenBlobContainerClient.GetBlobClient(_rankedMapsBlobPath);
         }
 
         public async Task UpdateRankedMapsAsync(DateTime lastRunDate, CancellationToken cancellationToken = default)
         {
+            await BackupRankedMapsAsync();
+
             var fullRankedMapInfo = await GetExistingFullRankedMapInfoAsync();
             var rankedMaps = await GetAllRankedMapsAsync(cancellationToken);
 
@@ -77,6 +86,39 @@ namespace MapMaven.RankedMapUpdater.Services
             };
 
             await SerializeJsonAndUpload(_rankedMapsBlob, rankedMapInfo);
+        }
+
+        private async Task BackupRankedMapsAsync()
+        {
+            if (await _fullRankedMapsBlob.ExistsAsync())
+            {
+                var fullRankedMapsCopy = _mapMavenBlobContainerClient.GetBlobClient($"{_leaderBoardProviderName}/previous/{_fullRankedMapsBlobFileName}-{DateTime.Today.AddDays(-1):yyyy-MM-dd}.json");
+
+                await fullRankedMapsCopy.StartCopyFromUriAsync(_fullRankedMapsBlob.Uri);
+            }
+
+            if (await _rankedMapsBlob.ExistsAsync())
+            {
+                var fullRankedMapsCopy = _mapMavenBlobContainerClient.GetBlobClient($"{_leaderBoardProviderName}/previous/{_rankedMapsBlobFileName}-{DateTime.Today.AddDays(-1):yyyy-MM-dd}.json");
+
+                await fullRankedMapsCopy.StartCopyFromUriAsync(_rankedMapsBlob.Uri);
+            }
+
+            await RemoveOldBackupBlobs();
+        }
+
+        private async Task RemoveOldBackupBlobs()
+        {
+            var previousRankedMapsBlobs = _mapMavenBlobContainerClient.GetBlobsAsync(prefix: $"{_leaderBoardProviderName}/previous/");
+
+            await foreach (var page in previousRankedMapsBlobs.AsPages())
+            {
+                foreach (var blob in page.Values)
+                {
+                    if (blob.Properties.CreatedOn < DateTime.Today.AddDays(-2))
+                        await _mapMavenBlobContainerClient.DeleteBlobIfExistsAsync(blob.Name);
+                }
+            }
         }
 
         private async Task UpdateMapDetailForExistingMapInfoAsync(DateTime lastRunDate, FullRankedMapInfo rankedMapInfo, CancellationToken cancellationToken)
