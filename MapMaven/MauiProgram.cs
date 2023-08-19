@@ -54,7 +54,7 @@ public static class MauiProgram
             config.SnackbarConfiguration.PositionClass = Defaults.Classes.Position.BottomCenter;
         });
 
-        builder.Services.AddMapMaven();
+        builder.Services.AddMapMaven(useStatefulServices: true);
 
         builder.Services.AddSingleton<UpdateService>();
         builder.Services.AddSingleton<IHostedService, UpdateWorker>();

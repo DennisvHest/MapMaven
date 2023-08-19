@@ -19,7 +19,7 @@ namespace MapMaven.Infrastructure
 {
     public static class StartupSetup
     {
-        public static void AddMapMaven(this IServiceCollection services)
+        public static void AddMapMaven(this IServiceCollection services, bool useStatefulServices = false)
         {
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
 
@@ -41,15 +41,17 @@ namespace MapMaven.Infrastructure
             services.AddHttpClient<BeatSaverApiClient>(client => client.BaseAddress = new Uri("https://api.beatsaver.com"));
             services.AddHttpClient("MapMavenFiles", client => client.BaseAddress = new Uri("http://files.map-maven.com"));
 
-            services.AddSingleton<BeatSaberFileService>();
-            services.AddSingleton<IBeatSaberDataService, BeatSaberDataService>();
-            services.AddSingleton<IMapService, MapService>();
-            services.AddSingleton<SongPlayerService>();
-            services.AddSingleton<IPlaylistService, PlaylistService>();
-            services.AddSingleton<IScoreSaberService, ScoreSaberService>();
-            services.AddSingleton<DynamicPlaylistArrangementService>();
-            services.AddSingleton<IApplicationSettingService, ApplicationSettingService>();
-            services.AddSingleton<IApplicationEventService, ApplicationEventService>();
+            var serviceScope = useStatefulServices ? ServiceLifetime.Singleton : ServiceLifetime.Scoped;
+
+            services.Add(new ServiceDescriptor(typeof(BeatSaberFileService), typeof(BeatSaberFileService), serviceScope));
+            services.Add(new ServiceDescriptor(typeof(IBeatSaberDataService), typeof(BeatSaberDataService), serviceScope));
+            services.Add(new ServiceDescriptor(typeof(IMapService), typeof(MapService), serviceScope));
+            services.Add(new ServiceDescriptor(typeof(SongPlayerService), typeof(SongPlayerService), serviceScope));
+            services.Add(new ServiceDescriptor(typeof(IPlaylistService), typeof(PlaylistService), serviceScope));
+            services.Add(new ServiceDescriptor(typeof(IScoreSaberService), typeof(ScoreSaberService), serviceScope));
+            services.Add(new ServiceDescriptor(typeof(DynamicPlaylistArrangementService), typeof(DynamicPlaylistArrangementService), serviceScope));
+            services.Add(new ServiceDescriptor(typeof(IApplicationSettingService), typeof(ApplicationSettingService), serviceScope));
+            services.Add(new ServiceDescriptor(typeof(IApplicationEventService), typeof(ApplicationEventService), serviceScope));
         }
 
         public static void Initialize(IServiceProvider serviceProvider)
