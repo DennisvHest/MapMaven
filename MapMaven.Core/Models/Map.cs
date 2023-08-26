@@ -24,6 +24,7 @@ namespace MapMaven.Models
 
         public PlayerScore? HighestPlayerScore { get; set; }
         public IEnumerable<PlayerScore> AllPlayerScores { get; set; } = Enumerable.Empty<PlayerScore>();
+        public RankedMapInfoItem RankedMap { get; set; }
         public RankedMapDifficultyInfo? Difficulty { get; set; }
         public IEnumerable<ScoreEstimate> ScoreEstimates { get; set; } = Enumerable.Empty<ScoreEstimate>();
         public ScoreEstimate? ScoreEstimate => ScoreEstimates.FirstOrDefault();

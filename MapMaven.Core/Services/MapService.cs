@@ -67,6 +67,7 @@ namespace MapMaven.Services
 
             Maps = Observable.CombineLatest(
                 _beatSaberDataService.MapInfo,
+                _scoreSaberService.RankedMaps.StartWith(new Dictionary<string, RankedMapInfoItem>()),
                 _scoreSaberService.PlayerScores.StartWith(Enumerable.Empty<PlayerScore>()),
                 _scoreSaberService.RankedMapScoreEstimates.StartWith(Enumerable.Empty<ScoreEstimate>()),
                 CombineMapData);
@@ -88,6 +89,7 @@ namespace MapMaven.Services
 
             CompleteMapData = Observable.CombineLatest(
                 _beatSaberDataService.MapInfo,
+                _scoreSaberService.RankedMaps,
                 _scoreSaberService.PlayerScores,
                 _scoreSaberService.RankedMapScoreEstimates,
                 CombineMapData);
@@ -100,12 +102,17 @@ namespace MapMaven.Services
                 CombineRankedMapData);
         }
 
-        private IEnumerable<Map> CombineMapData(IEnumerable<MapInfo> maps, IEnumerable<PlayerScore> playerScores, IEnumerable<ScoreEstimate> scoreEstimates)
+        private IEnumerable<Map> CombineMapData(IEnumerable<MapInfo> maps, Dictionary<string, RankedMapInfoItem> rankedMaps, IEnumerable<PlayerScore> playerScores, IEnumerable<ScoreEstimate> scoreEstimates)
         {
-            return maps.GroupJoin(playerScores, mapInfo => mapInfo.Hash, score => score.Leaderboard.SongHash, (mapInfo, scores) =>
+            return maps.GroupJoin(rankedMaps, mapInfo => mapInfo.Hash, rankedMap => rankedMap.Key, (mapInfo, rankedMaps) =>
             {
                 var map = mapInfo.ToMap();
 
+                map.RankedMap = rankedMaps.FirstOrDefault().Value;
+
+                return map;
+            }).GroupJoin(playerScores, mapInfo => mapInfo.Hash, score => score.Leaderboard.SongHash, (map, scores) =>
+            {
                 map.AllPlayerScores = scores.OrderByDescending(s => s.Leaderboard.Difficulty.Difficulty1).ToList();
                 map.HighestPlayerScore = scores.MaxBy(s => s.Score.Pp);
 
