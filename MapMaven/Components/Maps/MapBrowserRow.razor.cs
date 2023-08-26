@@ -8,7 +8,7 @@ using MapMaven.Core.Services;
 using MapMaven.Components.Playlists;
 using MapMaven.Components.Shared;
 using MapMaven.Core.Services.Interfaces;
-using MapMaven.Core.ApiClients;
+using MapMaven.Core.ApiClients.ScoreSaber;
 
 namespace MapMaven.Components.Maps
 {

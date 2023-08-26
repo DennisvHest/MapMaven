@@ -46,9 +46,9 @@ namespace MapMaven.Core.Models.DynamicPlaylists.MapInfo
             AddedDateTime = map.AddedDateTime;
             Hidden = map.Hidden;
             Played = map.Played;
-            Stars = map.RankedMap?.Stars ?? 0;
-            Difficulty = map.RankedMap?.Difficulty ?? "";
-            Pp = map.RankedMap?.PP ?? 0;
+            Stars = map.Difficulty?.Stars ?? 0;
+            Difficulty = map.Difficulty?.Difficulty ?? "";
+            Pp = map.Difficulty?.MaxPP ?? 0;
             Score = map.HighestPlayerScore != null
                 ? new DynamicPlaylistScore(map.HighestPlayerScore)
                 : null;

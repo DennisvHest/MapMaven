@@ -1,4 +1,4 @@
-﻿using MapMaven.Core.ApiClients;
+﻿using MapMaven.Core.ApiClients.ScoreSaber;
 using MapMaven.Core.Models;
 using MapMaven.Core.Models.Data;
 using MapMaven.Core.Models.Data.ScoreSaber;
@@ -14,6 +14,7 @@ using System.Reactive.Subjects;
 using Map = MapMaven.Models.Map;
 using MapMaven.Core.Services.Interfaces;
 using MapMaven.Core.Utilities;
+using MapMaven.Core.Models.Data.RankedMaps;
 
 namespace MapMaven.Services
 {
@@ -67,8 +68,7 @@ namespace MapMaven.Services
             Maps = Observable.CombineLatest(
                 _beatSaberDataService.MapInfo,
                 _scoreSaberService.PlayerScores.StartWith(Enumerable.Empty<PlayerScore>()),
-                _scoreSaberService.RankedMaps,
-                _scoreSaberService.ScoreEstimates.StartWith(Enumerable.Empty<ScoreEstimate>()),
+                _scoreSaberService.RankedMapScoreEstimates.StartWith(Enumerable.Empty<ScoreEstimate>()),
                 CombineMapData);
 
             var hiddenMaps = Observable.CombineLatest(_hiddenMaps, _scoreSaberService.PlayerProfile, (hiddenMaps, player) =>
@@ -89,8 +89,7 @@ namespace MapMaven.Services
             CompleteMapData = Observable.CombineLatest(
                 _beatSaberDataService.MapInfo,
                 _scoreSaberService.PlayerScores,
-                _scoreSaberService.RankedMaps,
-                _scoreSaberService.ScoreEstimates,
+                _scoreSaberService.RankedMapScoreEstimates,
                 CombineMapData);
 
             CompleteRankedMapData = Observable.CombineLatest(
@@ -101,7 +100,7 @@ namespace MapMaven.Services
                 CombineRankedMapData);
         }
 
-        private IEnumerable<Map> CombineMapData(IEnumerable<MapInfo> maps, IEnumerable<PlayerScore> playerScores, IEnumerable<RankedMap> rankedMaps, IEnumerable<ScoreEstimate> scoreEstimates)
+        private IEnumerable<Map> CombineMapData(IEnumerable<MapInfo> maps, IEnumerable<PlayerScore> playerScores, IEnumerable<ScoreEstimate> scoreEstimates)
         {
             return maps.GroupJoin(playerScores, mapInfo => mapInfo.Hash, score => score.Leaderboard.SongHash, (mapInfo, scores) =>
             {
@@ -111,13 +110,7 @@ namespace MapMaven.Services
                 map.HighestPlayerScore = scores.MaxBy(s => s.Score.Pp);
 
                 return map;
-            }).GroupJoin(rankedMaps, map => map.Hash, rankedMap => rankedMap.Id, (map, rankedMaps) =>
-            {
-                map.RankedMap = rankedMaps.FirstOrDefault();
-                map.RankedMaps = rankedMaps;
-
-                return map;
-            }).GroupJoin(scoreEstimates, map => map.Hash, scoreEstimate => scoreEstimate.MapId, (map, scoreEstimate) =>
+            }).GroupJoin(scoreEstimates, map => map.Hash, scoreEstimate => scoreEstimate.MapHash, (map, scoreEstimate) =>
             {
                 map.ScoreEstimates = scoreEstimate.OrderByDescending(s => DifficultyUtils.GetOrder(s.Difficulty));
 
@@ -126,26 +119,27 @@ namespace MapMaven.Services
         }
 
         private IEnumerable<Map> CombineRankedMapData(
-            IEnumerable<RankedMap> rankedMaps,
+            Dictionary<string, RankedMapInfoItem> rankedMaps,
             IEnumerable<ScoreEstimate> scoreEstimates,
             IEnumerable<PlayerScore> playerScores,
             IEnumerable<HiddenMap> hiddenMaps)
         {
             return rankedMaps
-                .GroupJoin(scoreEstimates, map => map.Id + map.Difficulty, scoreEstimate => scoreEstimate.MapId + scoreEstimate.Difficulty, (rankedMap, scoreEstimates) =>
+                .SelectMany(x => x.Value.Difficulties.Select(d => (Difficulty: d, Map: x)))
+                .GroupJoin(scoreEstimates, map => map.Map.Key + map.Difficulty.Difficulty, scoreEstimate => scoreEstimate.MapHash + scoreEstimate.Difficulty, (rankedMap, scoreEstimates) =>
                 {
-                    var map = rankedMap.ToMap();
+                    var map = rankedMap.Map.Value.ToMap();
 
                     map.ScoreEstimates = scoreEstimates.OrderByDescending(s => DifficultyUtils.GetOrder(s.Difficulty));
-                    map.RankedMap = rankedMap;
+                    map.Difficulty = rankedMap.Difficulty;
 
                     return map;
-                }).GroupJoin(playerScores, map => map.RankedMap.Id + map.RankedMap.Difficulty, score => score.Leaderboard.SongHash + score.Leaderboard.Difficulty.DifficultyName, (map, scores) =>
+                }).GroupJoin(playerScores, map => map.Hash + map.Difficulty.Difficulty, score => score.Leaderboard.SongHash + score.Leaderboard.Difficulty.DifficultyName, (map, scores) =>
                 {
                     map.HighestPlayerScore = scores.MaxBy(s => s.Score.Pp);
 
                     return map;
-                }).GroupJoin(hiddenMaps, map => map.Hash + map.RankedMap.Difficulty, hiddenMap => hiddenMap.Hash + hiddenMap.Difficulty, (map, hiddenMap) =>
+                }).GroupJoin(hiddenMaps, map => map.Hash + map.Difficulty.Difficulty, hiddenMap => hiddenMap.Hash + hiddenMap.Difficulty, (map, hiddenMap) =>
                 {
                     map.Hidden = hiddenMap.Any();
 

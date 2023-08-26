@@ -1,4 +1,5 @@
-﻿using MapMaven.Core.ApiClients;
+﻿using MapMaven.Core.ApiClients.ScoreSaber;
+using MapMaven.Core.Models.Data.RankedMaps;
 using MapMaven.Core.Models.Data.ScoreSaber;
 using MapMaven.Core.Services.Interfaces;
 using MapMaven.Core.Utilities.Scoresaber;
@@ -17,15 +18,14 @@ namespace MapMaven.Core.Services
         private readonly IHttpClientFactory _httpClientFactory;
 
         private readonly BehaviorSubject<string?> _playerId = new(null);
-        private readonly BehaviorSubject<IEnumerable<RankedMap>> _rankedMaps = new(Enumerable.Empty<RankedMap>());
+        private readonly BehaviorSubject<Dictionary<string, RankedMapInfoItem>> _rankedMaps = new(new());
 
         public IObservable<string?> PlayerIdObservable => _playerId;
         public IObservable<Player?> PlayerProfile { get; private set; }
         public IObservable<IEnumerable<PlayerScore>> PlayerScores { get; private set; }
-        public IObservable<IEnumerable<ScoreEstimate>> ScoreEstimates { get; private set; }
         public IObservable<IEnumerable<ScoreEstimate>> RankedMapScoreEstimates { get; private set; }
 
-        public IObservable<IEnumerable<RankedMap>> RankedMaps => _rankedMaps;
+        public IObservable<Dictionary<string, RankedMapInfoItem>> RankedMaps => _rankedMaps;
 
         public string? PlayerId => _playerId.Value;
 
@@ -109,40 +109,6 @@ namespace MapMaven.Core.Services
                 return Observable.Return(null as Player);
             });
 
-            var scoreEstimates = Observable.CombineLatest(PlayerProfile, PlayerScores, RankedMaps, (player, playerScores, rankedMaps) =>
-            {
-                if (player == null)
-                    return Enumerable.Empty<ScoreEstimate>();
-
-                var rankedMapPlayerScorePairs = playerScores
-                    .Join(rankedMaps, playerScore => playerScore.Leaderboard.SongHash + playerScore.Leaderboard.Difficulty.DifficultyName.ToLower(), rankedMap => rankedMap.Id + rankedMap.Difficulty.ToLower(), (playerScore, rankedMap) =>
-                    {
-                        return new RankedMapScorePair
-                        {
-                            Map = rankedMap,
-                            PlayerScore = playerScore
-                        };
-                    });
-
-                var scoresaber = new Scoresaber(player, playerScores);
-
-                return rankedMapPlayerScorePairs.Select(pair =>
-                {
-                    var output = ScoreEstimateMLModel.Predict(new ScoreEstimateMLModel.ModelInput
-                    {
-                        PP = Convert.ToSingle(player.Pp),
-                        StarDifficulty = Convert.ToSingle(pair.Map.Stars),
-                        TimeSet = DateTime.Now
-                    });
-
-                    return scoresaber.GetScoreEstimate(pair.Map, output.Score);
-                }).ToList();
-            }).Replay(1);
-
-            scoreEstimates.Connect();
-
-            ScoreEstimates = scoreEstimates;
-
             var rankedMapScoreEstimates = Observable.CombineLatest(PlayerProfile, PlayerScores, RankedMaps, (player, playerScores, rankedMaps) =>
             {
                 if (player == null)
@@ -150,16 +116,19 @@ namespace MapMaven.Core.Services
 
                 var scoresaber = new Scoresaber(player, playerScores);
 
-                return rankedMaps.Select(map =>
+                return rankedMaps.SelectMany(map =>
                 {
-                    var output = ScoreEstimateMLModel.Predict(new ScoreEstimateMLModel.ModelInput
+                    return map.Value.Difficulties.Select(difficulty =>
                     {
-                        PP = Convert.ToSingle(player.Pp),
-                        StarDifficulty = Convert.ToSingle(map.Stars),
-                        TimeSet = DateTime.Now
-                    });
+                        var output = ScoreEstimateMLModel.Predict(new ScoreEstimateMLModel.ModelInput
+                        {
+                            PP = Convert.ToSingle(player.Pp),
+                            StarDifficulty = Convert.ToSingle(difficulty.Stars),
+                            TimeSet = DateTime.Now
+                        });
 
-                    return scoresaber.GetScoreEstimate(map, output.Score);
+                        return scoresaber.GetScoreEstimate(map.Value, difficulty, output.Score);
+                    });
                 }).ToList();
             }).Replay(1);
 
@@ -220,17 +189,17 @@ namespace MapMaven.Core.Services
                     Message = "Failed to load ranked maps."
                 });
 
-                _rankedMaps.OnNext(Enumerable.Empty<RankedMap>());
+                _rankedMaps.OnNext(new());
             }
         }
 
-        public async Task<IEnumerable<RankedMap>> GetRankedMaps()
+        public async Task<Dictionary<string, RankedMapInfoItem>> GetRankedMaps()
         {
-            var httpClient = _httpClientFactory.CreateClient("RankedScoresaber");
+            var httpClient = _httpClientFactory.CreateClient("MapMavenFiles");
 
-            var response = await httpClient.GetFromJsonAsync<RankedMapResponse>("/ranked");
+            var response = await httpClient.GetFromJsonAsync<RankedMapInfo>("/scoresaber/ranked-maps.json");
 
-            return response?.List ?? Enumerable.Empty<RankedMap>();
+            return response?.RankedMaps ?? new();
         }
 
         public string? GetScoreSaberReplayUrl(string mapId, PlayerScore score)

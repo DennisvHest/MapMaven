@@ -1,5 +1,5 @@
 using BeatSaberPlaylistsLib.Types;
-using MapMaven.Core.ApiClients;
+using MapMaven.Core.ApiClients.ScoreSaber;
 using MapMaven.Core.Models.Data.ScoreSaber;
 using MapMaven.Core.Models.DynamicPlaylists;
 using MapMaven.Core.Models.DynamicPlaylists.MapInfo;

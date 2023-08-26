@@ -2,7 +2,7 @@
 {
     public class ScoreEstimate
     {
-        public string MapId { get; set; }
+        public string MapHash { get; set; }
         public double Accuracy { get; set; }
         public double Pp { get; set; }
         public double TotalPP { get; set; }
