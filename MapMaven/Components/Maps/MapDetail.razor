@@ -36,6 +36,15 @@
                         <MudItem xs="12">
                             <MudText><b>Hash:</b> @Map.Hash</MudText>
                         </MudItem>
+                        <MudItem xs="12">
+                            <MudText>
+                                <b>Tags:</b>
+                                @foreach (var tag in Map.Tags)
+                                {
+                                    <MudChip Color="Color.Default" Size="Size.Small">@tag</MudChip>
+                                }
+                            </MudText>
+                        </MudItem>
                     </MudGrid>
                 </MudPaper>
             </MudItem>

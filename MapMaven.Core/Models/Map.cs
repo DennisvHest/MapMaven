@@ -20,6 +20,7 @@ namespace MapMaven.Models
         public TimeSpan PreviewEndTime => PreviewStartTime + PreviewDuration;
         public string CoverImageUrl { get; set; }
         public bool Hidden { get; set; }
+        public IEnumerable<string> Tags { get; set; } = Enumerable.Empty<string>();
         public bool Played => HighestPlayerScore != null;
         public bool Ranked => RankedMap != null;
 
@@ -47,6 +48,8 @@ namespace MapMaven.Models
 
         public void SetMapDetails(Beatmap beatmap)
         {
+            Tags = beatmap.Tags ?? Enumerable.Empty<string>();
+
             if (Difficulties.Any() || beatmap.LatestVersion == null)
                 return;
 
