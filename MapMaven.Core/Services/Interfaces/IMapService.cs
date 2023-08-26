@@ -17,6 +17,7 @@ namespace MapMaven.Core.Services.Interfaces
         void ClearMapFilters();
         void ClearSelectedMaps();
         Task DownloadMap(Map map, bool force = false, IProgress<double>? progress = null, bool loadMapInfo = true, CancellationToken cancellationToken = default);
+        Task<Map> GetMapDetails(Map map);
         Task HideUnhideMap(Map map);
         Task LoadHiddenMaps();
         bool MapIsInstalled(Map map);

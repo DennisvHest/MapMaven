@@ -108,7 +108,7 @@ namespace MapMaven.Services
             {
                 var map = mapInfo.ToMap();
 
-                map.RankedMap = rankedMaps.FirstOrDefault().Value;
+                map.SetRankedMapDetails(rankedMaps.FirstOrDefault().Value);
 
                 return map;
             }).GroupJoin(playerScores, mapInfo => mapInfo.Hash, score => score.Leaderboard.SongHash, (map, scores) =>
@@ -182,6 +182,16 @@ namespace MapMaven.Services
         public void SelectMaps(IEnumerable<Map> selectedMaps)
         {
             _selectedMaps.OnNext(selectedMaps.ToHashSet());
+        }
+
+        public async Task<Map> GetMapDetails(Map map)
+        {
+            var beatMap = await _beatSaver.BeatmapByHash(map.Hash);
+
+            if (beatMap != null)
+                map.SetMapDetails(beatMap);
+
+            return map;
         }
 
         public async Task DownloadMap(Map map, bool force = false, IProgress<double>? progress = null, bool loadMapInfo = true, CancellationToken cancellationToken = default)

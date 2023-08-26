@@ -1,6 +1,7 @@
-﻿using MapMaven.Core.ApiClients.ScoreSaber;
+﻿using BeatSaverSharp.Models;
+using MapMaven.Core.ApiClients.BeatSaver;
+using MapMaven.Core.ApiClients.ScoreSaber;
 using MapMaven.Core.Models.Data.RankedMaps;
-using MapMaven.Core.Models.Data.ScoreSaber;
 using MapMaven.Core.Utilities.Scoresaber;
 
 namespace MapMaven.Models
@@ -24,10 +25,37 @@ namespace MapMaven.Models
 
         public PlayerScore? HighestPlayerScore { get; set; }
         public IEnumerable<PlayerScore> AllPlayerScores { get; set; } = Enumerable.Empty<PlayerScore>();
-        public RankedMapInfoItem RankedMap { get; set; }
+        public RankedMapInfoItem RankedMap { get; private set; }
+        public IEnumerable<Core.Models.MapDifficulty> Difficulties { get; set; } = Enumerable.Empty<Core.Models.MapDifficulty>();
         public RankedMapDifficultyInfo? Difficulty { get; set; }
         public IEnumerable<ScoreEstimate> ScoreEstimates { get; set; } = Enumerable.Empty<ScoreEstimate>();
         public ScoreEstimate? ScoreEstimate => ScoreEstimates.FirstOrDefault();
 
+        public void SetRankedMapDetails(RankedMapInfoItem rankedMap)
+        {
+            if (rankedMap == null)
+                return;
+
+            RankedMap = rankedMap;
+            Difficulties = rankedMap.Difficulties.Select(d => new Core.Models.MapDifficulty
+            {
+                Stars = d.Stars,
+                MaxPP = d.MaxPP,
+                Difficulty = d.Difficulty
+            });
+        }
+
+        public void SetMapDetails(Beatmap beatmap)
+        {
+            if (Difficulties.Any() || beatmap.LatestVersion == null)
+                return;
+
+            Difficulties = beatmap.LatestVersion.Difficulties.Select(d => new Core.Models.MapDifficulty
+            {
+                Stars = null,
+                MaxPP = null,
+                Difficulty = d.Difficulty.ToString()
+            });
+        }
     }
 }
