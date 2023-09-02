@@ -46,6 +46,8 @@ namespace MapMaven.RankedMapUpdater.Services
             await BackupRankedMapsAsync();
 
             var fullRankedMapInfo = await GetExistingFullRankedMapInfoAsync();
+            double oldRankedMapsCount = fullRankedMapInfo.RankedMaps.Count();
+
             var rankedMaps = await GetAllRankedMapsAsync(cancellationToken);
 
             var rankedMapsBySongHash = rankedMaps.GroupBy(m => m.SongHash);
@@ -75,6 +77,14 @@ namespace MapMaven.RankedMapUpdater.Services
                 .ToList();
 
             await GetMapDetailForMapInfoAsync(mapInfoWithoutDetails, cancellationToken);
+
+            double newRankedMapsCount = fullRankedMapInfo.RankedMaps.Count();
+
+            _logger.LogInformation("Updating ranked maps data. Old count: {oldRankedMapsCount}, new count: {newRankedMapsCount}", oldRankedMapsCount, newRankedMapsCount);
+
+            // If the number of ranked maps has decreased by more than 10%, something is wrong. Do not update the ranked maps JSON.
+            if (oldRankedMapsCount != 0 && newRankedMapsCount / oldRankedMapsCount <= 0.9)
+                throw new InvalidOperationException($"The number of ranked maps has decreased from {oldRankedMapsCount} to {newRankedMapsCount}. This cannot be correct...");
 
             await SerializeJsonAndUpload(_fullRankedMapsBlob, fullRankedMapInfo);
 

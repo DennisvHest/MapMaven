@@ -32,12 +32,10 @@ namespace MapMaven.Core.Models.Data.RankedMaps
 
             CoverImageUrl = mapVersion.CoverURL;
 
-            Difficulties = fullRankedMapInfoItem.Leaderboards.Select(x => new RankedMapDifficultyInfo
-            {
-                Stars = x.Stars,
-                MaxPP = x.Stars * Scoresaber.PPPerStar,
-                Difficulty = x.Difficulty.DifficultyName
-            });
+            Difficulties = fullRankedMapInfoItem.Leaderboards.GroupJoin(
+                mapVersion.Diffs, l => l.Difficulty.DifficultyName, d => d.Difficulty.ToString(),
+                (leaderboard, difficulty) => new RankedMapDifficultyInfo(leaderboard, difficulty.First(d => d.Characteristic == "Standard"))
+            );
         }
 
         public Map ToMap()
