@@ -1,5 +1,4 @@
-﻿using MapMaven.Core.Utilities.Scoresaber;
-using MapMaven.Models;
+﻿using MapMaven.Models;
 
 namespace MapMaven.Core.Models.Data.RankedMaps
 {

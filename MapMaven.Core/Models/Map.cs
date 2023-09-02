@@ -38,12 +38,7 @@ namespace MapMaven.Models
                 return;
 
             RankedMap = rankedMap;
-            Difficulties = rankedMap.Difficulties.Select(d => new Core.Models.MapDifficulty
-            {
-                Stars = d.Stars,
-                MaxPP = d.MaxPP,
-                Difficulty = d.Difficulty
-            });
+            Difficulties = rankedMap.Difficulties.Select(d => new Core.Models.MapDifficulty(d));
         }
 
         public void SetMapDetails(Beatmap beatmap)
@@ -53,12 +48,7 @@ namespace MapMaven.Models
             if (Difficulties.Any() || beatmap.LatestVersion == null)
                 return;
 
-            Difficulties = beatmap.LatestVersion.Difficulties.Select(d => new Core.Models.MapDifficulty
-            {
-                Stars = null,
-                MaxPP = null,
-                Difficulty = d.Difficulty.ToString()
-            });
+            Difficulties = beatmap.LatestVersion.Difficulties.Select(d => new Core.Models.MapDifficulty(d));
         }
     }
 }

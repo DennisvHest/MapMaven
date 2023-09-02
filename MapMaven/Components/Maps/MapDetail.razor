@@ -58,9 +58,16 @@
                             <thead>
                                 <tr>
                                     <td colspan="2">
-                                        <MudText Typo="Typo.overline">
-                                            @DifficultyDisplayUtils.GetDisplayName(difficulty.Difficulty)
-                                        </MudText>
+                                        @{
+                                            var chipStyle = $"border: 1px solid {DifficultyDisplayUtils.GetColor(difficulty.Difficulty)}";
+                                            <MudChip Size="Size.Small" Variant="Variant.Outlined" Style="@chipStyle">
+                                                @DifficultyDisplayUtils.GetDisplayName(difficulty.Difficulty)
+                                                @if (!string.IsNullOrEmpty(difficulty.Label))
+                                                {
+                                                    @: | @difficulty.Label
+                                                }
+                                            </MudChip>
+                                        }
                                     </td>
                                 </tr>
                             </thead>
@@ -77,8 +84,28 @@
                                     </tr>
                                 }
                                 <tr>
+                                    <td><b>Notes</b></td>
+                                    <td>@difficulty.Notes</td>
+                                </tr>
+                                <tr>
+                                    <td><b>Notes per second</b></td>
+                                    <td>@difficulty.NotesPerSecond.ToString("#0.##")</td>
+                                </tr>
+                                <tr>
+                                    <td><b>Bombs</b></td>
+                                    <td>@difficulty.Bombs</td>
+                                </tr>
+                                <tr>
+                                    <td><b>Obstacles</b></td>
+                                    <td>@difficulty.Obstacles</td>
+                                </tr>
+                                <tr>
                                     <td><b>Note jump speed</b></td>
-                                    <td>@* @difficulty.NoteJumpSpeed.ToString("#0.##") *@</td>
+                                    <td>@difficulty.Njs.ToString("#0.##")</td>
+                                </tr>
+                                <tr>
+                                    <td><b>Note jump offset</b></td>
+                                    <td>@difficulty.Offset.ToString("#0.##")</td>
                                 </tr>
 
                                 @{

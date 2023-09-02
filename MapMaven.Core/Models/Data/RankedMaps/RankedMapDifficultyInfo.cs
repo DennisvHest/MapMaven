@@ -1,5 +1,4 @@
-﻿using MapMaven.Core.ApiClients.BeatSaver;
-using MapMaven.Core.ApiClients.ScoreSaber;
+﻿using MapMaven.Core.ApiClients.ScoreSaber;
 using MapMaven.Core.Utilities.Scoresaber;
 
 namespace MapMaven.Core.Models.Data.RankedMaps
@@ -20,7 +19,7 @@ namespace MapMaven.Core.Models.Data.RankedMaps
 
         public RankedMapDifficultyInfo() { }
 
-        public RankedMapDifficultyInfo(LeaderboardInfo leaderboard, MapDifficulty difficulty)
+        public RankedMapDifficultyInfo(LeaderboardInfo leaderboard, ApiClients.BeatSaver.MapDifficulty difficulty)
         {
             Stars = leaderboard.Stars;
             MaxPP = leaderboard.Stars * Scoresaber.PPPerStar;
