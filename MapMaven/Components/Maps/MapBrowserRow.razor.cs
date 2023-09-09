@@ -8,7 +8,7 @@ using MapMaven.Core.Services;
 using MapMaven.Components.Playlists;
 using MapMaven.Components.Shared;
 using MapMaven.Core.Services.Interfaces;
-using MapMaven.Core.ApiClients;
+using MapMaven.Core.ApiClients.ScoreSaber;
 
 namespace MapMaven.Components.Maps
 {
@@ -109,6 +109,20 @@ namespace MapMaven.Components.Maps
                 Name = map.SongAuthorName,
                 Filter = otherMap => map.SongAuthorName == otherMap.SongAuthorName
             });
+        }
+
+        void OpenDetails(Map map)
+        {
+            DialogService.Show<MapDetail>(
+                title: null,
+                parameters: new() { { nameof(MapDetail.Map), map } },
+                options: new()
+                {
+                    MaxWidth = MaxWidth.Small,
+                    FullWidth = true,
+                    CloseButton = true
+                }
+            );
         }
 
         public void Dispose()

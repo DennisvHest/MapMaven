@@ -1,4 +1,5 @@
-﻿using MapMaven.Core.ApiClients;
+﻿using MapMaven.Core.ApiClients.ScoreSaber;
+using MapMaven.Core.Models.Data.RankedMaps;
 using MapMaven.Core.Models.Data.ScoreSaber;
 using MapMaven.Models;
 
@@ -13,10 +14,10 @@ namespace MapMaven.Core.Tests.Maps
                 Id = "1",
                 Name = "Test Map",
                 SongAuthorName = "Camellia",
-                RankedMap = new RankedMap
+                Difficulty = new RankedMapDifficultyInfo
                 {
                     Stars = 1,
-                    PP = 20
+                    MaxPP = 20
                 },
                 HighestPlayerScore = new PlayerScore
                 {
@@ -31,10 +32,10 @@ namespace MapMaven.Core.Tests.Maps
                 Id = "2",
                 Name = "Other test map",
                 SongAuthorName = "Camellia",
-                RankedMap = new RankedMap
+                Difficulty = new RankedMapDifficultyInfo
                 {
                     Stars = 10,
-                    PP = 100
+                    MaxPP = 100
                 }
             },
             new Map
@@ -42,10 +43,10 @@ namespace MapMaven.Core.Tests.Maps
                 Id = "3",
                 Name = "sleepparalysis//////////////",
                 SongAuthorName = "Test song author",
-                RankedMap = new RankedMap
+                Difficulty = new RankedMapDifficultyInfo
                 {
                     Stars = 5.2,
-                    PP = 43.2
+                    MaxPP = 43.2
                 },
                 HighestPlayerScore = new PlayerScore
                 {

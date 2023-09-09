@@ -1,4 +1,5 @@
-﻿using MapMaven.Core.ApiClients;
+﻿using MapMaven.Core.ApiClients.ScoreSaber;
+using MapMaven.Core.Models.Data.RankedMaps;
 using MapMaven.Core.Models.Data.ScoreSaber;
 
 namespace MapMaven.Core.Utilities.Scoresaber
@@ -9,6 +10,7 @@ namespace MapMaven.Core.Utilities.Scoresaber
         private readonly IEnumerable<PlayerScore> _playerScores;
 
         public const double PPDecay = .965D;
+        public const double PPPerStar = 42.114296; // Approximation
 
         public static readonly List<PPCurveItem> PPCurve = new List<PPCurveItem>
         {
@@ -91,21 +93,21 @@ namespace MapMaven.Core.Utilities.Scoresaber
                 });
         }
 
-        public ScoreEstimate GetScoreEstimate(RankedMap map, double accuracy)
+        public ScoreEstimate GetScoreEstimate(RankedMapInfoItem map, RankedMapDifficultyInfo difficulty, double accuracy)
         {
-            var estimatedPP = map.PP * ApplyCurve(accuracy);
+            var estimatedPP = difficulty.MaxPP * ApplyCurve(accuracy);
 
-            var totalPPEstimate = GetTotalPP(_playerScores, estimatedPP, new string[] { map.Id });
+            var totalPPEstimate = GetTotalPP(_playerScores, estimatedPP, new string[] { map.SongHash });
 
             return new ScoreEstimate
             {
-                MapId = map.Id,
+                MapHash = map.SongHash,
                 Accuracy = accuracy,
                 Pp = estimatedPP,
                 TotalPP = totalPPEstimate,
                 PPIncrease = Math.Max(totalPPEstimate - _player.Pp, 0),
-                Difficulty = map.Difficulty,
-                Stars = map.Stars
+                Difficulty = difficulty.Difficulty,
+                Stars = difficulty.Stars
             };
         }
 

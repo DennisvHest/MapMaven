@@ -29,5 +29,14 @@ namespace MapMaven.Utility
                 _ => "??"
             };
         }
+
+        public static string GetDisplayName(string difficulty)
+        {
+            return difficulty switch
+            {
+                "ExpertPlus" => "Expert+",
+                _ => difficulty
+            };
+        }
     }
 }

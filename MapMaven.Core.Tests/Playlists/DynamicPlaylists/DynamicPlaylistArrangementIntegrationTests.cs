@@ -13,13 +13,14 @@ using BeatSaber.SongHashing;
 using System.Reactive.Linq;
 using MapMaven.Core.Models.Data;
 using System.IO.Abstractions.TestingHelpers;
-using MapMaven.Core.ApiClients;
+using MapMaven.Core.ApiClients.ScoreSaber;
 using MapMaven.Core.Models.Data.ScoreSaber;
 using MapMaven.Core.Utilities.Scoresaber;
 using Microsoft.Extensions.DependencyInjection;
 using MapMaven.Models.Data;
 using MockQueryable.Moq;
 using System;
+using MapMaven.Core.Models.Data.RankedMaps;
 
 namespace MapMaven.Core.Tests.Playlists.DynamicPlaylists;
 
@@ -104,7 +105,7 @@ public class DynamicPlaylistArrangementIntegrationTests
 
         _scoreSaberServiceMock
             .SetupGet(x => x.PlayerProfile)
-            .Returns(() => Observable.Return(new ApiClients.Player { Id = "1" }));
+            .Returns(() => Observable.Return(new ApiClients.ScoreSaber.Player { Id = "1" }));
 
         _mapService = new(_beatSaberDataService, _scoreSaberServiceMock.Object, null!, _beatSaberFileService, _serviceProviderMock.Object);
 
@@ -137,8 +138,8 @@ public class DynamicPlaylistArrangementIntegrationTests
     {
         var scoreEstimates = new ScoreEstimate[]
         {
-            new() { MapId = "1", PPIncrease = 5 },
-            new() { MapId = "2", PPIncrease = 10 },
+            new() { MapHash = "1", PPIncrease = 5, Difficulty = "Expert" },
+            new() { MapHash = "2", PPIncrease = 10, Difficulty = "ExpertPlus" },
         };
 
         _scoreSaberServiceMock
@@ -148,10 +149,42 @@ public class DynamicPlaylistArrangementIntegrationTests
 
     private void MockRankedMaps()
     {
-        var rankedMaps = new RankedMap[]
+        var rankedMaps = new Dictionary<string, RankedMapInfoItem>()
         {
-            new() { Id = "1", Name = "KillerToy", PP = 45, DurationSeconds = 60 },
-            new() { Id = "2", Name = "Nacreous Snowmelt", PP = 100, DurationSeconds = 125 },
+            { 
+                "1", new()
+                {
+                    SongHash = "1",
+                    Name = "KillerToy",
+                    SongAuthorName = "Camellia",
+                    Difficulties = new RankedMapDifficultyInfo[]
+                    {
+                        new()
+                        {
+                            Difficulty = "Expert",
+                            MaxPP = 45
+                        }
+                    },
+                    Duration = TimeSpan.FromSeconds(60)
+                }
+            },
+            {
+                "2", new()
+                {
+                    SongHash = "2",
+                    Name = "Nacreous Snowmelt",
+                    SongAuthorName = "Camellia",
+                    Difficulties = new RankedMapDifficultyInfo[]
+                    {
+                        new()
+                        {
+                            Difficulty = "ExpertPlus",
+                            MaxPP = 100
+                        }
+                    },
+                    Duration = TimeSpan.FromSeconds(125)
+                }
+            }
         };
 
         _scoreSaberServiceMock
@@ -277,7 +310,7 @@ public class DynamicPlaylistArrangementIntegrationTests
             {
                 "dynamicPlaylistConfiguration", new JObject
                 {
-                    { nameof(DynamicPlaylistConfiguration.MapPool), nameof(MapPool.Standard) },
+                    { nameof(DynamicPlaylistConfiguration.MapPool), nameof(MapPool.Improvement) },
                     { nameof(DynamicPlaylistConfiguration.MapCount), 20 },
                     {
                         nameof(DynamicPlaylistConfiguration.FilterOperations), new JArray

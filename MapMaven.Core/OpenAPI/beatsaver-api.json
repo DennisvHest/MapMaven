@@ -1,0 +1,1589 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "WIP\n\nIfyouwanttokeepanykindofmirrorinsteadofmaking100sofrequestsinsteadconsidersubscribingtothewebsocketapi.\nwss://ws.beatsaver.com/maps\n\nMessageswillbeinthestyle{\"type\":\"MAP_UPDATE\",\"msg\":__MAP_DATA_HERE__}",
+    "version": "0.1",
+    "title": "BeatSaverAPI",
+    "contact": {
+      "name": "Top_Cat"
+    }
+  },
+  "paths": {
+    "/maps/id/{id}": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "MapDetail",
+            "schema": {
+              "$ref": "#/definitions/MapDetail"
+            },
+            "produces": [
+              "application/json"
+            ]
+          },
+          "404": {
+            "description": "NotFound",
+            "produces": [
+              "application/json"
+            ]
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Maps"
+        ],
+        "summary": "Getmapinformation",
+        "consumes": []
+      }
+    },
+    "/maps/hash/{hash}": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "MapDetail",
+            "schema": {
+              "$ref": "#/definitions/MapDetail"
+            },
+            "produces": [
+              "application/json"
+            ]
+          },
+          "404": {
+            "description": "NotFound",
+            "produces": [
+              "application/json"
+            ]
+          }
+        },
+        "parameters": [
+          {
+            "name": "hash",
+            "in": "path",
+            "description": "Upto50hashesseperatedbycommas",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Maps"
+        ],
+        "summary": "Getmap(s)foramaphash",
+        "consumes": []
+      }
+    },
+    "/maps/uploader/{id}/{page}": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "SearchResponse",
+            "schema": {
+              "$ref": "#/definitions/SearchResponse"
+            },
+            "produces": [
+              "application/json"
+            ]
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "page",
+            "in": "path",
+            "description": "page",
+            "required": false,
+            "type": "integer",
+            "format": "int64",
+            "default": "0"
+          }
+        ],
+        "tags": [
+          "Maps"
+        ],
+        "summary": "Getmapsbyauser",
+        "consumes": []
+      }
+    },
+    "/maps/latest": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "SearchResponse",
+            "schema": {
+              "$ref": "#/definitions/SearchResponse"
+            },
+            "produces": [
+              "application/json"
+            ]
+          }
+        },
+        "parameters": [
+          {
+            "name": "after",
+            "in": "query",
+            "description": "Like`before`butwillgetyoumapsmorerecentthanthetimesupplied.\nYYYY-MM-DDTHH:MM:SS+00:00",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "automapper",
+            "in": "query",
+            "description": "true=both,false=noai",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "before",
+            "in": "query",
+            "description": "Youprobablywantthis.Supplyingtheuploadedtimeofthelastmapinthepreviouspagewillgetyouanotherpage.\nYYYY-MM-DDTHH:MM:SS+00:00",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "sort",
+            "required": false,
+            "type": "string",
+            "enum": [
+              "FIRST_PUBLISHED",
+              "UPDATED",
+              "LAST_PUBLISHED",
+              "CREATED",
+              "CURATED"
+            ]
+          }
+        ],
+        "tags": [
+          "Maps"
+        ],
+        "summary": "Getmapsorderedbyupload/publish/updated.Ifyou'regoingtoscrapethedataandmake100sofrequestsmakethisthisendpointyouuse.",
+        "consumes": []
+      }
+    },
+    "/maps/plays/{page}": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "SearchResponse",
+            "schema": {
+              "$ref": "#/definitions/SearchResponse"
+            },
+            "produces": [
+              "application/json"
+            ]
+          }
+        },
+        "parameters": [
+          {
+            "name": "page",
+            "in": "path",
+            "description": "page",
+            "required": false,
+            "type": "integer",
+            "format": "int64",
+            "default": "0"
+          }
+        ],
+        "tags": [
+          "Maps"
+        ],
+        "summary": "Getmapsorderedbyplaycount(Notcurrentlytracked)",
+        "consumes": []
+      }
+    },
+    "/users/id/{id}": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "UserDetail",
+            "schema": {
+              "$ref": "#/definitions/UserDetail"
+            },
+            "produces": [
+              "application/json"
+            ]
+          },
+          "404": {
+            "description": "NotFound",
+            "produces": [
+              "application/json"
+            ]
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "tags": [
+          "Users"
+        ],
+        "summary": "Getuserinfo",
+        "consumes": []
+      }
+    },
+    "/users/name/{name}": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "UserDetail",
+            "schema": {
+              "$ref": "#/definitions/UserDetail"
+            },
+            "produces": [
+              "application/json"
+            ]
+          },
+          "404": {
+            "description": "NotFound",
+            "produces": [
+              "application/json"
+            ]
+          }
+        },
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "description": "name",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Users"
+        ],
+        "summary": "Getuserinfobyname",
+        "consumes": []
+      }
+    },
+    "/search/text/{page}": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "SearchResponse",
+            "schema": {
+              "$ref": "#/definitions/SearchResponse"
+            },
+            "produces": [
+              "application/json"
+            ]
+          }
+        },
+        "parameters": [
+          {
+            "name": "automapper",
+            "in": "query",
+            "description": "Optionsarealittleweird,Imayaddanotherenumfieldinfuturetomakethisclearer.\ntrue=both,false=onlyai,null=noai",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "chroma",
+            "in": "query",
+            "description": "chroma",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "cinema",
+            "in": "query",
+            "description": "cinema",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "curated",
+            "in": "query",
+            "description": "curated",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "from",
+            "in": "query",
+            "description": "from",
+            "required": false,
+            "type": "string",
+            "format": "date-time"
+          },
+          {
+            "name": "fullSpread",
+            "in": "query",
+            "description": "fullSpread",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "maxBpm",
+            "in": "query",
+            "type": "number",
+            "required": false
+          },
+          {
+            "name": "maxDuration",
+            "in": "query",
+            "description": "maxDuration",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "maxNps",
+            "in": "query",
+            "type": "number",
+            "required": false
+          },
+          {
+            "name": "maxRating",
+            "in": "query",
+            "type": "number",
+            "required": false
+          },
+          {
+            "name": "me",
+            "in": "query",
+            "description": "me",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "minBpm",
+            "in": "query",
+            "type": "number",
+            "required": false
+          },
+          {
+            "name": "minDuration",
+            "in": "query",
+            "description": "minDuration",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "minNps",
+            "in": "query",
+            "type": "number",
+            "required": false
+          },
+          {
+            "name": "minRating",
+            "in": "query",
+            "type": "number",
+            "required": false
+          },
+          {
+            "name": "noodle",
+            "in": "query",
+            "description": "noodle",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "page",
+            "in": "path",
+            "description": "page",
+            "required": false,
+            "type": "integer",
+            "format": "int64",
+            "default": "0"
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "description": "q",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "ranked",
+            "in": "query",
+            "description": "ranked",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "sortOrder",
+            "in": "query",
+            "description": "sortOrder",
+            "required": true,
+            "type": "string",
+            "enum": [
+              "Latest",
+              "Relevance",
+              "Rating",
+              "Curated"
+            ]
+          },
+          {
+            "name": "tags",
+            "in": "query",
+            "description": "Tagquery,separatedby`,`(and)or`|`(or).Excludedtagsareprefixedwith`!`.",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "description": "to",
+            "required": false,
+            "type": "string",
+            "format": "date-time"
+          },
+          {
+            "name": "verified",
+            "in": "query",
+            "description": "verified",
+            "required": false,
+            "type": "boolean"
+          }
+        ],
+        "tags": [
+          "Search"
+        ],
+        "summary": "Searchformaps",
+        "consumes": []
+      }
+    },
+    "/users/verify": {
+      "post": {
+        "responses": {
+          "200": {
+            "description": "VerifyResponse",
+            "schema": {
+              "$ref": "#/definitions/VerifyResponse"
+            },
+            "produces": [
+              "application/json"
+            ]
+          }
+        },
+        "parameters": [
+          {
+            "name": "noReflectionBody",
+            "in": "body",
+            "description": "AuthRequest",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/AuthRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Users"
+        ],
+        "summary": "Verifyusertokens",
+        "consumes": [
+          "application/json"
+        ]
+      }
+    },
+    "/vote": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "ListOfVoteSummary",
+            "schema": {
+              "$ref": "#/definitions/ListOfVoteSummary"
+            },
+            "produces": [
+              "application/json"
+            ]
+          },
+          "404": {
+            "description": "NotFound",
+            "produces": [
+              "application/json"
+            ]
+          }
+        },
+        "parameters": [
+          {
+            "name": "since",
+            "in": "query",
+            "description": "since",
+            "required": true,
+            "type": "string",
+            "format": "date-time"
+          }
+        ],
+        "tags": [
+          "Vote"
+        ],
+        "summary": "Getvotes",
+        "consumes": []
+      },
+      "post": {
+        "responses": {
+          "200": {
+            "description": "VoteResponse",
+            "schema": {
+              "$ref": "#/definitions/VoteResponse"
+            },
+            "produces": [
+              "application/json"
+            ]
+          }
+        },
+        "parameters": [
+          {
+            "name": "noReflectionBody",
+            "in": "body",
+            "description": "VoteRequest",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/VoteRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Vote"
+        ],
+        "summary": "Voteonamap",
+        "consumes": [
+          "application/json"
+        ]
+      }
+    },
+    "/playlists/latest": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "PlaylistSearchResponse",
+            "schema": {
+              "$ref": "#/definitions/PlaylistSearchResponse"
+            },
+            "produces": [
+              "application/json"
+            ]
+          }
+        },
+        "parameters": [
+          {
+            "name": "after",
+            "in": "query",
+            "description": "Like`before`butwillgetyoumapsmorerecentthanthetimesupplied.\nYYYY-MM-DDTHH:MM:SS+00:00",
+            "required": false,
+            "type": "string",
+            "format": "date-time"
+          },
+          {
+            "name": "before",
+            "in": "query",
+            "description": "Youprobablywantthis.Supplyingtheuploadedtimeofthelastmapinthepreviouspagewillgetyouanotherpage.\nYYYY-MM-DDTHH:MM:SS+00:00",
+            "required": false,
+            "type": "string",
+            "format": "date-time"
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "sort",
+            "required": false,
+            "type": "string",
+            "enum": [
+              "UPDATED",
+              "SONGS_UPDATED",
+              "CREATED"
+            ]
+          }
+        ],
+        "tags": [
+          "Playlists"
+        ],
+        "summary": "Getplaylistsorderedbycreated/updated",
+        "consumes": []
+      }
+    },
+    "/playlists/search/{page}": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "PlaylistSearchResponse",
+            "schema": {
+              "$ref": "#/definitions/PlaylistSearchResponse"
+            },
+            "produces": [
+              "application/json"
+            ]
+          }
+        },
+        "parameters": [
+          {
+            "name": "curated",
+            "in": "query",
+            "description": "curated",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "from",
+            "in": "query",
+            "description": "from",
+            "required": false,
+            "type": "string",
+            "format": "date-time"
+          },
+          {
+            "name": "includeEmpty",
+            "in": "query",
+            "description": "includeEmpty",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "maxNps",
+            "in": "query",
+            "type": "number",
+            "required": false
+          },
+          {
+            "name": "minNps",
+            "in": "query",
+            "type": "number",
+            "required": false
+          },
+          {
+            "name": "page",
+            "in": "path",
+            "description": "page",
+            "required": false,
+            "type": "integer",
+            "format": "int64",
+            "default": "0"
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "description": "q",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "sortOrder",
+            "in": "query",
+            "description": "sortOrder",
+            "required": true,
+            "type": "string",
+            "enum": [
+              "Latest",
+              "Relevance",
+              "Rating",
+              "Curated"
+            ]
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "description": "to",
+            "required": false,
+            "type": "string",
+            "format": "date-time"
+          },
+          {
+            "name": "verified",
+            "in": "query",
+            "description": "verified",
+            "required": false,
+            "type": "boolean"
+          }
+        ],
+        "tags": [
+          "Playlists"
+        ],
+        "summary": "Searchforplaylists",
+        "consumes": []
+      }
+    },
+    "/playlists/id/{id}/{page}": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "PlaylistPage",
+            "schema": {
+              "$ref": "#/definitions/PlaylistPage"
+            },
+            "produces": [
+              "application/json"
+            ]
+          },
+          "404": {
+            "description": "NotFound",
+            "produces": [
+              "application/json"
+            ]
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "page",
+            "in": "path",
+            "description": "page",
+            "required": false,
+            "type": "integer",
+            "format": "int64",
+            "default": "0"
+          }
+        ],
+        "tags": [
+          "Playlists"
+        ],
+        "summary": "Getplaylistdetail",
+        "consumes": []
+      }
+    },
+    "/playlists/user/{userId}/{page}": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "PlaylistSearchResponse",
+            "schema": {
+              "$ref": "#/definitions/PlaylistSearchResponse"
+            },
+            "produces": [
+              "application/json"
+            ]
+          }
+        },
+        "parameters": [
+          {
+            "name": "page",
+            "in": "path",
+            "description": "page",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "userId",
+            "in": "path",
+            "description": "userId",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "tags": [
+          "Playlists"
+        ],
+        "summary": "Getplaylistsbyuser",
+        "consumes": []
+      }
+    },
+    "/playlists/id/{id}/batch": {
+      "post": {
+        "responses": {
+          "200": {
+            "description": "ActionResponse",
+            "schema": {
+              "$ref": "#/definitions/ActionResponse"
+            },
+            "produces": [
+              "application/json"
+            ]
+          }
+        },
+        "parameters": [
+          {
+            "name": "noReflectionBody",
+            "in": "body",
+            "description": "PlaylistBatchRequest",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/PlaylistBatchRequest"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "tags": [
+          "Playlists"
+        ],
+        "summary": "Addorremoveupto100mapstoaplaylist.RequiresOAUTH",
+        "consumes": [
+          "application/json"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "MapDetail": {
+      "properties": {
+        "automapper": {
+          "type": "boolean"
+        },
+        "bookmarked": {
+          "type": "boolean"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "curatedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "curator": {
+          "description": "UserDetail",
+          "$ref": "#/definitions/UserDetail"
+        },
+        "deletedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "description": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "lastPublishedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "metadata": {
+          "description": "MapDetailMetadata",
+          "$ref": "#/definitions/MapDetailMetadata"
+        },
+        "name": {
+          "type": "string"
+        },
+        "qualified": {
+          "type": "boolean"
+        },
+        "ranked": {
+          "type": "boolean"
+        },
+        "stats": {
+          "description": "MapStats",
+          "$ref": "#/definitions/MapStats"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "uploaded": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "uploader": {
+          "description": "UserDetail",
+          "$ref": "#/definitions/UserDetail"
+        },
+        "versions": {
+          "type": "array",
+          "items": {
+            "description": "MapVersion",
+            "$ref": "#/definitions/MapVersion"
+          }
+        }
+      }
+    },
+    "UserDetail": {
+      "properties": {
+        "admin": {
+          "type": "boolean"
+        },
+        "avatar": {
+          "type": "string"
+        },
+        "curator": {
+          "type": "boolean"
+        },
+        "description": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "followData": {
+          "description": "UserFollowData",
+          "$ref": "#/definitions/UserFollowData"
+        },
+        "hash": {
+          "type": "string"
+        },
+        "id": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "name": {
+          "type": "string"
+        },
+        "playlistUrl": {
+          "type": "string"
+        },
+        "stats": {
+          "description": "UserStats",
+          "$ref": "#/definitions/UserStats"
+        },
+        "suspendedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "testplay": {
+          "type": "boolean"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "DISCORD",
+            "SIMPLE",
+            "DUAL"
+          ]
+        },
+        "uniqueSet": {
+          "type": "boolean"
+        },
+        "uploadLimit": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "verifiedMapper": {
+          "type": "boolean"
+        }
+      }
+    },
+    "UserFollowData": {
+      "properties": {
+        "followers": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "following": {
+          "type": "boolean"
+        },
+        "follows": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "UserStats": {
+      "properties": {
+        "avgBpm": {
+          "type": "number"
+        },
+        "avgDuration": {
+          "type": "number"
+        },
+        "avgScore": {
+          "type": "number"
+        },
+        "diffStats": {
+          "description": "UserDiffStats",
+          "$ref": "#/definitions/UserDiffStats"
+        },
+        "firstUpload": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "lastUpload": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "rankedMaps": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "totalDownvotes": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "totalMaps": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "totalUpvotes": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "UserDiffStats": {
+      "properties": {
+        "easy": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "expert": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "expertPlus": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "hard": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "normal": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "total": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "MapDetailMetadata": {
+      "properties": {
+        "bpm": {
+          "type": "number"
+        },
+        "duration": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "levelAuthorName": {
+          "type": "string"
+        },
+        "songAuthorName": {
+          "type": "string"
+        },
+        "songName": {
+          "type": "string"
+        },
+        "songSubName": {
+          "type": "string"
+        }
+      }
+    },
+    "MapStats": {
+      "properties": {
+        "downloads": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "downvotes": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "plays": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "reviews": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "score": {
+          "type": "number"
+        },
+        "scoreOneDP": {
+          "type": "number"
+        },
+        "sentiment": {
+          "type": "string",
+          "enum": [
+            "PENDING",
+            "VERY_NEGATIVE",
+            "MOSTLY_NEGATIVE",
+            "MIXED",
+            "MOSTLY_POSITIVE",
+            "VERY_POSITIVE"
+          ]
+        },
+        "upvotes": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "MapVersion": {
+      "properties": {
+        "coverURL": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "diffs": {
+          "type": "array",
+          "items": {
+            "description": "MapDifficulty",
+            "$ref": "#/definitions/MapDifficulty"
+          }
+        },
+        "downloadURL": {
+          "type": "string"
+        },
+        "feedback": {
+          "type": "string"
+        },
+        "hash": {
+          "type": "string"
+        },
+        "key": {
+          "type": "string"
+        },
+        "previewURL": {
+          "type": "string"
+        },
+        "sageScore": {
+          "type": "number"
+        },
+        "scheduledAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "state": {
+          "type": "string",
+          "enum": [
+            "Uploaded",
+            "Testplay",
+            "Published",
+            "Feedback",
+            "Scheduled"
+          ]
+        },
+        "testplayAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "testplays": {
+          "type": "array",
+          "items": {
+            "description": "MapTestplay",
+            "$ref": "#/definitions/MapTestplay"
+          }
+        }
+      }
+    },
+    "MapDifficulty": {
+      "properties": {
+        "bombs": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "characteristic": {
+          "type": "string"
+        },
+        "chroma": {
+          "type": "boolean"
+        },
+        "cinema": {
+          "type": "boolean"
+        },
+        "difficulty": {
+          "type": "string",
+          "enum": [
+            "Easy",
+            "Normal",
+            "Hard",
+            "Expert",
+            "ExpertPlus"
+          ]
+        },
+        "events": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "label": {
+          "type": "string"
+        },
+        "length": {
+          "type": "number",
+          "format": "double"
+        },
+        "maxScore": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "me": {
+          "type": "boolean"
+        },
+        "ne": {
+          "type": "boolean"
+        },
+        "njs": {
+          "type": "number"
+        },
+        "notes": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "nps": {
+          "type": "number",
+          "format": "double"
+        },
+        "obstacles": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "offset": {
+          "type": "number"
+        },
+        "paritySummary": {
+          "description": "MapParitySummary",
+          "$ref": "#/definitions/MapParitySummary"
+        },
+        "seconds": {
+          "type": "number",
+          "format": "double"
+        },
+        "stars": {
+          "type": "number"
+        }
+      }
+    },
+    "MapParitySummary": {
+      "properties": {
+        "errors": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "resets": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "warns": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "MapTestplay": {
+      "properties": {
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "feedback": {
+          "type": "string"
+        },
+        "feedbackAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "user": {
+          "description": "UserDetail",
+          "$ref": "#/definitions/UserDetail"
+        },
+        "video": {
+          "type": "string"
+        }
+      }
+    },
+    "SearchResponse": {
+      "properties": {
+        "docs": {
+          "type": "array",
+          "items": {
+            "description": "MapDetail",
+            "$ref": "#/definitions/MapDetail"
+          }
+        },
+        "redirect": {
+          "type": "string"
+        }
+      }
+    },
+    "AuthRequest": {
+      "properties": {
+        "oculusId": {
+          "type": "string"
+        },
+        "proof": {
+          "type": "string"
+        },
+        "steamId": {
+          "type": "string"
+        }
+      }
+    },
+    "VerifyResponse": {
+      "properties": {
+        "error": {
+          "type": "string"
+        },
+        "success": {
+          "type": "boolean"
+        }
+      }
+    },
+    "ListOfVoteSummary": {
+      "items": {
+        "description": "VoteSummary",
+        "$ref": "#/definitions/VoteSummary"
+      },
+      "uniqueItems": false,
+      "type": "array"
+    },
+    "VoteSummary": {
+      "properties": {
+        "downvotes": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "hash": {
+          "type": "string"
+        },
+        "key64": {
+          "type": "string"
+        },
+        "mapId": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "score": {
+          "type": "number",
+          "format": "double"
+        },
+        "upvotes": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "VoteRequest": {
+      "properties": {
+        "auth": {
+          "description": "AuthRequest",
+          "$ref": "#/definitions/AuthRequest"
+        },
+        "direction": {
+          "type": "boolean"
+        },
+        "hash": {
+          "type": "string"
+        }
+      }
+    },
+    "VoteResponse": {
+      "properties": {
+        "error": {
+          "type": "string"
+        },
+        "success": {
+          "type": "boolean"
+        }
+      }
+    },
+    "PlaylistSearchResponse": {
+      "properties": {
+        "docs": {
+          "type": "array",
+          "items": {
+            "description": "PlaylistFull",
+            "$ref": "#/definitions/PlaylistFull"
+          }
+        }
+      }
+    },
+    "PlaylistFull": {
+      "properties": {
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "curatedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "curator": {
+          "description": "UserDetail",
+          "$ref": "#/definitions/UserDetail"
+        },
+        "deletedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "description": {
+          "type": "string"
+        },
+        "downloadURL": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "owner": {
+          "description": "UserDetail",
+          "$ref": "#/definitions/UserDetail"
+        },
+        "playlistId": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "playlistImage": {
+          "type": "string"
+        },
+        "playlistImage512": {
+          "type": "string"
+        },
+        "songsChangedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "stats": {
+          "description": "PlaylistStats",
+          "$ref": "#/definitions/PlaylistStats"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Private",
+            "Public",
+            "System"
+          ]
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "PlaylistStats": {
+      "properties": {
+        "avgScore": {
+          "type": "number"
+        },
+        "downVotes": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "mapperCount": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "maxNps": {
+          "type": "number",
+          "format": "double"
+        },
+        "maxNpsTwoDP": {
+          "type": "number",
+          "format": "double"
+        },
+        "minNps": {
+          "type": "number",
+          "format": "double"
+        },
+        "minNpsTwoDP": {
+          "type": "number",
+          "format": "double"
+        },
+        "scoreOneDP": {
+          "type": "number"
+        },
+        "totalDuration": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "totalMaps": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "upVotes": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "PlaylistPage": {
+      "properties": {
+        "maps": {
+          "type": "array",
+          "items": {
+            "description": "MapDetailWithOrder",
+            "$ref": "#/definitions/MapDetailWithOrder"
+          }
+        },
+        "playlist": {
+          "description": "PlaylistFull",
+          "$ref": "#/definitions/PlaylistFull"
+        }
+      }
+    },
+    "MapDetailWithOrder": {
+      "properties": {
+        "map": {
+          "description": "MapDetail",
+          "$ref": "#/definitions/MapDetail"
+        },
+        "order": {
+          "type": "number"
+        }
+      }
+    },
+    "PlaylistBatchRequest": {
+      "properties": {
+        "hashes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "ignoreUnknown": {
+          "type": "boolean"
+        },
+        "inPlaylist": {
+          "type": "boolean"
+        },
+        "keys": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "ActionResponse": {
+      "properties": {
+        "errors": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "success": {
+          "type": "boolean"
+        }
+      }
+    }
+  }
+}

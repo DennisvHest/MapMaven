@@ -5,13 +5,22 @@
 
 <TemplateColumn T="Map" Sortable="false" Class="pa-0" CellStyle="width: 50px; position: relative;">
     <CellTemplate>
-        <SongPlaybackButton Map="context.Item"></SongPlaybackButton>
+        <div>
+            <div class="d-flex">
+                <MudTooltip Text="Play song preview" ShowOnFocus="false">
+                    <SongPlaybackButton Map="context.Item"></SongPlaybackButton>
+                </MudTooltip>
+                <MudTooltip Text="Open map details" ShowOnFocus="false">
+                    <MudIconButton Icon="@Icons.Material.Filled.Info" Variant="Variant.Text" Size="Size.Medium" OnClick="() => OpenDetails(context.Item)" />
+                </MudTooltip>
+            </div>
+        </div>
     </CellTemplate>
 </TemplateColumn>
 <TemplateColumn T="Map" Sortable="false" Class="pa-1" CellStyle="width: 50px">
     <CellTemplate>
         <div style="min-width: 50px">
-            <MapCover Map="context.Item"></MapCover>
+            <MapCover Map="context.Item" Size="50"></MapCover>
         </div>
     </CellTemplate>
 </TemplateColumn>
@@ -112,10 +121,14 @@
 <TemplateColumn T="Map" Sortable="false" CellStyle="width: 100px">
     <CellTemplate>
         <div style="min-width: 100px">
-            <MudIconButton Icon="@Icons.Filled.PlaylistAdd" Variant="Variant.Text" Size="Size.Medium" OnClick="() => OpenAddMapToPlaylistDialog(context.Item)" />
+            <MudTooltip Text="Add map to playlist" ShowOnFocus="false">
+                <MudIconButton Icon="@Icons.Filled.PlaylistAdd" Variant="Variant.Text" Size="Size.Medium" OnClick="() => OpenAddMapToPlaylistDialog(context.Item)" />
+            </MudTooltip>
             @if (SelectedPlaylist != null && !SelectedPlaylist.IsDynamicPlaylist)
             {
-                <MudIconButton Icon="@Icons.Filled.PlaylistRemove" Variant="Variant.Text" Size="Size.Medium" OnClick="() => OpenDeleteFromPlaylistDialog(context.Item)" />
+                <MudTooltip Text="Remove map from playlist" ShowOnFocus="false">
+                    <MudIconButton Icon="@Icons.Filled.PlaylistRemove" Variant="Variant.Text" Size="Size.Medium" OnClick="() => OpenDeleteFromPlaylistDialog(context.Item)" />
+                </MudTooltip>
             }
         </div>
     </CellTemplate>

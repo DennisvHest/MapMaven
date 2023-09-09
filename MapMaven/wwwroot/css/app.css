@@ -30,6 +30,18 @@
     letter-spacing: .03333em;
 }
 
+.blurred-background-image {
+    opacity: 0.1;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: auto;
+    z-index: -1;
+    filter: blur(10px);
+    object-fit: cover;
+}
+
 /* MudBlazor overrides */
 .mud-main-content {
     height: 100vh;
