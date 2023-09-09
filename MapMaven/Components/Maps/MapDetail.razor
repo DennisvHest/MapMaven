@@ -27,11 +27,29 @@
             <MudItem xs="12">
                 <MudPaper Class="pa-4" Style="background-color: var(--mud-palette-drawer-background);">
                     <MudGrid>
+                        <MudItem xs="12">
+                            <h3 class="mb-2">Description:</h3>
+                            <div style="max-height: 250px; overflow-y: auto; margin: 0 -12px; padding: 0 12px;">
+                                <MudText Typo="Typo.body2" Style="white-space: pre-wrap;">@Map.Description</MudText>
+                            </div>
+                        </MudItem>
+                    </MudGrid>
+                </MudPaper>
+            </MudItem>
+            <MudItem xs="12">
+                <MudPaper Class="pa-4" Style="background-color: var(--mud-palette-drawer-background);">
+                    <MudGrid>
                         <MudItem xs="6">
                             <MudText><b>Added:</b> @Map.AddedDateTime.ToShortDateString() @Map.AddedDateTime.ToLongTimeString()</MudText>
                         </MudItem>
                         <MudItem xs="6">
                             <MudText><b>Duration:</b> @Map.SongDuration.ToString("mm':'ss")</MudText>
+                        </MudItem>
+                        <MudItem xs="6">
+                            <MudText><b>Released:</b> @Map.ReleaseDate?.ToShortDateString() @Map.ReleaseDate?.ToLongTimeString()</MudText>
+                        </MudItem>
+                        <MudItem xs="6">
+                            <MudText><b>BPM:</b> @Map.Bpm</MudText>
                         </MudItem>
                         <MudItem xs="12">
                             <MudText><b>Hash:</b> @Map.Hash</MudText>
@@ -57,7 +75,7 @@
                         <MudSimpleTable Dense="true" Class="background-transparent mud-elevation-0">
                             <thead>
                                 <tr>
-                                    <td colspan="2">
+                                    <td colspan="2" style="border-bottom: 1px solid gray;">
                                         @{
                                             var chipStyle = $"border: 1px solid {DifficultyDisplayUtils.GetColor(difficulty.Difficulty)}";
                                             <MudChip Size="Size.Small" Variant="Variant.Outlined" Style="@chipStyle">
@@ -79,8 +97,12 @@
                                         <td>@difficulty.Stars</td>
                                     </tr>
                                     <tr>
-                                        <td><b>PP</b></td>
+                                        <td><b>Max PP</b></td>
                                         <td>@difficulty.MaxPP?.ToString("#0.##")</td>
+                                    </tr>
+                                    <tr>
+                                        <td><b>Max score</b></td>
+                                        <td>@difficulty.MaxScore</td>
                                     </tr>
                                 }
                                 <tr>
@@ -113,61 +135,63 @@
 
                                     if (playerScore != null)
                                     {
-                                        <tr>
-                                            <td colspan="2">
-                                                <MudIcon Icon="@Icons.Material.Filled.Leaderboard" Size="Size.Small"></MudIcon>
-                                                <MudText Typo="Typo.overline">Score</MudText>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td><b>Time set</b></td>
-                                            <td>@playerScore.Score.TimeSet.LocalDateTime.ToString("G")</td>
-                                        </tr>
-                                        <tr>
-                                            <td><b>Base score</b></td>
-                                            <td>@playerScore.Score.BaseScore</td>
-                                        </tr>
-                                        <tr>
-                                            <td><b>Modified score</b></td>
-                                            <td>@playerScore.Score.ModifiedScore</td>
-                                        </tr>
-                                        <tr>
-                                            <td><b>Accuracy</b></td>
-                                            <td>@playerScore.AccuracyWithMods().ToString("#0.##")%</td>
-                                        </tr>
-                                        <tr>
-                                            <td><b>Rank</b></td>
-                                            <td>@playerScore.Score.Rank</td>
-                                        </tr>
-                                        <tr>
-                                            <td><b>Bad cuts</b></td>
-                                            <td>@playerScore.Score.BadCuts</td>
-                                        </tr>
-                                        <tr>
-                                            <td><b>Missed notes</b></td>
-                                            <td>@playerScore.Score.MissedNotes</td>
-                                        </tr>
-                                        <tr>
-                                            <td><b>Max combo</b></td>
-                                            <td>
-                                                @playerScore.Score.MaxCombo
-                                                @if (playerScore.Score.FullCombo)
-                                                {
-                                                    <MudChip Color="Color.Primary" Size="Size.Small" Class="ml-2">FC <MudIcon Icon="@Icons.Material.Filled.Check" Size="Size.Small" Class="ml-1"></MudIcon></MudChip>
-                                                }
-                                            </td>
-                                        </tr>
-                                        @if (Map.Ranked)
-                                        {
+                                        <div class="score" style="display: contents">
                                             <tr>
-                                                <td><b>PP</b></td>
-                                                <td>@playerScore.Score.Pp.ToString("#0.##")</td>
+                                                <td colspan="2" style="border-bottom: 1px solid gray;">
+                                                    <MudIcon Icon="@Icons.Material.Filled.Leaderboard" Size="Size.Small"></MudIcon>
+                                                    <MudText Typo="Typo.overline">Score</MudText>
+                                                </td>
                                             </tr>
                                             <tr>
-                                                <td><b>Weighted PP</b></td>
-                                                <td>@((playerScore.Score.Pp * playerScore.Score.Weight).ToString("#0.##"))</td>
+                                                <td><b>Time set</b></td>
+                                                <td>@playerScore.Score.TimeSet.LocalDateTime.ToString("G")</td>
                                             </tr>
-                                        }
+                                            <tr>
+                                                <td><b>Base score</b></td>
+                                                <td>@playerScore.Score.BaseScore</td>
+                                            </tr>
+                                            <tr>
+                                                <td><b>Modified score</b></td>
+                                                <td>@playerScore.Score.ModifiedScore</td>
+                                            </tr>
+                                            <tr>
+                                                <td><b>Accuracy</b></td>
+                                                <td>@playerScore.AccuracyWithMods().ToString("#0.##")%</td>
+                                            </tr>
+                                            <tr>
+                                                <td><b>Rank</b></td>
+                                                <td>@playerScore.Score.Rank</td>
+                                            </tr>
+                                            <tr>
+                                                <td><b>Bad cuts</b></td>
+                                                <td>@playerScore.Score.BadCuts</td>
+                                            </tr>
+                                            <tr>
+                                                <td><b>Missed notes</b></td>
+                                                <td>@playerScore.Score.MissedNotes</td>
+                                            </tr>
+                                            <tr>
+                                                <td><b>Max combo</b></td>
+                                                <td>
+                                                        @playerScore.Score.MaxCombo
+                                                        @if (playerScore.Score.FullCombo)
+                                                        {
+                                                        <MudChip Color="Color.Primary" Size="Size.Small" Class="ml-2">FC <MudIcon Icon="@Icons.Material.Filled.Check" Size="Size.Small" Class="ml-1"></MudIcon></MudChip>
+                                                        }
+                                                </td>
+                                            </tr>
+                                            @if (Map.Ranked)
+                                            {
+                                                <tr>
+                                                    <td><b>PP</b></td>
+                                                    <td>@playerScore.Score.Pp.ToString("#0.##")</td>
+                                                </tr>
+                                                <tr>
+                                                    <td><b>Weighted PP</b></td>
+                                                    <td>@((playerScore.Score.Pp * playerScore.Score.Weight).ToString("#0.##"))</td>
+                                                </tr>
+                                            }
+                                        </div>
                                     }
                                 }
                             </tbody>
@@ -198,10 +222,10 @@
         catch (Exception ex)
         {
             ApplicationEventService.RaiseError(new ErrorEvent
-            {
-                Exception = ex,
-                Message = "Failed to load map details from BeatSaver."
-            });
+                {
+                    Exception = ex,
+                    Message = "Failed to load map details from BeatSaver."
+                });
         }
     }
 }

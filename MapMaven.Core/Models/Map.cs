@@ -11,6 +11,7 @@ namespace MapMaven.Models
         public string Id { get; set; }
         public string Hash { get; set; }
         public string Name { get; set; }
+        public string? Description { get; set; }
         public string SongAuthorName { get; set; }
         public string MapAuthorName { get; set; }
         public DateTime AddedDateTime { get; set; }
@@ -21,6 +22,8 @@ namespace MapMaven.Models
         public string CoverImageUrl { get; set; }
         public bool Hidden { get; set; }
         public IEnumerable<string> Tags { get; set; } = Enumerable.Empty<string>();
+        public int? Bpm { get; set; }
+        public DateTime? ReleaseDate { get; set; }
         public bool Played => HighestPlayerScore != null;
         public bool Ranked => RankedMap != null;
 
@@ -44,6 +47,9 @@ namespace MapMaven.Models
         public void SetMapDetails(Beatmap beatmap)
         {
             Tags = beatmap.Tags ?? Enumerable.Empty<string>();
+            ReleaseDate = beatmap.Uploaded;
+            Bpm = (int)beatmap.Metadata.BPM;
+            Description = beatmap.Description;
 
             if (Difficulties.Any() || beatmap.LatestVersion == null)
                 return;
