@@ -216,7 +216,11 @@ namespace MapMaven.Services
                 await _mapService.DownloadMap(map, progress: mapProgress, loadMapInfo: loadMapInfo, cancellationToken: cancellationToken);
 
                 if (totalProgress != null)
+                {
+                    totalProgress.CurrentMapProgress = 0;
                     totalProgress.CompletedItems++;
+                    progress?.Report(totalProgress);
+                }
             }
 
             return playlistMaps;
