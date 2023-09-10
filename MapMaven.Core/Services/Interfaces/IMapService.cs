@@ -23,6 +23,7 @@ namespace MapMaven.Core.Services.Interfaces
         bool MapIsInstalled(Map map);
         Task RefreshDataAsync(bool forceRefresh = false);
         void RemoveMapFilter(MapFilter filter);
+        void ResetSelectedMaps();
         void SelectMaps(IEnumerable<Map> selectedMaps);
         void SetSelectedMaps(HashSet<Map> selectedMaps);
     }

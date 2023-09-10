@@ -65,6 +65,8 @@ namespace MapMaven.Components.Maps
             {
                 Snackbar.Add($"Cancelled downloading map.", Severity.Normal, config => config.Icon = Icons.Material.Filled.Cancel);
             }
+
+            MapService.ResetSelectedMaps();
         }
 
         async Task HideUnhideMap(Map map)

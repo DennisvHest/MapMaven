@@ -179,6 +179,8 @@ namespace MapMaven.Services
 
         public void ClearSelectedMaps() => _selectedMaps.OnNext(new HashSet<Map>());
 
+        public void ResetSelectedMaps() => _selectedMaps.OnNext(_selectedMaps.Value);
+
         public void SelectMaps(IEnumerable<Map> selectedMaps)
         {
             _selectedMaps.OnNext(selectedMaps.ToHashSet());
