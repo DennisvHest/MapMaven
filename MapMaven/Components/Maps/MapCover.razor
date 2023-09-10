@@ -1,6 +1,5 @@
 ﻿
-@if (!string.IsNullOrEmpty(CoverImageUrl))
-{
+@{
     string style = Style;
 
     if (string.IsNullOrEmpty(style))
@@ -11,12 +10,15 @@
         }
         else
         {
-            style = "width: 100%";
+            style = "width: 100%;";
         }
-    }
 
-    <img class="cover-image @Class" src="@CoverImageUrl" style="@style" />
+        if (string.IsNullOrEmpty(CoverImageUrl))
+            style += " visibility: hidden;";
+    }
 }
+
+<img class="cover-image @Class" src="@CoverImageUrl" style="@style" />
 
 @code {
     [Inject]
