@@ -441,6 +441,24 @@ namespace MapMaven.Services
             await dataStore.SaveChangesAsync();
         }
 
+        public void DeleteMap(string mapHash)
+        {
+            if (!_mapInfo.Value.TryGetValue(mapHash, out var mapInfo))
+                return;
+
+            var fileCount = _fileSystem.Directory
+                .EnumerateFiles(mapInfo.DirectoryPath, "*", SearchOption.AllDirectories)
+                .Count();
+
+            if (fileCount >= 50)
+                throw new Exception("Map directory contains more than 50 files. Fail safe measure to prevent accidental deletion of other directories.");
+
+            _fileSystem.Directory.Delete(mapInfo.DirectoryPath, true);
+
+            _mapInfo.Value.Remove(mapHash);
+            _mapInfo.OnNext(_mapInfo.Value);
+        }
+
         /// <summary>
         /// Cleans the large object heap to remove playlist/map cover image data that is otherwise seldom cleaned by the garbage collector.
         /// </summary>

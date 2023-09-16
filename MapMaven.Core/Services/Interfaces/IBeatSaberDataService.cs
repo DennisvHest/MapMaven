@@ -13,6 +13,7 @@ namespace MapMaven.Core.Services.Interfaces
         IObservable<Dictionary<string, MapInfo>> MapInfoByHash { get; }
         IObservable<IEnumerable<IPlaylist>> PlaylistInfo { get; }
 
+        void DeleteMap(string mapHash);
         Task<IEnumerable<MapInfo>> GetAllMapInfo();
         Task<IEnumerable<IPlaylist>> GetAllPlaylists();
         Image GetMapCoverImage(string mapId);

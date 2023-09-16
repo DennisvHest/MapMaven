@@ -125,6 +125,22 @@ namespace MapMaven.Components.Maps
             );
         }
 
+        async Task DeleteMap(Map map)
+        {
+            var dialog = DialogService.Show<ConfirmationDialog>(null, new DialogParameters
+            {
+                { nameof(ConfirmationDialog.DialogText), $"Are you sure you want to delete \"{map.Name}\"? The map will be permanently deleted from your custom songs folder." },
+                { nameof(ConfirmationDialog.ConfirmText), $"Delete" }
+            });
+
+            var result = await dialog.Result;
+
+            if (result.Cancelled)
+                return;
+
+            BeatSaberDataService.DeleteMap(map.Hash);
+        }
+
         public void Dispose()
         {
             SelectedPlaylistSubscription?.Dispose();

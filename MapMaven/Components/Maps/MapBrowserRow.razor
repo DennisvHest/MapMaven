@@ -120,7 +120,7 @@
 }
 <TemplateColumn T="Map" Sortable="false" CellStyle="width: 100px">
     <CellTemplate>
-        <div style="min-width: 100px">
+        <div class="d-flex" style="min-width: 100px">
             <MudTooltip Text="Add map to playlist" ShowOnFocus="false">
                 <MudIconButton Icon="@Icons.Filled.PlaylistAdd" Variant="Variant.Text" Size="Size.Medium" OnClick="() => OpenAddMapToPlaylistDialog(context.Item)" />
             </MudTooltip>
@@ -129,6 +129,16 @@
                 <MudTooltip Text="Remove map from playlist" ShowOnFocus="false">
                     <MudIconButton Icon="@Icons.Filled.PlaylistRemove" Variant="Variant.Text" Size="Size.Medium" OnClick="() => OpenDeleteFromPlaylistDialog(context.Item)" />
                 </MudTooltip>
+            }
+            @if (SelectedPlaylist == null || !SelectedPlaylist.IsDynamicPlaylist)
+            {
+                <MudMenu Icon="@Icons.Material.Filled.MoreVert">
+                    <MudMenuItem OnClick="() => DeleteMap(context.Item)">
+                        <div class="d-flex">
+                            <MudIcon Icon="@Icons.Material.Filled.Delete" Size="Size.Small" /> Delete map
+                        </div>
+                    </MudMenuItem>
+                </MudMenu>
             }
         </div>
     </CellTemplate>
