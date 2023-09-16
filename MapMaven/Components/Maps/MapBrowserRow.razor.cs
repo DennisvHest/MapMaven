@@ -129,7 +129,7 @@ namespace MapMaven.Components.Maps
         {
             var dialog = DialogService.Show<ConfirmationDialog>(null, new DialogParameters
             {
-                { nameof(ConfirmationDialog.DialogText), $"Are you sure you want to delete \"{map.Name}\"? The map will be permanently deleted from your custom songs folder." },
+                { nameof(ConfirmationDialog.DialogText), $"Are you sure you want to delete \"{map.Name}\" from the game? This cannot be undone." },
                 { nameof(ConfirmationDialog.ConfirmText), $"Delete" }
             });
 

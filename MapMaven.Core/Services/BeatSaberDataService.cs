@@ -441,21 +441,27 @@ namespace MapMaven.Services
             await dataStore.SaveChangesAsync();
         }
 
-        public void DeleteMap(string mapHash)
+        public void DeleteMap(string mapHash) => DeleteMaps(new[] { mapHash });
+
+        public void DeleteMaps(IEnumerable<string> mapHashes)
         {
-            if (!_mapInfo.Value.TryGetValue(mapHash, out var mapInfo))
-                return;
+            foreach (var mapHash in mapHashes)
+            {
+                if (!_mapInfo.Value.TryGetValue(mapHash, out var mapInfo))
+                    continue;
 
-            var fileCount = _fileSystem.Directory
-                .EnumerateFiles(mapInfo.DirectoryPath, "*", SearchOption.AllDirectories)
-                .Count();
+                var fileCount = _fileSystem.Directory
+                    .EnumerateFiles(mapInfo.DirectoryPath, "*", SearchOption.AllDirectories)
+                    .Count();
 
-            if (fileCount >= 50)
-                throw new Exception("Map directory contains more than 50 files. Fail safe measure to prevent accidental deletion of other directories.");
+                if (fileCount >= 50)
+                    throw new Exception("Map directory contains more than 50 files. Fail safe measure to prevent accidental deletion of other directories.");
 
-            _fileSystem.Directory.Delete(mapInfo.DirectoryPath, true);
+                _fileSystem.Directory.Delete(mapInfo.DirectoryPath, true);
 
-            _mapInfo.Value.Remove(mapHash);
+                _mapInfo.Value.Remove(mapHash);
+            }
+
             _mapInfo.OnNext(_mapInfo.Value);
         }
 

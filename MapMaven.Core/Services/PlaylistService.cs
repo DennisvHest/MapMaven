@@ -226,13 +226,16 @@ namespace MapMaven.Services
             return playlistMaps;
         }
 
-        public async Task DeletePlaylist(Playlist playlist)
+        public async Task DeletePlaylist(Playlist playlist, bool deleteMaps = false)
         {
             var playlistToDelete = _playlistManager.GetPlaylist(playlist.FileName);
             _playlistManager.DeletePlaylist(playlistToDelete);
 
             if (playlist.FileName == _selectedPlaylistFileName.Value)
                 _selectedPlaylistFileName.OnNext(null); // Playlist should not be selected if deleted.
+
+            if (deleteMaps)
+                _beatSaberDataService.DeleteMaps(playlist.Maps.Select(m => m.Hash));
 
             await _beatSaberDataService.LoadAllPlaylists();
         }

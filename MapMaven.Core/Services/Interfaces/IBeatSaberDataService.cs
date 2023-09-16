@@ -14,6 +14,7 @@ namespace MapMaven.Core.Services.Interfaces
         IObservable<IEnumerable<IPlaylist>> PlaylistInfo { get; }
 
         void DeleteMap(string mapHash);
+        void DeleteMaps(IEnumerable<string> mapHashes);
         Task<IEnumerable<MapInfo>> GetAllMapInfo();
         Task<IEnumerable<IPlaylist>> GetAllPlaylists();
         Image GetMapCoverImage(string mapId);

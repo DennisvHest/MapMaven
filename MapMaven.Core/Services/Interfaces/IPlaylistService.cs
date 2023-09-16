@@ -16,7 +16,7 @@ namespace MapMaven.Core.Services.Interfaces
         Task AddMapToPlaylist(Map map, Playlist playlist, bool loadPlaylists = true);
         Task<Playlist> AddPlaylist(EditPlaylistModel editPlaylistModel, IEnumerable<Map>? playlistMaps = null, bool loadPlaylists = true);
         Task AddPlaylistAndDownloadMaps(EditPlaylistModel editPlaylistModel, IEnumerable<Map> playlistMaps, bool loadPlaylists = true, IProgress<ItemProgress<Map>>? progress = null, CancellationToken cancellationToken = default);
-        Task DeletePlaylist(Playlist playlist);
+        Task DeletePlaylist(Playlist playlist, bool deleteMaps = false);
         Task<IEnumerable<Map>> DownloadPlaylistMapsIfNotExist(IEnumerable<Map> playlistMaps, IProgress<ItemProgress<Map>>? progress = null, bool loadMapInfo = true, CancellationToken cancellationToken = default);
         Task EditDynamicPlaylist(EditDynamicPlaylistModel editPlaylistModel);
         Task EditPlaylist(EditPlaylistModel editPlaylistModel);
