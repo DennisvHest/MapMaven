@@ -27,7 +27,7 @@ namespace MapMaven.Services
         private readonly BeatSaberFileService _fileService;
 
         private readonly IBeatmapHasher _beatmapHasher;
-        private PlaylistManager _playlistManager;
+        public PlaylistManager PlaylistManager { get; private set; }
 
         private readonly IServiceProvider _serviceProvider;
 
@@ -62,7 +62,7 @@ namespace MapMaven.Services
 
             _fileService.PlaylistsLocationObservable.Subscribe(playlistsLocation =>
             {
-                _playlistManager = new PlaylistManager(_fileService.PlaylistsLocation, new LegacyPlaylistHandler());
+                PlaylistManager = new PlaylistManager(_fileService.PlaylistsLocation, new LegacyPlaylistHandler());
             });
 
             _fileService.BeatSaberInstallLocationObservable
@@ -165,9 +165,9 @@ namespace MapMaven.Services
 
         public async Task<IEnumerable<IPlaylist>> GetAllPlaylists()
         {
-            _playlistManager.RefreshPlaylists(true);
+            PlaylistManager.RefreshPlaylists(true);
 
-            var playlists = _playlistManager.GetAllPlaylists(true);
+            var playlists = PlaylistManager.GetAllPlaylists(true);
 
             CleanLargeObjectHeap();
 

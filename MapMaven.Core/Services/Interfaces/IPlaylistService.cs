@@ -22,7 +22,6 @@ namespace MapMaven.Core.Services.Interfaces
         Task EditPlaylist(EditPlaylistModel editPlaylistModel);
         Task RemoveMapFromPlaylist(Map map, Playlist playlist);
         Task ReplaceMapsInPlaylist(IEnumerable<Map> maps, Playlist playlist, bool loadPlaylists = true);
-        void ResetPlaylistManager();
         void SetSelectedPlaylist(Playlist playlist);
     }
 }
