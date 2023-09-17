@@ -53,6 +53,7 @@ namespace MapMaven.Components.Playlists
 
         private Playlist? PlaylistToDelete = null;
         private bool DeleteDialogVisible = false;
+        private bool DeletingPlaylist = false;
 
         protected override void OnInitialized()
         {
@@ -173,11 +174,21 @@ namespace MapMaven.Components.Playlists
 
         protected async Task DeletePlaylist()
         {
-            await PlaylistService.DeletePlaylist(PlaylistToDelete, DeleteMaps);
+            DeletingPlaylist = true;
+            await Task.Delay(1);
 
-            Snackbar.Add($"Removed playlist \"{PlaylistToDelete.Title}\"", Severity.Normal, config => config.Icon = Icons.Filled.Check);
+            try
+            {
+                await PlaylistService.DeletePlaylist(PlaylistToDelete, DeleteMaps);
 
-            ClosePlaylistDelete();
+                Snackbar.Add($"Removed playlist \"{PlaylistToDelete.Title}\"", Severity.Normal, config => config.Icon = Icons.Filled.Check);
+
+                ClosePlaylistDelete();
+            }
+            finally
+            {
+                DeletingPlaylist = false;
+            }
         }
     }
 }

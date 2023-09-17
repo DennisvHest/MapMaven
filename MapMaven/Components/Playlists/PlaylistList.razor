@@ -114,6 +114,15 @@
         }
         <MudCheckBox @bind-Checked="DeleteMaps" Label="@deleteMapsLabel" Class="mr-10" Style="opacity: 0.8;"></MudCheckBox>
         <MudButton OnClick="ClosePlaylistDelete">Cancel</MudButton>
-        <MudButton Color="@Color.Error" Variant="Variant.Filled" OnClick="DeletePlaylist">Delete</MudButton>
+        <MudButton Color="@Color.Error" Variant="Variant.Filled" OnClick="DeletePlaylist">
+            @if (DeletingPlaylist)
+            {
+                <MudProgressCircular Size="Size.Small" Indeterminate="true" Style="color: white;" />
+            }
+            else
+            {
+                @:Delete
+            }
+        </MudButton>
     </DialogActions>
 </MudDialog>
