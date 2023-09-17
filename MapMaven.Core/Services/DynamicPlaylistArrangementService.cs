@@ -60,8 +60,6 @@ namespace MapMaven.Core.Services
 
                 await _applicationSettingService.LoadAsync();
 
-                _playlistService.ResetPlaylistManager();
-
                 var playlists = await _beatSaberDataService.GetAllPlaylists();
 
                 var dynamicPlaylists = playlists
