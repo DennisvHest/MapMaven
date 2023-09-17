@@ -1,4 +1,5 @@
-﻿using BeatSaberPlaylistsLib.Types;
+﻿using BeatSaberPlaylistsLib;
+using BeatSaberPlaylistsLib.Types;
 using MapMaven.Models.Data;
 using System.Drawing;
 
@@ -12,6 +13,7 @@ namespace MapMaven.Core.Services.Interfaces
         IObservable<IEnumerable<MapInfo>> MapInfo { get; }
         IObservable<Dictionary<string, MapInfo>> MapInfoByHash { get; }
         IObservable<IEnumerable<IPlaylist>> PlaylistInfo { get; }
+        PlaylistManager PlaylistManager { get; }
 
         Task<IEnumerable<MapInfo>> GetAllMapInfo();
         Task<IEnumerable<IPlaylist>> GetAllPlaylists();
