@@ -138,7 +138,7 @@ namespace MapMaven.Components.Maps
             if (result.Cancelled)
                 return;
 
-            BeatSaberDataService.DeleteMap(map.Hash);
+            await BeatSaberDataService.DeleteMap(map.Hash);
         }
 
         public void Dispose()

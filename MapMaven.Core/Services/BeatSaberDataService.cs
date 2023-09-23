@@ -441,26 +441,42 @@ namespace MapMaven.Services
             await dataStore.SaveChangesAsync();
         }
 
-        public void DeleteMap(string mapHash) => DeleteMaps(new[] { mapHash });
+        private async Task RemoveMapsFromCache(IEnumerable<string> mapHashes)
+        {
+            using var scope = _serviceProvider.CreateScope();
 
-        public void DeleteMaps(IEnumerable<string> mapHashes)
+            var dataStore = scope.ServiceProvider.GetService<IDataStore>();
+
+            await dataStore.Set<MapInfo>()
+                .Where(m => mapHashes.Contains(m.Hash))
+                .ExecuteDeleteAsync();
+        }
+
+        public async Task DeleteMap(string mapHash) => await DeleteMaps(new[] { mapHash });
+
+        public async Task DeleteMaps(IEnumerable<string> mapHashes)
         {
             foreach (var mapHash in mapHashes)
             {
                 if (!_mapInfo.Value.TryGetValue(mapHash, out var mapInfo))
                     continue;
 
-                var fileCount = _fileSystem.Directory
-                    .EnumerateFiles(mapInfo.DirectoryPath, "*", SearchOption.AllDirectories)
-                    .Count();
+                if (_fileSystem.Directory.Exists(mapInfo.DirectoryPath))
+                {
+                    var fileCount = _fileSystem.Directory
+                        .EnumerateFiles(mapInfo.DirectoryPath, "*", SearchOption.AllDirectories)
+                        .Count();
 
-                if (fileCount >= 50)
-                    throw new Exception("Map directory contains more than 50 files. Fail safe measure to prevent accidental deletion of other directories.");
+                    if (fileCount >= 50)
+                        throw new Exception("Map directory contains more than 50 files. Fail safe measure to prevent accidental deletion of other directories.");
 
-                _fileSystem.Directory.Delete(mapInfo.DirectoryPath, true);
+                    _fileSystem.Directory.Delete(mapInfo.DirectoryPath, true);
+                }
 
                 _mapInfo.Value.Remove(mapHash);
             }
+
+            await RemoveMapsFromCache(mapHashes);
 
             _mapInfo.OnNext(_mapInfo.Value);
         }
