@@ -10,32 +10,37 @@
           Loading="LoadingMapInfo"
           QuickFilter="Filter"
           FixedHeader="true"
-          MultiSelection="Selectable"
+          MultiSelection="true"
           SortMode="SortMode.Single"
           SelectedItems="SelectedMaps"
+          SelectOnRowClick="false"
           SelectedItemsChanged="OnSelectedItemsChanged"
           RowsPerPage="25"
           Style="@Style"
-          RowStyle="@(Selectable ? "height: 88px; pointer-events: none;" : "height: 88px;")">
+          RowStyle="height: 88px;">
     <ToolBarContent>
-        @if (SelectedPlaylist != null)
-        {
-            <MudChip Variant="Variant.Outlined">@SelectedPlaylist.Title</MudChip>
-        }
-        @foreach (var mapFilter in MapFilters.Where(f => f.Visible))
-        {
-            <MudChip OnClose="() => RemoveMapFilter(mapFilter)">@mapFilter.Name</MudChip>
-        }
-        <MudTextField @bind-Value="SearchString"
-                      DebounceInterval="300"
-                      Immediate="true"
-                      Placeholder="Search map name, song author, map author..."
-                      Variant="Variant.Outlined"
-                      Adornment="Adornment.Start"
-                      AdornmentIcon="@Icons.Material.Filled.Search"
-                      IconSize="Size.Small"
-                      Class="mt-0">
-        </MudTextField>
+        <MudGrid>
+            <MudItem xs="12" Class="d-flex align-center">
+                @if (SelectedPlaylist != null)
+                {
+                    <MudChip Variant="Variant.Outlined">@SelectedPlaylist.Title</MudChip>
+                }
+                @foreach (var mapFilter in MapFilters.Where(f => f.Visible))
+                {
+                    <MudChip OnClose="() => RemoveMapFilter(mapFilter)">@mapFilter.Name</MudChip>
+                }
+                <MudTextField @bind-Value="SearchString"
+                              DebounceInterval="300"
+                              Immediate="true"
+                              Placeholder="Search map name, song author, map author..."
+                              Variant="Variant.Outlined"
+                              Adornment="Adornment.Start"
+                              AdornmentIcon="@Icons.Material.Filled.Search"
+                              IconSize="Size.Small"
+                              Class="mt-0">
+                </MudTextField>
+            </MudItem>
+        </MudGrid>
     </ToolBarContent>
     <LoadingContent>
         @if (InitialMapLoad)
@@ -60,6 +65,14 @@
         }
     </Columns>
     <PagerContent>
+        @if (SelectedMaps.Any())
+        {
+            <MudPaper Elevation="25" Class="bulk-actions-toolbar">
+                <MudToolBar>
+                    <b>@SelectedMaps.Count maps</b>
+                </MudToolBar>
+            </MudPaper>
+        }
         <MudDataGridPager T="Map" />
     </PagerContent>
 </MudDataGrid>

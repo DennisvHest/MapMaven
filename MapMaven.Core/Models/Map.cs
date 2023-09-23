@@ -56,5 +56,21 @@ namespace MapMaven.Models
 
             Difficulties = beatmap.LatestVersion.Difficulties.Select(d => new Core.Models.MapDifficulty(d));
         }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(this, obj))
+                return true;
+
+            if (!(obj is Map other))
+                return false;
+
+            return Hash == other.Hash;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Hash);
+        }
     }
 }

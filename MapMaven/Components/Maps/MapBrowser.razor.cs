@@ -40,9 +40,6 @@ namespace MapMaven.Components.Maps
         public RenderFragment<MapRowContext>? RowContent { get; set; }
 
         [Parameter]
-        public bool Selectable { get; set; } = false;
-
-        [Parameter]
         public string Width { get; set; } = "100%";
 
         [Parameter]
