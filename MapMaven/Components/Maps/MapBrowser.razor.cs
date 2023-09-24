@@ -183,7 +183,7 @@ namespace MapMaven.Components.Maps
 
             MapService.ClearSelectedMaps();
 
-            Snackbar.Add($"Succesfully deleted selected maps.", Severity.Normal, config => config.Icon = Icons.Filled.Check);
+            Snackbar.Add($"Succesfully deleted selected maps", Severity.Normal, config => config.Icon = Icons.Filled.Check);
         }
 
         async Task AddSelectedMapsToPlaylist()
@@ -205,6 +205,24 @@ namespace MapMaven.Components.Maps
 
                 Snackbar.Add($"Added selected maps to \"{playlist.Title}\"", Severity.Normal, config => config.Icon = Icons.Filled.Check);
             }
+        }
+
+        async Task RemoveSelectedMapsFromSelectedPlaylist()
+        {
+            var dialog = DialogService.Show<ConfirmationDialog>(null, new DialogParameters
+            {
+                { nameof(ConfirmationDialog.DialogText), $"Are you sure you want to remove the selected ({SelectedMaps.Count}) maps from the \"{SelectedPlaylist.Title}\" playlist?" },
+                { nameof(ConfirmationDialog.ConfirmText), $"Remove" }
+            });
+
+            var result = await dialog.Result;
+
+            if (result.Cancelled)
+                return;
+
+            await PlaylistService.RemoveMapsFromPlaylist(SelectedMaps, SelectedPlaylist);
+
+            Snackbar.Add($"Removed selected maps from \"{SelectedPlaylist.Title}\"", Severity.Normal, config => config.Icon = Icons.Filled.Check);
         }
 
         public void Dispose()

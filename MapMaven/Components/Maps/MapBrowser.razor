@@ -55,7 +55,7 @@
         }
     </LoadingContent>
     <Columns>
-        @if (RowContent != null)
+        @if (RowContent is not null)
         {
             @RowContent(new Core.Models.MapRowContext
             {
@@ -65,20 +65,30 @@
         }
     </Columns>
     <PagerContent>
-        @if (SelectedMaps.Any())
+        @if (!RankedMaps && SelectedMaps.Any())
         {
             <MudPaper Elevation="25" Class="bulk-actions-toolbar">
                 <MudToolBar>
                     <MudChip Variant="Variant.Outlined">@SelectedMaps.Count maps</MudChip>
-                    <MudButton Variant="Variant.Text" Class="mr-2" StartIcon="@Icons.Material.Filled.Close" OnClick="ClearSelectedMaps">
+                    <MudButton Variant="Variant.Text" Class="mr-5" StartIcon="@Icons.Material.Filled.Close" OnClick="ClearSelectedMaps">
                         Clear selection
                     </MudButton>
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" DisableElevation="true" Class="mr-2" StartIcon="@Icons.Material.Filled.PlaylistAdd" OnClick="AddSelectedMapsToPlaylist">
+                    <MudDivider Vertical="true" FlexItem="true" />
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" DisableElevation="true" Class="ml-5 mr-2" StartIcon="@Icons.Material.Filled.PlaylistAdd" OnClick="AddSelectedMapsToPlaylist">
                         Add to playlist
                     </MudButton>
-                    <MudButton Variant="Variant.Filled" Color="Color.Secondary" DisableElevation="true" StartIcon="@Icons.Material.Filled.Delete" OnClick="DeleteSelectedMaps">
-                        Delete
-                    </MudButton>
+                    @if (SelectedPlaylist is not null && !SelectedPlaylist.IsDynamicPlaylist)
+                    {
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" DisableElevation="true" Class="mr-2" StartIcon="@Icons.Material.Filled.PlaylistRemove" OnClick="RemoveSelectedMapsFromSelectedPlaylist">
+                            Remove from playlist
+                        </MudButton>
+                    }
+                    @if (SelectedPlaylist is null || !SelectedPlaylist.IsDynamicPlaylist)
+                    {
+                        <MudButton Variant="Variant.Filled" Color="Color.Secondary" DisableElevation="true" StartIcon="@Icons.Material.Filled.Delete" OnClick="DeleteSelectedMaps">
+                            Delete
+                        </MudButton>
+                    }
                 </MudToolBar>
             </MudPaper>
         }

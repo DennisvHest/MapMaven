@@ -282,16 +282,15 @@ namespace MapMaven.Services
             await AddMapsToPlaylist(maps, playlistToModify, loadPlaylists);
         }
 
-        public async Task RemoveMapFromPlaylist(Map map, Playlist playlist)
+        public async Task RemoveMapFromPlaylist(Map map, Playlist playlist) => await RemoveMapsFromPlaylist(new Map[] { map }, playlist);
+
+        public async Task RemoveMapsFromPlaylist(IEnumerable<Map> maps, Playlist playlist)
         {
             var playlistToModify = _beatSaberDataService.PlaylistManager.GetPlaylist(playlist.FileName);
 
-            var mapToRemove = playlistToModify.FirstOrDefault(m => m.Hash == map.Hash);
+            var mapHashes = maps.Select(m => m.Hash).ToList();
 
-            if (mapToRemove == null)
-                return;
-
-            playlistToModify.Remove(mapToRemove);
+            playlistToModify.RemoveAll(m => mapHashes.Contains(m.Hash));
 
             _beatSaberDataService.PlaylistManager.SavePlaylist(playlistToModify);
 
