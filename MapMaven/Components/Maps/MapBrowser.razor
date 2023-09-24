@@ -69,7 +69,16 @@
         {
             <MudPaper Elevation="25" Class="bulk-actions-toolbar">
                 <MudToolBar>
-                    <b>@SelectedMaps.Count maps</b>
+                    <MudChip Variant="Variant.Outlined">@SelectedMaps.Count maps</MudChip>
+                    <MudButton Variant="Variant.Text" Class="mr-2" StartIcon="@Icons.Material.Filled.Close" OnClick="ClearSelectedMaps">
+                        Clear selection
+                    </MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" DisableElevation="true" Class="mr-2" StartIcon="@Icons.Material.Filled.PlaylistAdd" OnClick="AddSelectedMapsToPlaylist">
+                        Add to playlist
+                    </MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Secondary" DisableElevation="true" StartIcon="@Icons.Material.Filled.Delete" OnClick="DeleteSelectedMaps">
+                        Delete
+                    </MudButton>
                 </MudToolBar>
             </MudPaper>
         }

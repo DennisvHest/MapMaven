@@ -8,6 +8,9 @@ using MudBlazor;
 using MapMaven.Core.Services.Interfaces;
 using MapMaven.Core.Services;
 using System.Reactive.Linq;
+using MapMaven.Components.Shared;
+using Microsoft.Maui.ApplicationModel;
+using MapMaven.Components.Playlists;
 
 namespace MapMaven.Components.Maps
 {
@@ -21,6 +24,12 @@ namespace MapMaven.Components.Maps
 
         [Inject]
         protected IBeatSaberDataService BeatSaberDataService { get; set; }
+
+        [Inject]
+        protected IDialogService DialogService { get; set; }
+
+        [Inject]
+        ISnackbar Snackbar { get; set; }
 
         [Inject]
         protected DynamicPlaylistArrangementService DynamicPlaylistArrangementService { get; set; }
@@ -151,6 +160,52 @@ namespace MapMaven.Components.Maps
         }
 
         public IEnumerable<Map> GetFilteredMaps() => TableRef.FilteredItems;
+
+        void ClearSelectedMaps()
+        {
+            MapService.ClearSelectedMaps();
+        }
+
+        async Task DeleteSelectedMaps()
+        {
+            var dialog = DialogService.Show<ConfirmationDialog>(null, new DialogParameters
+            {
+                { nameof(ConfirmationDialog.DialogText), $"Are you sure you want to delete the selected ({SelectedMaps.Count}) maps from the game? This cannot be undone." },
+                { nameof(ConfirmationDialog.ConfirmText), $"Delete" }
+            });
+
+            var result = await dialog.Result;
+
+            if (result.Cancelled)
+                return;
+
+            await BeatSaberDataService.DeleteMaps(SelectedMaps.Select(m => m.Hash));
+
+            MapService.ClearSelectedMaps();
+
+            Snackbar.Add($"Succesfully deleted selected maps.", Severity.Normal, config => config.Icon = Icons.Filled.Check);
+        }
+
+        async Task AddSelectedMapsToPlaylist()
+        {
+            var dialog = await DialogService.ShowAsync<PlaylistSelector>($"Add selected maps ({SelectedMaps.Count}) to playlist", new DialogOptions
+            {
+                MaxWidth = MaxWidth.ExtraSmall,
+                FullWidth = true,
+                CloseButton = true
+            });
+
+            var result = await dialog.Result;
+
+            if (!result.Cancelled)
+            {
+                var playlist = (Playlist)result.Data;
+
+                await PlaylistService.AddMapsToPlaylist(SelectedMaps, playlist);
+
+                Snackbar.Add($"Added selected maps to \"{playlist.Title}\"", Severity.Normal, config => config.Icon = Icons.Filled.Check);
+            }
+        }
 
         public void Dispose()
         {
