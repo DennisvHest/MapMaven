@@ -3,6 +3,7 @@ using MapMaven.Core.Models.DynamicPlaylists;
 using MapMaven.Core.Models.DynamicPlaylists.MapInfo;
 using MapMaven.Core.Services;
 using MapMaven.Core.Services.Interfaces;
+using MapMaven.Models;
 using MapMaven.Services;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
@@ -100,20 +101,22 @@ namespace MapMaven.Components.Playlists
 
         async Task OnValidSubmit()
         {
+            Playlist playlist;
+
             if (NewPlaylist)
             {
-                await PlaylistService.AddDynamicPlaylist(SelectedPlaylist);
+                playlist = await PlaylistService.AddDynamicPlaylist(SelectedPlaylist);
                 Snackbar.Add($"Added playlist \"{SelectedPlaylist.Name}\"", Severity.Normal, config => config.Icon = Icons.Filled.Check);
             }
             else
             {
-                await PlaylistService.EditDynamicPlaylist(SelectedPlaylist);
+                playlist = await PlaylistService.EditDynamicPlaylist(SelectedPlaylist);
                 Snackbar.Add($"Saved playlist \"{SelectedPlaylist.Name}\"", Severity.Normal, config => config.Icon = Icons.Filled.Check);
             }
             
             Task.Run(DynamicPlaylistArrangementService.ArrangeDynamicPlaylists);
 
-            MudDialog.Close(DialogResult.Ok(SelectedPlaylist));
+            MudDialog.Close(DialogResult.Ok(playlist));
         }
 
         void Cancel() => MudDialog.Cancel();

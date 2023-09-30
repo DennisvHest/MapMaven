@@ -16,6 +16,9 @@ namespace MapMaven.Components.Playlists
         [Inject]
         protected IPlaylistService PlaylistService { get; set; }
 
+        [Inject]
+        protected IDialogService DialogService { get; set; }
+
         private IEnumerable<Playlist> Playlists = Array.Empty<Playlist>();
 
         private BehaviorSubject<string> _playlistSearchText = new(string.Empty);
@@ -41,9 +44,23 @@ namespace MapMaven.Components.Playlists
             }), playlists => Playlists = playlists);
         }
 
-        protected void OnPlaylistSelect(Playlist playlist)
+        protected void OnPlaylistSelect(Playlist? playlist)
         {
             MudDialog.Close(DialogResult.Ok(playlist));
+        }
+
+        protected async Task CreateNewPlaylist()
+        {
+            var editPlaylistDialog = DialogService.Show<EditPlaylistDialog>("Add playlist", new DialogOptions
+            {
+                MaxWidth = MaxWidth.Small,
+                FullWidth = true
+            });
+
+            var result = await editPlaylistDialog.Result;
+
+            if (!result.Canceled)
+                MudDialog.Close(DialogResult.Ok((Playlist)result.Data));
         }
     }
 }

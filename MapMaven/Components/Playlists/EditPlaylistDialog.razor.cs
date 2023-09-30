@@ -33,18 +33,20 @@ namespace MapMaven.Components.Playlists
 
         async Task OnValidSubmit(EditContext context)
         {
+            Playlist playlist;
+
             if (NewPlaylist)
             {
-                await PlaylistService.AddPlaylist(EditPlaylistModel);
+                playlist = await PlaylistService.AddPlaylist(EditPlaylistModel);
                 Snackbar.Add($"Added playlist \"{EditPlaylistModel.Name}\"", Severity.Normal, config => config.Icon = Icons.Filled.Check);
             }
             else
             {
-                await PlaylistService.EditPlaylist(EditPlaylistModel);
+                playlist = await PlaylistService.EditPlaylist(EditPlaylistModel);
                 Snackbar.Add($"Saved playlist \"{EditPlaylistModel.Name}\"", Severity.Normal, config => config.Icon = Icons.Filled.Check);
             }
 
-            MudDialog.Close(DialogResult.Ok(EditPlaylistModel));
+            MudDialog.Close(DialogResult.Ok(playlist));
         }
 
         void Cancel() => MudDialog.Cancel();

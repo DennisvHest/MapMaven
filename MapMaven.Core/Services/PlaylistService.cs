@@ -99,7 +99,7 @@ namespace MapMaven.Services
             return playlist;
         }
 
-        public async Task EditDynamicPlaylist(EditDynamicPlaylistModel editPlaylistModel)
+        public async Task<Playlist> EditDynamicPlaylist(EditDynamicPlaylistModel editPlaylistModel)
         {
             var playlistToModify = _beatSaberDataService.PlaylistManager.GetPlaylist(editPlaylistModel.FileName);
             
@@ -114,6 +114,8 @@ namespace MapMaven.Services
             _beatSaberDataService.PlaylistManager.SavePlaylist(playlistToModify);
 
             await _beatSaberDataService.LoadAllPlaylists();
+
+            return new Playlist(playlistToModify);
         }
 
         private static void UpdatePlaylist(EditPlaylistModel editPlaylistModel, IPlaylist? playlistToModify)
@@ -232,7 +234,7 @@ namespace MapMaven.Services
             await _beatSaberDataService.LoadAllPlaylists();
         }
 
-        public async Task EditPlaylist(EditPlaylistModel editPlaylistModel)
+        public async Task<Playlist> EditPlaylist(EditPlaylistModel editPlaylistModel)
         {
             var playlistToModify = _beatSaberDataService.PlaylistManager.GetPlaylist(editPlaylistModel.FileName);
 
@@ -241,6 +243,8 @@ namespace MapMaven.Services
             _beatSaberDataService.PlaylistManager.SavePlaylist(playlistToModify);
 
             await _beatSaberDataService.LoadAllPlaylists();
+
+            return new Playlist(playlistToModify);
         }
 
         public async Task AddMapToPlaylist(Map map, Playlist playlist, bool loadPlaylists = true)
