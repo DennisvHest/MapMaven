@@ -6,5 +6,6 @@ namespace MapMaven.Core.Models
     {
         public IEnumerable<Map> FilteredMaps { get; set; }
         public Map Map { get; set; }
+        public bool Selectable { get; set; }
     }
 }

@@ -34,6 +34,7 @@ namespace MapMaven.Components.Maps
         protected string CoverImageUrl { get; set; }
 
         public string? PlayerId { get; set; } = null;
+        private bool Selectable = false;
 
         IDisposable SelectedPlaylistSubscription;
 
@@ -42,6 +43,7 @@ namespace MapMaven.Components.Maps
             SelectedPlaylistSubscription = SubscribeAndBind(PlaylistService.SelectedPlaylist, selectedPlaylist => SelectedPlaylist = selectedPlaylist);
 
             SubscribeAndBind(ScoreSaberService.PlayerIdObservable, playerId => PlayerId = playerId);
+            SubscribeAndBind(MapService.Selectable, selectable => Selectable = selectable);
         }
 
         async Task OpenAddMapToPlaylistDialog(Map map)

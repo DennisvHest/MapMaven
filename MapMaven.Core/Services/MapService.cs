@@ -31,6 +31,7 @@ namespace MapMaven.Services
         private readonly BehaviorSubject<List<MapFilter>> _mapFilters = new(new List<MapFilter>());
 
         private readonly BehaviorSubject<HashSet<Map>> _selectedMaps = new(Enumerable.Empty<Map>().ToHashSet());
+        private readonly BehaviorSubject<bool> _selectable = new(false);
 
         private readonly BehaviorSubject<IEnumerable<HiddenMap>> _hiddenMaps = new(Enumerable.Empty<HiddenMap>());
 
@@ -41,6 +42,7 @@ namespace MapMaven.Services
         public IObservable<Dictionary<string, Map>> MapsByHash { get; private set; }
 
         public IObservable<HashSet<Map>> SelectedMaps => _selectedMaps;
+        public IObservable<bool> Selectable => _selectable;
 
         public IObservable<IEnumerable<MapFilter>> MapFilters => _mapFilters;
 
@@ -181,9 +183,19 @@ namespace MapMaven.Services
 
         public void ResetSelectedMaps() => _selectedMaps.OnNext(_selectedMaps.Value);
 
+        public void CancelSelection() => SetSelectable(false);
+
         public void SelectMaps(IEnumerable<Map> selectedMaps)
         {
             _selectedMaps.OnNext(selectedMaps.ToHashSet());
+        }
+
+        public void SetSelectable(bool selectable)
+        {
+            _selectable.OnNext(selectable);
+
+            if (!selectable)
+                ClearSelectedMaps();
         }
 
         public async Task<Map> GetMapDetails(Map map)

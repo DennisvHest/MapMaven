@@ -67,6 +67,7 @@ namespace MapMaven.Components.Maps
         private List<string> MapHashFilter = null;
 
         private HashSet<Map> SelectedMaps = new HashSet<Map>();
+        private bool Selectable = false;
 
         private string SearchString = "";
 
@@ -91,6 +92,7 @@ namespace MapMaven.Components.Maps
             });
             SubscribeAndBind(MapService.MapFilters, mapFilters => MapFilters = mapFilters);
             SubscribeAndBind(MapService.SelectedMaps, selectedMaps => SelectedMaps = selectedMaps);
+            SubscribeAndBind(MapService.Selectable, selectable => Selectable = selectable);
         }
 
         protected override void OnParametersSet()
@@ -156,15 +158,12 @@ namespace MapMaven.Components.Maps
         private void LocationChanged(object sender, LocationChangedEventArgs e)
         {
             MapService.ClearMapFilters();
-            MapService.ClearSelectedMaps();
+            MapService.CancelSelection();
         }
 
         public IEnumerable<Map> GetFilteredMaps() => TableRef.FilteredItems;
 
-        void ClearSelectedMaps()
-        {
-            MapService.ClearSelectedMaps();
-        }
+        void CancelSelection() => MapService.CancelSelection();
 
         async Task DeleteSelectedMaps()
         {
@@ -181,7 +180,7 @@ namespace MapMaven.Components.Maps
 
             await BeatSaberDataService.DeleteMaps(SelectedMaps.Select(m => m.Hash));
 
-            MapService.ClearSelectedMaps();
+            MapService.CancelSelection();
 
             Snackbar.Add($"Succesfully deleted selected maps", Severity.Normal, config => config.Icon = Icons.Filled.Check);
         }
@@ -222,8 +221,12 @@ namespace MapMaven.Components.Maps
 
             await PlaylistService.RemoveMapsFromPlaylist(SelectedMaps, SelectedPlaylist);
 
+            MapService.CancelSelection();
+
             Snackbar.Add($"Removed selected maps from \"{SelectedPlaylist.Title}\"", Severity.Normal, config => config.Icon = Icons.Filled.Check);
         }
+
+        public void ToggleSelectable() => MapService.SetSelectable(!Selectable);
 
         public void Dispose()
         {
