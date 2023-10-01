@@ -65,12 +65,12 @@ namespace MapMaven.Models
             if (!(obj is Map other))
                 return false;
 
-            return Hash == other.Hash;
+            return Hash == other.Hash && (Difficulty is null || Difficulty == other.Difficulty);
         }
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(Hash);
+            return HashCode.Combine(Hash, Difficulty);
         }
     }
 }

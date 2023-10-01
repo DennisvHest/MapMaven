@@ -133,3 +133,7 @@ a:hover {
 .small-input .mud-input-root {
     padding: 8px !important;
 }
+
+.mud-menu.full-width > button {
+    width: 100%;
+}

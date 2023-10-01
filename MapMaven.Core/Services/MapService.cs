@@ -243,12 +243,47 @@ namespace MapMaven.Services
             _hiddenMaps.OnNext(hiddenMaps);
         }
 
-        public async Task HideUnhideMap(Map map)
+        public async Task HideUnhideMap(Map map) => await HideUnhideMap(new[] { map }, !map.Hidden);
+
+        public async Task HideUnhideMap(IEnumerable<Map> maps, bool hide)
         {
             using var scope = _serviceProvider.CreateScope();
 
             var dataStore = scope.ServiceProvider.GetRequiredService<IDataStore>();
 
+            var player = await AddPlayerIfNotExists(dataStore);
+
+            foreach (var map in maps)
+            {
+                var hiddenMap = new HiddenMap(map);
+
+                var existingHiddenMap = player.HiddenMaps.FirstOrDefault(m =>
+                    m.Hash == hiddenMap.Hash
+                    && m.Difficulty == hiddenMap.Difficulty
+                );
+
+                if (hide)
+                {
+                    if (existingHiddenMap == null)
+                    {
+                        hiddenMap.PlayerId = player.Id;
+                        dataStore.Set<HiddenMap>().Add(hiddenMap);
+                    }
+                }
+                else
+                {
+                    if (existingHiddenMap != null)
+                        dataStore.Set<HiddenMap>().Remove(existingHiddenMap);
+                }
+            }
+
+            await dataStore.SaveChangesAsync();
+
+            await LoadHiddenMaps();
+        }
+
+        private async Task<Core.Models.Data.Player> AddPlayerIfNotExists(IDataStore dataStore)
+        {
             var playerId = _scoreSaberService.PlayerId;
 
             var player = await dataStore.Set<Core.Models.Data.Player>()
@@ -262,23 +297,7 @@ namespace MapMaven.Services
                 dataStore.Set<Core.Models.Data.Player>().Add(player);
             }
 
-            var hiddenMap = new HiddenMap(map);
-
-            if (map.Hidden)
-            {
-                var mapToRemove = player.HiddenMaps.FirstOrDefault(m => m.Hash == map.Hash);
-
-                dataStore.Set<HiddenMap>().Remove(mapToRemove);
-            }
-            else
-            {
-                hiddenMap.PlayerId = playerId;
-                dataStore.Set<HiddenMap>().Add(hiddenMap);
-            }
-
-            await dataStore.SaveChangesAsync();
-
-            await LoadHiddenMaps();
+            return player;
         }
 
         public async Task RefreshDataAsync(bool forceRefresh = false)

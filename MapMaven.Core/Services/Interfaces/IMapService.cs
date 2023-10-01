@@ -21,6 +21,7 @@ namespace MapMaven.Core.Services.Interfaces
         Task DownloadMap(Map map, bool force = false, IProgress<double>? progress = null, bool loadMapInfo = true, CancellationToken cancellationToken = default);
         Task<Map> GetMapDetails(Map map);
         Task HideUnhideMap(Map map);
+        Task HideUnhideMap(IEnumerable<Map> maps, bool hide);
         Task LoadHiddenMaps();
         bool MapIsInstalled(Map map);
         Task RefreshDataAsync(bool forceRefresh = false);

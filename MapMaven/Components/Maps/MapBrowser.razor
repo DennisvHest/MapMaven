@@ -39,9 +39,12 @@
                               IconSize="Size.Small"
                               Class="mt-0">
                 </MudTextField>
-                <MudTooltip Text="Bulk&nbsp;edit">
-                    <MudIconButton Icon="@(Selectable ? Icons.Material.Filled.CheckBox : Icons.Material.Outlined.CheckBox)" OnClick="ToggleSelectable" />
-                </MudTooltip>
+                @if (!RankedMaps)
+                {
+                    <MudTooltip Text="Bulk&nbsp;edit">
+                        <MudIconButton Icon="@(Selectable ? Icons.Material.Filled.CheckBox : Icons.Material.Outlined.CheckBox)" OnClick="ToggleSelectable" />
+                    </MudTooltip>
+                }
             </MudItem>
         </MudGrid>
     </ToolBarContent>
