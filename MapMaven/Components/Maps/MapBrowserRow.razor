@@ -3,15 +3,31 @@
 @using System.Text.Json
 @using MapMaven.Core.Utilities.Scoresaber
 
-<TemplateColumn T="Map" Sortable="false" Class="pa-0" CellStyle="width: 50px; position: relative;">
+
+<TemplateColumn T="Map" Sortable="false" Resizable="false" ShowColumnOptions="false" HeaderStyle="width:0%; padding: 0;" CellStyle="padding: 0;"
+                Filterable="false" IsEditable="false">
+    <HeaderTemplate>
+        @if (Selectable)
+        {
+            <MudCheckBox T="bool" Checked="@context.IsAllSelected" CheckedChanged="@context.Actions.SetSelectAllAsync" Class="ma-3" />
+        }
+    </HeaderTemplate>
+    <CellTemplate>
+        @if (Selectable)
+        {
+            <MudCheckBox T="bool" Checked="@context.IsSelected" CheckedChanged="@context.Actions.SetSelectedItemAsync" Class="ma-3" />
+        }
+    </CellTemplate>
+</TemplateColumn>
+<TemplateColumn T="Map" Sortable="false" CellClass="pl-0" CellStyle="width: 50px; position: relative;">
     <CellTemplate>
         <div>
-            <div class="d-flex">
+            <div class="d-flex flex-column">
                 <MudTooltip Text="Play song preview" ShowOnFocus="false">
                     <SongPlaybackButton Map="context.Item"></SongPlaybackButton>
                 </MudTooltip>
                 <MudTooltip Text="Open map details" ShowOnFocus="false">
-                    <MudIconButton Icon="@Icons.Material.Filled.Info" Variant="Variant.Text" Size="Size.Medium" OnClick="() => OpenDetails(context.Item)" />
+                    <MudIconButton Icon="@Icons.Material.Filled.Info" Class="pb-0 pt-1" Variant="Variant.Text" Size="Size.Medium" OnClick="() => OpenDetails(context.Item)" />
                 </MudTooltip>
             </div>
         </div>
@@ -120,7 +136,7 @@
 }
 <TemplateColumn T="Map" Sortable="false" CellStyle="width: 100px">
     <CellTemplate>
-        <div style="min-width: 100px">
+        <div class="d-flex" style="min-width: 100px">
             <MudTooltip Text="Add map to playlist" ShowOnFocus="false">
                 <MudIconButton Icon="@Icons.Filled.PlaylistAdd" Variant="Variant.Text" Size="Size.Medium" OnClick="() => OpenAddMapToPlaylistDialog(context.Item)" />
             </MudTooltip>
@@ -129,6 +145,16 @@
                 <MudTooltip Text="Remove map from playlist" ShowOnFocus="false">
                     <MudIconButton Icon="@Icons.Filled.PlaylistRemove" Variant="Variant.Text" Size="Size.Medium" OnClick="() => OpenDeleteFromPlaylistDialog(context.Item)" />
                 </MudTooltip>
+            }
+            @if (SelectedPlaylist == null || !SelectedPlaylist.IsDynamicPlaylist)
+            {
+                <MudMenu Icon="@Icons.Material.Filled.MoreVert">
+                    <MudMenuItem OnClick="() => DeleteMap(context.Item)">
+                        <div class="d-flex">
+                            <MudIcon Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Class="mr-1" /> Delete map
+                        </div>
+                    </MudMenuItem>
+                </MudMenu>
             }
         </div>
     </CellTemplate>

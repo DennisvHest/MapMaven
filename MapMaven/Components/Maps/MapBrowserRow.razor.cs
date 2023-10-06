@@ -34,6 +34,7 @@ namespace MapMaven.Components.Maps
         protected string CoverImageUrl { get; set; }
 
         public string? PlayerId { get; set; } = null;
+        private bool Selectable = false;
 
         IDisposable SelectedPlaylistSubscription;
 
@@ -42,6 +43,7 @@ namespace MapMaven.Components.Maps
             SelectedPlaylistSubscription = SubscribeAndBind(PlaylistService.SelectedPlaylist, selectedPlaylist => SelectedPlaylist = selectedPlaylist);
 
             SubscribeAndBind(ScoreSaberService.PlayerIdObservable, playerId => PlayerId = playerId);
+            SubscribeAndBind(MapService.Selectable, selectable => Selectable = selectable);
         }
 
         async Task OpenAddMapToPlaylistDialog(Map map)
@@ -123,6 +125,22 @@ namespace MapMaven.Components.Maps
                     CloseButton = true
                 }
             );
+        }
+
+        async Task DeleteMap(Map map)
+        {
+            var dialog = DialogService.Show<ConfirmationDialog>(null, new DialogParameters
+            {
+                { nameof(ConfirmationDialog.DialogText), $"Are you sure you want to delete \"{map.Name}\" from the game? This cannot be undone." },
+                { nameof(ConfirmationDialog.ConfirmText), $"Delete" }
+            });
+
+            var result = await dialog.Result;
+
+            if (result.Cancelled)
+                return;
+
+            await BeatSaberDataService.DeleteMap(map.Hash);
         }
 
         public void Dispose()

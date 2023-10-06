@@ -23,6 +23,9 @@ namespace MapMaven.Components.Maps
         [Inject]
         ISnackbar Snackbar { get; set; }
 
+        [Inject]
+        protected IDialogService DialogService { get; set; }
+
         [Parameter]
         public EventCallback<MapSelectionConfig> OnMapSelectionChanged { get; set; }
 
@@ -180,6 +183,24 @@ namespace MapMaven.Components.Maps
                 MapSelectNumber = MapSelectNumber,
                 MapSelectStartFromNumber = MapSelectStartFromNumber
             });
+        }
+
+        async Task HideUnhideSelectedMaps(bool hide)
+        {
+            var dialog = DialogService.Show<ConfirmationDialog>(null, new DialogParameters
+            {
+                { nameof(ConfirmationDialog.DialogText), $"Are you sure you want to {(hide ? "hide" : "un-hide")} the selected ({SelectedMaps.Count}) maps?" },
+                { nameof(ConfirmationDialog.ConfirmText), hide ? "Hide" : "Un-hide" }
+            });
+
+            var result = await dialog.Result;
+
+            if (result.Cancelled)
+                return;
+
+            await MapService.HideUnhideMap(SelectedMaps, hide);
+
+            ClearSelection();
         }
     }
 }

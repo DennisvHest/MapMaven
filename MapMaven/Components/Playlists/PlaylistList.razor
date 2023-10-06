@@ -38,8 +38,16 @@
                         }
                         <span>@playlist.Title</span>
                         <MudMenu Icon="@Icons.Material.Filled.MoreVert" Class="ml-auto">
-                            <MudMenuItem OnClick="() => OpenEditPlaylistDialog(playlist)">Edit</MudMenuItem>
-                            <MudMenuItem OnClick="() => OpenDeletePlaylistDialog(playlist)">Delete</MudMenuItem>
+                            <MudMenuItem OnClick="() => OpenEditPlaylistDialog(playlist)">
+                                <div class="d-flex">
+                                    <MudIcon Icon="@Icons.Material.Filled.Edit" Size="Size.Small" Class="mr-1" /> Edit
+                                </div>
+                            </MudMenuItem>
+                            <MudMenuItem OnClick="() => OpenDeletePlaylistDialog(playlist)">
+                                <div class="d-flex">
+                                    <MudIcon Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Class="mr-1" /> Delete
+                                </div>
+                            </MudMenuItem>
                         </MudMenu>
                     </div>
                 </MudListItem>
@@ -82,8 +90,12 @@
                         }
                         <span>@playlist.Title</span>
                         <MudMenu Icon="@Icons.Material.Filled.MoreVert" Class="ml-auto">
-                            <MudMenuItem OnClick="() => OpenEditDynamicPlaylistDialog(playlist)">Edit</MudMenuItem>
-                            <MudMenuItem OnClick="() => OpenDeletePlaylistDialog(playlist)">Delete</MudMenuItem>
+                            <MudMenuItem OnClick="() => OpenEditDynamicPlaylistDialog(playlist)">
+                                <MudIcon Icon="@Icons.Material.Filled.Edit" Size="Size.Small" Class="mr-1" /> Edit
+                            </MudMenuItem>
+                            <MudMenuItem OnClick="() => OpenDeletePlaylistDialog(playlist)">
+                                <MudIcon Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Class="mr-1" /> Delete
+                            </MudMenuItem>
                         </MudMenu>
                     </div>
                 </MudListItem>
@@ -91,3 +103,26 @@
         </div>
     </MudList>
 </div>
+
+<MudDialog @bind-IsVisible="DeleteDialogVisible" Options="new() { DisableBackdropClick = true }">
+    <DialogContent>
+        <MudText Typo="Typo.body1" Class="mb-3">Are you sure you want to delete the "@PlaylistToDelete.Title" playlist?</MudText>
+    </DialogContent>
+    <DialogActions>
+        @{
+            var deleteMapsLabel = $"Also delete all {PlaylistToDelete.Maps.Count()} maps from the game";
+        }
+        <MudCheckBox @bind-Checked="DeleteMaps" Label="@deleteMapsLabel" Class="mr-10" Style="opacity: 0.8;"></MudCheckBox>
+        <MudButton OnClick="ClosePlaylistDelete">Cancel</MudButton>
+        <MudButton Color="@Color.Error" Variant="Variant.Filled" OnClick="DeletePlaylist">
+            @if (DeletingPlaylist)
+            {
+                <MudProgressCircular Size="Size.Small" Indeterminate="true" Style="color: white;" />
+            }
+            else
+            {
+                @:Delete
+            }
+        </MudButton>
+    </DialogActions>
+</MudDialog>

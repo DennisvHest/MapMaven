@@ -99,7 +99,7 @@ namespace MapMaven.Services
             return playlist;
         }
 
-        public async Task EditDynamicPlaylist(EditDynamicPlaylistModel editPlaylistModel)
+        public async Task<Playlist> EditDynamicPlaylist(EditDynamicPlaylistModel editPlaylistModel)
         {
             var playlistToModify = _beatSaberDataService.PlaylistManager.GetPlaylist(editPlaylistModel.FileName);
             
@@ -114,6 +114,8 @@ namespace MapMaven.Services
             _beatSaberDataService.PlaylistManager.SavePlaylist(playlistToModify);
 
             await _beatSaberDataService.LoadAllPlaylists();
+
+            return new Playlist(playlistToModify);
         }
 
         private static void UpdatePlaylist(EditPlaylistModel editPlaylistModel, IPlaylist? playlistToModify)
@@ -216,7 +218,7 @@ namespace MapMaven.Services
             return playlistMaps;
         }
 
-        public async Task DeletePlaylist(Playlist playlist)
+        public async Task DeletePlaylist(Playlist playlist, bool deleteMaps = false)
         {
             var playlistToDelete = _beatSaberDataService.PlaylistManager.GetPlaylist(playlist.FileName);
             var playlistManager = _beatSaberDataService.PlaylistManager.GetManagerForPlaylist(playlistToDelete);
@@ -226,10 +228,13 @@ namespace MapMaven.Services
             if (playlist.FileName == _selectedPlaylistFileName.Value)
                 _selectedPlaylistFileName.OnNext(null); // Playlist should not be selected if deleted.
 
+            if (deleteMaps)
+                await _beatSaberDataService.DeleteMaps(playlist.Maps.Select(m => m.Hash));
+
             await _beatSaberDataService.LoadAllPlaylists();
         }
 
-        public async Task EditPlaylist(EditPlaylistModel editPlaylistModel)
+        public async Task<Playlist> EditPlaylist(EditPlaylistModel editPlaylistModel)
         {
             var playlistToModify = _beatSaberDataService.PlaylistManager.GetPlaylist(editPlaylistModel.FileName);
 
@@ -238,6 +243,8 @@ namespace MapMaven.Services
             _beatSaberDataService.PlaylistManager.SavePlaylist(playlistToModify);
 
             await _beatSaberDataService.LoadAllPlaylists();
+
+            return new Playlist(playlistToModify);
         }
 
         public async Task AddMapToPlaylist(Map map, Playlist playlist, bool loadPlaylists = true)
@@ -279,16 +286,15 @@ namespace MapMaven.Services
             await AddMapsToPlaylist(maps, playlistToModify, loadPlaylists);
         }
 
-        public async Task RemoveMapFromPlaylist(Map map, Playlist playlist)
+        public async Task RemoveMapFromPlaylist(Map map, Playlist playlist) => await RemoveMapsFromPlaylist(new Map[] { map }, playlist);
+
+        public async Task RemoveMapsFromPlaylist(IEnumerable<Map> maps, Playlist playlist)
         {
             var playlistToModify = _beatSaberDataService.PlaylistManager.GetPlaylist(playlist.FileName);
 
-            var mapToRemove = playlistToModify.FirstOrDefault(m => m.Hash == map.Hash);
+            var mapHashes = maps.Select(m => m.Hash).ToList();
 
-            if (mapToRemove == null)
-                return;
-
-            playlistToModify.Remove(mapToRemove);
+            playlistToModify.RemoveAll(m => mapHashes.Contains(m.Hash));
 
             _beatSaberDataService.PlaylistManager.SavePlaylist(playlistToModify);
 

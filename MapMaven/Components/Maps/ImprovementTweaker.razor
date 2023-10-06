@@ -47,9 +47,13 @@
                            OnClick="ClearSelection">
                     Clear selection
                 </MudButton>
-                <MudChip Variant="Variant.Outlined" Class="full-width mx-0 my-3">
+                <MudChip Variant="Variant.Outlined" Class="full-width mx-0 mt-3">
                     @SelectedMaps.Count() maps (+@SelectedMaps.Sum(m => m.ScoreEstimates.FirstOrDefault()?.PPIncrease ?? 0).ToString("#0.##") pp)
                 </MudChip>
+                <MudMenu Label="Actions" Class="full-width mx-0 my-3" FullWidth="true" Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.Menu">
+                    <MudMenuItem Icon="@Icons.Material.Filled.DisabledVisible" OnClick="() => HideUnhideSelectedMaps(true)">Hide all</MudMenuItem>
+                    <MudMenuItem Icon="@Icons.Material.Filled.RemoveRedEye" OnClick="() => HideUnhideSelectedMaps(false)">Un-hide all</MudMenuItem>
+                </MudMenu>
             }
             <MudButton Color="Color.Primary"
                        Variant="Variant.Filled"

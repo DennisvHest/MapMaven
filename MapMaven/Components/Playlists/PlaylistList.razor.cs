@@ -34,6 +34,7 @@ namespace MapMaven.Components.Playlists
         private bool LoadingPlaylists = false;
 
         private Playlist SelectedPlaylist;
+        private bool DeleteMaps = false;
 
         private BehaviorSubject<string> _playlistSearchText = new(string.Empty);
         private BehaviorSubject<string> _dynamicPlaylistSearchText = new(string.Empty);
@@ -49,6 +50,10 @@ namespace MapMaven.Components.Playlists
             get => _dynamicPlaylistSearchText.Value;
             set => _dynamicPlaylistSearchText.OnNext(value);
         }
+
+        private Playlist? PlaylistToDelete = null;
+        private bool DeleteDialogVisible = false;
+        private bool DeletingPlaylist = false;
 
         protected override void OnInitialized()
         {
@@ -154,25 +159,36 @@ namespace MapMaven.Components.Playlists
             });
         }
 
-        protected async Task OpenDeletePlaylistDialog(Playlist playlistToDelete)
+        protected void OpenDeletePlaylistDialog(Playlist playlistToDelete)
         {
-            var dialog = DialogService.Show<ConfirmationDialog>(null, new DialogParameters
-            {
-                { nameof(ConfirmationDialog.DialogText), $"Are you sure you want to delete the \"{playlistToDelete.Title}\" playlist?" },
-                { nameof(ConfirmationDialog.ConfirmText), $"Delete" }
-            });
-
-            var result = await dialog.Result;
-
-            if (!result.Cancelled)
-                await DeletePlaylist(playlistToDelete);
+            PlaylistToDelete = playlistToDelete;
+            DeleteDialogVisible = true;
         }
 
-        protected async Task DeletePlaylist(Playlist playlistToDelete)
+        protected void ClosePlaylistDelete()
         {
-            await PlaylistService.DeletePlaylist(playlistToDelete);
+            PlaylistToDelete = null;
+            DeleteDialogVisible = false;
+            DeleteMaps = false;
+        }
 
-            Snackbar.Add($"Removed playlist \"{playlistToDelete.Title}\"", Severity.Normal, config => config.Icon = Icons.Filled.Check);
+        protected async Task DeletePlaylist()
+        {
+            DeletingPlaylist = true;
+            await Task.Delay(1);
+
+            try
+            {
+                await PlaylistService.DeletePlaylist(PlaylistToDelete, DeleteMaps);
+
+                Snackbar.Add($"Removed playlist \"{PlaylistToDelete.Title}\"", Severity.Normal, config => config.Icon = Icons.Filled.Check);
+
+                ClosePlaylistDelete();
+            }
+            finally
+            {
+                DeletingPlaylist = false;
+            }
         }
     }
 }

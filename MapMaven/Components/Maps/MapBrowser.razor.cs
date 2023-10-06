@@ -8,6 +8,9 @@ using MudBlazor;
 using MapMaven.Core.Services.Interfaces;
 using MapMaven.Core.Services;
 using System.Reactive.Linq;
+using MapMaven.Components.Shared;
+using Microsoft.Maui.ApplicationModel;
+using MapMaven.Components.Playlists;
 
 namespace MapMaven.Components.Maps
 {
@@ -21,6 +24,12 @@ namespace MapMaven.Components.Maps
 
         [Inject]
         protected IBeatSaberDataService BeatSaberDataService { get; set; }
+
+        [Inject]
+        protected IDialogService DialogService { get; set; }
+
+        [Inject]
+        ISnackbar Snackbar { get; set; }
 
         [Inject]
         protected DynamicPlaylistArrangementService DynamicPlaylistArrangementService { get; set; }
@@ -38,9 +47,6 @@ namespace MapMaven.Components.Maps
 
         [Parameter]
         public RenderFragment<MapRowContext>? RowContent { get; set; }
-
-        [Parameter]
-        public bool Selectable { get; set; } = false;
 
         [Parameter]
         public string Width { get; set; } = "100%";
@@ -61,6 +67,7 @@ namespace MapMaven.Components.Maps
         private List<string> MapHashFilter = null;
 
         private HashSet<Map> SelectedMaps = new HashSet<Map>();
+        private bool Selectable = false;
 
         private string SearchString = "";
 
@@ -85,6 +92,7 @@ namespace MapMaven.Components.Maps
             });
             SubscribeAndBind(MapService.MapFilters, mapFilters => MapFilters = mapFilters);
             SubscribeAndBind(MapService.SelectedMaps, selectedMaps => SelectedMaps = selectedMaps);
+            SubscribeAndBind(MapService.Selectable, selectable => Selectable = selectable);
         }
 
         protected override void OnParametersSet()
@@ -150,10 +158,75 @@ namespace MapMaven.Components.Maps
         private void LocationChanged(object sender, LocationChangedEventArgs e)
         {
             MapService.ClearMapFilters();
-            MapService.ClearSelectedMaps();
+            MapService.CancelSelection();
         }
 
         public IEnumerable<Map> GetFilteredMaps() => TableRef.FilteredItems;
+
+        void CancelSelection() => MapService.CancelSelection();
+
+        async Task DeleteSelectedMaps()
+        {
+            var dialog = DialogService.Show<ConfirmationDialog>(null, new DialogParameters
+            {
+                { nameof(ConfirmationDialog.DialogText), $"Are you sure you want to delete the selected ({SelectedMaps.Count}) maps from the game? This cannot be undone." },
+                { nameof(ConfirmationDialog.ConfirmText), $"Delete" }
+            });
+
+            var result = await dialog.Result;
+
+            if (result.Cancelled)
+                return;
+
+            await BeatSaberDataService.DeleteMaps(SelectedMaps.Select(m => m.Hash));
+
+            MapService.CancelSelection();
+
+            Snackbar.Add($"Succesfully deleted selected maps", Severity.Normal, config => config.Icon = Icons.Filled.Check);
+        }
+
+        async Task AddSelectedMapsToPlaylist()
+        {
+            var dialog = await DialogService.ShowAsync<PlaylistSelector>($"Add selected maps ({SelectedMaps.Count}) to playlist", new DialogOptions
+            {
+                MaxWidth = MaxWidth.ExtraSmall,
+                FullWidth = true,
+                CloseButton = true
+            });
+
+            var result = await dialog.Result;
+
+            if (!result.Cancelled)
+            {
+                var playlist = (Playlist)result.Data;
+
+                await PlaylistService.AddMapsToPlaylist(SelectedMaps, playlist);
+
+                Snackbar.Add($"Added selected maps to \"{playlist.Title}\"", Severity.Normal, config => config.Icon = Icons.Filled.Check);
+            }
+        }
+
+        async Task RemoveSelectedMapsFromSelectedPlaylist()
+        {
+            var dialog = DialogService.Show<ConfirmationDialog>(null, new DialogParameters
+            {
+                { nameof(ConfirmationDialog.DialogText), $"Are you sure you want to remove the selected ({SelectedMaps.Count}) maps from the \"{SelectedPlaylist.Title}\" playlist?" },
+                { nameof(ConfirmationDialog.ConfirmText), $"Remove" }
+            });
+
+            var result = await dialog.Result;
+
+            if (result.Cancelled)
+                return;
+
+            await PlaylistService.RemoveMapsFromPlaylist(SelectedMaps, SelectedPlaylist);
+
+            MapService.CancelSelection();
+
+            Snackbar.Add($"Removed selected maps from \"{SelectedPlaylist.Title}\"", Severity.Normal, config => config.Icon = Icons.Filled.Check);
+        }
+
+        public void ToggleSelectable() => MapService.SetSelectable(!Selectable);
 
         public void Dispose()
         {

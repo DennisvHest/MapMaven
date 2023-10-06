@@ -42,6 +42,13 @@
     object-fit: cover;
 }
 
+.bulk-actions-toolbar {
+    position: absolute;
+    bottom: 100px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
 /* MudBlazor overrides */
 .mud-main-content {
     height: 100vh;
@@ -74,6 +81,7 @@ a:hover {
 
 .mud-table-toolbar {
     background-color: var(--mud-palette-surface);
+    height: initial;
 }
 
 .mud-primary-text {
@@ -124,4 +132,8 @@ a:hover {
 
 .small-input .mud-input-root {
     padding: 8px !important;
+}
+
+.mud-menu.full-width > button {
+    width: 100%;
 }

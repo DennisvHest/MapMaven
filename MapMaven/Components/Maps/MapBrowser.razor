@@ -10,32 +10,43 @@
           Loading="LoadingMapInfo"
           QuickFilter="Filter"
           FixedHeader="true"
-          MultiSelection="Selectable"
+          MultiSelection="true"
           SortMode="SortMode.Single"
           SelectedItems="SelectedMaps"
+          SelectOnRowClick="false"
           SelectedItemsChanged="OnSelectedItemsChanged"
           RowsPerPage="25"
           Style="@Style"
-          RowStyle="@(Selectable ? "height: 88px; pointer-events: none;" : "height: 88px;")">
+          RowStyle="height: 88px;">
     <ToolBarContent>
-        @if (SelectedPlaylist != null)
-        {
-            <MudChip Variant="Variant.Outlined">@SelectedPlaylist.Title</MudChip>
-        }
-        @foreach (var mapFilter in MapFilters.Where(f => f.Visible))
-        {
-            <MudChip OnClose="() => RemoveMapFilter(mapFilter)">@mapFilter.Name</MudChip>
-        }
-        <MudTextField @bind-Value="SearchString"
-                      DebounceInterval="300"
-                      Immediate="true"
-                      Placeholder="Search map name, song author, map author..."
-                      Variant="Variant.Outlined"
-                      Adornment="Adornment.Start"
-                      AdornmentIcon="@Icons.Material.Filled.Search"
-                      IconSize="Size.Small"
-                      Class="mt-0">
-        </MudTextField>
+        <MudGrid>
+            <MudItem xs="12" Class="d-flex align-center">
+                @if (SelectedPlaylist != null)
+                {
+                    <MudChip Variant="Variant.Outlined">@SelectedPlaylist.Title</MudChip>
+                }
+                @foreach (var mapFilter in MapFilters.Where(f => f.Visible))
+                {
+                    <MudChip OnClose="() => RemoveMapFilter(mapFilter)">@mapFilter.Name</MudChip>
+                }
+                <MudTextField @bind-Value="SearchString"
+                              DebounceInterval="300"
+                              Immediate="true"
+                              Placeholder="Search map name, song author, map author..."
+                              Variant="Variant.Outlined"
+                              Adornment="Adornment.Start"
+                              AdornmentIcon="@Icons.Material.Filled.Search"
+                              IconSize="Size.Small"
+                              Class="mt-0">
+                </MudTextField>
+                @if (!RankedMaps)
+                {
+                    <MudTooltip Text="Bulk&nbsp;edit">
+                        <MudIconButton Icon="@(Selectable ? Icons.Material.Filled.LibraryAddCheck : Icons.Material.Outlined.LibraryAddCheck)" Class="mx-5" OnClick="ToggleSelectable" />
+                    </MudTooltip>
+                }
+            </MudItem>
+        </MudGrid>
     </ToolBarContent>
     <LoadingContent>
         @if (InitialMapLoad)
@@ -50,7 +61,7 @@
         }
     </LoadingContent>
     <Columns>
-        @if (RowContent != null)
+        @if (RowContent is not null)
         {
             @RowContent(new Core.Models.MapRowContext
             {
@@ -60,6 +71,33 @@
         }
     </Columns>
     <PagerContent>
+        @if (!RankedMaps && Selectable)
+        {
+            <MudPaper Elevation="25" Class="bulk-actions-toolbar">
+                <MudToolBar Class="pr-0 border-l-2">
+                    <MudChip Variant="Variant.Outlined">@SelectedMaps.Count maps</MudChip>
+                    <MudButton Variant="Variant.Text" Class="px-5 full-height" StartIcon="@Icons.Material.Filled.Close" OnClick="CancelSelection">
+                        Cancel selection
+                    </MudButton>
+                    <MudDivider Vertical="true" FlexItem="true" />
+                    <MudButton Variant="Variant.Text" DisableElevation="true" Class="px-5 full-height" StartIcon="@Icons.Material.Filled.PlaylistAdd" Disabled="!SelectedMaps.Any()" OnClick="AddSelectedMapsToPlaylist">
+                        Add to playlist
+                    </MudButton>
+                    @if (SelectedPlaylist is not null && !SelectedPlaylist.IsDynamicPlaylist)
+                    {
+                        <MudButton Variant="Variant.Text" DisableElevation="true" Class="px-5 full-height" StartIcon="@Icons.Material.Filled.PlaylistRemove" Disabled="!SelectedMaps.Any()" OnClick="RemoveSelectedMapsFromSelectedPlaylist">
+                            Remove from playlist
+                        </MudButton>
+                    }
+                    @if (SelectedPlaylist is null || !SelectedPlaylist.IsDynamicPlaylist)
+                    {
+                        <MudButton Variant="Variant.Text" Color="Color.Secondary" Class="px-5 full-height" DisableElevation="true" StartIcon="@Icons.Material.Filled.Delete" Disabled="!SelectedMaps.Any()" OnClick="DeleteSelectedMaps">
+                            Delete
+                        </MudButton>
+                    }
+                </MudToolBar>
+            </MudPaper>
+        }
         <MudDataGridPager T="Map" />
     </PagerContent>
 </MudDataGrid>
