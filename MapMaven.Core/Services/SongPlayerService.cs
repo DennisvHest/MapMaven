@@ -84,13 +84,21 @@ namespace MapMaven.Services
             {
                 if (currentlyPlayingMap == null)
                 {
-                    return Observable.Empty<double>();
+                    return Observable.Return(0D);
                 }
                 else
                 {
                     return Observable
                         .Interval(TimeSpan.FromMilliseconds(200))
-                        .Select(x => (_audioFile.CurrentTime - currentlyPlayingMap.PreviewStartTime) / (currentlyPlayingMap.PreviewEndTime - currentlyPlayingMap.PreviewStartTime));
+                        .Select(_ =>
+                        {
+                            var progress = (_audioFile.CurrentTime - currentlyPlayingMap.PreviewStartTime) / (currentlyPlayingMap.PreviewEndTime - currentlyPlayingMap.PreviewStartTime);
+
+                            if (progress < 0)
+                                return 0;
+
+                            return progress;
+                        }).StartWith(0D);
                 }
             }).Switch();
         }
