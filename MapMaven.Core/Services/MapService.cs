@@ -23,6 +23,7 @@ namespace MapMaven.Services
         private readonly IBeatSaberDataService _beatSaberDataService;
         private readonly IScoreSaberService _scoreSaberService;
         private readonly BeatSaberFileService _fileService;
+        private readonly SongPlayerService _songPlayerService;
 
         private readonly BeatSaver _beatSaver;
 
@@ -52,10 +53,12 @@ namespace MapMaven.Services
             IScoreSaberService scoreSaberService,
             BeatSaver beatSaver,
             BeatSaberFileService fileService,
-            IServiceProvider serviceProvider)
+            IServiceProvider serviceProvider,
+            SongPlayerService songPlayerService)
         {
             _beatSaberDataService = beatSaberDataService;
             _scoreSaberService = scoreSaberService;
+            _songPlayerService = songPlayerService;
             _fileService = fileService;
             _beatSaver = beatSaver;
             _serviceProvider = serviceProvider;
@@ -280,6 +283,18 @@ namespace MapMaven.Services
             await dataStore.SaveChangesAsync();
 
             await LoadHiddenMaps();
+        }
+
+        public async Task DeleteMap(string mapHash) => await DeleteMaps(new string[] { mapHash });
+
+        public async Task DeleteMaps(IEnumerable<string> mapHashes)
+        {
+            foreach (var mapHash in mapHashes)
+            {
+                _songPlayerService.StopIfPlaying(mapHash);
+            }
+
+            await _beatSaberDataService.DeleteMaps(mapHashes);
         }
 
         private async Task<Core.Models.Data.Player> AddPlayerIfNotExists(IDataStore dataStore)

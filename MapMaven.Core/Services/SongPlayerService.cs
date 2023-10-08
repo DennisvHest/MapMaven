@@ -31,16 +31,14 @@ namespace MapMaven.Services
             if (_outputDevice == null)
                 InitializeOutputDevice();
 
-            _outputDevice.Stop();
+            StopSongPreview();
 
             if (map.Hash == _currentlyPlayingMap.Value?.Hash)
-            {
-                _currentlyPlayingMap.OnNext(null);
                 return;
-            }
 
             var songPath = _beatSaberDataService.GetMapSongPath(map.Hash);
 
+            _audioFile?.Dispose(); // Dispose audio file from other map
             _audioFile = new VorbisWaveReader(songPath);
 
             _audioFile.CurrentTime = map.PreviewStartTime;
@@ -56,14 +54,27 @@ namespace MapMaven.Services
             _currentlyPlayingMap.OnNext(map);
         }
 
+        public void StopIfPlaying(string hash)
+        {
+            if (hash != _currentlyPlayingMap.Value?.Hash)
+                return;
+
+            StopSongPreview();
+            CleanupAudioOutput();
+        }
+
+        public void StopSongPreview()
+        {
+            _outputDevice?.Stop();
+        }
+
         private void InitializeOutputDevice()
         {
             _outputDevice = new();
-
             _outputDevice.PlaybackStopped += (object sender, StoppedEventArgs args) =>
             {
-                if (_outputDevice.PlaybackState == PlaybackState.Stopped)
-                    _currentlyPlayingMap.OnNext(null);
+                if (_outputDevice?.PlaybackState == PlaybackState.Stopped)
+                    CleanupAudioOutput();
             };
         }
 
@@ -73,15 +84,32 @@ namespace MapMaven.Services
             {
                 if (currentlyPlayingMap == null)
                 {
-                    return Observable.Empty<double>();
+                    return Observable.Return(0D);
                 }
                 else
                 {
                     return Observable
                         .Interval(TimeSpan.FromMilliseconds(200))
-                        .Select(x => (_audioFile.CurrentTime - currentlyPlayingMap.PreviewStartTime) / (currentlyPlayingMap.PreviewEndTime - currentlyPlayingMap.PreviewStartTime));
+                        .Select(_ =>
+                        {
+                            var progress = (_audioFile.CurrentTime - currentlyPlayingMap.PreviewStartTime) / (currentlyPlayingMap.PreviewEndTime - currentlyPlayingMap.PreviewStartTime);
+
+                            if (progress < 0)
+                                return 0;
+
+                            return progress;
+                        }).StartWith(0D);
                 }
             }).Switch();
+        }
+
+        private void CleanupAudioOutput()
+        {
+            _currentlyPlayingMap.OnNext(null);
+            _audioFile?.Dispose();
+            _audioFile = null;
+            _outputDevice?.Dispose();
+            _outputDevice = null;
         }
     }
 }

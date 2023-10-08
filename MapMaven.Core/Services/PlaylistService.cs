@@ -229,7 +229,7 @@ namespace MapMaven.Services
                 _selectedPlaylistFileName.OnNext(null); // Playlist should not be selected if deleted.
 
             if (deleteMaps)
-                await _beatSaberDataService.DeleteMaps(playlist.Maps.Select(m => m.Hash));
+                await _mapService.DeleteMaps(playlist.Maps.Select(m => m.Hash));
 
             await _beatSaberDataService.LoadAllPlaylists();
         }
