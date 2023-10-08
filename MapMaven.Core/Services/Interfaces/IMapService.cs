@@ -18,6 +18,8 @@ namespace MapMaven.Core.Services.Interfaces
         void CancelSelection();
         void ClearMapFilters();
         void ClearSelectedMaps();
+        Task DeleteMap(string mapHash);
+        Task DeleteMaps(IEnumerable<string> mapHashes);
         Task DownloadMap(Map map, bool force = false, IProgress<double>? progress = null, bool loadMapInfo = true, CancellationToken cancellationToken = default);
         Task<Map> GetMapDetails(Map map);
         Task HideUnhideMap(Map map);

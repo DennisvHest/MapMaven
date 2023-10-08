@@ -178,7 +178,7 @@ namespace MapMaven.Components.Maps
             if (result.Cancelled)
                 return;
 
-            await BeatSaberDataService.DeleteMaps(SelectedMaps.Select(m => m.Hash));
+            await MapService.DeleteMaps(SelectedMaps.Select(m => m.Hash));
 
             MapService.CancelSelection();
 

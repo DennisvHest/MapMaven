@@ -15,8 +15,6 @@ namespace MapMaven.Components.Maps
     public partial class MapBrowserRow : IDisposable
     {
         [Inject]
-        protected IBeatSaberDataService BeatSaberDataService { get; set; }
-        [Inject]
         protected IPlaylistService PlaylistService { get; set; }
         [Inject]
         protected IScoreSaberService ScoreSaberService { get; set; }
@@ -140,7 +138,7 @@ namespace MapMaven.Components.Maps
             if (result.Cancelled)
                 return;
 
-            await BeatSaberDataService.DeleteMap(map.Hash);
+            await MapService.DeleteMap(map.Hash);
         }
 
         public void Dispose()
