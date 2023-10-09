@@ -52,88 +52,88 @@
         @context.Item.SongDuration.ToString("mm':'ss")
     </CellTemplate>
 </SortableTemplateColumn>
-@if (!string.IsNullOrEmpty(PlayerId))
-{
-    <SortableTemplateColumn
-        T="Map"
-        TProperty="double"
-        Property="m => m.AllPlayerScores.Any() ? m.AllPlayerScores.Max(x => x.AccuracyWithMods()) : 0"
-        SortBy="m => m.AllPlayerScores.Any() ? m.AllPlayerScores.Max(x => x.AccuracyWithMods()) : 0"
-        Title="%"
-        CellStyle="max-width: 150px; min-width: 150px;">
-        <CellTemplate>
-            @foreach (var playerScore in context.Item.AllPlayerScores)
+<SortableTemplateColumn
+    T="Map"
+    TProperty="double"
+    Property="m => m.AllPlayerScores.Any() ? m.AllPlayerScores.Max(x => x.AccuracyWithMods()) : 0"
+    SortBy="m => m.AllPlayerScores.Any() ? m.AllPlayerScores.Max(x => x.AccuracyWithMods()) : 0"
+    Title="%"
+    CellStyle="max-width: 150px; min-width: 150px;"
+    Visible="!string.IsNullOrEmpty(PlayerId)">
+    <CellTemplate>
+        @foreach (var playerScore in context.Item.AllPlayerScores)
+        {
+            var chipStyle = $"border: 1px solid {DifficultyDisplayUtils.GetColor(playerScore.Leaderboard?.Difficulty?.DifficultyName)}";
+            <MudChip Size="Size.Small" Variant="Variant.Outlined" Style="@chipStyle">
+                @DifficultyDisplayUtils.GetShortName(playerScore.Leaderboard?.Difficulty?.DifficultyName) | @playerScore.AccuracyWithMods().ToString("#0.##")%
+            </MudChip>
+        }
+    </CellTemplate>
+</SortableTemplateColumn>
+<SortableTemplateColumn
+    T="Map"
+    TProperty="double"
+    Property="m => m.AllPlayerScores.Any() ? m.AllPlayerScores.Max(x => x.Score.Pp) : 0"
+    SortBy="m => m.AllPlayerScores.Any() ? m.AllPlayerScores.Max(x => x.Score.Pp) : 0"
+    Title="pp"
+    CellStyle="max-width: 150px; min-width: 150px;"
+    Visible="!string.IsNullOrEmpty(PlayerId)">
+    <CellTemplate>
+        @foreach (var playerScore in context.Item.AllPlayerScores)
+        {
+            var chipStyle = $"border: 1px solid {DifficultyDisplayUtils.GetColor(playerScore.Leaderboard?.Difficulty?.DifficultyName)}";
+            <MudChip Size="Size.Small" Variant="Variant.Outlined" Style="@chipStyle">
+                @DifficultyDisplayUtils.GetShortName(playerScore.Leaderboard?.Difficulty?.DifficultyName) | @playerScore.Score.Pp.ToString("#0.##") pp
+            </MudChip>
+        }
+    </CellTemplate>
+</SortableTemplateColumn>
+<SortableTemplateColumn
+    T="Map"
+    TProperty="double"
+    Property="m => m.ScoreEstimates.Any() ? m.ScoreEstimates.Max(x => x.PPIncrease) : 0"
+    SortBy="m => m.ScoreEstimates.Any() ? m.ScoreEstimates.Max(x => x.PPIncrease) : 0"
+    Title="Score estimates"
+    CellStyle="max-width: 230px; min-width: 230px;"
+    Visible="!string.IsNullOrEmpty(PlayerId)">
+    <HeaderTemplate>
+        <div class="d-flex">
+            <MudIcon Icon="@Icons.Filled.KeyboardDoubleArrowUp"></MudIcon>pp
+        </div>
+    </HeaderTemplate>
+    <CellTemplate>
+        @if (context.Item.ScoreEstimates != null)
+        {
+            @foreach (var scoreEstimate in context.Item.ScoreEstimates.Where(s => s.PPIncrease >= 0.005))
             {
-                var chipStyle = $"border: 1px solid {DifficultyDisplayUtils.GetColor(playerScore.Leaderboard?.Difficulty?.DifficultyName)}";
+                var chipStyle = $"border: 1px solid {DifficultyDisplayUtils.GetColor(scoreEstimate.Difficulty)}";
                 <MudChip Size="Size.Small" Variant="Variant.Outlined" Style="@chipStyle">
-                    @DifficultyDisplayUtils.GetShortName(playerScore.Leaderboard?.Difficulty?.DifficultyName) | @playerScore.AccuracyWithMods().ToString("#0.##")%
+                    @DifficultyDisplayUtils.GetShortName(scoreEstimate.Difficulty) |
+                    @scoreEstimate.Stars <MudIcon Icon="@Icons.Filled.Star" Size="Size.Small"></MudIcon> |
+                    @scoreEstimate.Accuracy.ToString("#0.##") % |
+                    +@scoreEstimate.PPIncrease.ToString("#0.##") pp
                 </MudChip>
             }
-        </CellTemplate>
-    </SortableTemplateColumn>
-    <SortableTemplateColumn
-        T="Map"
-        TProperty="double"
-        Property="m => m.AllPlayerScores.Any() ? m.AllPlayerScores.Max(x => x.Score.Pp) : 0"
-        SortBy="m => m.AllPlayerScores.Any() ? m.AllPlayerScores.Max(x => x.Score.Pp) : 0"
-        Title="pp"
-        CellStyle="max-width: 150px; min-width: 150px;">
-        <CellTemplate>
-            @foreach (var playerScore in context.Item.AllPlayerScores)
-            {
-                var chipStyle = $"border: 1px solid {DifficultyDisplayUtils.GetColor(playerScore.Leaderboard?.Difficulty?.DifficultyName)}";
-                <MudChip Size="Size.Small" Variant="Variant.Outlined" Style="@chipStyle">
-                    @DifficultyDisplayUtils.GetShortName(playerScore.Leaderboard?.Difficulty?.DifficultyName) | @playerScore.Score.Pp.ToString("#0.##") pp
+        }
+    </CellTemplate>
+</SortableTemplateColumn>
+<SortableTemplateColumn T="Map" TProperty="bool" Property="m => m.HighestPlayerScore.Score.HasReplay" SortBy="m => m.HighestPlayerScore?.Score?.HasReplay" Visible="!string.IsNullOrEmpty(PlayerId)">
+    <HeaderTemplate>
+        <img src="images/replay-icon.png" style="width: 24px; vertical-align: middle;" />
+    </HeaderTemplate>
+    <CellTemplate>
+        @foreach (var playerScore in context.Item.AllPlayerScores.Where(s => s.Score.HasReplay))
+        {
+            var chipStyle = $"cursor: pointer; border: 1px solid {DifficultyDisplayUtils.GetColor(playerScore.Leaderboard?.Difficulty?.DifficultyName)}";
+            <MudButton Class="replay-button pa-0" OnClick="() => OpenReplay(context.Item, playerScore)" Style="min-width: 0; border-radius: 100%;">
+                <MudChip Size="Size.Small" Variant="Variant.Text" Style="@chipStyle">
+                    @DifficultyDisplayUtils.GetShortName(playerScore.Leaderboard?.Difficulty?.DifficultyName)
+                    <img src="images/replay-icon.png" class="ml-1" style="width: 18px" />
                 </MudChip>
-            }
-        </CellTemplate>
-    </SortableTemplateColumn>
-    <SortableTemplateColumn
-        T="Map"
-        TProperty="double"
-        Property="m => m.ScoreEstimates.Any() ? m.ScoreEstimates.Max(x => x.PPIncrease) : 0"
-        SortBy="m => m.ScoreEstimates.Any() ? m.ScoreEstimates.Max(x => x.PPIncrease) : 0"
-        Title="Score estimates"
-        CellStyle="max-width: 230px; min-width: 230px;">
-        <HeaderTemplate>
-            <div class="d-flex">
-                <MudIcon Icon="@Icons.Filled.KeyboardDoubleArrowUp"></MudIcon>pp
-            </div>
-        </HeaderTemplate>
-        <CellTemplate>
-            @if (context.Item.ScoreEstimates != null)
-            {
-                @foreach (var scoreEstimate in context.Item.ScoreEstimates.Where(s => s.PPIncrease >= 0.005))
-                {
-                    var chipStyle = $"border: 1px solid {DifficultyDisplayUtils.GetColor(scoreEstimate.Difficulty)}";
-                    <MudChip Size="Size.Small" Variant="Variant.Outlined" Style="@chipStyle">
-                        @DifficultyDisplayUtils.GetShortName(scoreEstimate.Difficulty) |
-                        @scoreEstimate.Stars <MudIcon Icon="@Icons.Filled.Star" Size="Size.Small"></MudIcon> |
-                        @scoreEstimate.Accuracy.ToString("#0.##") % |
-                        +@scoreEstimate.PPIncrease.ToString("#0.##") pp
-                    </MudChip>
-                }
-            }
-        </CellTemplate>
-    </SortableTemplateColumn>
-    <SortableTemplateColumn T="Map" TProperty="bool" Property="m => m.HighestPlayerScore.Score.HasReplay" SortBy="m => m.HighestPlayerScore?.Score?.HasReplay">
-        <HeaderTemplate>
-            <img src="images/replay-icon.png" style="width: 24px; vertical-align: middle;" />
-        </HeaderTemplate>
-        <CellTemplate>
-            @foreach (var playerScore in context.Item.AllPlayerScores.Where(s => s.Score.HasReplay))
-            {
-                var chipStyle = $"cursor: pointer; border: 1px solid {DifficultyDisplayUtils.GetColor(playerScore.Leaderboard?.Difficulty?.DifficultyName)}";
-                <MudButton Class="replay-button pa-0" OnClick="() => OpenReplay(context.Item, playerScore)" Style="min-width: 0; border-radius: 100%;">
-                    <MudChip Size="Size.Small" Variant="Variant.Text" Style="@chipStyle">
-                        @DifficultyDisplayUtils.GetShortName(playerScore.Leaderboard?.Difficulty?.DifficultyName)
-                        <img src="images/replay-icon.png" class="ml-1" style="width: 18px" />
-                    </MudChip>
-                </MudButton>
-            }
-        </CellTemplate>
-    </SortableTemplateColumn>
-}
+            </MudButton>
+        }
+    </CellTemplate>
+</SortableTemplateColumn>
 <TemplateColumn T="Map" Sortable="false" CellStyle="width: 100px">
     <CellTemplate>
         <div class="d-flex" style="min-width: 100px">
