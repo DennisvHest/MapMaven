@@ -32,9 +32,15 @@ namespace MapMaven.Components
         public string BeatSaberInstallLocation { get; set; }
         public string PlayerId { get; set; }
 
+        private string? OldBeatSaberInstallLocation { get; set; }
+
         protected override void OnInitialized()
         {
-            SubscribeAndBind(BeatSaberToolFileService.BeatSaberInstallLocationObservable, installLocation => BeatSaberInstallLocation = installLocation);
+            SubscribeAndBind(BeatSaberToolFileService.BeatSaberInstallLocationObservable, installLocation =>
+            {
+                OldBeatSaberInstallLocation = installLocation;
+                BeatSaberInstallLocation = installLocation;
+            });
             SubscribeAndBind(ScoreSaberService.PlayerIdObservable, playerId => PlayerId = playerId);
         }
 
@@ -67,6 +73,12 @@ namespace MapMaven.Components
             }
 
             Close();
+
+            if (BeatSaberInstallLocation != OldBeatSaberInstallLocation)
+            {
+                await BeatSaberDataService.ClearMapCache();
+                InitialSetup = true;
+            }
 
             BeatSaberDataService.SetInitialMapLoad(InitialSetup);
 
