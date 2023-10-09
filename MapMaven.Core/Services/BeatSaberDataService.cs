@@ -452,6 +452,16 @@ namespace MapMaven.Services
                 .ExecuteDeleteAsync();
         }
 
+        public async Task ClearMapCache()
+        {
+            using var scope = _serviceProvider.CreateScope();
+
+            var dataStore = scope.ServiceProvider.GetService<IDataStore>();
+
+            await dataStore.Set<MapInfo>()
+                .ExecuteDeleteAsync();
+        }
+
         public async Task DeleteMap(string mapHash) => await DeleteMaps(new[] { mapHash });
 
         public async Task DeleteMaps(IEnumerable<string> mapHashes)
