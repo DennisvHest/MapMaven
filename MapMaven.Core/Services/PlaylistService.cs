@@ -130,8 +130,7 @@ namespace MapMaven.Services
             if (playlistMaps == null)
                 playlistMaps = Array.Empty<Map>();
 
-            var fileName = editPlaylistModel.FileName ?? editPlaylistModel.Name;
-            fileName = string.Join("_", fileName.Split(Path.GetInvalidFileNameChars()));
+            var fileName = GetUniqueFileName(editPlaylistModel);
 
             var addedPlaylist = _beatSaberDataService.PlaylistManager.CreatePlaylist(
                 fileName: fileName,
@@ -299,6 +298,23 @@ namespace MapMaven.Services
             _beatSaberDataService.PlaylistManager.SavePlaylist(playlistToModify);
 
             await _beatSaberDataService.LoadAllPlaylists();
+        }
+
+        private string GetUniqueFileName(EditPlaylistModel editPlaylistModel)
+        {
+            var fileName = editPlaylistModel.FileName ?? editPlaylistModel.Name;
+            fileName = string.Join("_", fileName.Split(Path.GetInvalidFileNameChars()));
+
+            string uniqueFileName = fileName;
+            int count = 1;
+
+            while (File.Exists(Path.Join(_beatSaverFileService.PlaylistsLocation, $"{uniqueFileName}.bplist")))
+            {
+                uniqueFileName = $"{fileName}({count})";
+                count++;
+            }
+
+            return uniqueFileName;
         }
     }
 }
