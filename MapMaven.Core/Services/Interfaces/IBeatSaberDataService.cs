@@ -26,6 +26,7 @@ namespace MapMaven.Core.Services.Interfaces
         Task LoadAllMapInfo();
         Task LoadAllPlaylists();
         Task LoadMapInfo(string id);
+        bool MapIsLoaded(string mapHash);
         void SetInitialMapLoad(bool initialMapLoad);
     }
 }

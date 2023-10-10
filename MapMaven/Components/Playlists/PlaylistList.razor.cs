@@ -175,7 +175,6 @@ namespace MapMaven.Components.Playlists
         protected async Task DeletePlaylist()
         {
             DeletingPlaylist = true;
-            await Task.Delay(1);
 
             try
             {
@@ -189,6 +188,13 @@ namespace MapMaven.Components.Playlists
             {
                 DeletingPlaylist = false;
             }
+        }
+
+        protected int GetLoadedMapsCount(Playlist playlist)
+        {
+            return playlist.Maps
+                .Where(m => BeatSaberDataService.MapIsLoaded(m.Hash))
+                .Count();
         }
     }
 }

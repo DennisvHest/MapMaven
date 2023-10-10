@@ -110,7 +110,7 @@
     </DialogContent>
     <DialogActions>
         @{
-            var deleteMapsLabel = $"Also delete all {PlaylistToDelete.Maps.Count()} maps from the game";
+            var deleteMapsLabel = $"Also delete all {GetLoadedMapsCount(PlaylistToDelete)} maps from the game";
         }
         <MudCheckBox @bind-Checked="DeleteMaps" Label="@deleteMapsLabel" Class="mr-10" Style="opacity: 0.8;"></MudCheckBox>
         <MudButton OnClick="ClosePlaylistDelete">Cancel</MudButton>
