@@ -491,6 +491,8 @@ namespace MapMaven.Services
             _mapInfo.OnNext(_mapInfo.Value);
         }
 
+        public bool MapIsLoaded(string mapHash) => _mapInfo.Value.ContainsKey(mapHash);
+
         /// <summary>
         /// Cleans the large object heap to remove playlist/map cover image data that is otherwise seldom cleaned by the garbage collector.
         /// </summary>
