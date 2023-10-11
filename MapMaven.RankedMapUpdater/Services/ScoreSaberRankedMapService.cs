@@ -28,7 +28,7 @@ namespace MapMaven.RankedMapUpdater.Services
             int totalMaps;
             double itemsPerPage;
             var page = 1;
-            _logger.LogInformation("Fetching ranked maps from ScoreSaber...");
+            _logger.LogInformation("Fetching ranked maps from BeatLeader...");
 
             var rateLimit = TimeLimiter.GetFromMaxCountByInterval(380, TimeSpan.FromMinutes(1));
 
