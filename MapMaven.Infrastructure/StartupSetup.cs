@@ -14,6 +14,7 @@ using Newtonsoft.Json;
 using System.IO.Abstractions;
 using MapMaven.Core.OpenAPI;
 using MapMaven.Core.ApiClients.BeatSaver;
+using MapMaven.Core.ApiClients.BeatLeader;
 
 namespace MapMaven.Infrastructure
 {
@@ -38,6 +39,7 @@ namespace MapMaven.Infrastructure
             services.AddScoped(_ => new BeatSaver("MapMaven", new Version(1, 0)));
 
             services.AddHttpClient<ScoreSaberApiClient>(client => client.BaseAddress = new Uri("https://scoresaber.com"));
+            services.AddHttpClient<BeatLeaderApiClient>(client => client.BaseAddress = new Uri("https://api.beatleader.xyz"));
             services.AddHttpClient<BeatSaverApiClient>(client => client.BaseAddress = new Uri("https://api.beatsaver.com"));
             services.AddHttpClient("MapMavenFiles", client => client.BaseAddress = new Uri("http://files.map-maven.com"));
 

@@ -12,7 +12,7 @@ using System.Text;
 
 namespace MapMaven.RankedMapUpdater.Services
 {
-    public class RankedMapService
+    public class RankedMapService : IRankedMapService
     {
         private readonly ILogger<RankedMapService> _logger;
 
