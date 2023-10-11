@@ -33,6 +33,22 @@ namespace MapMaven.Core.Models.Data.RankedMaps
             );
         }
 
+        public RankedMapInfoItem(BeatLeaderFullRankedMapInfoItem fullRankedMapInfoItem)
+        {
+            var mapVersion = MapBaseProperties(fullRankedMapInfoItem);
+
+            var leaderboard = fullRankedMapInfoItem.Leaderboards.First();
+
+            Name = leaderboard.Song.Name;
+            SongAuthorName = leaderboard.Song.Author;
+            MapAuthorName = leaderboard.Song.Mapper;
+
+            Difficulties = fullRankedMapInfoItem.Leaderboards.GroupJoin(
+                mapVersion.Diffs, l => l.Difficulty.DifficultyName, d => d.Difficulty.ToString(),
+                (leaderboard, difficulty) => new RankedMapDifficultyInfo(leaderboard, difficulty.FirstOrDefault(d => d.Characteristic == "Standard") ?? difficulty.First())
+            );
+        }
+
         private MapVersion MapBaseProperties(FullRankedMapInfoItem fullRankedMapInfoItem)
         {
             SongHash = fullRankedMapInfoItem.SongHash;

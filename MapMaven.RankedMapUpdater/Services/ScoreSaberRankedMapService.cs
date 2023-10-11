@@ -64,7 +64,7 @@ namespace MapMaven.RankedMapUpdater.Services
             while ((page - 1) * itemsPerPage < totalMaps);
 
             return rankedMaps
-                .GroupBy(m => m.SongHash)
+                .GroupBy(m => m.SongHash.ToUpper())
                 .Select(leaderboards => new ScoreSaberFullRankedMapInfoItem
                 {
                     SongHash = leaderboards.Key,
