@@ -1,4 +1,5 @@
-﻿using MapMaven.Models;
+﻿using MapMaven.Core.ApiClients.BeatSaver;
+using MapMaven.Models;
 
 namespace MapMaven.Core.Models.Data.RankedMaps
 {
@@ -16,25 +17,33 @@ namespace MapMaven.Core.Models.Data.RankedMaps
 
         public RankedMapInfoItem() { }
 
-        public RankedMapInfoItem(FullRankedMapInfoItem fullRankedMapInfoItem)
+        public RankedMapInfoItem(ScoreSaberFullRankedMapInfoItem fullRankedMapInfoItem)
         {
+            var mapVersion = MapBaseProperties(fullRankedMapInfoItem);
+
             var leaderboard = fullRankedMapInfoItem.Leaderboards.First();
 
-            SongHash = fullRankedMapInfoItem.SongHash;
-            BeatSaverId = fullRankedMapInfoItem.MapDetail.Id;
             Name = leaderboard.SongName;
             SongAuthorName = leaderboard.SongAuthorName;
             MapAuthorName = leaderboard.LevelAuthorName;
+
+            Difficulties = fullRankedMapInfoItem.Leaderboards.GroupJoin(
+                mapVersion.Diffs, l => l.Difficulty.DifficultyName, d => d.Difficulty.ToString(),
+                (leaderboard, difficulty) => new RankedMapDifficultyInfo(leaderboard, difficulty.First(d => d.Characteristic == "Standard"))
+            );
+        }
+
+        private MapVersion MapBaseProperties(FullRankedMapInfoItem fullRankedMapInfoItem)
+        {
+            SongHash = fullRankedMapInfoItem.SongHash;
+            BeatSaverId = fullRankedMapInfoItem.MapDetail.Id;
             Duration = TimeSpan.FromSeconds(fullRankedMapInfoItem.MapDetail.Metadata.Duration ?? 0);
 
             var mapVersion = fullRankedMapInfoItem.MapDetail.Versions.First(x => x.Hash.Equals(SongHash, StringComparison.OrdinalIgnoreCase));
 
             CoverImageUrl = mapVersion.CoverURL;
 
-            Difficulties = fullRankedMapInfoItem.Leaderboards.GroupJoin(
-                mapVersion.Diffs, l => l.Difficulty.DifficultyName, d => d.Difficulty.ToString(),
-                (leaderboard, difficulty) => new RankedMapDifficultyInfo(leaderboard, difficulty.First(d => d.Characteristic == "Standard"))
-            );
+            return mapVersion;
         }
 
         public Map ToMap()

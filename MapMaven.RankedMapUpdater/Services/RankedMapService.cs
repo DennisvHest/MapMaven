@@ -2,9 +2,7 @@
 using Azure.Storage.Blobs.Models;
 using ComposableAsync;
 using MapMaven.Core.ApiClients.BeatSaver;
-using MapMaven.Core.ApiClients.ScoreSaber;
 using MapMaven.Core.Models.Data.RankedMaps;
-using MapMaven.RankedMapUpdater.Models.ScoreSaber;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using RateLimiter;
@@ -12,30 +10,31 @@ using System.Text;
 
 namespace MapMaven.RankedMapUpdater.Services
 {
-    public class RankedMapService : IRankedMapService
+    public abstract class RankedMapService<TFullRankedMapInfoItem> : IRankedMapService where TFullRankedMapInfoItem : FullRankedMapInfoItem
     {
-        private readonly ILogger<RankedMapService> _logger;
+        protected readonly ILogger<RankedMapService<TFullRankedMapInfoItem>> _logger;
 
-        private readonly ScoreSaberApiClient _scoreSaberApiClient;
-        private readonly BeatSaverApiClient _beatSaverApiClient;
+        protected readonly BeatSaverApiClient _beatSaverApiClient;
 
-        private readonly BlobContainerClient _mapMavenBlobContainerClient;
-        private readonly BlobClient _fullRankedMapsBlob;
-        private readonly BlobClient _rankedMapsBlob;
+        protected readonly BlobContainerClient _mapMavenBlobContainerClient;
+        protected readonly BlobClient _fullRankedMapsBlob;
+        protected readonly BlobClient _rankedMapsBlob;
 
-        private const string _leaderBoardProviderName = "scoresaber";
-        private const string _fullRankedMapsBlobFileName = "ranked-maps-full";
-        private const string _rankedMapsBlobFileName = "ranked-maps";
+        protected abstract string _leaderBoardProviderName { get; }
+        protected const string _fullRankedMapsBlobFileName = "ranked-maps-full";
+        protected const string _rankedMapsBlobFileName = "ranked-maps";
 
-        private const string _fullRankedMapsBlobPath = $"{_leaderBoardProviderName}/{_fullRankedMapsBlobFileName}.json";
-        private const string _rankedMapsBlobPath = $"{_leaderBoardProviderName}/{_rankedMapsBlobFileName}.json";
+        protected string _fullRankedMapsBlobPath;
+        protected string _rankedMapsBlobPath;
 
-        public RankedMapService(ScoreSaberApiClient scoreSaberApiClient, ILogger<RankedMapService> logger, BlobContainerClient mapMavenBlobContainerClient, BeatSaverApiClient beatSaverApiClient)
+        public RankedMapService(ILogger<RankedMapService<TFullRankedMapInfoItem>> logger, BeatSaverApiClient beatSaverApiClient, BlobContainerClient mapMavenBlobContainerClient)
         {
-            _scoreSaberApiClient = scoreSaberApiClient;
             _logger = logger;
-            _mapMavenBlobContainerClient = mapMavenBlobContainerClient;
             _beatSaverApiClient = beatSaverApiClient;
+            _mapMavenBlobContainerClient = mapMavenBlobContainerClient;
+
+            _fullRankedMapsBlobPath = $"{_leaderBoardProviderName}/{_fullRankedMapsBlobFileName}.json";
+            _rankedMapsBlobPath = $"{_leaderBoardProviderName}/{_rankedMapsBlobFileName}.json";
 
             _fullRankedMapsBlob = _mapMavenBlobContainerClient.GetBlobClient(_fullRankedMapsBlobPath);
             _rankedMapsBlob = _mapMavenBlobContainerClient.GetBlobClient(_rankedMapsBlobPath);
@@ -50,24 +49,16 @@ namespace MapMaven.RankedMapUpdater.Services
 
             var rankedMaps = await GetAllRankedMapsAsync(cancellationToken);
 
-            var rankedMapsBySongHash = rankedMaps.GroupBy(m => m.SongHash);
-
             // Join the existing ranked maps with the new ranked maps to preserve the map details
-            fullRankedMapInfo.RankedMaps = rankedMapsBySongHash.GroupJoin(fullRankedMapInfo.RankedMaps, m => m.Key, m => m.SongHash, (updatedLeaderboardInfo, existingRankedMapInfo) =>
+            fullRankedMapInfo.RankedMaps = rankedMaps.GroupJoin(fullRankedMapInfo.RankedMaps, m => m.SongHash, m => m.SongHash, (updatedRankedMapInfo, existingRankedMapInfo) =>
             {
-                var rankedMapInfoItem = new FullRankedMapInfoItem
-                {
-                    SongHash = updatedLeaderboardInfo.Key,
-                    Leaderboards = updatedLeaderboardInfo
-                };
-
                 if (existingRankedMapInfo.Any())
                 {
                     var existingMap = existingRankedMapInfo.First();
-                    rankedMapInfoItem.MapDetail = existingMap.MapDetail;
+                    updatedRankedMapInfo.MapDetail = existingMap.MapDetail;
                 }
 
-                return rankedMapInfoItem;
+                return updatedRankedMapInfo;
             }).ToList();
 
             await UpdateMapDetailForExistingMapInfoAsync(lastRunDate, fullRankedMapInfo, cancellationToken);
@@ -91,7 +82,7 @@ namespace MapMaven.RankedMapUpdater.Services
             var rankedMapInfo = new RankedMapInfo
             {
                 RankedMaps = fullRankedMapInfo.RankedMaps
-                    .Select(m => new RankedMapInfoItem(m))
+                    .Select(MapRankedMapInfoItem)
                     .ToDictionary(m => m.SongHash)
             };
 
@@ -131,7 +122,7 @@ namespace MapMaven.RankedMapUpdater.Services
             }
         }
 
-        private async Task UpdateMapDetailForExistingMapInfoAsync(DateTime lastRunDate, FullRankedMapInfo rankedMapInfo, CancellationToken cancellationToken)
+        private async Task UpdateMapDetailForExistingMapInfoAsync(DateTime lastRunDate, FullRankedMapInfo<TFullRankedMapInfoItem> rankedMapInfo, CancellationToken cancellationToken)
         {
             var updatedMaps = await GetUpdatedMapsAsync(lastRunDate, cancellationToken);
 
@@ -170,7 +161,7 @@ namespace MapMaven.RankedMapUpdater.Services
             }
         }
 
-        private async Task<FullRankedMapInfo> GetExistingFullRankedMapInfoAsync()
+        private async Task<FullRankedMapInfo<TFullRankedMapInfoItem>> GetExistingFullRankedMapInfoAsync()
         {
             if (!await _fullRankedMapsBlob.ExistsAsync())
             {
@@ -184,54 +175,10 @@ namespace MapMaven.RankedMapUpdater.Services
 
             var serializer = JsonSerializer.CreateDefault();
 
-            return serializer.Deserialize<FullRankedMapInfo>(jsonReader);
+            return serializer.Deserialize<FullRankedMapInfo<TFullRankedMapInfoItem>>(jsonReader);
         }
 
-        private async Task<IEnumerable<LeaderboardInfo>> GetAllRankedMapsAsync(CancellationToken cancellationToken = default)
-        {
-            var rankedMaps = new List<LeaderboardInfo>();
-
-            int totalMaps;
-            double itemsPerPage;
-            var page = 1;
-
-            _logger.LogInformation("Fetching ranked maps from ScoreSaber...");
-
-            var rateLimit = TimeLimiter.GetFromMaxCountByInterval(380, TimeSpan.FromMinutes(1));
-
-            do
-            {
-                await rateLimit;
-
-                var rankedMapsCollection = await _scoreSaberApiClient.LeaderboardsAsync(
-                    search: string.Empty,
-                    verified: default,
-                    ranked: true,
-                    qualified: default,
-                    loved: default,
-                    minStar: default,
-                    maxStar: default,
-                    category: default,
-                    sort: LeaderboardSort.DateDescending,
-                    unique: default,
-                    page: page,
-                    withMetadata: true,
-                    cancellationToken: cancellationToken
-                );
-
-                itemsPerPage = rankedMapsCollection.Metadata.ItemsPerPage;
-                totalMaps = rankedMapsCollection.Metadata.Total;
-
-                rankedMaps.AddRange(rankedMapsCollection.Leaderboards);
-
-                _logger.LogInformation($"Fetched page {page} out of {Math.Ceiling(totalMaps / itemsPerPage)} ({rankedMaps.Count}/{totalMaps} maps).");
-
-                page++;
-            }
-            while ((page - 1) * itemsPerPage < totalMaps);
-
-            return rankedMaps;
-        }
+        
 
         private async Task<IEnumerable<MapDetail>> GetUpdatedMapsAsync(DateTime lastRunDate, CancellationToken cancellationToken = default)
         {
@@ -261,5 +208,9 @@ namespace MapMaven.RankedMapUpdater.Services
                 HttpHeaders = new() { ContentType = "application/json" }
             });
         }
+
+        protected abstract Task<IEnumerable<TFullRankedMapInfoItem>> GetAllRankedMapsAsync(CancellationToken cancellationToken = default);
+
+        protected abstract RankedMapInfoItem MapRankedMapInfoItem(FullRankedMapInfoItem fullRankedMapInfoItem);
     }
 }

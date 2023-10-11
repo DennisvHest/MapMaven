@@ -8,12 +8,12 @@ namespace MapMaven.RankedMapUpdater
     {
         private readonly ILogger _logger;
 
-        private readonly RankedMapService _rankedMapService;
+        private readonly IEnumerable<IRankedMapService> _rankedMapServices;
 
-        public RankedMapUpdater(ILoggerFactory loggerFactory, RankedMapService rankedMapService)
+        public RankedMapUpdater(ILoggerFactory loggerFactory, IEnumerable<IRankedMapService> rankedMapService)
         {
             _logger = loggerFactory.CreateLogger<RankedMapUpdater>();
-            _rankedMapService = rankedMapService;
+            _rankedMapServices = rankedMapService;
         }
 
         [Function("UpdateRankedMapsData")]
@@ -29,7 +29,7 @@ namespace MapMaven.RankedMapUpdater
 
             var lastRunDate = timerInfo.ScheduleStatus?.Last ?? DateTime.Now.AddDays(-1);
 
-            await _rankedMapService.UpdateRankedMapsAsync(lastRunDate, cancellationToken);
+            await Task.WhenAll(_rankedMapServices.Select(s => s.UpdateRankedMapsAsync(lastRunDate, cancellationToken)));
 
             _logger.LogInformation($"Next ranked maps update at: {timerInfo.ScheduleStatus?.Next}");
         }

@@ -34,7 +34,7 @@ var host = new HostBuilder()
 
         services.AddMapMaven();
 
-        services.AddScoped<RankedMapService>();
+        services.AddScoped<IRankedMapService, ScoreSaberRankedMapService>();
     })
     .Build();
 
