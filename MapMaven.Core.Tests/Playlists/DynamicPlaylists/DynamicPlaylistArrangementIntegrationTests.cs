@@ -41,6 +41,7 @@ public class DynamicPlaylistArrangementIntegrationTests
 
     private readonly BeatSaberDataService _beatSaberDataService;
     private readonly BeatSaberFileService _beatSaberFileService;
+    private readonly SongPlayerService _songPlayerService;
     private readonly MapService _mapService;
 
     private readonly DynamicPlaylistArrangementService _sut;
@@ -83,6 +84,8 @@ public class DynamicPlaylistArrangementIntegrationTests
 
         _beatSaberDataService = new(_hasherMock.Object, _beatSaberFileService, _serviceProviderMock.Object, _beatSaberDataServiceLoggerMock.Object, fileSystem);
 
+        _songPlayerService = new(_beatSaberDataService);
+
         _beatSaberDataServiceMock
             .Setup(x => x.LoadAllMapInfo())
             .Returns(() =>
@@ -107,7 +110,7 @@ public class DynamicPlaylistArrangementIntegrationTests
             .SetupGet(x => x.PlayerProfile)
             .Returns(() => Observable.Return(new ApiClients.ScoreSaber.Player { Id = "1" }));
 
-        _mapService = new(_beatSaberDataService, _scoreSaberServiceMock.Object, null!, _beatSaberFileService, _serviceProviderMock.Object);
+        _mapService = new(_beatSaberDataService, _scoreSaberServiceMock.Object, null!, _beatSaberFileService, _serviceProviderMock.Object, _songPlayerService);
 
         _mapServiceMock
             .SetupGet(x => x.CompleteMapData)
