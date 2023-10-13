@@ -1,5 +1,6 @@
 ﻿using MapMaven.Core.ApiClients.BeatLeader;
 using MapMaven.Core.ApiClients.ScoreSaber;
+using MapMaven.Core.Models.Data.BeatLeader;
 using MapMaven.Core.Utilities.Scoresaber;
 
 namespace MapMaven.Core.Models.Data.RankedMaps
@@ -18,12 +19,31 @@ namespace MapMaven.Core.Models.Data.RankedMaps
         public double NotesPerSecond { get; set; }
         public int MaxScore { get; set; }
 
+        public BeatLeaderRating? BeatLeaderRating { get; set; }
+
         public RankedMapDifficultyInfo() { }
 
         public RankedMapDifficultyInfo(LeaderboardInfo leaderboard, ApiClients.BeatSaver.MapDifficulty difficulty)
         {
             Stars = leaderboard.Stars;
             MaxPP = leaderboard.Stars * Scoresaber.PPPerStar;
+            Difficulty = leaderboard.Difficulty.DifficultyName;
+
+            SetBeatSaverMapDiffultyProperties(difficulty);
+        }
+
+        public RankedMapDifficultyInfo(LeaderboardInfoResponse leaderboard, ApiClients.BeatSaver.MapDifficulty difficulty)
+        {
+            var stars = (double)leaderboard.Difficulty.Stars;
+
+            Stars = stars;
+            MaxPP = stars * 34; // TODO: Replace this with BeatLeader specific PP calculation properties
+            BeatLeaderRating = new()
+            {
+                PassRating = leaderboard.Difficulty.PassRating.Value,
+                AccRating = leaderboard.Difficulty.AccRating.Value,
+                TechRating = leaderboard.Difficulty.TechRating.Value
+            };
             Difficulty = leaderboard.Difficulty.DifficultyName;
 
             SetBeatSaverMapDiffultyProperties(difficulty);
