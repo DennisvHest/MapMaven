@@ -2,6 +2,7 @@
 
 @using MapMaven.Core.ApiClients.ScoreSaber;
 @using MapMaven.Core.Services;
+@using MapMaven.Core.Services.Leaderboards;
 
 @if (Player != null)
 {
@@ -39,7 +40,7 @@
 
 @code {
     [Inject]
-    IScoreSaberService ScoreSaberService { get; set; }
+    ILeaderboardService ScoreSaberService { get; set; }
 
     [Inject]
     IMapService MapService { get; set; }

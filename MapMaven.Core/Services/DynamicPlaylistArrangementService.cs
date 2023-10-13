@@ -7,6 +7,7 @@ using System.Reactive.Linq;
 using System.Globalization;
 using Microsoft.Extensions.Logging;
 using System.Reactive.Subjects;
+using MapMaven.Core.Services.Leaderboards;
 
 namespace MapMaven.Core.Services
 {
@@ -15,7 +16,7 @@ namespace MapMaven.Core.Services
         private readonly IBeatSaberDataService _beatSaberDataService;
         private readonly IMapService _mapService;
         private readonly IPlaylistService _playlistService;
-        private readonly IScoreSaberService _scoreSaberService;
+        private readonly ILeaderboardService _scoreSaberService;
         private readonly IApplicationSettingService _applicationSettingService;
 
         private readonly ILogger<DynamicPlaylistArrangementService> _logger;
@@ -37,7 +38,7 @@ namespace MapMaven.Core.Services
             IBeatSaberDataService beatSaberDataService,
             IMapService mapService,
             IPlaylistService playlistService,
-            IScoreSaberService scoreSaberService,
+            ILeaderboardService scoreSaberService,
             IApplicationSettingService applicationSettingService,
             ILogger<DynamicPlaylistArrangementService> logger)
         {

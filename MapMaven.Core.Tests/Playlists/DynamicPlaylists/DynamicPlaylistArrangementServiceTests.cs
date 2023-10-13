@@ -5,6 +5,7 @@ using MapMaven.Core.Models.DynamicPlaylists;
 using MapMaven.Core.Models.DynamicPlaylists.MapInfo;
 using MapMaven.Core.Services;
 using MapMaven.Core.Services.Interfaces;
+using MapMaven.Core.Services.Leaderboards;
 using MapMaven.Core.Tests.Maps;
 using MapMaven.Models;
 using Microsoft.Extensions.Logging;
@@ -21,7 +22,7 @@ public class DynamicPlaylistArrangementServiceTests
     private readonly Mock<IApplicationSettingService> _applicationSettingServiceMock = new();
     private readonly Mock<IPlaylistService> _playlistServiceMock = new();
     private readonly Mock<IBeatSaberDataService> _beatSaberDataServiceMock = new();
-    private readonly Mock<IScoreSaberService> _scoreSaberServiceMock = new();
+    private readonly Mock<ILeaderboardService> _scoreSaberServiceMock = new();
     private readonly Mock<IMapService> _mapServiceMock = new();
     private readonly Mock<ILogger<DynamicPlaylistArrangementService>> _loggerMock = new();
 

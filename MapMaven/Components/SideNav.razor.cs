@@ -1,5 +1,6 @@
 using MapMaven.Core.Services;
 using MapMaven.Core.Services.Interfaces;
+using MapMaven.Core.Services.Leaderboards;
 using MapMaven.Services;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
@@ -12,7 +13,7 @@ namespace MapMaven.Components
         protected IPlaylistService PlaylistService { get; set; }
 
         [Inject]
-        IScoreSaberService ScoreSaberService { get; set; }
+        ILeaderboardService ScoreSaberService { get; set; }
 
         [Inject]
         public IDialogService DialogService { get; set; }

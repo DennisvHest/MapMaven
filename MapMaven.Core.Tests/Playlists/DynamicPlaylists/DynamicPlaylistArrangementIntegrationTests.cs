@@ -21,6 +21,7 @@ using MapMaven.Models.Data;
 using MockQueryable.Moq;
 using System;
 using MapMaven.Core.Models.Data.RankedMaps;
+using MapMaven.Core.Services.Leaderboards;
 
 namespace MapMaven.Core.Tests.Playlists.DynamicPlaylists;
 
@@ -29,7 +30,7 @@ public class DynamicPlaylistArrangementIntegrationTests
     private readonly Mock<IApplicationSettingService> _applicationSettingServiceMock = new();
     private readonly Mock<IPlaylistService> _playlistServiceMock = new();
     private readonly Mock<IBeatSaberDataService> _beatSaberDataServiceMock = new();
-    private readonly Mock<IScoreSaberService> _scoreSaberServiceMock = new();
+    private readonly Mock<ILeaderboardService> _scoreSaberServiceMock = new();
     private readonly Mock<IMapService> _mapServiceMock = new();
     private readonly Mock<ILogger<DynamicPlaylistArrangementService>> _dynamicPlaylistArrangementServiceLoggerMock = new();
     private readonly Mock<ILogger<BeatSaberDataService>> _beatSaberDataServiceLoggerMock = new();

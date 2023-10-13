@@ -1,6 +1,6 @@
 ﻿using MapMaven.Core.ApiClients.ScoreSaber;
+using MapMaven.Core.Models;
 using MapMaven.Core.Models.Data.RankedMaps;
-using MapMaven.Core.Models.Data.ScoreSaber;
 using MapMaven.Core.Services.Interfaces;
 using MapMaven.Core.Utilities.Scoresaber;
 using MapMaven_Core;
@@ -8,10 +8,12 @@ using System.Net.Http.Json;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 
-namespace MapMaven.Core.Services
+namespace MapMaven.Core.Services.Leaderboards
 {
-    public class ScoreSaberService : IScoreSaberService
+    public class ScoreSaberService : ILeaderboardProvider
     {
+        public string LeaderboardProviderName => LeaderboardProviders.ScoreSaber;
+
         private readonly ScoreSaberApiClient _scoreSaber;
         private readonly IApplicationSettingService _applicationSettingService;
         private readonly IApplicationEventService _applicationEventService;
@@ -109,7 +111,7 @@ namespace MapMaven.Core.Services
                 return Observable.Return(null as Player);
             });
 
-            var rankedMapScoreEstimates = Observable.CombineLatest(PlayerProfile, PlayerScores, RankedMaps, (player, playerScores, rankedMaps) =>
+            var rankedMapScoreEstimates = PlayerProfile.CombineLatest(PlayerScores, RankedMaps, (player, playerScores, rankedMaps) =>
             {
                 if (player == null)
                     return Enumerable.Empty<ScoreEstimate>();
@@ -202,7 +204,7 @@ namespace MapMaven.Core.Services
             return response?.RankedMaps ?? new();
         }
 
-        public string? GetScoreSaberReplayUrl(string mapId, PlayerScore score)
+        public string? GetReplayUrl(string mapId, PlayerScore score)
         {
             if (!score.Score.HasReplay)
                 return null;

@@ -9,6 +9,7 @@ using MapMaven.Components.Playlists;
 using MapMaven.Components.Shared;
 using MapMaven.Core.Services.Interfaces;
 using MapMaven.Core.ApiClients.ScoreSaber;
+using MapMaven.Core.Services.Leaderboards;
 
 namespace MapMaven.Components.Maps
 {
@@ -17,7 +18,7 @@ namespace MapMaven.Components.Maps
         [Inject]
         protected IPlaylistService PlaylistService { get; set; }
         [Inject]
-        protected IScoreSaberService ScoreSaberService { get; set; }
+        protected ILeaderboardService ScoreSaberService { get; set; }
         [Inject]
         protected IMapService MapService { get; set; }
 

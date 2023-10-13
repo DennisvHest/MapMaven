@@ -15,13 +15,14 @@ using Map = MapMaven.Models.Map;
 using MapMaven.Core.Services.Interfaces;
 using MapMaven.Core.Utilities;
 using MapMaven.Core.Models.Data.RankedMaps;
+using MapMaven.Core.Services.Leaderboards;
 
 namespace MapMaven.Services
 {
     public class MapService : IMapService
     {
         private readonly IBeatSaberDataService _beatSaberDataService;
-        private readonly IScoreSaberService _scoreSaberService;
+        private readonly ILeaderboardService _scoreSaberService;
         private readonly BeatSaberFileService _fileService;
         private readonly SongPlayerService _songPlayerService;
 
@@ -50,7 +51,7 @@ namespace MapMaven.Services
 
         public MapService(
             IBeatSaberDataService beatSaberDataService,
-            IScoreSaberService scoreSaberService,
+            ILeaderboardService scoreSaberService,
             BeatSaver beatSaver,
             BeatSaberFileService fileService,
             IServiceProvider serviceProvider,

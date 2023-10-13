@@ -15,6 +15,7 @@ using System.IO.Abstractions;
 using MapMaven.Core.OpenAPI;
 using MapMaven.Core.ApiClients.BeatSaver;
 using MapMaven.Core.ApiClients.BeatLeader;
+using MapMaven.Core.Services.Leaderboards;
 
 namespace MapMaven.Infrastructure
 {
@@ -57,7 +58,8 @@ namespace MapMaven.Infrastructure
             services.Add(new ServiceDescriptor(typeof(IMapService), typeof(MapService), serviceScope));
             services.Add(new ServiceDescriptor(typeof(SongPlayerService), typeof(SongPlayerService), serviceScope));
             services.Add(new ServiceDescriptor(typeof(IPlaylistService), typeof(PlaylistService), serviceScope));
-            services.Add(new ServiceDescriptor(typeof(IScoreSaberService), typeof(ScoreSaberService), serviceScope));
+            services.Add(new ServiceDescriptor(typeof(ILeaderboardService), typeof(LeaderboardService), serviceScope));
+            services.Add(new ServiceDescriptor(typeof(ILeaderboardProvider), typeof(ScoreSaberService), serviceScope));
             services.Add(new ServiceDescriptor(typeof(DynamicPlaylistArrangementService), typeof(DynamicPlaylistArrangementService), serviceScope));
             services.Add(new ServiceDescriptor(typeof(IApplicationSettingService), typeof(ApplicationSettingService), serviceScope));
             services.Add(new ServiceDescriptor(typeof(IApplicationEventService), typeof(ApplicationEventService), serviceScope));
