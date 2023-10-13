@@ -41,7 +41,14 @@ namespace MapMaven.Infrastructure
             services.AddHttpClient<ScoreSaberApiClient>(client => client.BaseAddress = new Uri("https://scoresaber.com"));
             services.AddHttpClient<BeatLeaderApiClient>(client => client.BaseAddress = new Uri("https://api.beatleader.xyz"));
             services.AddHttpClient<BeatSaverApiClient>(client => client.BaseAddress = new Uri("https://api.beatsaver.com"));
-            services.AddHttpClient("MapMavenFiles", client => client.BaseAddress = new Uri("http://files.map-maven.com"));
+            services.AddHttpClient("MapMavenFiles", client =>
+            {
+#if DEBUG
+                client.BaseAddress = new Uri("https://mapmavenstoragetest.z6.web.core.windows.net");
+#else
+                client.BaseAddress = new Uri("http://files.map-maven.com");
+#endif
+            });
 
             var serviceScope = useStatefulServices ? ServiceLifetime.Singleton : ServiceLifetime.Scoped;
 
