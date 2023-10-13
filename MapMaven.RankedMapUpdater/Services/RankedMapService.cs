@@ -42,6 +42,11 @@ namespace MapMaven.RankedMapUpdater.Services
 
         public async Task UpdateRankedMapsAsync(DateTime lastRunDate, CancellationToken cancellationToken = default)
         {
+            using var _ = _logger.BeginScope(new Dictionary<string, object>
+            {
+                { "LeaderBoardProviderName", _leaderBoardProviderName }
+            });
+
             await BackupRankedMapsAsync();
 
             var fullRankedMapInfo = await GetExistingFullRankedMapInfoAsync();
