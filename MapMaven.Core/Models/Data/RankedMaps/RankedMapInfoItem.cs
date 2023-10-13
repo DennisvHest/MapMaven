@@ -45,7 +45,7 @@ namespace MapMaven.Core.Models.Data.RankedMaps
 
             Difficulties = fullRankedMapInfoItem.Leaderboards.GroupJoin(
                 mapVersion.Diffs, l => l.Difficulty.DifficultyName, d => d.Difficulty.ToString(),
-                (leaderboard, difficulty) => new RankedMapDifficultyInfo(leaderboard, difficulty.FirstOrDefault(d => d.Characteristic == "Standard") ?? difficulty.First())
+                (leaderboard, difficulty) => new BeatLeaderRankedMapDifficultyInfo(leaderboard, difficulty.FirstOrDefault(d => d.Characteristic == "Standard") ?? difficulty.First())
             );
         }
 

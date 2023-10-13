@@ -29,18 +29,7 @@ namespace MapMaven.Core.Models.Data.RankedMaps
             SetBeatSaverMapDiffultyProperties(difficulty);
         }
 
-        public RankedMapDifficultyInfo(LeaderboardInfoResponse leaderboard, ApiClients.BeatSaver.MapDifficulty difficulty)
-        {
-            var stars = (double)leaderboard.Difficulty.Stars;
-
-            Stars = stars;
-            MaxPP = stars * 34; // TODO: Replace this with BeatLeader specific PP calculation properties
-            Difficulty = leaderboard.Difficulty.DifficultyName;
-
-            SetBeatSaverMapDiffultyProperties(difficulty);
-        }
-
-        private void SetBeatSaverMapDiffultyProperties(ApiClients.BeatSaver.MapDifficulty difficulty)
+        protected void SetBeatSaverMapDiffultyProperties(ApiClients.BeatSaver.MapDifficulty difficulty)
         {
             Label = difficulty.Label;
             Njs = difficulty.Njs ?? 0;

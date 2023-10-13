@@ -2,7 +2,6 @@
 using ComposableAsync;
 using MapMaven.Core.ApiClients.BeatLeader;
 using MapMaven.Core.ApiClients.BeatSaver;
-using MapMaven.Core.ApiClients.ScoreSaber;
 using MapMaven.Core.Models.Data.BeatLeader;
 using MapMaven.Core.Models.Data.RankedMaps;
 using Microsoft.Extensions.Logging;
@@ -29,9 +28,9 @@ namespace MapMaven.RankedMapUpdater.Services
             int totalMaps;
             double itemsPerPage;
             var page = 1;
-            _logger.LogInformation("Fetching ranked maps from ScoreSaber...");
+            _logger.LogInformation("Fetching ranked maps from BeatLeader...");
 
-            var rateLimit = TimeLimiter.GetFromMaxCountByInterval(380, TimeSpan.FromMinutes(1));
+            var rateLimit = TimeLimiter.GetFromMaxCountByInterval(18, TimeSpan.FromSeconds(10));
 
             do
             {
@@ -75,7 +74,7 @@ namespace MapMaven.RankedMapUpdater.Services
             while ((page - 1) * itemsPerPage < totalMaps);
 
             return rankedMaps
-                .GroupBy(m => m.Song.Hash)
+                .GroupBy(m => m.Song.Hash.ToUpper())
                 .Select(leaderboards => new BeatLeaderFullRankedMapInfoItem
                 {
                     SongHash = leaderboards.Key,
