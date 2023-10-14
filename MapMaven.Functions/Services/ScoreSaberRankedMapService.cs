@@ -3,11 +3,11 @@ using ComposableAsync;
 using MapMaven.Core.ApiClients.BeatSaver;
 using MapMaven.Core.ApiClients.ScoreSaber;
 using MapMaven.Core.Models.Data.RankedMaps;
-using MapMaven.RankedMapUpdater.Models.ScoreSaber;
+using MapMaven.Functions.Models.ScoreSaber;
 using Microsoft.Extensions.Logging;
 using RateLimiter;
 
-namespace MapMaven.RankedMapUpdater.Services
+namespace MapMaven.Functions.Services
 {
     public class ScoreSaberRankedMapService : RankedMapService<ScoreSaberFullRankedMapInfoItem>
     {

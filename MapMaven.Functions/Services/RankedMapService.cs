@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 using RateLimiter;
 using System.Text;
 
-namespace MapMaven.RankedMapUpdater.Services
+namespace MapMaven.Functions.Services
 {
     public abstract class RankedMapService<TFullRankedMapInfoItem> : IRankedMapService where TFullRankedMapInfoItem : FullRankedMapInfoItem
     {

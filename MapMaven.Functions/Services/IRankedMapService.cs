@@ -1,4 +1,4 @@
-﻿namespace MapMaven.RankedMapUpdater.Services
+﻿namespace MapMaven.Functions.Services
 {
     public interface IRankedMapService
     {

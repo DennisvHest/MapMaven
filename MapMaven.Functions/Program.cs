@@ -1,4 +1,4 @@
-using MapMaven.RankedMapUpdater.Services;
+using MapMaven.Functions.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MapMaven.Infrastructure;

@@ -1,4 +1,4 @@
-﻿namespace MapMaven.RankedMapUpdater.Models.ScoreSaber
+﻿namespace MapMaven.Functions.Models.ScoreSaber
 {
     public class LeaderboardSort
     {

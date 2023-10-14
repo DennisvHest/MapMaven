@@ -7,7 +7,7 @@ using MapMaven.Core.Models.Data.RankedMaps;
 using Microsoft.Extensions.Logging;
 using RateLimiter;
 
-namespace MapMaven.RankedMapUpdater.Services
+namespace MapMaven.Functions.Services
 {
     public class BeatLeaderRankedMapService : RankedMapService<BeatLeaderFullRankedMapInfoItem>
     {

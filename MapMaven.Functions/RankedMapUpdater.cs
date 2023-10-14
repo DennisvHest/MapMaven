@@ -1,8 +1,8 @@
-using MapMaven.RankedMapUpdater.Services;
+using MapMaven.Functions.Services;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 
-namespace MapMaven.RankedMapUpdater
+namespace MapMaven.Functions
 {
     public class RankedMapUpdater
     {
