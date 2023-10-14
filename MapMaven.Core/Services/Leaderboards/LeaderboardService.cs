@@ -16,16 +16,16 @@ namespace MapMaven.Core.Services.Leaderboards
 
         public Dictionary<string, ILeaderboardProvider> LeaderboardProviders { get; private set; }
 
-        private readonly BehaviorSubject<string?> _activeLeaderboardProviderName = new(Models.LeaderboardProviders.ScoreSaber);
+        private readonly BehaviorSubject<string?> _activeLeaderboardProviderName = new(Models.LeaderboardProviders.BeatLeader);
 
         public IObservable<string?> PlayerIdObservable { get; private set; }
-        public IObservable<Player?> PlayerProfile { get; private set; }
+        public IObservable<PlayerProfile?> PlayerProfile { get; private set; }
         public IObservable<IEnumerable<PlayerScore>> PlayerScores { get; private set; }
         public IObservable<IEnumerable<ScoreEstimate>> RankedMapScoreEstimates { get; private set; }
 
         public IObservable<Dictionary<string, RankedMapInfoItem>> RankedMaps { get; private set; }
 
-        public string? PlayerId { get; private set; }
+        public string? PlayerId => LeaderboardProviders[_activeLeaderboardProviderName.Value].PlayerId;
 
         private const string PlayerIdSettingKey = "PlayerId";
 
@@ -52,7 +52,7 @@ namespace MapMaven.Core.Services.Leaderboards
                 .Concat();
 
             PlayerProfile = activeLeaderboardProviderService
-                .Select(x => x?.PlayerProfile ?? Observable.Return(null as Player))
+                .Select(x => x?.PlayerProfile ?? Observable.Return(null as PlayerProfile))
                 .Concat();
 
             PlayerScores = activeLeaderboardProviderService

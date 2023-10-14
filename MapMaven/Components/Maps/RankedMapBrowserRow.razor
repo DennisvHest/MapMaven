@@ -21,7 +21,7 @@
 <TemplateColumn T="Map" Sortable="false" Title="Difficulty">
     <CellTemplate>
         @{
-            var difficulty = context.Item.ScoreEstimates.FirstOrDefault()?.Difficulty;
+            var difficulty = context.Item.Difficulty?.Difficulty;
             var chipStyle = $"border: 1px solid {DifficultyDisplayUtils.GetColor(difficulty)}";
         }
         <MudChip Size="Size.Small" Variant="Variant.Outlined" Style="@chipStyle">@difficulty</MudChip>
@@ -33,7 +33,7 @@
     </HeaderTemplate>
     <CellTemplate>
         <MudChip Size="Size.Small">
-            @context.Item.ScoreEstimates.FirstOrDefault()?.Stars <MudIcon Icon="@Icons.Filled.Star" Size="Size.Small"></MudIcon>
+            @context.Item.Difficulty?.Stars.ToString("0.##") <MudIcon Icon="@Icons.Filled.Star" Size="Size.Small"></MudIcon>
         </MudChip>
     </CellTemplate>
 </TemplateColumn>

@@ -35,4 +35,14 @@
         Reweighted,
         Unranked,
     }
+
+    [Flags]
+    public enum LeaderboardContexts
+    {
+        None = 0,
+        General = 1 << 1,
+        NoMods = 1 << 2,
+        NoPause = 1 << 3,
+        Golf = 1 << 4
+    }
 }

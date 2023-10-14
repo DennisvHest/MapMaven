@@ -22,6 +22,7 @@ using MockQueryable.Moq;
 using System;
 using MapMaven.Core.Models.Data.RankedMaps;
 using MapMaven.Core.Services.Leaderboards;
+using MapMaven.Core.Models;
 
 namespace MapMaven.Core.Tests.Playlists.DynamicPlaylists;
 
@@ -109,7 +110,7 @@ public class DynamicPlaylistArrangementIntegrationTests
 
         _scoreSaberServiceMock
             .SetupGet(x => x.PlayerProfile)
-            .Returns(() => Observable.Return(new ApiClients.ScoreSaber.Player { Id = "1" }));
+            .Returns(() => Observable.Return(new PlayerProfile { Id = "1" }));
 
         _mapService = new(_beatSaberDataService, _scoreSaberServiceMock.Object, null!, _beatSaberFileService, _serviceProviderMock.Object, _songPlayerService);
 

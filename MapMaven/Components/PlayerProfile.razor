@@ -7,9 +7,9 @@
 @if (Player != null)
 {
     <div class="d-flex pa-2 profile">
-        <img src="@Player.ProfilePicture" class="profile-background-image" />
+        <img src="@Player.ProfilePictureUrl" class="profile-background-image" />
         <a href="https://scoresaber.com/u/@Player.Id" class="d-flex align-center">
-            <MudAvatar Image="@Player.ProfilePicture" />
+            <MudAvatar Image="@Player.ProfilePictureUrl" />
         </a>
         <div class="pl-2 full-width">
             <a href="https://scoresaber.com/u/@Player.Id"><h3>@Player.Name</h3></a>
@@ -19,7 +19,7 @@
                     @Player.Rank
                 </span>
                 <span class="ml-4">
-                    <span class="fi fi-@Player.Country.ToLower() mr-1"></span>
+                    <span class="fi fi-@Player.CountryCode.ToLower() mr-1"></span>
                     @Player.CountryRank
                 </span>
             </div>
@@ -45,7 +45,7 @@
     [Inject]
     IMapService MapService { get; set; }
 
-    Player Player { get; set; } = null;
+    Core.Models.PlayerProfile Player { get; set; } = null;
 
     protected override void OnInitialized()
     {

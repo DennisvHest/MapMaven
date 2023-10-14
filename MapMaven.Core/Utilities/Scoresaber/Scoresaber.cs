@@ -1,12 +1,12 @@
 ﻿using MapMaven.Core.ApiClients.ScoreSaber;
+using MapMaven.Core.Models;
 using MapMaven.Core.Models.Data.RankedMaps;
-using MapMaven.Core.Models.Data.ScoreSaber;
 
 namespace MapMaven.Core.Utilities.Scoresaber
 {
     public class Scoresaber
     {
-        private readonly Player _player;
+        private readonly PlayerProfile _player;
         private readonly IEnumerable<PlayerScore> _playerScores;
 
         public const double PPDecay = .965D;
@@ -52,7 +52,7 @@ namespace MapMaven.Core.Utilities.Scoresaber
             new PPCurveItem { At = 100D, Value = 5.367394282890631D },
         };
 
-        public Scoresaber(Player player, IEnumerable<PlayerScore> playerScores)
+        public Scoresaber(PlayerProfile player, IEnumerable<PlayerScore> playerScores)
         {
             _player = player;
             _playerScores = playerScores;

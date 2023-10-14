@@ -23,7 +23,7 @@ namespace MapMaven.Core.Services.Leaderboards
         private readonly BehaviorSubject<Dictionary<string, RankedMapInfoItem>> _rankedMaps = new(new());
 
         public IObservable<string?> PlayerIdObservable => _playerId;
-        public IObservable<Player?> PlayerProfile { get; private set; }
+        public IObservable<PlayerProfile?> PlayerProfile { get; private set; }
         public IObservable<IEnumerable<PlayerScore>> PlayerScores { get; private set; }
         public IObservable<IEnumerable<ScoreEstimate>> RankedMapScoreEstimates { get; private set; }
 
@@ -82,7 +82,7 @@ namespace MapMaven.Core.Services.Leaderboards
 
             PlayerScores = playerScores.Catch((Exception exception) =>
             {
-                _applicationEventService.RaiseError(new Models.ErrorEvent
+                _applicationEventService.RaiseError(new ErrorEvent
                 {
                     Exception = exception,
                     Message = "Failed to load player scores from ScoreSaber."
@@ -94,21 +94,25 @@ namespace MapMaven.Core.Services.Leaderboards
             PlayerProfile = _playerId.Select(playerId =>
             {
                 if (string.IsNullOrEmpty(playerId))
-                    return Observable.Return(null as Player);
+                    return Observable.Return(null as PlayerProfile);
 
-                return Observable.FromAsync(async () => await _scoreSaber.FullAsync(playerId));
+                return Observable.FromAsync(async () =>
+                {
+                    var playerProfile = await _scoreSaber.FullAsync(playerId);
+
+                    return new PlayerProfile(playerProfile);
+                });
             }).Concat();
-
 
             PlayerProfile = PlayerProfile.Catch((Exception exception) =>
             {
-                _applicationEventService.RaiseError(new Models.ErrorEvent
+                _applicationEventService.RaiseError(new ErrorEvent
                 {
                     Exception = exception,
                     Message = "Failed to load player profile from ScoreSaber."
                 });
 
-                return Observable.Return(null as Player);
+                return Observable.Return(null as PlayerProfile);
             });
 
             var rankedMapScoreEstimates = PlayerProfile.CombineLatest(PlayerScores, RankedMaps, (player, playerScores, rankedMaps) =>
@@ -188,7 +192,7 @@ namespace MapMaven.Core.Services.Leaderboards
                 _applicationEventService.RaiseError(new()
                 {
                     Exception = ex,
-                    Message = "Failed to load ranked maps."
+                    Message = "Failed to load ranked maps from ScoreSaber."
                 });
 
                 _rankedMaps.OnNext(new());

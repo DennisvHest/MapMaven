@@ -1,5 +1,4 @@
 ﻿using BeatSaverSharp.Models;
-using MapMaven.Core.ApiClients.BeatSaver;
 using MapMaven.Core.ApiClients.ScoreSaber;
 using MapMaven.Core.Models.Data.RankedMaps;
 using MapMaven.Core.Utilities.Scoresaber;

@@ -1,4 +1,5 @@
 ﻿using MapMaven.Core.ApiClients.ScoreSaber;
+using MapMaven.Core.Models;
 using MapMaven.Core.Models.Data.RankedMaps;
 using MapMaven.Core.Utilities.Scoresaber;
 
@@ -9,7 +10,7 @@ namespace MapMaven.Core.Services.Leaderboards
         string? PlayerId { get; }
         IObservable<string?> PlayerIdObservable { get; }
         IObservable<Dictionary<string, RankedMapInfoItem>> RankedMaps { get; }
-        IObservable<Player?> PlayerProfile { get; }
+        IObservable<PlayerProfile?> PlayerProfile { get; }
         IObservable<IEnumerable<PlayerScore>> PlayerScores { get; }
         IObservable<IEnumerable<ScoreEstimate>> RankedMapScoreEstimates { get; }
 
