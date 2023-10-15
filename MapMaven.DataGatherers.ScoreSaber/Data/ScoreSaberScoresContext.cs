@@ -30,11 +30,6 @@ namespace MapMaven.DataGatherers.ScoreSaber.Data
 
         public ScoreSaberScoresContext(DbContextOptions<ScoreSaberScoresContext> options) : base(options) { }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=BSScores;Trusted_Connection=True;MultipleActiveResultSets=true");
-        }
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Ignore<Badge>();

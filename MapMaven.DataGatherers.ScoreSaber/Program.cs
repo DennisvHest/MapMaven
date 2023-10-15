@@ -8,7 +8,8 @@ IHost host = Host.CreateDefaultBuilder(args)
         services.AddHostedService<Worker>();
 
         services.AddDbContext<ScoreSaberScoresContext>(options =>
-            options.UseSqlServer(hostContext.Configuration.GetConnectionString("ScoreSaberScoresConnection"))
+            options.UseSqlServer(hostContext.Configuration.GetConnectionString("ScoreSaberScoresConnection")),
+            contextLifetime: ServiceLifetime.Singleton
         );
 
         services.AddHttpClient<ScoreSaberApiClient>(client => client.BaseAddress = new Uri("https://scoresaber.com"));
