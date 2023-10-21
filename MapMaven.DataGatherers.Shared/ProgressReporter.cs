@@ -11,15 +11,16 @@ namespace MapMaven.DataGatherers.Shared
 
         private int _totalItems;
         private int _itemsPerPage;
-        private int _completedPages = 0;
+        private int _completedPages;
 
-        public ProgressReporter(int totalItems, int itemsPerPage, ILogger logger)
+        public ProgressReporter(int totalItems, int itemsPerPage, ILogger logger, int alreadyDone = 0)
         {
             _stopwatch = Stopwatch.StartNew();
 
             _totalItems = totalItems;
             _itemsPerPage = itemsPerPage;
             _logger = logger;
+            _completedPages = alreadyDone;
         }
 
         public void ReportProgress()
