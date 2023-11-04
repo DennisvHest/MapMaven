@@ -12,7 +12,7 @@ namespace MapMaven.DataGatherers.BeatLeader
         private readonly BeatLeaderApiClient _beatLeader;
         private readonly BeatLeaderScoresContext _db;
 
-        private readonly TimeLimiter _beatLeaderRateLimit = TimeLimiter.GetFromMaxCountByInterval(18, TimeSpan.FromSeconds(10));
+        private readonly TimeLimiter _beatLeaderRateLimit = TimeLimiter.GetFromMaxCountByInterval(15, TimeSpan.FromSeconds(10));
         private readonly SemaphoreSlim _dbSemaphore = new SemaphoreSlim(1, 1);
 
         private readonly ILogger<Worker> _logger;
@@ -28,7 +28,10 @@ namespace MapMaven.DataGatherers.BeatLeader
         {
             await _db.Database.MigrateAsync();
 
-            await GetAllPlayersAsync(stoppingToken);
+            _db.ChangeTracker.AutoDetectChangesEnabled = false;
+
+            //await GetAllPlayersAsync(stoppingToken);
+            await GetPlayerScores(stoppingToken);
         }
 
         private async Task GetAllPlayersAsync(CancellationToken stoppingToken)
@@ -55,19 +58,25 @@ namespace MapMaven.DataGatherers.BeatLeader
 
                 var players = await PlayersRequest(page, stoppingToken);
 
-                if (!players.Data.Any(x => existingPlayerIds.Contains(x.Id)))
+                try
                 {
                     await _dbSemaphore.WaitAsync();
 
-                    try
+                    foreach (var player in players.Data)
                     {
-                        _db.Players.AddRange(players.Data);
-                        await _db.SaveChangesAsync(stoppingToken);
+                        var existingPlayer = await _db.Players.FindAsync(player.Id);
+
+                        if (existingPlayer is not null)
+                            continue;
+
+                        _db.Players.Add(player);
                     }
-                    finally
-                    {
-                        _dbSemaphore.Release();
-                    }
+
+                    await _db.SaveChangesAsync(stoppingToken);
+                }
+                finally
+                {
+                    _dbSemaphore.Release();
                 }
 
                 progressReporter.ReportProgress();
@@ -105,7 +114,109 @@ namespace MapMaven.DataGatherers.BeatLeader
 
         private async Task GetPlayerScores(CancellationToken stoppingToken)
         {
+            var totalPlayerCount = await _db.Players.CountAsync();
 
+            var playersStillToGetScores = _db.Players
+                .Where(p => !p.Scores.Any())
+                .Select(p => p.Id)
+                .ToList()
+                .OrderBy(x => Guid.NewGuid())
+                .ToList();
+
+            var alreadyDone = totalPlayerCount - playersStillToGetScores.Count();
+
+            using var progressReporter = new ProgressReporter(playersStillToGetScores.Count + alreadyDone, 1, _logger, alreadyDone);
+
+            ICollection<ScoreResponseWithMyScore> playerScoresPage = new List<ScoreResponseWithMyScore>();
+            List<ScoreResponseWithMyScore> playerScores = new List<ScoreResponseWithMyScore>();
+
+            for (int i = 1; i <= playersStillToGetScores.Count; i++)
+            {
+                var player = playersStillToGetScores[i];
+
+                var page = 1;
+                var totalPlayerPages = 0D;
+
+                do
+                {
+                    ScoreResponseWithMyScoreResponseWithMetadata playerScoresResult;
+
+                    try
+                    {
+                        await _beatLeaderRateLimit;
+
+                        playerScoresResult = await _beatLeader.ScoresAsync(
+                            id: player,
+                            sortBy: "date",
+                            order: Order._1, // Ascending
+                            page: page,
+                            count: 100,
+                            search: default,
+                            diff: default,
+                            mode: default,
+                            requirements: default,
+                            scoreStatus: default,
+                            leaderboardContext: LeaderboardContexts._2, // General
+                            type: "ranked",
+                            modifiers: default,
+                            stars_from: default,
+                            stars_to: default,
+                            time_from: default,
+                            time_to: default,
+                            eventId: default,
+                            cancellationToken: stoppingToken
+                        );
+                    }
+                    catch (ApiException ex)
+                    {
+                        if (ex.StatusCode != 404)
+                            throw;
+
+                        playerScoresResult = new ScoreResponseWithMyScoreResponseWithMetadata { Data = new List<ScoreResponseWithMyScore>() };
+                    }
+
+                    playerScoresPage = playerScoresResult.Data;
+
+                    foreach (var playerScore in playerScoresPage)
+                    {
+                        playerScore.PlayerId = player;
+                    }
+
+                    playerScores.AddRange(playerScoresPage);
+
+                    totalPlayerPages = Math.Ceiling((double)playerScoresResult.Metadata.Total / playerScoresResult.Metadata.ItemsPerPage);
+
+                    if (totalPlayerPages == 0)
+                        totalPlayerPages = 1;
+
+                    if (playerScoresResult.Metadata != null)
+                        _logger.LogInformation($"Fetched page {page}/{totalPlayerPages} from player: {player}");
+
+                    page++;
+                }
+                while (page <= totalPlayerPages);
+
+                foreach (var playerScore in playerScores)
+                {
+                    var existingLeaderboard = await _db.Leaderboards.FindAsync(playerScore.Leaderboard.Id);
+
+                    if (existingLeaderboard != null)
+                        playerScore.Leaderboard = existingLeaderboard;
+
+                    var existingSong = await _db.Songs.FindAsync(playerScore.Leaderboard.SongId ?? playerScore.Leaderboard.Song.Id);
+
+                    if (existingSong != null)
+                        playerScore.Leaderboard.Song = existingSong;
+
+                    _db.Scores.Add(playerScore);
+                }
+
+                await _db.SaveChangesAsync(stoppingToken);
+
+                playerScores.Clear();
+
+                progressReporter.ReportProgress();
+            }
         }
     }
 }

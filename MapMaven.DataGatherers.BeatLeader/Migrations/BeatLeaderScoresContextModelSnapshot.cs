@@ -91,186 +91,12 @@ namespace MapMaven.DataGatherers.BeatLeader.Migrations
                     b.Property<string>("Role")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("ScoreStatsId")
-                        .HasColumnType("int");
-
                     b.Property<float>("TechPp")
                         .HasColumnType("real");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ScoreStatsId");
-
                     b.ToTable("Players", (string)null);
-                });
-
-            modelBuilder.Entity("MapMaven.DataGatherers.BeatLeader.PlayerScoreStats", b =>
-                {
-                    b.Property<int>("Id")
-                        .HasColumnType("int");
-
-                    b.Property<int>("APlays")
-                        .HasColumnType("int");
-
-                    b.Property<int>("AnonimusReplayWatched")
-                        .HasColumnType("int");
-
-                    b.Property<int>("AuthorizedReplayWatched")
-                        .HasColumnType("int");
-
-                    b.Property<float>("AverageAccuracy")
-                        .HasColumnType("real");
-
-                    b.Property<float>("AverageLeftTiming")
-                        .HasColumnType("real");
-
-                    b.Property<float>("AverageRank")
-                        .HasColumnType("real");
-
-                    b.Property<float>("AverageRankedAccuracy")
-                        .HasColumnType("real");
-
-                    b.Property<float>("AverageRankedRank")
-                        .HasColumnType("real");
-
-                    b.Property<float>("AverageRightTiming")
-                        .HasColumnType("real");
-
-                    b.Property<float>("AverageUnrankedAccuracy")
-                        .HasColumnType("real");
-
-                    b.Property<float>("AverageUnrankedRank")
-                        .HasColumnType("real");
-
-                    b.Property<float>("AverageWeightedRankedAccuracy")
-                        .HasColumnType("real");
-
-                    b.Property<float>("AverageWeightedRankedRank")
-                        .HasColumnType("real");
-
-                    b.Property<int>("DailyImprovements")
-                        .HasColumnType("int");
-
-                    b.Property<int>("LastRankedScoreTime")
-                        .HasColumnType("int");
-
-                    b.Property<int>("LastScoreTime")
-                        .HasColumnType("int");
-
-                    b.Property<int>("LastUnrankedScoreTime")
-                        .HasColumnType("int");
-
-                    b.Property<int>("MaxStreak")
-                        .HasColumnType("int");
-
-                    b.Property<float>("MedianAccuracy")
-                        .HasColumnType("real");
-
-                    b.Property<float>("MedianRankedAccuracy")
-                        .HasColumnType("real");
-
-                    b.Property<float>("PeakRank")
-                        .HasColumnType("real");
-
-                    b.Property<int>("RankedImprovementsCount")
-                        .HasColumnType("int");
-
-                    b.Property<int>("RankedMaxStreak")
-                        .HasColumnType("int");
-
-                    b.Property<int>("RankedPlayCount")
-                        .HasColumnType("int");
-
-                    b.Property<int>("RankedTop1Count")
-                        .HasColumnType("int");
-
-                    b.Property<int>("RankedTop1Score")
-                        .HasColumnType("int");
-
-                    b.Property<int>("SPlays")
-                        .HasColumnType("int");
-
-                    b.Property<int>("SpPlays")
-                        .HasColumnType("int");
-
-                    b.Property<int>("SsPlays")
-                        .HasColumnType("int");
-
-                    b.Property<int>("SspPlays")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Top1Count")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Top1Score")
-                        .HasColumnType("int");
-
-                    b.Property<float>("TopAccPP")
-                        .HasColumnType("real");
-
-                    b.Property<float>("TopAccuracy")
-                        .HasColumnType("real");
-
-                    b.Property<float>("TopBonusPP")
-                        .HasColumnType("real");
-
-                    b.Property<int>("TopHMD")
-                        .HasColumnType("int");
-
-                    b.Property<float>("TopPassPP")
-                        .HasColumnType("real");
-
-                    b.Property<string>("TopPlatform")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<float>("TopPp")
-                        .HasColumnType("real");
-
-                    b.Property<float>("TopRankedAccuracy")
-                        .HasColumnType("real");
-
-                    b.Property<float>("TopTechPP")
-                        .HasColumnType("real");
-
-                    b.Property<float>("TopUnrankedAccuracy")
-                        .HasColumnType("real");
-
-                    b.Property<int>("TotalImprovementsCount")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TotalPlayCount")
-                        .HasColumnType("int");
-
-                    b.Property<long>("TotalRankedScore")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("TotalScore")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("TotalUnrankedScore")
-                        .HasColumnType("bigint");
-
-                    b.Property<int>("UnrankedImprovementsCount")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UnrankedMaxStreak")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UnrankedPlayCount")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UnrankedTop1Count")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UnrankedTop1Score")
-                        .HasColumnType("int");
-
-                    b.Property<int>("WatchedReplays")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("PlayerScoreStats", (string)null);
                 });
 
             modelBuilder.Entity("MapMaven.DataGatherers.BeatLeader.ScoreResponseWithMyScore", b =>
@@ -449,7 +275,7 @@ namespace MapMaven.DataGatherers.BeatLeader.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.OwnsOne("MapMaven.DataGatherers.BeatLeader.DifficultyResponse", "Difficulty", b1 =>
+                    b.OwnsOne("MapMaven.DataGatherers.BeatLeader.LeaderboardResponse.Difficulty#MapMaven.DataGatherers.BeatLeader.DifficultyResponse", "Difficulty", b1 =>
                         {
                             b1.Property<string>("LeaderboardResponseId")
                                 .HasColumnType("nvarchar(450)");
@@ -525,12 +351,12 @@ namespace MapMaven.DataGatherers.BeatLeader.Migrations
 
                             b1.HasKey("LeaderboardResponseId");
 
-                            b1.ToTable("Leaderboards");
+                            b1.ToTable("Leaderboards", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("LeaderboardResponseId");
 
-                            b1.OwnsOne("MapMaven.DataGatherers.BeatLeader.ModifiersMap", "ModifierValues", b2 =>
+                            b1.OwnsOne("MapMaven.DataGatherers.BeatLeader.LeaderboardResponse.Difficulty#MapMaven.DataGatherers.BeatLeader.DifficultyResponse.ModifierValues#MapMaven.DataGatherers.BeatLeader.ModifiersMap", "ModifierValues", b2 =>
                                 {
                                     b2.Property<string>("DifficultyResponseLeaderboardResponseId")
                                         .HasColumnType("nvarchar(450)");
@@ -579,13 +405,13 @@ namespace MapMaven.DataGatherers.BeatLeader.Migrations
 
                                     b2.HasKey("DifficultyResponseLeaderboardResponseId");
 
-                                    b2.ToTable("Leaderboards");
+                                    b2.ToTable("Leaderboards", (string)null);
 
                                     b2.WithOwner()
                                         .HasForeignKey("DifficultyResponseLeaderboardResponseId");
                                 });
 
-                            b1.OwnsOne("MapMaven.DataGatherers.BeatLeader.ModifiersRating", "ModifiersRating", b2 =>
+                            b1.OwnsOne("MapMaven.DataGatherers.BeatLeader.LeaderboardResponse.Difficulty#MapMaven.DataGatherers.BeatLeader.DifficultyResponse.ModifiersRating#MapMaven.DataGatherers.BeatLeader.ModifiersRating", "ModifiersRating", b2 =>
                                 {
                                     b2.Property<string>("DifficultyResponseLeaderboardResponseId")
                                         .HasColumnType("nvarchar(450)");
@@ -640,7 +466,7 @@ namespace MapMaven.DataGatherers.BeatLeader.Migrations
 
                                     b2.HasKey("DifficultyResponseLeaderboardResponseId");
 
-                                    b2.ToTable("Leaderboards");
+                                    b2.ToTable("Leaderboards", (string)null);
 
                                     b2.WithOwner()
                                         .HasForeignKey("DifficultyResponseLeaderboardResponseId");
@@ -658,9 +484,180 @@ namespace MapMaven.DataGatherers.BeatLeader.Migrations
 
             modelBuilder.Entity("MapMaven.DataGatherers.BeatLeader.PlayerResponseWithStats", b =>
                 {
-                    b.HasOne("MapMaven.DataGatherers.BeatLeader.PlayerScoreStats", "ScoreStats")
-                        .WithMany()
-                        .HasForeignKey("ScoreStatsId");
+                    b.OwnsOne("MapMaven.DataGatherers.BeatLeader.PlayerResponseWithStats.ScoreStats#MapMaven.DataGatherers.BeatLeader.PlayerScoreStats", "ScoreStats", b1 =>
+                        {
+                            b1.Property<string>("PlayerResponseWithStatsId")
+                                .HasColumnType("nvarchar(450)");
+
+                            b1.Property<int>("APlays")
+                                .HasColumnType("int");
+
+                            b1.Property<int>("AnonimusReplayWatched")
+                                .HasColumnType("int");
+
+                            b1.Property<int>("AuthorizedReplayWatched")
+                                .HasColumnType("int");
+
+                            b1.Property<float>("AverageAccuracy")
+                                .HasColumnType("real");
+
+                            b1.Property<float>("AverageLeftTiming")
+                                .HasColumnType("real");
+
+                            b1.Property<float>("AverageRank")
+                                .HasColumnType("real");
+
+                            b1.Property<float>("AverageRankedAccuracy")
+                                .HasColumnType("real");
+
+                            b1.Property<float>("AverageRankedRank")
+                                .HasColumnType("real");
+
+                            b1.Property<float>("AverageRightTiming")
+                                .HasColumnType("real");
+
+                            b1.Property<float>("AverageUnrankedAccuracy")
+                                .HasColumnType("real");
+
+                            b1.Property<float>("AverageUnrankedRank")
+                                .HasColumnType("real");
+
+                            b1.Property<float>("AverageWeightedRankedAccuracy")
+                                .HasColumnType("real");
+
+                            b1.Property<float>("AverageWeightedRankedRank")
+                                .HasColumnType("real");
+
+                            b1.Property<int>("DailyImprovements")
+                                .HasColumnType("int");
+
+                            b1.Property<int>("Id")
+                                .HasColumnType("int");
+
+                            b1.Property<int>("LastRankedScoreTime")
+                                .HasColumnType("int");
+
+                            b1.Property<int>("LastScoreTime")
+                                .HasColumnType("int");
+
+                            b1.Property<int>("LastUnrankedScoreTime")
+                                .HasColumnType("int");
+
+                            b1.Property<int>("MaxStreak")
+                                .HasColumnType("int");
+
+                            b1.Property<float>("MedianAccuracy")
+                                .HasColumnType("real");
+
+                            b1.Property<float>("MedianRankedAccuracy")
+                                .HasColumnType("real");
+
+                            b1.Property<float>("PeakRank")
+                                .HasColumnType("real");
+
+                            b1.Property<int>("RankedImprovementsCount")
+                                .HasColumnType("int");
+
+                            b1.Property<int>("RankedMaxStreak")
+                                .HasColumnType("int");
+
+                            b1.Property<int>("RankedPlayCount")
+                                .HasColumnType("int");
+
+                            b1.Property<int>("RankedTop1Count")
+                                .HasColumnType("int");
+
+                            b1.Property<int>("RankedTop1Score")
+                                .HasColumnType("int");
+
+                            b1.Property<int>("SPlays")
+                                .HasColumnType("int");
+
+                            b1.Property<int>("SpPlays")
+                                .HasColumnType("int");
+
+                            b1.Property<int>("SsPlays")
+                                .HasColumnType("int");
+
+                            b1.Property<int>("SspPlays")
+                                .HasColumnType("int");
+
+                            b1.Property<int>("Top1Count")
+                                .HasColumnType("int");
+
+                            b1.Property<int>("Top1Score")
+                                .HasColumnType("int");
+
+                            b1.Property<float>("TopAccPP")
+                                .HasColumnType("real");
+
+                            b1.Property<float>("TopAccuracy")
+                                .HasColumnType("real");
+
+                            b1.Property<float>("TopBonusPP")
+                                .HasColumnType("real");
+
+                            b1.Property<int>("TopHMD")
+                                .HasColumnType("int");
+
+                            b1.Property<float>("TopPassPP")
+                                .HasColumnType("real");
+
+                            b1.Property<string>("TopPlatform")
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<float>("TopPp")
+                                .HasColumnType("real");
+
+                            b1.Property<float>("TopRankedAccuracy")
+                                .HasColumnType("real");
+
+                            b1.Property<float>("TopTechPP")
+                                .HasColumnType("real");
+
+                            b1.Property<float>("TopUnrankedAccuracy")
+                                .HasColumnType("real");
+
+                            b1.Property<int>("TotalImprovementsCount")
+                                .HasColumnType("int");
+
+                            b1.Property<int>("TotalPlayCount")
+                                .HasColumnType("int");
+
+                            b1.Property<long>("TotalRankedScore")
+                                .HasColumnType("bigint");
+
+                            b1.Property<long>("TotalScore")
+                                .HasColumnType("bigint");
+
+                            b1.Property<long>("TotalUnrankedScore")
+                                .HasColumnType("bigint");
+
+                            b1.Property<int>("UnrankedImprovementsCount")
+                                .HasColumnType("int");
+
+                            b1.Property<int>("UnrankedMaxStreak")
+                                .HasColumnType("int");
+
+                            b1.Property<int>("UnrankedPlayCount")
+                                .HasColumnType("int");
+
+                            b1.Property<int>("UnrankedTop1Count")
+                                .HasColumnType("int");
+
+                            b1.Property<int>("UnrankedTop1Score")
+                                .HasColumnType("int");
+
+                            b1.Property<int>("WatchedReplays")
+                                .HasColumnType("int");
+
+                            b1.HasKey("PlayerResponseWithStatsId");
+
+                            b1.ToTable("Players", (string)null);
+
+                            b1.WithOwner()
+                                .HasForeignKey("PlayerResponseWithStatsId");
+                        });
 
                     b.Navigation("ScoreStats");
                 });

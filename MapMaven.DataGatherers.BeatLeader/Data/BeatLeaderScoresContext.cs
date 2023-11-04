@@ -25,6 +25,7 @@ namespace MapMaven.DataGatherers.BeatLeader.Data
         public DbSet<PlayerResponseWithStats> Players { get; set; }
         public DbSet<ScoreResponseWithMyScore> Scores { get; set; }
         public DbSet<LeaderboardResponse> Leaderboards { get; set; }
+        public DbSet<Song> Songs { get; set; }
 
         public BeatLeaderScoresContext(DbContextOptions<BeatLeaderScoresContext> options) : base(options) { }
 
@@ -41,13 +42,11 @@ namespace MapMaven.DataGatherers.BeatLeader.Data
             players.Ignore(p => p.Clans);
             players.Ignore(p => p.EventsParticipating);
 
+            players.OwnsOne(p => p.ScoreStats);
+
             players.HasMany(p => p.Scores)
                 .WithOne(s => s.PlayerEntity)
                 .HasForeignKey(x => x.PlayerId);
-
-            var playerScoreStats = modelBuilder.Entity<PlayerScoreStats>().ToTable("PlayerScoreStats");
-
-            playerScoreStats.Property(x => x.Id).ValueGeneratedNever();
 
             var scores = modelBuilder.Entity<ScoreResponseWithMyScore>().ToTable("Scores");
 
