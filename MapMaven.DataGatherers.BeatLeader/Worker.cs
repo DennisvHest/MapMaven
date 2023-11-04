@@ -102,5 +102,10 @@ namespace MapMaven.DataGatherers.BeatLeader
                 cancellationToken: stoppingToken
             );
         }
+
+        private async Task GetPlayerScores(CancellationToken stoppingToken)
+        {
+
+        }
     }
 }
