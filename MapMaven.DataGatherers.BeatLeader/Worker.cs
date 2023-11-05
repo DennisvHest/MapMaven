@@ -12,7 +12,7 @@ namespace MapMaven.DataGatherers.BeatLeader
         private readonly BeatLeaderApiClient _beatLeader;
         private readonly BeatLeaderScoresContext _db;
 
-        private readonly TimeLimiter _beatLeaderRateLimit = TimeLimiter.GetFromMaxCountByInterval(15, TimeSpan.FromSeconds(10));
+        private readonly TimeLimiter _beatLeaderRateLimit = TimeLimiter.GetFromMaxCountByInterval(10, TimeSpan.FromSeconds(10));
         private readonly SemaphoreSlim _dbSemaphore = new SemaphoreSlim(1, 1);
 
         private readonly ILogger<Worker> _logger;
@@ -114,10 +114,10 @@ namespace MapMaven.DataGatherers.BeatLeader
 
         private async Task GetPlayerScores(CancellationToken stoppingToken)
         {
-            var totalPlayerCount = await _db.Players.CountAsync();
+            var totalPlayerCount = await _db.Players.CountAsync(p => p.ScoreStats.RankedPlayCount > 0);
 
             var playersStillToGetScores = _db.Players
-                .Where(p => !p.Scores.Any())
+                .Where(p => !p.Scores.Any() && p.ScoreStats.RankedPlayCount > 0)
                 .Select(p => p.Id)
                 .ToList()
                 .OrderBy(x => Guid.NewGuid())
