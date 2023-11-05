@@ -4,6 +4,7 @@ using MapMaven.Core.Models;
 using MapMaven.Core.Models.Data.RankedMaps;
 using MapMaven.Core.Services.Interfaces;
 using MapMaven.Core.Utilities.Scoresaber;
+using MapMaven_Core;
 using System.Net.Http.Json;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
@@ -32,7 +33,7 @@ namespace MapMaven.Core.Services.Leaderboards
 
         public IObservable<IEnumerable<PlayerScore>> PlayerScores => Observable.Return(Enumerable.Empty<PlayerScore>());
 
-        public IObservable<IEnumerable<ScoreEstimate>> RankedMapScoreEstimates => Observable.Return(Enumerable.Empty<ScoreEstimate>());
+        public IObservable<IEnumerable<ScoreEstimate>> RankedMapScoreEstimates { get; private set; }
 
         private const string PlayerIdSettingKey = "BeatLeaderPlayerId";
 
@@ -65,6 +66,40 @@ namespace MapMaven.Core.Services.Leaderboards
                     });
                 })
                 .Concat();
+
+            var rankedMapScoreEstimates = PlayerProfile.CombineLatest(PlayerScores, RankedMaps, (player, playerScores, rankedMaps) =>
+            {
+                if (player == null)
+                    return Enumerable.Empty<ScoreEstimate>();
+
+                return rankedMaps.SelectMany(map =>
+                {
+                    return map.Value.Difficulties.Select(difficulty =>
+                    {
+                        var output = BeatLeaderScoreEstimateMLModel.Predict(new BeatLeaderScoreEstimateMLModel.ModelInput
+                        {
+                            PP = Convert.ToSingle(player.Pp),
+                            StarDifficulty = Convert.ToSingle(difficulty.Stars),
+                            TimeSet = DateTime.Now
+                        });
+
+                        return new ScoreEstimate
+                        {
+                            Accuracy = output.Score,
+                            Difficulty = difficulty.Difficulty,
+                            MapHash = map.Key,
+                            Pp = 0,
+                            PPIncrease = 0,
+                            Stars = difficulty.Stars,
+                            TotalPP = 0
+                        };
+                    });
+                }).ToList();
+            }).Replay(1);
+
+            rankedMapScoreEstimates.Connect();
+
+            RankedMapScoreEstimates = rankedMapScoreEstimates;
 
             _applicationSettingService.ApplicationSettings
                 .Select(applicationSettings => applicationSettings.TryGetValue(PlayerIdSettingKey, out var playerId) ? playerId.StringValue : null)

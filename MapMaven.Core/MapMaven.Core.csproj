@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
@@ -27,8 +27,8 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Http" Version="7.0.0" />
-    <PackageReference Include="Microsoft.ML" Version="2.0.1" />
-    <PackageReference Include="Microsoft.ML.FastTree" Version="2.0.1" />
+    <PackageReference Include="Microsoft.ML" Version="3.0.0-preview.23266.6" />
+    <PackageReference Include="Microsoft.ML.FastTree" Version="3.0.0-preview.23266.6" />
     <PackageReference Include="Microsoft.ML.LightGbm" Version="2.0.1" />
     <PackageReference Include="Microsoft.VisualStudio.Utilities" Version="17.7.37355" />
     <PackageReference Include="NAudio" Version="2.2.1" />
@@ -39,6 +39,8 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Pather.CSharp" Version="2.1.0" />
+    <PackageReference Include="Plotly.NET" Version="3.0.1" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.3" />
     <PackageReference Include="System.Drawing.Common" Version="7.0.0" />
     <PackageReference Include="System.Reactive" Version="6.0.0" />
     <PackageReference Include="TestableIO.System.IO.Abstractions" Version="19.2.69" />
@@ -55,6 +57,11 @@
   <ItemGroup>
     <None Update="ScoreEstimation\ScoreSaberScoreEstimateMLModel.zip">
       <DependentUpon>ScoreSaberScoreEstimateMLModel.mbconfig</DependentUpon>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup Label="BeatLeaderScoreEstimateMLModel">
+    <None Include="ScoreEstimation\BeatLeaderScoreEstimateMLModel.mlnet">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
