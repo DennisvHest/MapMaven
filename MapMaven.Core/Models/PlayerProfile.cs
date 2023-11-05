@@ -8,7 +8,7 @@
         public string ProfilePictureUrl { get; set; }
         public int Rank { get; set; }
         public int CountryRank { get; set; }
-        public int Pp { get; set; }
+        public double Pp { get; set; }
 
         public PlayerProfile() {}
 
@@ -20,7 +20,7 @@
             ProfilePictureUrl = player.ProfilePicture;
             Rank = Convert.ToInt32(player.Rank);
             CountryRank = Convert.ToInt32(player.CountryRank);
-            Pp = Convert.ToInt32(player.Pp);
+            Pp = player.Pp;
         }
 
         public PlayerProfile(ApiClients.BeatLeader.PlayerResponseFull playerProfile)
@@ -31,7 +31,7 @@
             ProfilePictureUrl = playerProfile.Avatar;
             Rank = Convert.ToInt32(playerProfile.Rank);
             CountryRank = Convert.ToInt32(playerProfile.CountryRank);
-            Pp = Convert.ToInt32(playerProfile.Pp);
+            Pp = playerProfile.Pp;
         }
     }
 }

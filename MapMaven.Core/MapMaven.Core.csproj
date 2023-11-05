@@ -44,17 +44,17 @@
     <PackageReference Include="TestableIO.System.IO.Abstractions" Version="19.2.69" />
     <PackageReference Include="TestableIO.System.IO.Abstractions.Wrappers" Version="19.2.69" />
   </ItemGroup>
-  <ItemGroup Label="ScoreEstimateMLModel">
-    <None Include="ScoreEstimation\ScoreEstimateMLModel.consumption.cs">
-      <DependentUpon>ScoreEstimateMLModel.mbconfig</DependentUpon>
+  <ItemGroup Label="ScoreSaberScoreEstimateMLModel">
+    <None Include="ScoreEstimation\ScoreSaberScoreEstimateMLModel.consumption.cs">
+      <DependentUpon>ScoreSaberScoreEstimateMLModel.mbconfig</DependentUpon>
     </None>
-    <None Include="ScoreEstimation\ScoreEstimateMLModel.training.cs">
-      <DependentUpon>ScoreEstimateMLModel.mbconfig</DependentUpon>
+    <None Include="ScoreEstimation\ScoreSaberScoreEstimateMLModel.training.cs">
+      <DependentUpon>ScoreSaberScoreEstimateMLModel.mbconfig</DependentUpon>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Update="ScoreEstimation\ScoreEstimateMLModel.zip">
-      <DependentUpon>ScoreEstimateMLModel.mbconfig</DependentUpon>
+    <None Update="ScoreEstimation\ScoreSaberScoreEstimateMLModel.zip">
+      <DependentUpon>ScoreSaberScoreEstimateMLModel.mbconfig</DependentUpon>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

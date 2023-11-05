@@ -5,10 +5,10 @@ using System.Reflection;
 
 namespace MapMaven_Core
 {
-    public partial class ScoreEstimateMLModel
+    public partial class ScoreSaberScoreEstimateMLModel
     {
         /// <summary>
-        /// model input class for ScoreEstimateMLModel.
+        /// model input class for ScoreSaberScoreEstimateMLModel.
         /// </summary>
         #region model input class
         public class ModelInput
@@ -34,7 +34,7 @@ namespace MapMaven_Core
         #endregion
 
         /// <summary>
-        /// model output class for ScoreEstimateMLModel.
+        /// model output class for ScoreSaberScoreEstimateMLModel.
         /// </summary>
         #region model output class
         public class ModelOutput
@@ -67,7 +67,7 @@ namespace MapMaven_Core
             {
                 var currentDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
-                return Path.Join(currentDirectory, "ScoreEstimation", "ScoreEstimateMLModel.zip");
+                return Path.Join(currentDirectory, "ScoreEstimation", "ScoreSaberScoreEstimateMLModel.zip");
             }
         }
 

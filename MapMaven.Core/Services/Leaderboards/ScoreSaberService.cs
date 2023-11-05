@@ -126,7 +126,7 @@ namespace MapMaven.Core.Services.Leaderboards
                 {
                     return map.Value.Difficulties.Select(difficulty =>
                     {
-                        var output = ScoreEstimateMLModel.Predict(new ScoreEstimateMLModel.ModelInput
+                        var output = ScoreSaberScoreEstimateMLModel.Predict(new ScoreSaberScoreEstimateMLModel.ModelInput
                         {
                             PP = Convert.ToSingle(player.Pp),
                             StarDifficulty = Convert.ToSingle(difficulty.Stars),

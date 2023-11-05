@@ -11,7 +11,7 @@ using Microsoft.ML;
 
 namespace MapMaven_Core
 {
-    public partial class ScoreEstimateMLModel
+    public partial class ScoreSaberScoreEstimateMLModel
     {
         /// <summary>
         /// Retrains model using the pipeline generated as part of the training process. For more information on how to load data, see aka.ms/loaddata.
