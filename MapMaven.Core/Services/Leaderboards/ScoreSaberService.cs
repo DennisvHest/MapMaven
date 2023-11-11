@@ -32,7 +32,6 @@ namespace MapMaven.Core.Services.Leaderboards
         public string? PlayerId => _playerId.Value;
 
         private const string PlayerIdSettingKey = "PlayerId";
-        private const string _replayBaseUrl = "https://www.replay.beatleader.xyz";
 
         public ScoreSaberService(
             ScoreSaberApiClient scoreSaber,
@@ -213,7 +212,7 @@ namespace MapMaven.Core.Services.Leaderboards
             if (!score.Score.HasReplay)
                 return null;
 
-            return $"{_replayBaseUrl}/?id={mapId}&difficulty={score.Leaderboard.Difficulty}&playerID={_playerId.Value}";
+            return $"{LeaderboardService.ReplayBaseUrl}/?id={mapId}&difficulty={score.Leaderboard.Difficulty}&playerID={_playerId.Value}";
         }
     }
 }

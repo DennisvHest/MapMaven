@@ -171,7 +171,10 @@ namespace MapMaven.Core.Services.Leaderboards
 
         public string? GetReplayUrl(string mapId, PlayerScore score)
         {
-            throw new NotImplementedException();
+            if (!score.Score.HasReplay)
+                return null;
+
+            return $"{LeaderboardService.ReplayBaseUrl}/?scoreId={score.Score.Id}";
         }
 
         public async Task LoadRankedMaps()

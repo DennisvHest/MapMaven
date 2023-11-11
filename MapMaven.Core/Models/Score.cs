@@ -4,6 +4,7 @@ namespace MapMaven.Core.Models
 {
     public class Score
     {
+        public string Id { get; set; }
         public double Rank { get; set; }
         public double BaseScore { get; set; }
         public double ModifiedScore { get; set; }
@@ -21,6 +22,7 @@ namespace MapMaven.Core.Models
 
         public Score(ApiClients.ScoreSaber.PlayerScore playerScore)
         {
+            Id = playerScore.Score.Id.ToString();
             Rank = playerScore.Score.Rank;
             BaseScore = playerScore.Score.BaseScore;
             ModifiedScore = playerScore.Score.ModifiedScore;
@@ -37,6 +39,7 @@ namespace MapMaven.Core.Models
 
         public Score(ApiClients.BeatLeader.Score score)
         {
+            Id = score.Id.ToString();
             Rank = score.Rank;
             BaseScore = score.BaseScore;
             ModifiedScore = score.ModifiedScore;
@@ -53,6 +56,7 @@ namespace MapMaven.Core.Models
 
         public Score(ApiClients.BeatLeader.ScoreResponseWithMyScore score)
         {
+            Id = score.Id.ToString();
             Rank = score.Rank;
             BaseScore = score.BaseScore;
             ModifiedScore = score.ModifiedScore;

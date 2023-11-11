@@ -28,6 +28,8 @@ namespace MapMaven.Core.Services.Leaderboards
 
         private const string PlayerIdSettingKey = "PlayerId";
 
+        public const string ReplayBaseUrl = "https://www.replay.beatleader.xyz";
+
         public LeaderboardService(
             IEnumerable<ILeaderboardProvider> leaderboardProviders,
             IApplicationSettingService applicationSettingService)
