@@ -131,7 +131,7 @@
                                 </tr>
 
                                 @{
-                                    var playerScore = Map.AllPlayerScores.FirstOrDefault(s => s.Leaderboard.Difficulty.DifficultyName == difficulty.Difficulty);
+                                    var playerScore = Map.AllPlayerScores.FirstOrDefault(s => s.Leaderboard.Difficulty == difficulty.Difficulty);
 
                                     if (playerScore != null)
                                     {
@@ -156,7 +156,7 @@
                                             </tr>
                                             <tr>
                                                 <td><b>Accuracy</b></td>
-                                                <td>@playerScore.AccuracyWithMods().ToString("#0.##")%</td>
+                                                <td>@playerScore.Score.Accuracy.ToString("#0.##")%</td>
                                             </tr>
                                             <tr>
                                                 <td><b>Rank</b></td>

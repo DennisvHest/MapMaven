@@ -41,7 +41,7 @@
     <CellTemplate>
         @if (context.Item.HighestPlayerScore != null)
         {
-            <MudChip Size="Size.Small">@context.Item.HighestPlayerScore.Accuracy().ToString("#0.##") %</MudChip>
+            <MudChip Size="Size.Small">@context.Item.HighestPlayerScore.Score.Accuracy.ToString("#0.##") %</MudChip>
             <MudChip Size="Size.Small">@context.Item.HighestPlayerScore.Score.Pp.ToString("#0.##") pp</MudChip>
         }
     </CellTemplate>

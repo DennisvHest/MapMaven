@@ -11,12 +11,12 @@ namespace MapMaven.Core.Services.Leaderboards
         IObservable<string?> PlayerIdObservable { get; }
         IObservable<Dictionary<string, RankedMapInfoItem>> RankedMaps { get; }
         IObservable<PlayerProfile?> PlayerProfile { get; }
-        IObservable<IEnumerable<PlayerScore>> PlayerScores { get; }
+        IObservable<IEnumerable<Models.PlayerScore>> PlayerScores { get; }
         IObservable<IEnumerable<ScoreEstimate>> RankedMapScoreEstimates { get; }
 
         string? GetPlayerIdFromReplays(string beatSaberInstallLocation);
         Task<Dictionary<string, RankedMapInfoItem>> GetRankedMaps();
-        string? GetReplayUrl(string mapId, PlayerScore score);
+        string? GetReplayUrl(string mapId, Models.PlayerScore score);
         Task LoadRankedMaps();
         void RefreshPlayerData();
         Task SetPlayerId(string playerId);

@@ -14,12 +14,10 @@ using System.Reactive.Linq;
 using MapMaven.Core.Models.Data;
 using System.IO.Abstractions.TestingHelpers;
 using MapMaven.Core.ApiClients.ScoreSaber;
-using MapMaven.Core.Models.Data.ScoreSaber;
 using MapMaven.Core.Utilities.Scoresaber;
 using Microsoft.Extensions.DependencyInjection;
 using MapMaven.Models.Data;
 using MockQueryable.Moq;
-using System;
 using MapMaven.Core.Models.Data.RankedMaps;
 using MapMaven.Core.Services.Leaderboards;
 using MapMaven.Core.Models;
@@ -102,7 +100,7 @@ public class DynamicPlaylistArrangementIntegrationTests
 
         _scoreSaberServiceMock
             .SetupGet(x => x.PlayerScores)
-            .Returns(() => Observable.Return(Enumerable.Empty<PlayerScore>()));
+            .Returns(() => Observable.Return(Enumerable.Empty<Models.PlayerScore>()));
 
         MockRankedMaps();
 

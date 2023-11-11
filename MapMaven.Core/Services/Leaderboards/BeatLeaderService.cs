@@ -1,5 +1,4 @@
 ﻿using MapMaven.Core.ApiClients.BeatLeader;
-using MapMaven.Core.ApiClients.ScoreSaber;
 using MapMaven.Core.Models;
 using MapMaven.Core.Models.Data.RankedMaps;
 using MapMaven.Core.Services.Interfaces;
@@ -31,7 +30,7 @@ namespace MapMaven.Core.Services.Leaderboards
 
         public IObservable<PlayerProfile?> PlayerProfile { get; private set; }
 
-        public IObservable<IEnumerable<PlayerScore>> PlayerScores => Observable.Return(Enumerable.Empty<PlayerScore>());
+        public IObservable<IEnumerable<PlayerScore>> PlayerScores { get; private set; }
 
         public IObservable<IEnumerable<ScoreEstimate>> RankedMapScoreEstimates { get; private set; }
 
@@ -47,6 +46,64 @@ namespace MapMaven.Core.Services.Leaderboards
             _applicationSettingService = applicationSettingService;
             _applicationEventService = applicationEventService;
             _httpClientFactory = httpClientFactory;
+
+            var playerScores = _playerId.Select(playerId =>
+            {
+                if (string.IsNullOrEmpty(playerId))
+                    return Observable.Return(Enumerable.Empty<PlayerScore>());
+
+                return Observable.FromAsync(async () =>
+                {
+                    var playerScores = Enumerable.Empty<PlayerScore>();
+                    int totalScores;
+                    int page = 1;
+
+                    do
+                    {
+                        var scoreCollection = await _beatLeader.ScoresAsync(
+                            id: playerId,
+                            sortBy: "date",
+                            order: default,
+                            page: page,
+                            count: 100,
+                            search: default,
+                            diff: default,
+                            mode: default,
+                            requirements: default,
+                            scoreStatus: default,
+                            leaderboardContext: (LeaderboardContexts)Models.Data.BeatLeader.LeaderboardContexts.General,
+                            type: default,
+                            modifiers: default,
+                            stars_from: default,
+                            stars_to: default,
+                            time_from: default,
+                            time_to: default,
+                            eventId: default
+                        );
+
+                        totalScores = scoreCollection.Metadata.Total;
+                        playerScores = playerScores.Concat(scoreCollection.Data.Select(s => new PlayerScore(s)));
+
+                        page++;
+                    }
+                    while ((page - 1) * 100 < totalScores);
+
+                    return playerScores;
+                });
+            }).Concat().Replay(1);
+
+            playerScores.Connect();
+
+            PlayerScores = playerScores.Catch((Exception exception) =>
+            {
+                _applicationEventService.RaiseError(new ErrorEvent
+                {
+                    Exception = exception,
+                    Message = "Failed to load player scores from ScoreSaber."
+                });
+
+                return Observable.Return(Enumerable.Empty<PlayerScore>());
+            });
 
             PlayerProfile = _playerId
                 .Select(playerId =>

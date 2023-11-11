@@ -1,7 +1,5 @@
-﻿using MapMaven.Core.ApiClients.ScoreSaber;
-using MapMaven.Core.Models;
+﻿using MapMaven.Core.Models;
 using MapMaven.Core.Models.Data;
-using MapMaven.Core.Models.Data.ScoreSaber;
 using MapMaven.Core.Services;
 using MapMaven.Core.Utilities.BeatSaver;
 using MapMaven.Core.Utilities.Scoresaber;
@@ -119,7 +117,7 @@ namespace MapMaven.Services
                 return map;
             }).GroupJoin(playerScores, mapInfo => mapInfo.Hash, score => score.Leaderboard.SongHash, (map, scores) =>
             {
-                map.AllPlayerScores = scores.OrderByDescending(s => s.Leaderboard.Difficulty.Difficulty1).ToList();
+                map.AllPlayerScores = scores.OrderByDescending(s => DifficultyUtils.GetOrder(s.Leaderboard.Difficulty)).ToList();
                 map.HighestPlayerScore = scores.MaxBy(s => s.Score.Pp);
 
                 return map;
@@ -147,7 +145,7 @@ namespace MapMaven.Services
                     map.Difficulty = rankedMap.Difficulty;
 
                     return map;
-                }).GroupJoin(playerScores, map => map.Hash + map.Difficulty.Difficulty, score => score.Leaderboard.SongHash + score.Leaderboard.Difficulty.DifficultyName, (map, scores) =>
+                }).GroupJoin(playerScores, map => map.Hash + map.Difficulty.Difficulty, score => score.Leaderboard.SongHash + score.Leaderboard.Difficulty, (map, scores) =>
                 {
                     map.HighestPlayerScore = scores.MaxBy(s => s.Score.Pp);
 
@@ -298,19 +296,19 @@ namespace MapMaven.Services
             await _beatSaberDataService.DeleteMaps(mapHashes);
         }
 
-        private async Task<Core.Models.Data.Player> AddPlayerIfNotExists(IDataStore dataStore)
+        private async Task<Player> AddPlayerIfNotExists(IDataStore dataStore)
         {
             var playerId = _scoreSaberService.PlayerId;
 
-            var player = await dataStore.Set<Core.Models.Data.Player>()
+            var player = await dataStore.Set<Player>()
                 .Include(p => p.HiddenMaps)
                 .FirstOrDefaultAsync(p => p.Id == playerId);
 
             if (player == null)
             {
-                player = new Core.Models.Data.Player { Id = playerId };
+                player = new Player { Id = playerId };
 
-                dataStore.Set<Core.Models.Data.Player>().Add(player);
+                dataStore.Set<Player>().Add(player);
             }
 
             return player;

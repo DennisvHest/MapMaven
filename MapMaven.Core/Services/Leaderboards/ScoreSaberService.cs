@@ -24,7 +24,7 @@ namespace MapMaven.Core.Services.Leaderboards
 
         public IObservable<string?> PlayerIdObservable => _playerId;
         public IObservable<PlayerProfile?> PlayerProfile { get; private set; }
-        public IObservable<IEnumerable<PlayerScore>> PlayerScores { get; private set; }
+        public IObservable<IEnumerable<Models.PlayerScore>> PlayerScores { get; private set; }
         public IObservable<IEnumerable<ScoreEstimate>> RankedMapScoreEstimates { get; private set; }
 
         public IObservable<Dictionary<string, RankedMapInfoItem>> RankedMaps => _rankedMaps;
@@ -48,11 +48,11 @@ namespace MapMaven.Core.Services.Leaderboards
             var playerScores = _playerId.Select(playerId =>
             {
                 if (string.IsNullOrEmpty(playerId))
-                    return Observable.Return(Enumerable.Empty<PlayerScore>());
+                    return Observable.Return(Enumerable.Empty<Models.PlayerScore>());
 
                 return Observable.FromAsync(async () =>
                 {
-                    var playerScores = Enumerable.Empty<PlayerScore>();
+                    var playerScores = Enumerable.Empty<Models.PlayerScore>();
                     int totalScores;
                     int page = 1;
 
@@ -68,7 +68,7 @@ namespace MapMaven.Core.Services.Leaderboards
 
                         totalScores = scoreCollection.Metadata.Total;
 
-                        playerScores = playerScores.Concat(scoreCollection.PlayerScores);
+                        playerScores = playerScores.Concat(scoreCollection.PlayerScores.Select(s => new Models.PlayerScore(s)));
 
                         page++;
                     }
@@ -88,7 +88,7 @@ namespace MapMaven.Core.Services.Leaderboards
                     Message = "Failed to load player scores from ScoreSaber."
                 });
 
-                return Observable.Return(Enumerable.Empty<PlayerScore>());
+                return Observable.Return(Enumerable.Empty<Models.PlayerScore>());
             });
 
             PlayerProfile = _playerId.Select(playerId =>
@@ -208,12 +208,12 @@ namespace MapMaven.Core.Services.Leaderboards
             return response?.RankedMaps ?? new();
         }
 
-        public string? GetReplayUrl(string mapId, PlayerScore score)
+        public string? GetReplayUrl(string mapId, Models.PlayerScore score)
         {
             if (!score.Score.HasReplay)
                 return null;
 
-            return $"{_replayBaseUrl}/?id={mapId}&difficulty={score.Leaderboard.Difficulty.DifficultyName}&playerID={_playerId.Value}";
+            return $"{_replayBaseUrl}/?id={mapId}&difficulty={score.Leaderboard.Difficulty}&playerID={_playerId.Value}";
         }
     }
 }

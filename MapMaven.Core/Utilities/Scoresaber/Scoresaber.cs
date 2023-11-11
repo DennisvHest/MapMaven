@@ -7,7 +7,7 @@ namespace MapMaven.Core.Utilities.Scoresaber
     public class Scoresaber
     {
         private readonly PlayerProfile _player;
-        private readonly IEnumerable<PlayerScore> _playerScores;
+        private readonly IEnumerable<Models.PlayerScore> _playerScores;
 
         public const double PPDecay = .965D;
         public const double PPPerStar = 42.114296; // Approximation
@@ -52,7 +52,7 @@ namespace MapMaven.Core.Utilities.Scoresaber
             new PPCurveItem { At = 100D, Value = 5.367394282890631D },
         };
 
-        public Scoresaber(PlayerProfile player, IEnumerable<PlayerScore> playerScores)
+        public Scoresaber(PlayerProfile player, IEnumerable<Models.PlayerScore> playerScores)
         {
             _player = player;
             _playerScores = playerScores;
@@ -65,7 +65,7 @@ namespace MapMaven.Core.Utilities.Scoresaber
         /// <param name="newPP">New PP score to add to the total.</param>
         /// <param name="replaceMapIds">Map ids of which the PP should not be included in the total.</param>
         /// <returns></returns>
-        public static double GetTotalPP(IEnumerable<PlayerScore> scores, double newPP = 0, IEnumerable<string>? replaceMapIds = null)
+        public static double GetTotalPP(IEnumerable<Models.PlayerScore> scores, double newPP = 0, IEnumerable<string>? replaceMapIds = null)
         {
             if (replaceMapIds == null)
                 replaceMapIds = Enumerable.Empty<string>();
