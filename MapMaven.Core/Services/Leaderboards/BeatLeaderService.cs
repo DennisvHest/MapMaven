@@ -2,6 +2,7 @@
 using MapMaven.Core.Models;
 using MapMaven.Core.Models.Data.RankedMaps;
 using MapMaven.Core.Services.Interfaces;
+using MapMaven.Core.Utilities.BeatLeader;
 using MapMaven.Core.Utilities.Scoresaber;
 using MapMaven_Core;
 using System.Net.Http.Json;
@@ -129,6 +130,8 @@ namespace MapMaven.Core.Services.Leaderboards
                 if (player == null)
                     return Enumerable.Empty<ScoreEstimate>();
 
+                var beatLeader = new BeatLeader(player, playerScores);
+
                 return rankedMaps.SelectMany(map =>
                 {
                     return map.Value.Difficulties.Select(difficulty =>
@@ -140,16 +143,7 @@ namespace MapMaven.Core.Services.Leaderboards
                             TimeSet = DateTime.Now
                         });
 
-                        return new ScoreEstimate
-                        {
-                            Accuracy = output.Score,
-                            Difficulty = difficulty.Difficulty,
-                            MapHash = map.Key,
-                            Pp = 0,
-                            PPIncrease = 0,
-                            Stars = difficulty.Stars,
-                            TotalPP = 0
-                        };
+                        return beatLeader.GetScoreEstimate(map.Value, difficulty, output.Score);
                     });
                 }).ToList();
             }).Replay(1);

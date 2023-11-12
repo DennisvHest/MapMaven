@@ -124,7 +124,7 @@ namespace MapMaven.Components.Maps
             {
                 Name = $"Predicted accuracy >= {MinimumPredictedAccuracy}%",
                 Visible = false,
-                Filter = map => true// map.ScoreEstimate?.Accuracy >= MinimumPredictedAccuracy TODO: UNCOMMMENT WHEN SCORE ESTIMATES WORK FOR BEATLEADER
+                Filter = map => map.ScoreEstimate?.Accuracy >= MinimumPredictedAccuracy
             };
 
             MapService.AddMapFilter(MinimumPredictedAccuracyFilter);

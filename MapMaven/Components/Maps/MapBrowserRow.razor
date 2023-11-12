@@ -109,7 +109,7 @@
                 var chipStyle = $"border: 1px solid {DifficultyDisplayUtils.GetColor(scoreEstimate.Difficulty)}";
                 <MudChip Size="Size.Small" Variant="Variant.Outlined" Style="@chipStyle">
                     @DifficultyDisplayUtils.GetShortName(scoreEstimate.Difficulty) |
-                    @scoreEstimate.Stars <MudIcon Icon="@Icons.Filled.Star" Size="Size.Small"></MudIcon> |
+                    @scoreEstimate.Stars.ToString("#0.##") <MudIcon Icon="@Icons.Filled.Star" Size="Size.Small"></MudIcon> |
                     @scoreEstimate.Accuracy.ToString("#0.##") % |
                     +@scoreEstimate.PPIncrease.ToString("#0.##") pp
                 </MudChip>
