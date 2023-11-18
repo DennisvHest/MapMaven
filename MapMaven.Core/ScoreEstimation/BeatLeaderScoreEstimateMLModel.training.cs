@@ -16,8 +16,8 @@ namespace MapMaven_Core
 {
     public partial class BeatLeaderScoreEstimateMLModel
     {
-        public const string RetrainConnectionString = @"Data Source=tcp:map-maven-db-server.database.windows.net,1433;Initial Catalog=map-maven-beatleader-data-db;User ID=MapMaven";
-        public const string RetrainCommandString = @"SELECT CAST([PP] as REAL), CAST([StarDifficulty] as REAL), CAST([Accuracy] as REAL), [TimeSet] FROM [dbo].[TraningData]";
+        public const string RetrainConnectionString = @"Data Source=map-maven-db-server.database.windows.net;Initial Catalog=map-maven-beatleader-data-db;User ID=MapMaven";
+        public const string RetrainCommandString = @"SELECT CAST([Pp] as REAL), CAST([StarDifficulty] as REAL), CAST([Accuracy] as REAL), [TimeSet] FROM [dbo].[TraningData]";
 
         /// <summary>
         /// Train a new model with the provided dataset.
@@ -90,10 +90,10 @@ namespace MapMaven_Core
         public static IEstimator<ITransformer> BuildPipeline(MLContext mlContext)
         {
             // Data process configuration with pipeline data transformations
-            var pipeline = mlContext.Transforms.ReplaceMissingValues(new []{new InputOutputColumnPair(@"PP", @"PP"),new InputOutputColumnPair(@"StarDifficulty", @"StarDifficulty")})      
+            var pipeline = mlContext.Transforms.ReplaceMissingValues(new []{new InputOutputColumnPair(@"Pp", @"Pp"),new InputOutputColumnPair(@"StarDifficulty", @"StarDifficulty")})      
                                     .Append(mlContext.Transforms.Conversion.ConvertType(@"TimeSet", @"TimeSet"))      
-                                    .Append(mlContext.Transforms.Concatenate(@"Features", new []{@"PP",@"StarDifficulty",@"TimeSet"}))      
-                                    .Append(mlContext.Regression.Trainers.FastForest(new FastForestRegressionTrainer.Options(){NumberOfTrees=4,NumberOfLeaves=4,FeatureFraction=1F,LabelColumnName=@"Accuracy",FeatureColumnName=@"Features"}));
+                                    .Append(mlContext.Transforms.Concatenate(@"Features", new []{@"Pp",@"StarDifficulty",@"TimeSet"}))      
+                                    .Append(mlContext.Regression.Trainers.FastTree(new FastTreeRegressionTrainer.Options(){NumberOfLeaves=16,MinimumExampleCountPerLeaf=25,NumberOfTrees=9,MaximumBinCountPerFeature=134,FeatureFraction=0.975225607165882,LearningRate=0.999999776672986,LabelColumnName=@"Accuracy",FeatureColumnName=@"Features",DiskTranspose=false}));
 
             return pipeline;
         }

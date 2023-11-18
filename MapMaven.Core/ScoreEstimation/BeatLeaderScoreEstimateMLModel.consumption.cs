@@ -6,6 +6,7 @@ using System.Linq;
 using System.IO;
 using System.Collections.Generic;
 using System.Reflection;
+
 namespace MapMaven_Core
 {
     public partial class BeatLeaderScoreEstimateMLModel
@@ -17,8 +18,8 @@ namespace MapMaven_Core
         public class ModelInput
         {
             [LoadColumn(0)]
-            [ColumnName(@"PP")]
-            public float PP { get; set; }
+            [ColumnName(@"Pp")]
+            public float Pp { get; set; }
 
             [LoadColumn(1)]
             [ColumnName(@"StarDifficulty")]
@@ -42,8 +43,8 @@ namespace MapMaven_Core
         #region model output class
         public class ModelOutput
         {
-            [ColumnName(@"PP")]
-            public float PP { get; set; }
+            [ColumnName(@"Pp")]
+            public float Pp { get; set; }
 
             [ColumnName(@"StarDifficulty")]
             public float StarDifficulty { get; set; }

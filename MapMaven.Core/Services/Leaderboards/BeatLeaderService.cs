@@ -138,7 +138,7 @@ namespace MapMaven.Core.Services.Leaderboards
                     {
                         var output = BeatLeaderScoreEstimateMLModel.Predict(new BeatLeaderScoreEstimateMLModel.ModelInput
                         {
-                            PP = Convert.ToSingle(player.Pp),
+                            Pp = Convert.ToSingle(player.Pp),
                             StarDifficulty = Convert.ToSingle(difficulty.Stars),
                             TimeSet = DateTime.Now
                         });

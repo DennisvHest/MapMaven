@@ -5,7 +5,7 @@
     "Version": 1,
     "ColumnProperties": [
       {
-        "ColumnName": "PP",
+        "ColumnName": "Pp",
         "ColumnPurpose": "Feature",
         "ColumnDataFormat": "Single",
         "IsCategorical": false,
@@ -37,8 +37,8 @@
         "Version": 4
       }
     ],
-    "ConnectionString": "Data Source=tcp:map-maven-db-server.database.windows.net,1433;Initial Catalog=map-maven-beatleader-data-db;User ID=MapMaven",
-    "CommandString": "SELECT CAST([PP] as REAL), CAST([StarDifficulty] as REAL), CAST([Accuracy] as REAL), [TimeSet] FROM [dbo].[TraningData]",
+    "ConnectionString": "Data Source=map-maven-db-server.database.windows.net;Initial Catalog=map-maven-beatleader-data-db;User ID=MapMaven",
+    "CommandString": "SELECT CAST([Pp] as REAL), CAST([StarDifficulty] as REAL), CAST([Accuracy] as REAL), [TimeSet] FROM [dbo].[TraningData]",
     "DatabaseName": "map-maven-beatleader-data-db",
     "SelectedTableDbo": "dbo",
     "TableName": "TraningData"
@@ -54,18 +54,18 @@
       {
         "Version": 1,
         "Type": "Trial",
-        "TrainerName": "FastForestRegression",
-        "Score": 0.41674471891146014,
-        "RuntimeInSeconds": 11.915,
+        "TrainerName": "FastTreeRegression",
+        "Score": 0.46695028375294845,
+        "RuntimeInSeconds": 7.857,
         "Parameter": {
-          "_SCHEMA_": "e0 * e1 * e2 * e4",
+          "_SCHEMA_": "e0 * e1 * e2 * e3",
           "e0": {
             "OutputColumnNames": [
-              "PP",
+              "Pp",
               "StarDifficulty"
             ],
             "InputColumnNames": [
-              "PP",
+              "Pp",
               "StarDifficulty"
             ]
           },
@@ -79,36 +79,40 @@
           },
           "e2": {
             "InputColumnNames": [
-              "PP",
+              "Pp",
               "StarDifficulty",
               "TimeSet"
             ],
             "OutputColumnName": "Features"
           },
-          "e4": {
-            "NumberOfTrees": 4,
-            "NumberOfLeaves": 4,
-            "FeatureFraction": 1.0,
+          "e3": {
+            "NumberOfLeaves": 16,
+            "MinimumExampleCountPerLeaf": 25,
+            "NumberOfTrees": 9,
+            "MaximumBinCountPerFeature": 134,
+            "FeatureFraction": 0.97522560716588169,
+            "LearningRate": 0.99999977667298645,
             "LabelColumnName": "Accuracy",
-            "FeatureColumnName": "Features"
+            "FeatureColumnName": "Features",
+            "DiskTranspose": false
           }
         }
       },
       {
         "Version": 1,
         "Type": "Trial",
-        "TrainerName": "FastForestRegression",
-        "Score": 0.41674471891146014,
-        "RuntimeInSeconds": 8.197,
+        "TrainerName": "FastTreeRegression",
+        "Score": 0.46177364911700436,
+        "RuntimeInSeconds": 9.096,
         "Parameter": {
-          "_SCHEMA_": "e0 * e1 * e2 * e4",
+          "_SCHEMA_": "e0 * e1 * e2 * e3",
           "e0": {
             "OutputColumnNames": [
-              "PP",
+              "Pp",
               "StarDifficulty"
             ],
             "InputColumnNames": [
-              "PP",
+              "Pp",
               "StarDifficulty"
             ]
           },
@@ -122,36 +126,40 @@
           },
           "e2": {
             "InputColumnNames": [
-              "PP",
+              "Pp",
               "StarDifficulty",
               "TimeSet"
             ],
             "OutputColumnName": "Features"
           },
-          "e4": {
-            "NumberOfTrees": 4,
-            "NumberOfLeaves": 4,
-            "FeatureFraction": 1.0,
+          "e3": {
+            "NumberOfLeaves": 6,
+            "MinimumExampleCountPerLeaf": 7,
+            "NumberOfTrees": 16,
+            "MaximumBinCountPerFeature": 237,
+            "FeatureFraction": 0.99999999,
+            "LearningRate": 0.99999977667298645,
             "LabelColumnName": "Accuracy",
-            "FeatureColumnName": "Features"
+            "FeatureColumnName": "Features",
+            "DiskTranspose": false
           }
         }
       },
       {
         "Version": 1,
         "Type": "Trial",
-        "TrainerName": "FastForestRegression",
-        "Score": 0.41674471891146014,
-        "RuntimeInSeconds": 7.484,
+        "TrainerName": "FastTreeRegression",
+        "Score": 0.45838112802981068,
+        "RuntimeInSeconds": 8.189,
         "Parameter": {
-          "_SCHEMA_": "e0 * e1 * e2 * e4",
+          "_SCHEMA_": "e0 * e1 * e2 * e3",
           "e0": {
             "OutputColumnNames": [
-              "PP",
+              "Pp",
               "StarDifficulty"
             ],
             "InputColumnNames": [
-              "PP",
+              "Pp",
               "StarDifficulty"
             ]
           },
@@ -165,36 +173,40 @@
           },
           "e2": {
             "InputColumnNames": [
-              "PP",
+              "Pp",
               "StarDifficulty",
               "TimeSet"
             ],
             "OutputColumnName": "Features"
           },
-          "e4": {
-            "NumberOfTrees": 4,
-            "NumberOfLeaves": 9,
-            "FeatureFraction": 0.9902305,
+          "e3": {
+            "NumberOfLeaves": 6,
+            "MinimumExampleCountPerLeaf": 17,
+            "NumberOfTrees": 26,
+            "MaximumBinCountPerFeature": 94,
+            "FeatureFraction": 0.89864455876691607,
+            "LearningRate": 0.2070077870371794,
             "LabelColumnName": "Accuracy",
-            "FeatureColumnName": "Features"
+            "FeatureColumnName": "Features",
+            "DiskTranspose": false
           }
         }
       },
       {
         "Version": 1,
         "Type": "Trial",
-        "TrainerName": "FastForestRegression",
-        "Score": 0.41674471891146014,
-        "RuntimeInSeconds": 7.7,
+        "TrainerName": "FastTreeRegression",
+        "Score": 0.45534371859327927,
+        "RuntimeInSeconds": 8.275,
         "Parameter": {
-          "_SCHEMA_": "e0 * e1 * e2 * e4",
+          "_SCHEMA_": "e0 * e1 * e2 * e3",
           "e0": {
             "OutputColumnNames": [
-              "PP",
+              "Pp",
               "StarDifficulty"
             ],
             "InputColumnNames": [
-              "PP",
+              "Pp",
               "StarDifficulty"
             ]
           },
@@ -208,36 +220,40 @@
           },
           "e2": {
             "InputColumnNames": [
-              "PP",
+              "Pp",
               "StarDifficulty",
               "TimeSet"
             ],
             "OutputColumnName": "Features"
           },
-          "e4": {
-            "NumberOfTrees": 4,
-            "NumberOfLeaves": 4,
-            "FeatureFraction": 1.0,
+          "e3": {
+            "NumberOfLeaves": 5,
+            "MinimumExampleCountPerLeaf": 10,
+            "NumberOfTrees": 13,
+            "MaximumBinCountPerFeature": 358,
+            "FeatureFraction": 0.99999999,
+            "LearningRate": 0.58784167636731088,
             "LabelColumnName": "Accuracy",
-            "FeatureColumnName": "Features"
+            "FeatureColumnName": "Features",
+            "DiskTranspose": false
           }
         }
       },
       {
         "Version": 1,
         "Type": "Trial",
-        "TrainerName": "FastForestRegression",
-        "Score": 0.41674471891146014,
-        "RuntimeInSeconds": 7.24,
+        "TrainerName": "FastTreeRegression",
+        "Score": 0.44721031080458662,
+        "RuntimeInSeconds": 7.903,
         "Parameter": {
-          "_SCHEMA_": "e0 * e1 * e2 * e4",
+          "_SCHEMA_": "e0 * e1 * e2 * e3",
           "e0": {
             "OutputColumnNames": [
-              "PP",
+              "Pp",
               "StarDifficulty"
             ],
             "InputColumnNames": [
-              "PP",
+              "Pp",
               "StarDifficulty"
             ]
           },
@@ -251,18 +267,22 @@
           },
           "e2": {
             "InputColumnNames": [
-              "PP",
+              "Pp",
               "StarDifficulty",
               "TimeSet"
             ],
             "OutputColumnName": "Features"
           },
-          "e4": {
-            "NumberOfTrees": 4,
-            "NumberOfLeaves": 4,
-            "FeatureFraction": 1.0,
+          "e3": {
+            "NumberOfLeaves": 37,
+            "MinimumExampleCountPerLeaf": 84,
+            "NumberOfTrees": 5,
+            "MaximumBinCountPerFeature": 75,
+            "FeatureFraction": 0.947507967182168,
+            "LearningRate": 0.56314455204975711,
             "LabelColumnName": "Accuracy",
-            "FeatureColumnName": "Features"
+            "FeatureColumnName": "Features",
+            "DiskTranspose": false
           }
         }
       }
@@ -286,7 +306,7 @@
     "Version": 2,
     "Subsampling": false,
     "Type": "RegressionTrainingOption",
-    "TrainingTime": 600,
+    "TrainingTime": 1200,
     "LabelColumn": "Accuracy",
     "ValidationOption": {
       "Version": 0,
