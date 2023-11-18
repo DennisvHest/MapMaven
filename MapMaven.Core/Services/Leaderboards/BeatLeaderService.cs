@@ -1,10 +1,12 @@
-﻿using MapMaven.Core.ApiClients.BeatLeader;
+﻿using ComposableAsync;
+using MapMaven.Core.ApiClients.BeatLeader;
 using MapMaven.Core.Models;
 using MapMaven.Core.Models.Data.RankedMaps;
 using MapMaven.Core.Services.Interfaces;
 using MapMaven.Core.Utilities.BeatLeader;
 using MapMaven.Core.Utilities.Scoresaber;
 using MapMaven_Core;
+using RateLimiter;
 using System.Net.Http.Json;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
@@ -37,6 +39,8 @@ namespace MapMaven.Core.Services.Leaderboards
 
         private const string PlayerIdSettingKey = "BeatLeaderPlayerId";
 
+        private readonly TimeLimiter _beatLeaderApiLimit;
+
         public BeatLeaderService(
             BeatLeaderApiClient beatLeader,
             IApplicationSettingService applicationSettingService,
@@ -47,6 +51,8 @@ namespace MapMaven.Core.Services.Leaderboards
             _applicationSettingService = applicationSettingService;
             _applicationEventService = applicationEventService;
             _httpClientFactory = httpClientFactory;
+
+            _beatLeaderApiLimit = TimeLimiter.GetFromMaxCountByInterval(10, TimeSpan.FromSeconds(10));
 
             var playerScores = _playerId.Select(playerId =>
             {
@@ -61,6 +67,8 @@ namespace MapMaven.Core.Services.Leaderboards
 
                     do
                     {
+                        await _beatLeaderApiLimit;
+
                         var scoreCollection = await _beatLeader.ScoresAsync(
                             id: playerId,
                             sortBy: "date",
@@ -114,6 +122,8 @@ namespace MapMaven.Core.Services.Leaderboards
 
                     return Observable.FromAsync(async () =>
                     {
+                        await _beatLeaderApiLimit;
+
                         var playerProfile = await _beatLeader.PlayerAsync(
                             id: playerId,
                             stats: false,
