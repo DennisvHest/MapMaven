@@ -160,7 +160,23 @@ namespace MapMaven.Core.Services.Leaderboards
 
         public string? GetPlayerIdFromReplays(string beatSaberInstallLocation)
         {
-            throw new NotImplementedException();
+            var beatLeaderReplaysLocation = Path.Combine(BeatSaberFileService.GetUserDataLocation(beatSaberInstallLocation), "BeatLeader", "Replays");
+
+            if (!Directory.Exists(beatLeaderReplaysLocation))
+                return null;
+
+            var replayFileName = Directory.EnumerateFiles(beatLeaderReplaysLocation, "*.bsor").FirstOrDefault();
+
+            if (string.IsNullOrEmpty(replayFileName))
+                return null;
+
+            var replayFile = new FileInfo(replayFileName);
+
+            var playerId = replayFile.Name
+                .Split('-')
+                .First();
+
+            return playerId;
         }
 
         public string? GetReplayUrl(string mapId, PlayerScore score)

@@ -11,6 +11,7 @@ namespace MapMaven.Components
     public partial class Settings
     {
         private static readonly Regex _scoreSaberPlayerIdUrlRegex = new Regex(@"scoresaber.com\/u\/(?<playerId>[^\/\?]+)");
+        private static readonly Regex _beatLeaderPlayerIdUrlRegex = new Regex(@"beatleader.xyz\/u\/(?<playerId>[^\/\?]+)");
 
         [Inject]
         protected IFolderPicker FolderPicker { get; set; }
@@ -22,7 +23,10 @@ namespace MapMaven.Components
         protected IBeatSaberDataService BeatSaberDataService { get; set; }
 
         [Inject]
-        protected ILeaderboardService ScoreSaberService { get; set; }
+        protected ScoreSaberService ScoreSaberService { get; set; }
+
+        [Inject]
+        protected BeatLeaderService BeatLeaderService { get; set; }
 
         [CascadingParameter]
         MudDialogInstance MudDialog { get; set; }
@@ -31,7 +35,8 @@ namespace MapMaven.Components
         public bool InitialSetup { get; set; } = false;
 
         public string BeatSaberInstallLocation { get; set; }
-        public string PlayerId { get; set; }
+        public string ScoreSaberPlayerId { get; set; }
+        public string BeatLeaderPlayerId { get; set; }
 
         private string? OldBeatSaberInstallLocation { get; set; }
 
@@ -42,18 +47,24 @@ namespace MapMaven.Components
                 OldBeatSaberInstallLocation = installLocation;
                 BeatSaberInstallLocation = installLocation;
             });
-            SubscribeAndBind(ScoreSaberService.PlayerIdObservable, playerId => PlayerId = playerId);
+            SubscribeAndBind(ScoreSaberService.PlayerIdObservable, playerId => ScoreSaberPlayerId = playerId);
+            SubscribeAndBind(BeatLeaderService.PlayerIdObservable, playerId => BeatLeaderPlayerId = playerId);
         }
 
         public void AutoFillPlayerId(string beatSaberInstallLocation)
         {
-            if (!string.IsNullOrEmpty(PlayerId))
+            if (!string.IsNullOrEmpty(ScoreSaberPlayerId))
                 return;
 
-            var playerId = ScoreSaberService.GetPlayerIdFromReplays(beatSaberInstallLocation);
+            var scoreSaberPlayerId = ScoreSaberService.GetPlayerIdFromReplays(beatSaberInstallLocation);
 
-            if (!string.IsNullOrEmpty(playerId))
-                PlayerId = playerId;
+            if (!string.IsNullOrEmpty(scoreSaberPlayerId))
+                ScoreSaberPlayerId = scoreSaberPlayerId;
+
+            var beatLeaderPlayerId = BeatLeaderService.GetPlayerIdFromReplays(beatSaberInstallLocation);
+
+            if (!string.IsNullOrEmpty(beatLeaderPlayerId))
+                BeatLeaderPlayerId = beatLeaderPlayerId;
         }
 
         public async Task PickFolder()
@@ -65,12 +76,20 @@ namespace MapMaven.Components
 
         public async Task SaveSettings()
         {
-            if (!string.IsNullOrEmpty(PlayerId))
+            if (!string.IsNullOrEmpty(ScoreSaberPlayerId))
             {
-                var playerIdMatch = _scoreSaberPlayerIdUrlRegex.Match(PlayerId);
+                var playerIdMatch = _scoreSaberPlayerIdUrlRegex.Match(ScoreSaberPlayerId);
 
                 if (playerIdMatch.Success)
-                    PlayerId = playerIdMatch.Groups.GetValueOrDefault("playerId")?.Value;
+                    ScoreSaberPlayerId = playerIdMatch.Groups.GetValueOrDefault("playerId")?.Value;
+            }
+
+            if (!string.IsNullOrEmpty(BeatLeaderPlayerId))
+            {
+                var playerIdMatch = _beatLeaderPlayerIdUrlRegex.Match(BeatLeaderPlayerId);
+
+                if (playerIdMatch.Success)
+                    BeatLeaderPlayerId = playerIdMatch.Groups.GetValueOrDefault("playerId")?.Value;
             }
 
             Close();
@@ -83,8 +102,12 @@ namespace MapMaven.Components
 
             BeatSaberDataService.SetInitialMapLoad(InitialSetup);
 
-            Task.Run(() => BeatSaberToolFileService.SetBeatSaberInstallLocation(BeatSaberInstallLocation));
-            Task.Run(() => ScoreSaberService.SetPlayerId(PlayerId));
+            Task.Run(async () =>
+            {
+                await BeatSaberToolFileService.SetBeatSaberInstallLocation(BeatSaberInstallLocation);
+                await ScoreSaberService.SetPlayerId(ScoreSaberPlayerId);
+                await BeatLeaderService.SetPlayerId(BeatLeaderPlayerId);
+            });
         }
 
         public void Close()

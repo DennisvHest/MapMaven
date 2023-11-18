@@ -24,9 +24,15 @@
             OnAdornmentClick="PickFolder">
         </MudTextField>
         <MudTextField
-            @bind-Value="PlayerId"
+            @bind-Value="ScoreSaberPlayerId"
             Variant="Variant.Outlined"
-            Label="ScoreSaber player ID / URL (optional)">
+            Label="ScoreSaber player ID / URL (optional)"
+            Class="mb-4">
+        </MudTextField>
+        <MudTextField
+            @bind-Value="BeatLeaderPlayerId"
+            Variant="Variant.Outlined"
+            Label="BeatLeader player ID / URL (optional)">
         </MudTextField>
     </DialogContent>
     <DialogActions>
