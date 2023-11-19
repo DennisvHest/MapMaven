@@ -15,7 +15,7 @@ namespace MapMaven.Core.Services.Leaderboards
 
         public Dictionary<string, ILeaderboardProvider> LeaderboardProviders { get; private set; }
 
-        private readonly BehaviorSubject<string?> _activeLeaderboardProviderName = new(Models.LeaderboardProviders.ScoreSaber);
+        private readonly BehaviorSubject<string?> _activeLeaderboardProviderName = new(Models.LeaderboardProviders.BeatLeader);
 
         public IObservable<string?> PlayerIdObservable { get; private set; }
         public IObservable<PlayerProfile?> PlayerProfile { get; private set; }
