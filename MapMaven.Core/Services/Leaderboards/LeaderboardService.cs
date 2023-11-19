@@ -15,7 +15,7 @@ namespace MapMaven.Core.Services.Leaderboards
 
         public Dictionary<string, ILeaderboardProvider> LeaderboardProviders { get; private set; }
 
-        private readonly BehaviorSubject<string?> _activeLeaderboardProviderName = new(Models.LeaderboardProviders.BeatLeader);
+        private readonly BehaviorSubject<string?> _activeLeaderboardProviderName = new(Models.LeaderboardProviders.ScoreSaber);
 
         public IObservable<string?> PlayerIdObservable { get; private set; }
         public IObservable<PlayerProfile?> PlayerProfile { get; private set; }
@@ -25,8 +25,6 @@ namespace MapMaven.Core.Services.Leaderboards
         public IObservable<string?> ActiveLeaderboardProviderName => _activeLeaderboardProviderName;
 
         public string? PlayerId => LeaderboardProviders[_activeLeaderboardProviderName.Value].PlayerId;
-
-        private const string PlayerIdSettingKey = "PlayerId";
 
         public const string ReplayBaseUrl = "https://www.replay.beatleader.xyz";
 
@@ -38,6 +36,23 @@ namespace MapMaven.Core.Services.Leaderboards
             _applicationSettingService = applicationSettingService;
 
             LeaderboardProviders = _leaderboardProviders.ToDictionary(x => x.LeaderboardProviderName);
+
+            // If there is only one leaderboard provider, set it as the active one
+            _leaderboardProviders
+                .Select(x => x.PlayerIdObservable.StartWith(null as string))
+                .CombineLatest()
+                .Subscribe(playerIds =>
+                {
+                    if (playerIds.Where(x => !string.IsNullOrEmpty(x)).Count() > 1)
+                        return;
+
+                    var activeLeaderboardProvider = _leaderboardProviders.FirstOrDefault(p => !string.IsNullOrEmpty(p.PlayerId));
+
+                    if (activeLeaderboardProvider == null)
+                        return;
+
+                    SetActiveLeaderboardProvider(activeLeaderboardProvider.LeaderboardProviderName);
+                });
 
             var activeLeaderboardProviderService = _activeLeaderboardProviderName
                 .Select(leaderboardProviderName =>
@@ -76,7 +91,7 @@ namespace MapMaven.Core.Services.Leaderboards
 
         public async Task SetPlayerId(string playerId)
         {
-            await _applicationSettingService.AddOrUpdateAsync(PlayerIdSettingKey, playerId);
+            await LeaderboardProviders[_activeLeaderboardProviderName.Value].SetPlayerId(playerId);
         }
 
         public void RefreshPlayerData()

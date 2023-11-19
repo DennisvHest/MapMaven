@@ -1,12 +1,19 @@
-﻿@if (Player != null)
+﻿@using MapMaven.Core.Models;
+@if (Player != null)
 {
+    var profileUrl = Player.LeaderboardProvider switch
+    {
+        LeaderboardProviders.ScoreSaber => $"https://scoresaber.com/u/{Player.Id}",
+        LeaderboardProviders.BeatLeader => $"https://www.beatleader.xyz/u/{Player.Id}",
+    };
+
     <div class="d-flex pa-2 profile full-width">
         <img src="@Player.ProfilePictureUrl" class="profile-background-image" />
-        <a href="https://scoresaber.com/u/@Player.Id" class="d-flex align-center">
+        <a href="@profileUrl" class="d-flex align-center">
             <MudAvatar Image="@Player.ProfilePictureUrl" />
         </a>
         <div class="pl-2 full-width">
-            <a href="https://scoresaber.com/u/@Player.Id"><h3>@Player.Name</h3></a>
+            <a href="@profileUrl"><h3>@Player.Name</h3></a>
             <div>
                 <span>
                     <MudIcon Icon="@Icons.Material.Filled.Language" Style="font-size: 1rem; transform: translateY(2px);"></MudIcon>

@@ -5,26 +5,40 @@
 @using MapMaven.Core.Services;
 @using MapMaven.Core.Services.Leaderboards;
 
-@if (ScoreSaberProfile != null)
+@if (ScoreSaberProfile is not null && BeatLeaderProfile is not null)
 {
     <MudTabs MinimumTabWidth="20px" Position="Position.Left" ActivePanelIndex="ActivePanelIndex">
-        <MudTabPanel Class="px-1" Style="min-height: 43px" OnClick="() => SetActiveLeaderboardProvider(LeaderboardProviders.ScoreSaber)">
-            <TabContent>
-                <img src="/images/score-saber-logo-small.png" style="width: 24px;" />
-            </TabContent>
-            <ChildContent>
-                <PlayerProfileInfo Player="ScoreSaberProfile"></PlayerProfileInfo>
-            </ChildContent>
-        </MudTabPanel>
-        <MudTabPanel Class="px-1" Style="min-height: 43px" OnClick="() => SetActiveLeaderboardProvider(LeaderboardProviders.BeatLeader)">
-            <TabContent>
-                <img src="/images/beat-leader-logo.svg" style="width: 24px;" />
-            </TabContent>
-            <ChildContent>
-                <PlayerProfileInfo Player="BeatLeaderProfile"></PlayerProfileInfo>
-            </ChildContent>
-        </MudTabPanel>
+        @if (ScoreSaberProfile is not null)
+        {
+            <MudTabPanel Class="px-1" Style="min-height: 43px" OnClick="() => SetActiveLeaderboardProvider(LeaderboardProviders.ScoreSaber)">
+                <TabContent>
+                    <img src="/images/score-saber-logo-small.png" style="width: 24px;" />
+                </TabContent>
+                <ChildContent>
+                    <PlayerProfileInfo Player="ScoreSaberProfile"></PlayerProfileInfo>
+                </ChildContent>
+            </MudTabPanel>
+        }
+        @if (BeatLeaderProfile is not null)
+        {
+            <MudTabPanel Class="px-1" Style="min-height: 43px" OnClick="() => SetActiveLeaderboardProvider(LeaderboardProviders.BeatLeader)">
+                <TabContent>
+                    <img src="/images/beat-leader-logo.svg" style="width: 24px;" />
+                </TabContent>
+                <ChildContent>
+                    <PlayerProfileInfo Player="BeatLeaderProfile"></PlayerProfileInfo>
+                </ChildContent>
+            </MudTabPanel>
+        }
     </MudTabs>
+}
+else if (ScoreSaberProfile is not null)
+{
+    <PlayerProfileInfo Player="ScoreSaberProfile"></PlayerProfileInfo>
+}
+else if (BeatLeaderProfile is not null)
+{
+    <PlayerProfileInfo Player="BeatLeaderProfile"></PlayerProfileInfo>
 }
 
 @code {
