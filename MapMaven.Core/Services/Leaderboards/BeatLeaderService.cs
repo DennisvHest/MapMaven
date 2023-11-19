@@ -153,6 +153,8 @@ namespace MapMaven.Core.Services.Leaderboards
                             TimeSet = DateTime.Now
                         });
 
+                        output.Score = Math.Min(output.Score, 99); // Filter out impossible accuracies without modifiers and cap it at 99%
+
                         return beatLeader.GetScoreEstimate(map.Value, difficulty, output.Score);
                     });
                 }).ToList();
