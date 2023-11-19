@@ -1,4 +1,6 @@
-﻿namespace MapMaven.Core.Models
+﻿using MapMaven.Core.Services.Leaderboards;
+
+namespace MapMaven.Core.Models
 {
     public class PlayerProfile
     {
@@ -9,6 +11,7 @@
         public int Rank { get; set; }
         public int CountryRank { get; set; }
         public double Pp { get; set; }
+        public string LeaderboardProvider { get; set; }
 
         public PlayerProfile() {}
 
@@ -21,6 +24,7 @@
             Rank = Convert.ToInt32(player.Rank);
             CountryRank = Convert.ToInt32(player.CountryRank);
             Pp = player.Pp;
+            LeaderboardProvider = LeaderboardProviders.ScoreSaber;
         }
 
         public PlayerProfile(ApiClients.BeatLeader.PlayerResponseFull playerProfile)
@@ -32,6 +36,7 @@
             Rank = Convert.ToInt32(playerProfile.Rank);
             CountryRank = Convert.ToInt32(playerProfile.CountryRank);
             Pp = playerProfile.Pp;
+            LeaderboardProvider = LeaderboardProviders.BeatLeader;
         }
     }
 }

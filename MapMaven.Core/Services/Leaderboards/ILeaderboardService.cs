@@ -13,12 +13,14 @@ namespace MapMaven.Core.Services.Leaderboards
         IObservable<PlayerProfile?> PlayerProfile { get; }
         IObservable<IEnumerable<Models.PlayerScore>> PlayerScores { get; }
         IObservable<IEnumerable<ScoreEstimate>> RankedMapScoreEstimates { get; }
+        IObservable<string?> ActiveLeaderboardProviderName { get; }
 
         string? GetPlayerIdFromReplays(string beatSaberInstallLocation);
         Task<Dictionary<string, RankedMapInfoItem>> GetRankedMaps();
         string? GetReplayUrl(string mapId, Models.PlayerScore score);
         Task LoadRankedMaps();
         void RefreshPlayerData();
+        void SetActiveLeaderboardProvider(string leaderboardProviderName);
         Task SetPlayerId(string playerId);
     }
 }

@@ -39,7 +39,7 @@ namespace MapMaven.Core.Services.Leaderboards
 
         private const string PlayerIdSettingKey = "BeatLeaderPlayerId";
 
-        private readonly TimeLimiter _beatLeaderApiLimit;
+        private static readonly TimeLimiter _beatLeaderApiLimit = TimeLimiter.GetFromMaxCountByInterval(10, TimeSpan.FromSeconds(10));
 
         public BeatLeaderService(
             BeatLeaderApiClient beatLeader,
@@ -51,8 +51,6 @@ namespace MapMaven.Core.Services.Leaderboards
             _applicationSettingService = applicationSettingService;
             _applicationEventService = applicationEventService;
             _httpClientFactory = httpClientFactory;
-
-            _beatLeaderApiLimit = TimeLimiter.GetFromMaxCountByInterval(10, TimeSpan.FromSeconds(10));
 
             var playerScores = _playerId.Select(playerId =>
             {

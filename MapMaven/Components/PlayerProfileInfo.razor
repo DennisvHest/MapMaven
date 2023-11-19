@@ -1,0 +1,46 @@
+﻿@if (Player != null)
+{
+    <div class="d-flex pa-2 profile full-width">
+        <img src="@Player.ProfilePictureUrl" class="profile-background-image" />
+        <a href="https://scoresaber.com/u/@Player.Id" class="d-flex align-center">
+            <MudAvatar Image="@Player.ProfilePictureUrl" />
+        </a>
+        <div class="pl-2 full-width">
+            <a href="https://scoresaber.com/u/@Player.Id"><h3>@Player.Name</h3></a>
+            <div>
+                <span>
+                    <MudIcon Icon="@Icons.Material.Filled.Language" Style="font-size: 1rem; transform: translateY(2px);"></MudIcon>
+                    @Player.Rank
+                </span>
+                <span class="ml-4">
+                    <span class="fi fi-@Player.CountryCode.ToLower() mr-1"></span>
+                    @Player.CountryRank
+                </span>
+            </div>
+            <div>
+                <span>
+                    <b>pp</b>
+                    @Player.Pp.ToString("#0.##")
+                </span>
+                <div style="float: right;">
+                    <MudTooltip Text="Refresh all data">
+                        <MudIconButton Icon="@Icons.Material.Filled.Refresh" OnClick="RefreshData" Class="pa-0"></MudIconButton>
+                    </MudTooltip>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public Core.Models.PlayerProfile Player { get; set; } = null;
+
+    [Inject]
+    IMapService MapService { get; set; }
+
+    void RefreshData()
+    {
+        Task.Run(() => MapService.RefreshDataAsync(forceRefresh: true));
+    }
+}

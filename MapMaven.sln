@@ -20,7 +20,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MapMaven.DataGatherers.Scor
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MapMaven.DataGatherers.Shared", "MapMaven.DataGatherers.Shared\MapMaven.DataGatherers.Shared.csproj", "{C0651AC0-D854-4ED1-BECE-4972829E5BF2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MapMaven.DataGatherers.BeatLeader", "MapMaven.DataGatherers.BeatLeader\MapMaven.DataGatherers.BeatLeader.csproj", "{A3CD3E97-FE61-405B-AE61-1501532DA0AF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MapMaven.DataGatherers.BeatLeader", "MapMaven.DataGatherers.BeatLeader\MapMaven.DataGatherers.BeatLeader.csproj", "{A3CD3E97-FE61-405B-AE61-1501532DA0AF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

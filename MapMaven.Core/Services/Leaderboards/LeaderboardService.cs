@@ -21,8 +21,8 @@ namespace MapMaven.Core.Services.Leaderboards
         public IObservable<PlayerProfile?> PlayerProfile { get; private set; }
         public IObservable<IEnumerable<PlayerScore>> PlayerScores { get; private set; }
         public IObservable<IEnumerable<ScoreEstimate>> RankedMapScoreEstimates { get; private set; }
-
         public IObservable<Dictionary<string, RankedMapInfoItem>> RankedMaps { get; private set; }
+        public IObservable<string?> ActiveLeaderboardProviderName => _activeLeaderboardProviderName;
 
         public string? PlayerId => LeaderboardProviders[_activeLeaderboardProviderName.Value].PlayerId;
 
@@ -50,23 +50,28 @@ namespace MapMaven.Core.Services.Leaderboards
 
             PlayerIdObservable = activeLeaderboardProviderService
                 .Select(x => x?.PlayerIdObservable ?? Observable.Return(null as string))
-                .Concat();
+                .Switch();
 
             PlayerProfile = activeLeaderboardProviderService
                 .Select(x => x?.PlayerProfile ?? Observable.Return(null as PlayerProfile))
-                .Concat();
+                .Switch();
 
             PlayerScores = activeLeaderboardProviderService
                 .Select(x => x?.PlayerScores ?? Observable.Return(Enumerable.Empty<PlayerScore>()))
-                .Concat();
+                .Switch();
 
             RankedMapScoreEstimates = activeLeaderboardProviderService
                 .Select(x => x?.RankedMapScoreEstimates ?? Observable.Return(Enumerable.Empty<ScoreEstimate>()))
-                .Concat();
+                .Switch();
 
             RankedMaps = activeLeaderboardProviderService
                 .Select(x => x?.RankedMaps ?? Observable.Return(new Dictionary<string, RankedMapInfoItem>()))
-                .Concat();
+                .Switch();
+        }
+
+        public void SetActiveLeaderboardProvider(string leaderboardProviderName)
+        {
+            _activeLeaderboardProviderName.OnNext(leaderboardProviderName);
         }
 
         public async Task SetPlayerId(string playerId)
@@ -84,7 +89,12 @@ namespace MapMaven.Core.Services.Leaderboards
 
         public string? GetPlayerIdFromReplays(string beatSaberInstallLocation) => LeaderboardProviders[_activeLeaderboardProviderName.Value].GetPlayerIdFromReplays(beatSaberInstallLocation);
 
-        public async Task LoadRankedMaps() => await LeaderboardProviders[_activeLeaderboardProviderName.Value].LoadRankedMaps();
+        public async Task LoadRankedMaps()
+        {
+            await Task.WhenAll(
+                LeaderboardProviders.Values.Select(x => x.LoadRankedMaps())
+            );
+        }
 
         public async Task<Dictionary<string, RankedMapInfoItem>> GetRankedMaps() => await LeaderboardProviders[_activeLeaderboardProviderName.Value].GetRankedMaps();
 
