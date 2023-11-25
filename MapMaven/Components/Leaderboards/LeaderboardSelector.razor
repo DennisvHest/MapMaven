@@ -1,0 +1,33 @@
+﻿@using MapMaven.Core.Models;
+
+<MudChip
+    OnClick="() => SetLeaderboardProvider(LeaderboardProvider.ScoreSaber)"
+    Variant="Variant.Outlined"
+    Disabled="SelectedLeaderboardProvider != LeaderboardProvider.ScoreSaber"
+    Style="border: 1px solid #ffde18; pointer-events: all;">
+    <img src="/images/score-saber-logo-small.png" class="mr-1" style="width: 24px;" />
+    ScoreSaber
+</MudChip>
+
+<MudChip
+    OnClick="() => SetLeaderboardProvider(LeaderboardProvider.BeatLeader)"
+    Variant="Variant.Outlined"
+    Disabled="SelectedLeaderboardProvider != LeaderboardProvider.BeatLeader"
+    Style="border: 1px solid #a437b0; pointer-events: all;">
+    <img src="/images/beat-leader-logo.svg" class="mr-1" style="width: 24px;" />
+    BeatLeader
+</MudChip>
+
+@code {
+    [Parameter]
+    public LeaderboardProvider? SelectedLeaderboardProvider { get; set; } = LeaderboardProvider.ScoreSaber;
+
+    [Parameter]
+    public EventCallback<LeaderboardProvider?> SelectedLeaderboardProviderChanged { get; set; }
+
+    async Task SetLeaderboardProvider(LeaderboardProvider? leaderboardProvider)
+    {
+        SelectedLeaderboardProvider = leaderboardProvider;
+        await SelectedLeaderboardProviderChanged.InvokeAsync(leaderboardProvider);
+    }
+}

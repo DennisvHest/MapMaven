@@ -16,7 +16,7 @@ namespace MapMaven.Core.Services
         private readonly IBeatSaberDataService _beatSaberDataService;
         private readonly IMapService _mapService;
         private readonly IPlaylistService _playlistService;
-        private readonly ILeaderboardService _scoreSaberService;
+        private readonly ILeaderboardService _leaderboardService;
         private readonly IApplicationSettingService _applicationSettingService;
 
         private readonly ILogger<DynamicPlaylistArrangementService> _logger;
@@ -45,7 +45,7 @@ namespace MapMaven.Core.Services
             _beatSaberDataService = beatSaberDataService;
             _mapService = mapService;
             _playlistService = playlistService;
-            _scoreSaberService = scoreSaberService;
+            _leaderboardService = scoreSaberService;
 
             _logger = logger;
 
@@ -77,15 +77,32 @@ namespace MapMaven.Core.Services
                     return;
 
                 var mapData = await _mapService.CompleteMapData.FirstAsync();
-                var rankedMapData = await _mapService.CompleteRankedMapData.FirstAsync();
 
-                var maps = mapData.Select(m => new DynamicPlaylistMapPair
+                var rankedMapsTasks = _leaderboardService.LeaderboardProviders.Select(async leaderboard =>
                 {
-                    DynamicPlaylistMap = new DynamicPlaylistMap(m),
-                    Map = m
+                    IEnumerable<DynamicPlaylistMapPair> rankedMaps;
+
+                    if (leaderboard.Key is not null)
+                    {
+                        var rankedMapsData = await _mapService.GetCompleteRankedMapDataForLeaderboardProvider(leaderboard.Key.Value);
+                        rankedMaps = rankedMapsData.Select(m => new DynamicPlaylistMapPair
+                        {
+                            DynamicPlaylistMap = new DynamicPlaylistMap(m),
+                            Map = m
+                        });
+                    }
+                    else
+                    {
+                        rankedMaps = Enumerable.Empty<DynamicPlaylistMapPair>();
+                    }
+
+                    return (leaderboardProvider: leaderboard.Key, rankedMaps);
                 });
 
-                var rankedMaps = rankedMapData.Select(m => new DynamicPlaylistMapPair
+                var rankedMaps = await Task.WhenAll(rankedMapsTasks);
+                var rankedMapsPerLeaderboardProvider = rankedMaps.ToDictionary(x => x.leaderboardProvider, x => x.rankedMaps);
+
+                var maps = mapData.Select(m => new DynamicPlaylistMapPair
                 {
                     DynamicPlaylistMap = new DynamicPlaylistMap(m),
                     Map = m
@@ -97,10 +114,15 @@ namespace MapMaven.Core.Services
                     {
                         var configuration = playlist.Playlist.DynamicPlaylistConfiguration;
 
+                        var rankedMapsForLeaderboard = Enumerable.Empty<DynamicPlaylistMapPair>();
+
+                        if (rankedMapsPerLeaderboardProvider.ContainsKey(playlist.Playlist.DynamicPlaylistConfiguration.LeaderboardProvider))
+                            rankedMapsForLeaderboard = rankedMapsPerLeaderboardProvider[playlist.Playlist.DynamicPlaylistConfiguration.LeaderboardProvider];
+
                         var playlistMaps = configuration.MapPool switch
                         {
                             MapPool.Standard => maps,
-                            MapPool.Improvement => rankedMaps,
+                            MapPool.Improvement => rankedMapsForLeaderboard,
                             _ => maps
                         };
 

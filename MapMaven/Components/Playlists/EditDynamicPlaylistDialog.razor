@@ -74,6 +74,21 @@ else
                         </MudListItem>
                     </MudList>
                 </MudPaper>
+                @if (configuration.MapPool == MapPool.Improvement)
+                {
+                    <MudPaper Class="my-4" Style="background-color: var(--mud-palette-drawer-background);">
+                        <MudList>
+                            <MudListItem Class="py-0">
+                                <div class="d-flex flex-row align-center">
+                                    <b class="mud-list-subheader pa-0 mr-1">Leaderboard</b>
+                                    <div class="ml-auto">
+                                        <LeaderboardSelector @bind-SelectedLeaderboardProvider="SelectedPlaylist.DynamicPlaylistConfiguration.LeaderboardProvider"></LeaderboardSelector>
+                                    </div>
+                                </div>
+                            </MudListItem>
+                        </MudList>
+                    </MudPaper>
+                }
                 <MudPaper Class="my-4" Style="background-color: var(--mud-palette-drawer-background);">
                     <MudList>
                         <MudListSubheader Class="d-flex align-center justify-space-between">

@@ -40,6 +40,7 @@ namespace MapMaven.Services
         public IObservable<IEnumerable<Map>> CompleteMapData { get; private set; }
         public IObservable<IEnumerable<Map>> CompleteRankedMapData { get; private set; }
         public IObservable<Dictionary<string, Map>> MapsByHash { get; private set; }
+        public IObservable<IEnumerable<HiddenMap>> HiddenMaps { get; private set; }
 
         public IObservable<HashSet<Map>> SelectedMaps => _selectedMaps;
         public IObservable<bool> Selectable => _selectable;
@@ -76,7 +77,7 @@ namespace MapMaven.Services
                 _leaderBoardService.RankedMapScoreEstimates.StartWith(Enumerable.Empty<ScoreEstimate>()),
                 CombineMapData);
 
-            var hiddenMaps = Observable.CombineLatest(_hiddenMaps, _leaderBoardService.PlayerProfile, (hiddenMaps, player) =>
+            HiddenMaps = Observable.CombineLatest(_hiddenMaps, _leaderBoardService.PlayerProfile, (hiddenMaps, player) =>
             {
                 if (hiddenMaps == null || player == null)
                     return Enumerable.Empty<HiddenMap>();
@@ -88,7 +89,7 @@ namespace MapMaven.Services
                 _leaderBoardService.RankedMaps,
                 _leaderBoardService.RankedMapScoreEstimates,
                 _leaderBoardService.PlayerScores,
-                hiddenMaps,
+                HiddenMaps,
                 CombineRankedMapData);
 
             CompleteMapData = Observable.CombineLatest(
@@ -102,7 +103,7 @@ namespace MapMaven.Services
                 _leaderBoardService.RankedMaps,
                 _leaderBoardService.RankedMapScoreEstimates,
                 _leaderBoardService.PlayerScores,
-                hiddenMaps,
+                HiddenMaps,
                 CombineRankedMapData);
         }
 
@@ -156,6 +157,20 @@ namespace MapMaven.Services
 
                     return map;
                 }).ToList();
+        }
+
+        public async Task<IEnumerable<Map>> GetCompleteRankedMapDataForLeaderboardProvider(LeaderboardProvider leaderboardProvider)
+        {
+            var leaderBoardService = _leaderBoardService.LeaderboardProviders[leaderboardProvider];
+
+            var combinedData = Observable.CombineLatest(
+                leaderBoardService.RankedMaps,
+                leaderBoardService.RankedMapScoreEstimates,
+                leaderBoardService.PlayerScores,
+                HiddenMaps,
+                CombineRankedMapData);
+
+            return await combinedData.FirstAsync();
         }
 
         public void AddMapFilter(MapFilter filter)
