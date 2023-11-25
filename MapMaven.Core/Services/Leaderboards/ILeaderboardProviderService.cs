@@ -4,9 +4,9 @@ using MapMaven.Core.Utilities.Scoresaber;
 
 namespace MapMaven.Core.Services.Leaderboards
 {
-    public interface ILeaderboardProvider
+    public interface ILeaderboardProviderService
     {
-        string LeaderboardProviderName { get; }
+        LeaderboardProvider LeaderboardProviderName { get; }
         string? PlayerId { get; }
         IObservable<string?> PlayerIdObservable { get; }
         IObservable<Dictionary<string, RankedMapInfoItem>> RankedMaps { get; }

@@ -10,9 +10,9 @@ using System.Reactive.Subjects;
 
 namespace MapMaven.Core.Services.Leaderboards
 {
-    public class ScoreSaberService : ILeaderboardProvider
+    public class ScoreSaberService : ILeaderboardProviderService
     {
-        public string LeaderboardProviderName => LeaderboardProviders.ScoreSaber;
+        public LeaderboardProvider LeaderboardProviderName => LeaderboardProvider.ScoreSaber;
 
         private readonly ScoreSaberApiClient _scoreSaber;
         private readonly IApplicationSettingService _applicationSettingService;

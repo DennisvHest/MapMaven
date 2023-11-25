@@ -10,7 +10,7 @@
     <MudTabs MinimumTabWidth="20px" Position="Position.Left" ActivePanelIndex="ActivePanelIndex">
         @if (ScoreSaberProfile is not null)
         {
-            <MudTabPanel Class="px-1" Style="min-height: 43px" OnClick="() => SetActiveLeaderboardProvider(LeaderboardProviders.ScoreSaber)">
+            <MudTabPanel Class="px-1" Style="min-height: 43px" OnClick="() => SetActiveLeaderboardProvider(LeaderboardProvider.ScoreSaber)">
                 <TabContent>
                     <img src="/images/score-saber-logo-small.png" style="width: 24px;" />
                 </TabContent>
@@ -21,7 +21,7 @@
         }
         @if (BeatLeaderProfile is not null)
         {
-            <MudTabPanel Class="px-1" Style="min-height: 43px" OnClick="() => SetActiveLeaderboardProvider(LeaderboardProviders.BeatLeader)">
+            <MudTabPanel Class="px-1" Style="min-height: 43px" OnClick="() => SetActiveLeaderboardProvider(LeaderboardProvider.BeatLeader)">
                 <TabContent>
                     <img src="/images/beat-leader-logo.svg" style="width: 24px;" />
                 </TabContent>
@@ -61,12 +61,12 @@ else if (BeatLeaderProfile is not null)
 
     protected override void OnInitialized()
     {
-        SubscribeAndBind(LeaderboardService.ActiveLeaderboardProviderName, providerName =>
+        SubscribeAndBind(LeaderboardService.ActiveLeaderboardProviderName, provider =>
         {
-            ActivePanelIndex = providerName switch
+            ActivePanelIndex = provider switch
             {
-                LeaderboardProviders.ScoreSaber => 0,
-                LeaderboardProviders.BeatLeader => 1,
+                LeaderboardProvider.ScoreSaber => 0,
+                LeaderboardProvider.BeatLeader => 1,
                 _ => 0
             };
         });
@@ -75,7 +75,7 @@ else if (BeatLeaderProfile is not null)
         SubscribeAndBind(BeatLeaderService.PlayerProfile, player => BeatLeaderProfile = player);
     }
 
-    void SetActiveLeaderboardProvider(string leaderboardProvider)
+    void SetActiveLeaderboardProvider(LeaderboardProvider leaderboardProvider)
     {
         LeaderboardService.SetActiveLeaderboardProvider(leaderboardProvider);
     }

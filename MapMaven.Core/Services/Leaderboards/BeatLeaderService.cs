@@ -13,7 +13,7 @@ using System.Reactive.Subjects;
 
 namespace MapMaven.Core.Services.Leaderboards
 {
-    public class BeatLeaderService : ILeaderboardProvider
+    public class BeatLeaderService : ILeaderboardProviderService
     {
         private readonly BeatLeaderApiClient _beatLeader;
         private readonly IApplicationSettingService _applicationSettingService;
@@ -23,7 +23,7 @@ namespace MapMaven.Core.Services.Leaderboards
         private readonly BehaviorSubject<string?> _playerId = new(null);
         private readonly BehaviorSubject<Dictionary<string, RankedMapInfoItem>> _rankedMaps = new(new());
 
-        public string LeaderboardProviderName => LeaderboardProviders.BeatLeader;
+        public LeaderboardProvider LeaderboardProviderName => LeaderboardProvider.BeatLeader;
 
         public string? PlayerId => _playerId.Value;
 

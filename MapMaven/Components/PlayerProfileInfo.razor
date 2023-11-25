@@ -3,8 +3,8 @@
 {
     var profileUrl = Player.LeaderboardProvider switch
     {
-        LeaderboardProviders.ScoreSaber => $"https://scoresaber.com/u/{Player.Id}",
-        LeaderboardProviders.BeatLeader => $"https://www.beatleader.xyz/u/{Player.Id}",
+        LeaderboardProvider.ScoreSaber => $"https://scoresaber.com/u/{Player.Id}",
+        LeaderboardProvider.BeatLeader => $"https://www.beatleader.xyz/u/{Player.Id}",
     };
 
     <div class="d-flex pa-2 profile full-width">

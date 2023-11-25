@@ -9,33 +9,33 @@ namespace MapMaven.Core.Services.Leaderboards
 {
     public class LeaderboardService : ILeaderboardService
     {
-        private readonly IEnumerable<ILeaderboardProvider> _leaderboardProviders;
+        private readonly IEnumerable<ILeaderboardProviderService> _leaderboardProviders;
 
         private readonly IApplicationSettingService _applicationSettingService;
 
-        public Dictionary<string, ILeaderboardProvider> LeaderboardProviders { get; private set; }
+        public Dictionary<LeaderboardProvider?, ILeaderboardProviderService> LeaderboardProviders { get; private set; }
 
-        private readonly BehaviorSubject<string?> _activeLeaderboardProviderName = new(Models.LeaderboardProviders.BeatLeader);
+        private readonly BehaviorSubject<LeaderboardProvider?> _activeLeaderboardProviderName = new(LeaderboardProvider.BeatLeader);
 
         public IObservable<string?> PlayerIdObservable { get; private set; }
         public IObservable<PlayerProfile?> PlayerProfile { get; private set; }
         public IObservable<IEnumerable<PlayerScore>> PlayerScores { get; private set; }
         public IObservable<IEnumerable<ScoreEstimate>> RankedMapScoreEstimates { get; private set; }
         public IObservable<Dictionary<string, RankedMapInfoItem>> RankedMaps { get; private set; }
-        public IObservable<string?> ActiveLeaderboardProviderName => _activeLeaderboardProviderName;
+        public IObservable<LeaderboardProvider?> ActiveLeaderboardProviderName => _activeLeaderboardProviderName;
 
         public string? PlayerId => LeaderboardProviders[_activeLeaderboardProviderName.Value].PlayerId;
 
         public const string ReplayBaseUrl = "https://www.replay.beatleader.xyz";
 
         public LeaderboardService(
-            IEnumerable<ILeaderboardProvider> leaderboardProviders,
+            IEnumerable<ILeaderboardProviderService> leaderboardProviders,
             IApplicationSettingService applicationSettingService)
         {
             _leaderboardProviders = leaderboardProviders;
             _applicationSettingService = applicationSettingService;
 
-            LeaderboardProviders = _leaderboardProviders.ToDictionary(x => x.LeaderboardProviderName);
+            LeaderboardProviders = _leaderboardProviders.ToDictionary(x => x.LeaderboardProviderName as LeaderboardProvider?);
 
             // If there is only one leaderboard provider, set it as the active one
             _leaderboardProviders
@@ -84,7 +84,7 @@ namespace MapMaven.Core.Services.Leaderboards
                 .Switch();
         }
 
-        public void SetActiveLeaderboardProvider(string leaderboardProviderName)
+        public void SetActiveLeaderboardProvider(LeaderboardProvider leaderboardProviderName)
         {
             _activeLeaderboardProviderName.OnNext(leaderboardProviderName);
         }
