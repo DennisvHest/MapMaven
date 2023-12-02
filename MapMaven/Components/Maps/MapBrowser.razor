@@ -23,7 +23,13 @@
             <MudItem xs="12" Class="d-flex align-center">
                 @if (SelectedPlaylist != null)
                 {
-                    <MudChip Variant="Variant.Outlined">@SelectedPlaylist.Title</MudChip>
+                    <MudChip Variant="Variant.Outlined">
+                        @if (SelectedPlaylist.DynamicPlaylistConfiguration?.LeaderboardProvider is not null)
+                        {
+                            <img src="@LeaderboardUtility.GetLogoPath(SelectedPlaylist.DynamicPlaylistConfiguration.LeaderboardProvider.Value)" class="mr-1" style="width: 24px;" />
+                        }
+                        @SelectedPlaylist.Title
+                    </MudChip>
                 }
                 @foreach (var mapFilter in MapFilters.Where(f => f.Visible))
                 {

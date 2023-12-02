@@ -9,7 +9,7 @@
              Variant="Variant.Outlined"
              Disabled="SelectedLeaderboardProvider != LeaderboardProvider.ScoreSaber"
              Style="border: 1px solid #ffde18; pointer-events: all;">
-        <img src="/images/score-saber-logo-small.png" class="mr-1" style="width: 24px;" />
+        <img src="@LeaderboardUtility.GetLogoPath(LeaderboardProvider.ScoreSaber)" class="mr-1" style="width: 24px;" />
         ScoreSaber
     </MudChip>
 }
@@ -20,7 +20,7 @@
              Variant="Variant.Outlined"
              Disabled="SelectedLeaderboardProvider != LeaderboardProvider.BeatLeader"
              Style="border: 1px solid #a437b0; pointer-events: all;">
-        <img src="/images/beat-leader-logo.svg" class="mr-1" style="width: 24px;" />
+        <img src="@LeaderboardUtility.GetLogoPath(LeaderboardProvider.BeatLeader)" class="mr-1" style="width: 24px;" />
         BeatLeader
     </MudChip>
 }
