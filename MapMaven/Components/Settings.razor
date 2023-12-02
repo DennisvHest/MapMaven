@@ -24,19 +24,24 @@
             AdornmentIcon="@Icons.Filled.DriveFileMove"
             OnAdornmentClick="PickFolder">
         </MudTextField>
-        <MudTextField
-            @bind-Value="ScoreSaberPlayerId"
-            DebounceInterval="300"
-            Variant="Variant.Outlined"
-            Label="ScoreSaber player ID / URL (optional)"
-            Class="mb-4">
-        </MudTextField>
-        <MudTextField
-            @bind-Value="BeatLeaderPlayerId"
-            DebounceInterval="300"
-            Variant="Variant.Outlined"
-            Label="BeatLeader player ID / URL (optional)">
-        </MudTextField>
+
+        <div class="d-flex align-center mb-4">
+            <img src="@LeaderboardUtility.GetLogoPath(LeaderboardProvider.ScoreSaber)" style="width: 24px;" class="mr-3" />
+            <MudTextField @bind-Value="ScoreSaberPlayerId"
+                          DebounceInterval="300"
+                          Variant="Variant.Outlined"
+                          Label="ScoreSaber player ID / URL (optional)">
+            </MudTextField>
+        </div>
+
+        <div class="d-flex align-center mb-4">
+            <img src="@LeaderboardUtility.GetLogoPath(LeaderboardProvider.BeatLeader)" style="width: 24px;" class="mr-3" />
+            <MudTextField @bind-Value="BeatLeaderPlayerId"
+                          DebounceInterval="300"
+                          Variant="Variant.Outlined"
+                          Label="BeatLeader player ID / URL (optional)">
+            </MudTextField>
+        </div>
 
         @{
             var availableLeaderboards = new List<LeaderboardProvider?>();
@@ -51,10 +56,17 @@
                 ActiveLeaderboardProvider = availableLeaderboards.First();
         }
 
-        <LeaderboardSelector
-            AvailableLeaderboardProviders="availableLeaderboards"
-            @bind-SelectedLeaderboardProvider="ActiveLeaderboardProvider">
-        </LeaderboardSelector>
+        @if (availableLeaderboards.Any())
+        {
+            <div class="d-flex flex-row align-center">
+                <b class="mud-list-subheader pa-0 mr-1">Active leaderboard</b>
+                <div class="ml-auto">
+                    <LeaderboardSelector AvailableLeaderboardProviders="availableLeaderboards"
+                                         @bind-SelectedLeaderboardProvider="ActiveLeaderboardProvider">
+                    </LeaderboardSelector>
+                </div>
+            </div>
+        }
     </DialogContent>
     <DialogActions>
         <MudButton Color="Color.Primary" Variant="Variant.Filled" Class="ma-3" Disabled="string.IsNullOrEmpty(BeatSaberInstallLocation)" OnClick="SaveSettings">
