@@ -116,7 +116,7 @@ namespace MapMaven.Core.Services
 
                         var rankedMapsForLeaderboard = Enumerable.Empty<DynamicPlaylistMapPair>();
 
-                        if (rankedMapsPerLeaderboardProvider.ContainsKey(playlist.Playlist.DynamicPlaylistConfiguration.LeaderboardProvider))
+                        if (configuration.LeaderboardProvider is not null && rankedMapsPerLeaderboardProvider.ContainsKey(configuration.LeaderboardProvider))
                             rankedMapsForLeaderboard = rankedMapsPerLeaderboardProvider[playlist.Playlist.DynamicPlaylistConfiguration.LeaderboardProvider];
 
                         var playlistMaps = configuration.MapPool switch

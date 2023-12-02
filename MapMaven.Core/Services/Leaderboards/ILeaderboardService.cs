@@ -15,6 +15,8 @@ namespace MapMaven.Core.Services.Leaderboards
         IObservable<IEnumerable<ScoreEstimate>> RankedMapScoreEstimates { get; }
         IObservable<LeaderboardProvider?> ActiveLeaderboardProviderName { get; }
         Dictionary<LeaderboardProvider?, ILeaderboardProviderService> LeaderboardProviders { get; }
+        IObservable<IEnumerable<ILeaderboardProviderService>> AvailableLeaderboardProviderServices { get; }
+        LeaderboardProvider? ActiveLeaderboardProviderNameValue { get; }
 
         string? GetPlayerIdFromReplays(string beatSaberInstallLocation);
         Task<Dictionary<string, RankedMapInfoItem>> GetRankedMaps();

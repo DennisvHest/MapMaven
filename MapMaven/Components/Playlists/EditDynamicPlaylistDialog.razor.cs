@@ -2,6 +2,7 @@ using FastDeepCloner;
 using MapMaven.Core.Models.DynamicPlaylists;
 using MapMaven.Core.Services;
 using MapMaven.Core.Services.Interfaces;
+using MapMaven.Core.Services.Leaderboards;
 using MapMaven.Models;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
@@ -14,6 +15,8 @@ namespace MapMaven.Components.Playlists
         protected IPlaylistService PlaylistService { get; set; }
         [Inject]
         protected DynamicPlaylistArrangementService DynamicPlaylistArrangementService { get; set; }
+        [Inject]
+        protected ILeaderboardService LeaderboardService { get; set; }
 
         [Inject]
         ISnackbar Snackbar { get; set; }
@@ -29,6 +32,13 @@ namespace MapMaven.Components.Playlists
 
         [Parameter]
         public bool NewPlaylist { get; set; } = true;
+
+        bool LeaderboardAvailable = false;
+
+        protected override void OnInitialized()
+        {
+            SubscribeAndBind(LeaderboardService.AvailableLeaderboardProviderServices, leaderboards => LeaderboardAvailable = leaderboards.Any());
+        }
 
         void ConfigureDynamicPlaylist(EditDynamicPlaylistModel dynamicPlaylist)
         {

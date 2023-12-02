@@ -23,8 +23,10 @@ namespace MapMaven.Core.Services.Leaderboards
         public IObservable<IEnumerable<ScoreEstimate>> RankedMapScoreEstimates { get; private set; }
         public IObservable<Dictionary<string, RankedMapInfoItem>> RankedMaps { get; private set; }
         public IObservable<LeaderboardProvider?> ActiveLeaderboardProviderName => _activeLeaderboardProviderName;
+        public IObservable<IEnumerable<ILeaderboardProviderService>> AvailableLeaderboardProviderServices { get; private set; }
 
         public string? PlayerId => LeaderboardProviders[_activeLeaderboardProviderName.Value].PlayerId;
+        public LeaderboardProvider? ActiveLeaderboardProviderNameValue => _activeLeaderboardProviderName.Value;
 
         public const string ReplayBaseUrl = "https://www.replay.beatleader.xyz";
 
@@ -62,6 +64,16 @@ namespace MapMaven.Core.Services.Leaderboards
 
                     return LeaderboardProviders[leaderboardProviderName];
                 });
+
+            var leaderboardProviderPlayerIds = _leaderboardProviders.Select(p =>
+                p.PlayerIdObservable.Select(playerId => (leaderboardProvider: p, playerId))
+            );
+
+            AvailableLeaderboardProviderServices = Observable.CombineLatest(leaderboardProviderPlayerIds, (leaderboardProviders) =>
+                leaderboardProviders
+                    .Where(x => !string.IsNullOrEmpty(x.playerId))
+                    .Select(x => x.leaderboardProvider)
+            );
 
             PlayerIdObservable = activeLeaderboardProviderService
                 .Select(x => x?.PlayerIdObservable ?? Observable.Return(null as string))
