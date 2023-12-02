@@ -1,4 +1,5 @@
-﻿@inherits ReactiveComponent
+﻿@using MapMaven.Core.Models;
+@inherits ReactiveComponent
 
 <MudDialog Style="width: 600px">
     <TitleContent>
@@ -25,15 +26,35 @@
         </MudTextField>
         <MudTextField
             @bind-Value="ScoreSaberPlayerId"
+            DebounceInterval="300"
             Variant="Variant.Outlined"
             Label="ScoreSaber player ID / URL (optional)"
             Class="mb-4">
         </MudTextField>
         <MudTextField
             @bind-Value="BeatLeaderPlayerId"
+            DebounceInterval="300"
             Variant="Variant.Outlined"
             Label="BeatLeader player ID / URL (optional)">
         </MudTextField>
+
+        @{
+            var availableLeaderboards = new List<LeaderboardProvider?>();
+
+            if (!string.IsNullOrEmpty(ScoreSaberPlayerId))
+                availableLeaderboards.Add(LeaderboardProvider.ScoreSaber);
+
+            if (!string.IsNullOrEmpty(BeatLeaderPlayerId))
+                availableLeaderboards.Add(LeaderboardProvider.BeatLeader);
+
+            if (availableLeaderboards.Count == 1)
+                ActiveLeaderboardProvider = availableLeaderboards.First();
+        }
+
+        <LeaderboardSelector
+            AvailableLeaderboardProviders="availableLeaderboards"
+            @bind-SelectedLeaderboardProvider="ActiveLeaderboardProvider">
+        </LeaderboardSelector>
     </DialogContent>
     <DialogActions>
         <MudButton Color="Color.Primary" Variant="Variant.Filled" Class="ma-3" Disabled="string.IsNullOrEmpty(BeatSaberInstallLocation)" OnClick="SaveSettings">

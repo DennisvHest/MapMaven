@@ -3,7 +3,7 @@
 @using MapMaven.Core.Models;
 @using MapMaven.Core.Services.Leaderboards;
 
-@if (AvailableLeaderboardProviders.Any(p => p.LeaderboardProviderName == LeaderboardProvider.ScoreSaber))
+@if (AvailableLeaderboardProviders.Contains(LeaderboardProvider.ScoreSaber))
 {
     <MudChip OnClick="() => SetLeaderboardProvider(LeaderboardProvider.ScoreSaber)"
              Variant="Variant.Outlined"
@@ -14,7 +14,7 @@
     </MudChip>
 }
 
-@if (AvailableLeaderboardProviders.Any(p => p.LeaderboardProviderName == LeaderboardProvider.BeatLeader))
+@if (AvailableLeaderboardProviders.Contains(LeaderboardProvider.BeatLeader))
 {
     <MudChip OnClick="() => SetLeaderboardProvider(LeaderboardProvider.BeatLeader)"
              Variant="Variant.Outlined"
@@ -35,18 +35,19 @@
     [Parameter]
     public bool NewLeaderboardSelection { get; set; } = false;
 
+    [Parameter]
+    public IEnumerable<LeaderboardProvider?> AvailableLeaderboardProviders { get; set; }
+
     [Inject]
     ILeaderboardService LeaderboardService { get; set; }
-
-    IEnumerable<ILeaderboardProviderService> AvailableLeaderboardProviders;
 
     protected override async Task OnInitializedAsync()
     {
         SubscribeAndBind(LeaderboardService.AvailableLeaderboardProviderServices, leaderboardProviders =>
         {
-            AvailableLeaderboardProviders = leaderboardProviders;
+            AvailableLeaderboardProviders ??= leaderboardProviders.Select(x => x.LeaderboardProviderName as LeaderboardProvider?);
 
-            var defaultLeaderboardProvider = leaderboardProviders.FirstOrDefault(p => p.LeaderboardProviderName == SelectedLeaderboardProvider)?.LeaderboardProviderName;
+            var defaultLeaderboardProvider = AvailableLeaderboardProviders.FirstOrDefault(x => x == SelectedLeaderboardProvider);
 
             if (NewLeaderboardSelection)
                 defaultLeaderboardProvider = LeaderboardService.ActiveLeaderboardProviderNameValue;

@@ -1,3 +1,4 @@
+using MapMaven.Core.Models;
 using MapMaven.Core.Services;
 using MapMaven.Core.Services.Interfaces;
 using MapMaven.Core.Services.Leaderboards;
@@ -23,6 +24,9 @@ namespace MapMaven.Components
         protected IBeatSaberDataService BeatSaberDataService { get; set; }
 
         [Inject]
+        protected ILeaderboardService LeaderboardService { get; set; }
+
+        [Inject]
         protected ScoreSaberService ScoreSaberService { get; set; }
 
         [Inject]
@@ -35,6 +39,7 @@ namespace MapMaven.Components
         public bool InitialSetup { get; set; } = false;
 
         public string BeatSaberInstallLocation { get; set; }
+        public LeaderboardProvider? ActiveLeaderboardProvider { get; set; }
         public string ScoreSaberPlayerId { get; set; }
         public string BeatLeaderPlayerId { get; set; }
 
@@ -47,6 +52,7 @@ namespace MapMaven.Components
                 OldBeatSaberInstallLocation = installLocation;
                 BeatSaberInstallLocation = installLocation;
             });
+            SubscribeAndBind(LeaderboardService.ActiveLeaderboardProviderName, provider => ActiveLeaderboardProvider = provider);
             SubscribeAndBind(ScoreSaberService.PlayerIdObservable, playerId => ScoreSaberPlayerId = playerId);
             SubscribeAndBind(BeatLeaderService.PlayerIdObservable, playerId => BeatLeaderPlayerId = playerId);
         }
@@ -107,6 +113,9 @@ namespace MapMaven.Components
                 await BeatSaberToolFileService.SetBeatSaberInstallLocation(BeatSaberInstallLocation);
                 await ScoreSaberService.SetPlayerId(ScoreSaberPlayerId);
                 await BeatLeaderService.SetPlayerId(BeatLeaderPlayerId);
+
+                if (ActiveLeaderboardProvider.HasValue)
+                    LeaderboardService.SetActiveLeaderboardProvider(ActiveLeaderboardProvider.Value);
             });
         }
 
