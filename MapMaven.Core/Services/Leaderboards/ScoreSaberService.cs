@@ -1,5 +1,6 @@
 ﻿using MapMaven.Core.ApiClients.ScoreSaber;
 using MapMaven.Core.Models;
+using MapMaven.Core.Models.Data.Leaderboards;
 using MapMaven.Core.Models.Data.RankedMaps;
 using MapMaven.Core.Services.Interfaces;
 using MapMaven.Core.Utilities.Scoresaber;
@@ -18,6 +19,7 @@ namespace MapMaven.Core.Services.Leaderboards
         private readonly IApplicationSettingService _applicationSettingService;
         private readonly IApplicationEventService _applicationEventService;
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly LeaderboardDataService _leaderboardDataService;
 
         private readonly BehaviorSubject<string?> _playerId = new(null);
         private readonly BehaviorSubject<Dictionary<string, RankedMapInfoItem>> _rankedMaps = new(new());
@@ -37,12 +39,14 @@ namespace MapMaven.Core.Services.Leaderboards
             ScoreSaberApiClient scoreSaber,
             IHttpClientFactory httpClientFactory,
             IApplicationSettingService applicationSettingService,
-            IApplicationEventService applicationEventService)
+            IApplicationEventService applicationEventService,
+            LeaderboardDataService leaderboardDataService)
         {
             _scoreSaber = scoreSaber;
             _httpClientFactory = httpClientFactory;
             _applicationSettingService = applicationSettingService;
             _applicationEventService = applicationEventService;
+            _leaderboardDataService = leaderboardDataService;
 
             var playerScores = _playerId.Select(playerId =>
             {
@@ -114,12 +118,12 @@ namespace MapMaven.Core.Services.Leaderboards
                 return Observable.Return(null as PlayerProfile);
             });
 
-            var rankedMapScoreEstimates = PlayerProfile.CombineLatest(PlayerScores, RankedMaps, (player, playerScores, rankedMaps) =>
+            var rankedMapScoreEstimates = PlayerProfile.CombineLatest(PlayerScores, RankedMaps, _leaderboardDataService.LeaderboardData, (player, playerScores, rankedMaps, leaderboardData) =>
             {
-                if (player == null)
+                if (player == null || leaderboardData?.ScoreSaber == null)
                     return Enumerable.Empty<ScoreEstimate>();
 
-                var scoresaber = new Scoresaber(player, playerScores);
+                var scoresaber = new Scoresaber(player, playerScores, leaderboardData.ScoreSaber);
 
                 return rankedMaps.SelectMany(map =>
                 {

@@ -1,10 +1,11 @@
 ﻿using ComposableAsync;
 using MapMaven.Core.ApiClients.BeatLeader;
 using MapMaven.Core.Models;
+using MapMaven.Core.Models.Data.Leaderboards;
+using MapMaven.Core.Models.Data.Leaderboards.BeatLeader;
 using MapMaven.Core.Models.Data.RankedMaps;
 using MapMaven.Core.Services.Interfaces;
 using MapMaven.Core.Utilities.BeatLeader;
-using MapMaven.Core.Utilities.Scoresaber;
 using MapMaven_Core;
 using RateLimiter;
 using System.Net.Http.Json;
@@ -19,6 +20,7 @@ namespace MapMaven.Core.Services.Leaderboards
         private readonly IApplicationSettingService _applicationSettingService;
         private readonly IApplicationEventService _applicationEventService;
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly LeaderboardDataService _leaderboardDataService;
 
         private readonly BehaviorSubject<string?> _playerId = new(null);
         private readonly BehaviorSubject<Dictionary<string, RankedMapInfoItem>> _rankedMaps = new(new());
@@ -45,12 +47,14 @@ namespace MapMaven.Core.Services.Leaderboards
             BeatLeaderApiClient beatLeader,
             IApplicationSettingService applicationSettingService,
             IApplicationEventService applicationEventService,
-            IHttpClientFactory httpClientFactory)
+            IHttpClientFactory httpClientFactory,
+            LeaderboardDataService leaderboardDataService)
         {
             _beatLeader = beatLeader;
             _applicationSettingService = applicationSettingService;
             _applicationEventService = applicationEventService;
             _httpClientFactory = httpClientFactory;
+            _leaderboardDataService = leaderboardDataService;
 
             var playerScores = _playerId.Select(playerId =>
             {
@@ -78,7 +82,7 @@ namespace MapMaven.Core.Services.Leaderboards
                             mode: default,
                             requirements: default,
                             scoreStatus: default,
-                            leaderboardContext: (LeaderboardContexts)Models.Data.BeatLeader.LeaderboardContexts.General,
+                            leaderboardContext: (ApiClients.BeatLeader.LeaderboardContexts)Models.Data.Leaderboards.BeatLeader.LeaderboardContexts.General,
                             type: default,
                             modifiers: default,
                             stars_from: default,
@@ -126,19 +130,19 @@ namespace MapMaven.Core.Services.Leaderboards
                             id: playerId,
                             stats: false,
                             keepOriginalId: false,
-                            leaderboardContext: (LeaderboardContexts)Models.Data.BeatLeader.LeaderboardContexts.General
+                            leaderboardContext: (ApiClients.BeatLeader.LeaderboardContexts)Models.Data.Leaderboards.BeatLeader.LeaderboardContexts.General
                         );
                         return new PlayerProfile(playerProfile);
                     });
                 })
                 .Concat();
 
-            var rankedMapScoreEstimates = PlayerProfile.CombineLatest(PlayerScores, RankedMaps, (player, playerScores, rankedMaps) =>
+            var rankedMapScoreEstimates = PlayerProfile.CombineLatest(PlayerScores, RankedMaps, _leaderboardDataService.LeaderboardData, (player, playerScores, rankedMaps, leaderboardData) =>
             {
-                if (player == null)
+                if (player == null || leaderboardData?.BeatLeader == null)
                     return Enumerable.Empty<ScoreEstimate>();
 
-                var beatLeader = new BeatLeader(player, playerScores);
+                var beatLeader = new BeatLeader(player, playerScores, leaderboardData.BeatLeader);
 
                 return rankedMaps.SelectMany(map =>
                 {

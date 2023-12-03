@@ -1,8 +1,7 @@
-﻿
-using MapMaven.Models;
+﻿using MapMaven.Models;
 using System.Text.Json.Serialization;
 
-namespace MapMaven.Core.Models.Data.ScoreSaber
+namespace MapMaven.Core.Models.Data.Leaderboards.ScoreSaber
 {
     public class RankedMap
     {

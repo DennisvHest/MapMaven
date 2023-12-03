@@ -2,7 +2,7 @@
 using ComposableAsync;
 using MapMaven.Core.ApiClients.BeatLeader;
 using MapMaven.Core.ApiClients.BeatSaver;
-using MapMaven.Core.Models.Data.BeatLeader;
+using MapMaven.Core.Models.Data.Leaderboards.BeatLeader;
 using MapMaven.Core.Models.Data.RankedMaps;
 using Microsoft.Extensions.Logging;
 using RateLimiter;
@@ -39,8 +39,8 @@ namespace MapMaven.Functions.Services
                 var rankedMapsCollection = await _beatLeaderApiClient.LeaderboardsAsync(
                     page: page,
                     count: 100,
-                    sortBy: (Core.ApiClients.BeatLeader.SortBy)Core.Models.Data.BeatLeader.SortBy.Timestamp,
-                    order: (Core.ApiClients.BeatLeader.Order)Core.Models.Data.BeatLeader.Order.Desc,
+                    sortBy: (Core.ApiClients.BeatLeader.SortBy)Core.Models.Data.Leaderboards.BeatLeader.SortBy.Timestamp,
+                    order: (Core.ApiClients.BeatLeader.Order)Core.Models.Data.Leaderboards.BeatLeader.Order.Desc,
                     search: string.Empty,
                     type: (Core.ApiClients.BeatLeader.Type)LeaderboardType.Ranked,
                     mode: default,

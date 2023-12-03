@@ -1,6 +1,6 @@
 ﻿using MapMaven.Core.Models;
+using MapMaven.Core.Models.Data.Leaderboards;
 using MapMaven.Core.Models.Data.RankedMaps;
-using MapMaven.Core.Utilities.Scoresaber;
 
 namespace MapMaven.Core.Services.Leaderboards
 {

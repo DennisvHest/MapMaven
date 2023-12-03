@@ -6,7 +6,6 @@ namespace MapMaven.Core.Models
     public class MapDifficulty
     {
         public double? Stars { get; set; }
-        public double? MaxPP { get; set; }
         public string Difficulty { get; set; }
         public string? Label { get; set; }
         public double Njs { get; set; }
@@ -33,7 +32,6 @@ namespace MapMaven.Core.Models
         public MapDifficulty(RankedMapDifficultyInfo difficultyInfo)
         {
             Stars = difficultyInfo.Stars;
-            MaxPP = difficultyInfo.MaxPP;
             Difficulty = difficultyInfo.Difficulty.ToString();
             Label = difficultyInfo.Label;
             Njs = difficultyInfo.Njs;

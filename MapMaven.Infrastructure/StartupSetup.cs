@@ -66,6 +66,7 @@ namespace MapMaven.Infrastructure
             services.Add(new ServiceDescriptor(typeof(DynamicPlaylistArrangementService), typeof(DynamicPlaylistArrangementService), serviceScope));
             services.Add(new ServiceDescriptor(typeof(IApplicationSettingService), typeof(ApplicationSettingService), serviceScope));
             services.Add(new ServiceDescriptor(typeof(IApplicationEventService), typeof(ApplicationEventService), serviceScope));
+            services.Add(new ServiceDescriptor(typeof(LeaderboardDataService), typeof(LeaderboardDataService), serviceScope));
         }
 
         public static void Initialize(IServiceProvider serviceProvider)

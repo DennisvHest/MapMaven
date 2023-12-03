@@ -1,4 +1,4 @@
-﻿namespace MapMaven.Core.Models.Data.BeatLeader
+﻿namespace MapMaven.Core.Models.Data.Leaderboards.BeatLeader
 {
     public class BeatLeaderRating
     {

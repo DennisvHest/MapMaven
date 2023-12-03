@@ -14,13 +14,13 @@ using System.Reactive.Linq;
 using MapMaven.Core.Models.Data;
 using System.IO.Abstractions.TestingHelpers;
 using MapMaven.Core.ApiClients.ScoreSaber;
-using MapMaven.Core.Utilities.Scoresaber;
 using Microsoft.Extensions.DependencyInjection;
 using MapMaven.Models.Data;
 using MockQueryable.Moq;
 using MapMaven.Core.Models.Data.RankedMaps;
 using MapMaven.Core.Services.Leaderboards;
 using MapMaven.Core.Models;
+using MapMaven.Core.Models.Data.Leaderboards;
 
 namespace MapMaven.Core.Tests.Playlists.DynamicPlaylists;
 
@@ -164,8 +164,7 @@ public class DynamicPlaylistArrangementIntegrationTests
                     {
                         new()
                         {
-                            Difficulty = "Expert",
-                            MaxPP = 45
+                            Difficulty = "Expert"
                         }
                     },
                     Duration = TimeSpan.FromSeconds(60)
@@ -181,8 +180,7 @@ public class DynamicPlaylistArrangementIntegrationTests
                     {
                         new()
                         {
-                            Difficulty = "ExpertPlus",
-                            MaxPP = 100
+                            Difficulty = "ExpertPlus"
                         }
                     },
                     Duration = TimeSpan.FromSeconds(125)

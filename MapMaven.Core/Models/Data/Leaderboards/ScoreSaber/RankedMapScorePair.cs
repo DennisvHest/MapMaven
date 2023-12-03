@@ -1,6 +1,6 @@
 ﻿using MapMaven.Core.ApiClients.ScoreSaber;
 
-namespace MapMaven.Core.Models.Data.ScoreSaber
+namespace MapMaven.Core.Models.Data.Leaderboards.ScoreSaber
 {
     public class RankedMapScorePair
     {

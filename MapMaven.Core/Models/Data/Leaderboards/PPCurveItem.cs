@@ -1,4 +1,4 @@
-﻿namespace MapMaven.Core.Utilities.Scoresaber
+﻿namespace MapMaven.Core.Models.Data.Leaderboards
 {
     public class PPCurveItem
     {

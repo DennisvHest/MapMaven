@@ -2,7 +2,6 @@
 using MapMaven.Core.Models.Data;
 using MapMaven.Core.Services;
 using MapMaven.Core.Utilities.BeatSaver;
-using MapMaven.Core.Utilities.Scoresaber;
 using MapMaven.Models.Data;
 using BeatSaverSharp;
 using Microsoft.EntityFrameworkCore;
@@ -14,6 +13,7 @@ using MapMaven.Core.Services.Interfaces;
 using MapMaven.Core.Utilities;
 using MapMaven.Core.Models.Data.RankedMaps;
 using MapMaven.Core.Services.Leaderboards;
+using MapMaven.Core.Models.Data.Leaderboards;
 
 namespace MapMaven.Services
 {
@@ -23,6 +23,7 @@ namespace MapMaven.Services
         private readonly ILeaderboardService _leaderBoardService;
         private readonly BeatSaberFileService _fileService;
         private readonly SongPlayerService _songPlayerService;
+        private readonly LeaderboardDataService _leaderboardDataService;
 
         private readonly BeatSaver _beatSaver;
 
@@ -54,7 +55,8 @@ namespace MapMaven.Services
             BeatSaver beatSaver,
             BeatSaberFileService fileService,
             IServiceProvider serviceProvider,
-            SongPlayerService songPlayerService)
+            SongPlayerService songPlayerService,
+            LeaderboardDataService leaderboardDataService)
         {
             _beatSaberDataService = beatSaberDataService;
             _leaderBoardService = leaderBoardService;
@@ -105,6 +107,7 @@ namespace MapMaven.Services
                 _leaderBoardService.PlayerScores,
                 HiddenMaps,
                 CombineRankedMapData);
+            _leaderboardDataService = leaderboardDataService;
         }
 
         private IEnumerable<Map> CombineMapData(IEnumerable<MapInfo> maps, Dictionary<string, RankedMapInfoItem> rankedMaps, IEnumerable<PlayerScore> playerScores, IEnumerable<ScoreEstimate> scoreEstimates)
@@ -334,6 +337,7 @@ namespace MapMaven.Services
             IEnumerable<Task> tasks = new List<Task>()
             {
                 _leaderBoardService.LoadRankedMaps(),
+                _leaderboardDataService.LoadLeaderboardDataAsync(),
                 _beatSaberDataService.LoadAllPlaylists(),
                 LoadHiddenMaps()
             };

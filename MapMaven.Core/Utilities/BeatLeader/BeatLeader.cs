@@ -1,6 +1,7 @@
 ﻿using MapMaven.Core.Models;
+using MapMaven.Core.Models.Data.Leaderboards;
+using MapMaven.Core.Models.Data.Leaderboards.BeatLeader;
 using MapMaven.Core.Models.Data.RankedMaps;
-using MapMaven.Core.Utilities.Scoresaber;
 using static System.Math;
 
 namespace MapMaven.Core.Utilities.BeatLeader
@@ -10,57 +11,13 @@ namespace MapMaven.Core.Utilities.BeatLeader
         private readonly PlayerProfile _player;
         private readonly IEnumerable<PlayerScore> _playerScores;
 
-        public const double PPDecay = .965D;
+        private BeatLeaderLeaderboardData _leaderboardData;
 
-        public static readonly List<PPCurveItem> AccCurve = new List<PPCurveItem>
-        {
-            new PPCurveItem { At = 0, Value = 0 },
-            new PPCurveItem { At = 0.6, Value = 0.256 },
-            new PPCurveItem { At = 0.65, Value = 0.296 },
-            new PPCurveItem { At = 0.7, Value = 0.345 },
-            new PPCurveItem { At = 0.75, Value = 0.404 },
-            new PPCurveItem { At = 0.8, Value = 0.473 },
-            new PPCurveItem { At = 0.825, Value = 0.522 },
-            new PPCurveItem { At = 0.85, Value = 0.581 },
-            new PPCurveItem { At = 0.875, Value = 0.65 },
-            new PPCurveItem { At = 0.9, Value = 0.729 },
-            new PPCurveItem { At = 0.91, Value = 0.768 },
-            new PPCurveItem { At = 0.92, Value = 0.813 },
-            new PPCurveItem { At = 0.93, Value = 0.867 },
-            new PPCurveItem { At = 0.94, Value = 0.931 },
-            new PPCurveItem { At = 0.95, Value = 1 },
-            new PPCurveItem { At = 0.955, Value = 1.039 },
-            new PPCurveItem { At = 0.96, Value = 1.094 },
-            new PPCurveItem { At = 0.965, Value = 1.167 },
-            new PPCurveItem { At = 0.97, Value = 1.256 },
-            new PPCurveItem { At = 0.9725, Value = 1.315 },
-            new PPCurveItem { At = 0.975, Value = 1.392 },
-            new PPCurveItem { At = 0.9775, Value = 1.49 },
-            new PPCurveItem { At = 0.98, Value = 1.618 },
-            new PPCurveItem { At = 0.9825, Value = 1.786 },
-            new PPCurveItem { At = 0.985, Value = 2.007 },
-            new PPCurveItem { At = 0.9875, Value = 2.303 },
-            new PPCurveItem { At = 0.99, Value = 2.7 },
-            new PPCurveItem { At = 0.9925, Value = 3.241 },
-            new PPCurveItem { At = 0.995, Value = 4.01 },
-            new PPCurveItem { At = 0.9975, Value = 5.158 },
-            new PPCurveItem { At = 0.999, Value = 6.241 },
-            new PPCurveItem { At = 1, Value = 7.424 }
-        };
-
-        private double _passMultiplier = 15.2;
-        private double _passExponential = 0.381679;
-        private double _passShift = -30;
-        private double _accMultiplier = 34;
-        private double _techMultiplier = 1.08;
-        private double _techExponentialMultiplier = 1.9;
-        private double _inflateMultiplier = 650;
-        private double _inflateExponential = 1.3;
-
-        public BeatLeader(PlayerProfile player, IEnumerable<PlayerScore> playerScores)
+        public BeatLeader(PlayerProfile player, IEnumerable<PlayerScore> playerScores, BeatLeaderLeaderboardData leaderboardData)
         {
             _player = player;
             _playerScores = playerScores;
+            _leaderboardData = leaderboardData;
         }
 
         /// <summary>
@@ -70,7 +27,7 @@ namespace MapMaven.Core.Utilities.BeatLeader
         /// <param name="newPP">New PP score to add to the total.</param>
         /// <param name="replaceMapIds">Map ids of which the PP should not be included in the total.</param>
         /// <returns></returns>
-        public static double GetTotalPP(IEnumerable<PlayerScore> scores, double newPP = 0, IEnumerable<string>? replaceMapIds = null)
+        public double GetTotalPP(IEnumerable<PlayerScore> scores, double newPP = 0, IEnumerable<string>? replaceMapIds = null)
         {
             if (replaceMapIds == null)
                 replaceMapIds = Enumerable.Empty<string>();
@@ -92,7 +49,7 @@ namespace MapMaven.Core.Utilities.BeatLeader
                 .Select((pp, index) => new { PP = pp, Index = index })
                 .Aggregate(0D, (total, score) =>
                 {
-                    ppDecayMultiplier *= score.Index != 0 ? PPDecay : 1;
+                    ppDecayMultiplier *= score.Index != 0 ? _leaderboardData.PpDecay : 1;
 
                     return total + score.PP * ppDecayMultiplier;
                 });
@@ -128,7 +85,7 @@ namespace MapMaven.Core.Utilities.BeatLeader
 
         private double GetPassPP(double passRating)
         {
-            var passPP = _passMultiplier * Exp(Pow(passRating, _passExponential)) + _passShift;
+            var passPP = _leaderboardData.PassMultiplier * Exp(Pow(passRating, _leaderboardData.PassExponential)) + _leaderboardData.PassShift;
 
             if (double.IsInfinity(passPP) || double.IsNaN(passPP) || double.IsNegativeInfinity(passPP) || passPP < 0)
                 passPP = 0;
@@ -136,33 +93,33 @@ namespace MapMaven.Core.Utilities.BeatLeader
             return passPP;
         }
 
-        private double GetAccPP(double accRating, double accuracy) => ApplyCurve(accuracy) * accRating * _accMultiplier;
+        private double GetAccPP(double accRating, double accuracy) => ApplyCurve(accuracy) * accRating * _leaderboardData.AccMultiplier;
 
-        private double GetTechPP(double techRating, double accuracy) => Exp(_techExponentialMultiplier * accuracy) * _techMultiplier * techRating;
+        private double GetTechPP(double techRating, double accuracy) => Exp(_leaderboardData.TechExponentialMultiplier * accuracy) * _leaderboardData.TechMultiplier * techRating;
 
-        private double Inflate(double pp) => _inflateMultiplier * Pow(pp, _inflateExponential) / Pow(_inflateMultiplier, _inflateExponential);
+        private double Inflate(double pp) => _leaderboardData.InflateMultiplier * Pow(pp, _leaderboardData.InflateExponential) / Pow(_leaderboardData.InflateMultiplier, _leaderboardData.InflateExponential);
 
         /// <summary>
         /// Calculates the multiplication value for the given accuracy. This value can then be used to calculate the acual PP gain.
         /// </summary>
         /// <param name="accuracy">The accuracy to calculate the multiplication value from.</param>
         /// <returns>The multiplication value.</returns>
-        private static double ApplyCurve(double accuracy)
+        private double ApplyCurve(double accuracy)
         {
-            var curveItem = AccCurve.FirstOrDefault(x => x.At >= accuracy);
+            var curveItem = _leaderboardData.AccCurve.FirstOrDefault(x => x.At >= accuracy);
 
             // Impossible accuracy, but just return the last value
             if (curveItem == null)
-                return AccCurve.Last().Value;
+                return _leaderboardData.AccCurve.Last().Value;
 
-            var index = AccCurve.IndexOf(curveItem);
+            var index = Array.IndexOf(_leaderboardData.AccCurve, curveItem);
 
             // If the accuracy is the lowest possbile, just return the first value in the curve
             if (index == 0)
-                return AccCurve.First().Value;
+                return _leaderboardData.AccCurve.First().Value;
 
-            var from = AccCurve[index - 1];
-            var to = AccCurve[index];
+            var from = _leaderboardData.AccCurve[index - 1];
+            var to = _leaderboardData.AccCurve[index];
 
             // Calculate the PP multiplier value at the given accuracy
             var progress = (accuracy - from.At) / (to.At - from.At);
