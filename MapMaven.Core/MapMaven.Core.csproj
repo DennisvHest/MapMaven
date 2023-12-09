@@ -56,7 +56,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Update="ScoreEstimation\ScoreSaberScoreEstimateMLModel.zip">
+    <None Update="ScoreEstimation\ScoreSaberScoreEstimateMLModel.mlnet">
       <DependentUpon>ScoreSaberScoreEstimateMLModel.mbconfig</DependentUpon>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
