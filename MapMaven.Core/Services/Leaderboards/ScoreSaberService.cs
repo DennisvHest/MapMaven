@@ -120,25 +120,7 @@ namespace MapMaven.Core.Services.Leaderboards
 
             var rankedMapScoreEstimates = PlayerProfile.CombineLatest(PlayerScores, RankedMaps, _leaderboardDataService.LeaderboardData, (player, playerScores, rankedMaps, leaderboardData) =>
             {
-                if (player == null || leaderboardData?.ScoreSaber == null)
-                    return Enumerable.Empty<ScoreEstimate>();
-
-                var scoresaber = new Scoresaber(player, playerScores, leaderboardData.ScoreSaber);
-
-                return rankedMaps.SelectMany(map =>
-                {
-                    return map.Value.Difficulties.Select(difficulty =>
-                    {
-                        var output = ScoreSaberScoreEstimateMLModel.Predict(new ScoreSaberScoreEstimateMLModel.ModelInput
-                        {
-                            PP = Convert.ToSingle(player.Pp),
-                            StarDifficulty = Convert.ToSingle(difficulty.Stars),
-                            TimeSet = DateTime.Now
-                        });
-
-                        return scoresaber.GetScoreEstimate(map.Value, difficulty, output.Score);
-                    });
-                }).ToList();
+                return Enumerable.Empty<ScoreEstimate>();
             }).Replay(1);
 
             rankedMapScoreEstimates.Connect();

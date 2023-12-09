@@ -2,6 +2,8 @@
 using MapMaven.Core.Models.Data.Leaderboards;
 using MapMaven.Core.Models.Data.RankedMaps;
 using MapMaven.Core.Services.Interfaces;
+using MapMaven.Core.Services.Leaderboards.ScoreEstimation;
+using System;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 
@@ -10,8 +12,7 @@ namespace MapMaven.Core.Services.Leaderboards
     public class LeaderboardService : ILeaderboardService
     {
         private readonly IEnumerable<ILeaderboardProviderService> _leaderboardProviders;
-
-        private readonly IApplicationSettingService _applicationSettingService;
+        private readonly IEnumerable<IScoreEstimationService> _scoreEstimationServices;
 
         public Dictionary<LeaderboardProvider?, ILeaderboardProviderService> LeaderboardProviders { get; private set; }
 
@@ -30,12 +31,10 @@ namespace MapMaven.Core.Services.Leaderboards
 
         public const string ReplayBaseUrl = "https://www.replay.beatleader.xyz";
 
-        public LeaderboardService(
-            IEnumerable<ILeaderboardProviderService> leaderboardProviders,
-            IApplicationSettingService applicationSettingService)
+        public LeaderboardService(IEnumerable<ILeaderboardProviderService> leaderboardProviders, IEnumerable<IScoreEstimationService> scoreEstimationServices)
         {
             _leaderboardProviders = leaderboardProviders;
-            _applicationSettingService = applicationSettingService;
+            _scoreEstimationServices = scoreEstimationServices;
 
             LeaderboardProviders = _leaderboardProviders.ToDictionary(x => x.LeaderboardProviderName as LeaderboardProvider?);
 
@@ -88,7 +87,17 @@ namespace MapMaven.Core.Services.Leaderboards
                 .Switch();
 
             RankedMapScoreEstimates = activeLeaderboardProviderService
-                .Select(x => x?.RankedMapScoreEstimates ?? Observable.Return(Enumerable.Empty<ScoreEstimate>()))
+                .Select(x =>
+                {
+                    if (x.LeaderboardProviderName == LeaderboardProvider.ScoreSaber)
+                    {
+                        return _scoreEstimationServices.First().RankedMapScoreEstimates;
+                    }
+                    else
+                    {
+                        return x?.RankedMapScoreEstimates ?? Observable.Return(Enumerable.Empty<ScoreEstimate>());
+                    }
+                })
                 .Switch();
 
             RankedMaps = activeLeaderboardProviderService

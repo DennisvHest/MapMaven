@@ -16,6 +16,7 @@ using MapMaven.Core.OpenAPI;
 using MapMaven.Core.ApiClients.BeatSaver;
 using MapMaven.Core.ApiClients.BeatLeader;
 using MapMaven.Core.Services.Leaderboards;
+using MapMaven.Core.Services.Leaderboards.ScoreEstimation;
 
 namespace MapMaven.Infrastructure
 {
@@ -67,6 +68,7 @@ namespace MapMaven.Infrastructure
             services.Add(new ServiceDescriptor(typeof(IApplicationSettingService), typeof(ApplicationSettingService), serviceScope));
             services.Add(new ServiceDescriptor(typeof(IApplicationEventService), typeof(ApplicationEventService), serviceScope));
             services.Add(new ServiceDescriptor(typeof(LeaderboardDataService), typeof(LeaderboardDataService), serviceScope));
+            services.Add(new ServiceDescriptor(typeof(IScoreEstimationService), typeof(ScoreSaberScoreEstimationService), serviceScope));
         }
 
         public static void Initialize(IServiceProvider serviceProvider)
