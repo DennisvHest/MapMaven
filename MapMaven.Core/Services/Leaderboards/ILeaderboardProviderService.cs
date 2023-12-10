@@ -12,7 +12,6 @@ namespace MapMaven.Core.Services.Leaderboards
         IObservable<Dictionary<string, RankedMapInfoItem>> RankedMaps { get; }
         IObservable<PlayerProfile?> PlayerProfile { get; }
         IObservable<IEnumerable<PlayerScore>> PlayerScores { get; }
-        IObservable<IEnumerable<ScoreEstimate>> RankedMapScoreEstimates { get; }
 
         string? GetPlayerIdFromReplays(string beatSaberInstallLocation);
         Task<Dictionary<string, RankedMapInfoItem>> GetRankedMaps();

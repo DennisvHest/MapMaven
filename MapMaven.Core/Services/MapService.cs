@@ -165,10 +165,11 @@ namespace MapMaven.Services
         public async Task<IEnumerable<Map>> GetCompleteRankedMapDataForLeaderboardProvider(LeaderboardProvider leaderboardProvider)
         {
             var leaderBoardService = _leaderBoardService.LeaderboardProviders[leaderboardProvider];
+            var scoreEstimationService = _leaderBoardService.ScoreEstimationServices[leaderboardProvider];
 
             var combinedData = Observable.CombineLatest(
                 leaderBoardService.RankedMaps,
-                leaderBoardService.RankedMapScoreEstimates,
+                scoreEstimationService.RankedMapScoreEstimates,
                 leaderBoardService.PlayerScores,
                 HiddenMaps,
                 CombineRankedMapData);

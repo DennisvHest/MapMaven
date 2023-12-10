@@ -1,12 +1,8 @@
 ﻿using ComposableAsync;
 using MapMaven.Core.ApiClients.BeatLeader;
 using MapMaven.Core.Models;
-using MapMaven.Core.Models.Data.Leaderboards;
-using MapMaven.Core.Models.Data.Leaderboards.BeatLeader;
 using MapMaven.Core.Models.Data.RankedMaps;
 using MapMaven.Core.Services.Interfaces;
-using MapMaven.Core.Utilities.BeatLeader;
-using MapMaven_Core;
 using RateLimiter;
 using System.Net.Http.Json;
 using System.Reactive.Linq;
@@ -20,7 +16,6 @@ namespace MapMaven.Core.Services.Leaderboards
         private readonly IApplicationSettingService _applicationSettingService;
         private readonly IApplicationEventService _applicationEventService;
         private readonly IHttpClientFactory _httpClientFactory;
-        private readonly LeaderboardDataService _leaderboardDataService;
 
         private readonly BehaviorSubject<string?> _playerId = new(null);
         private readonly BehaviorSubject<Dictionary<string, RankedMapInfoItem>> _rankedMaps = new(new());
@@ -37,8 +32,6 @@ namespace MapMaven.Core.Services.Leaderboards
 
         public IObservable<IEnumerable<PlayerScore>> PlayerScores { get; private set; }
 
-        public IObservable<IEnumerable<ScoreEstimate>> RankedMapScoreEstimates { get; private set; }
-
         private const string PlayerIdSettingKey = "BeatLeaderPlayerId";
 
         private static readonly TimeLimiter _beatLeaderApiLimit = TimeLimiter.GetFromMaxCountByInterval(10, TimeSpan.FromSeconds(10));
@@ -47,14 +40,12 @@ namespace MapMaven.Core.Services.Leaderboards
             BeatLeaderApiClient beatLeader,
             IApplicationSettingService applicationSettingService,
             IApplicationEventService applicationEventService,
-            IHttpClientFactory httpClientFactory,
-            LeaderboardDataService leaderboardDataService)
+            IHttpClientFactory httpClientFactory)
         {
             _beatLeader = beatLeader;
             _applicationSettingService = applicationSettingService;
             _applicationEventService = applicationEventService;
             _httpClientFactory = httpClientFactory;
-            _leaderboardDataService = leaderboardDataService;
 
             var playerScores = _playerId.Select(playerId =>
             {
@@ -136,35 +127,6 @@ namespace MapMaven.Core.Services.Leaderboards
                     });
                 })
                 .Concat();
-
-            var rankedMapScoreEstimates = PlayerProfile.CombineLatest(PlayerScores, RankedMaps, _leaderboardDataService.LeaderboardData, (player, playerScores, rankedMaps, leaderboardData) =>
-            {
-                if (player == null || leaderboardData?.BeatLeader == null)
-                    return Enumerable.Empty<ScoreEstimate>();
-
-                var beatLeader = new BeatLeader(player, playerScores, leaderboardData.BeatLeader);
-
-                return rankedMaps.SelectMany(map =>
-                {
-                    return map.Value.Difficulties.Select(difficulty =>
-                    {
-                        var output = BeatLeaderScoreEstimateMLModel.Predict(new BeatLeaderScoreEstimateMLModel.ModelInput
-                        {
-                            Pp = Convert.ToSingle(player.Pp),
-                            StarDifficulty = Convert.ToSingle(difficulty.Stars),
-                            TimeSet = DateTime.Now
-                        });
-
-                        output.Score = Math.Min(output.Score, 99); // Filter out impossible accuracies without modifiers and cap it at 99%
-
-                        return beatLeader.GetScoreEstimate(map.Value, difficulty, output.Score);
-                    });
-                }).ToList();
-            }).Replay(1);
-
-            rankedMapScoreEstimates.Connect();
-
-            RankedMapScoreEstimates = rankedMapScoreEstimates;
 
             _applicationSettingService.ApplicationSettings
                 .Select(applicationSettings => applicationSettings.TryGetValue(PlayerIdSettingKey, out var playerId) ? playerId.StringValue : null)

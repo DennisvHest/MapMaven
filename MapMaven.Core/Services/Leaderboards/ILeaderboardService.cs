@@ -2,6 +2,7 @@
 using MapMaven.Core.Models;
 using MapMaven.Core.Models.Data.Leaderboards;
 using MapMaven.Core.Models.Data.RankedMaps;
+using MapMaven.Core.Services.Leaderboards.ScoreEstimation;
 
 namespace MapMaven.Core.Services.Leaderboards
 {
@@ -17,6 +18,7 @@ namespace MapMaven.Core.Services.Leaderboards
         Dictionary<LeaderboardProvider?, ILeaderboardProviderService> LeaderboardProviders { get; }
         IObservable<IEnumerable<ILeaderboardProviderService>> AvailableLeaderboardProviderServices { get; }
         LeaderboardProvider? ActiveLeaderboardProviderNameValue { get; }
+        Dictionary<LeaderboardProvider?, IScoreEstimationService> ScoreEstimationServices { get; }
 
         string? GetPlayerIdFromReplays(string beatSaberInstallLocation);
         Task<Dictionary<string, RankedMapInfoItem>> GetRankedMaps();

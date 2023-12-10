@@ -15,6 +15,7 @@ namespace MapMaven.Core.Services.Leaderboards
         private readonly IEnumerable<IScoreEstimationService> _scoreEstimationServices;
 
         public Dictionary<LeaderboardProvider?, ILeaderboardProviderService> LeaderboardProviders { get; private set; }
+        public Dictionary<LeaderboardProvider?, IScoreEstimationService> ScoreEstimationServices { get; private set; }
 
         private readonly BehaviorSubject<LeaderboardProvider?> _activeLeaderboardProviderName = new(LeaderboardProvider.BeatLeader);
 
@@ -37,6 +38,7 @@ namespace MapMaven.Core.Services.Leaderboards
             _scoreEstimationServices = scoreEstimationServices;
 
             LeaderboardProviders = _leaderboardProviders.ToDictionary(x => x.LeaderboardProviderName as LeaderboardProvider?);
+            ScoreEstimationServices = _scoreEstimationServices.ToDictionary(x => x.LeaderboardProviderName as LeaderboardProvider?);
 
             // If there is only one leaderboard provider, set it as the active one
             _leaderboardProviders
@@ -87,15 +89,15 @@ namespace MapMaven.Core.Services.Leaderboards
                 .Switch();
 
             RankedMapScoreEstimates = activeLeaderboardProviderService
-                .Select(x =>
+                .Select(activeLeaderboardProvider =>
                 {
-                    if (x.LeaderboardProviderName == LeaderboardProvider.ScoreSaber)
+                    if (ScoreEstimationServices.TryGetValue(activeLeaderboardProvider?.LeaderboardProviderName, out var activeScoreEstimationService))
                     {
-                        return _scoreEstimationServices.First().RankedMapScoreEstimates;
+                        return activeScoreEstimationService.RankedMapScoreEstimates;
                     }
                     else
                     {
-                        return x?.RankedMapScoreEstimates ?? Observable.Return(Enumerable.Empty<ScoreEstimate>());
+                        return Observable.Return(Enumerable.Empty<ScoreEstimate>());
                     }
                 })
                 .Switch();
