@@ -38,12 +38,12 @@ namespace MapMaven.Core.Services.Leaderboards.ScoreEstimation
 
         public ScoreSaberScoreEstimationService(
             LeaderboardDataService leaderboardDataService,
-            IEnumerable<ILeaderboardProviderService> leaderboardProviders,
+            ScoreSaberService scoreSaberService,
             IHttpClientFactory httpClientFactory,
             ILogger<ScoreSaberScoreEstimationService> logger)
         {
             _leaderboardDataService = leaderboardDataService;
-            _scoreSaberService = (ScoreSaberService)leaderboardProviders.First(x => x.LeaderboardProviderName == LeaderboardProvider.ScoreSaber);
+            _scoreSaberService = scoreSaberService;
             _httpClientFactory = httpClientFactory;
             _logger = logger;
 
