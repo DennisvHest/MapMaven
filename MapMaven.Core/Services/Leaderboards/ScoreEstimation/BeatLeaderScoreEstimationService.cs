@@ -16,6 +16,7 @@ namespace MapMaven.Core.Services.Leaderboards.ScoreEstimation
 
         private readonly LeaderboardDataService _leaderboardDataService;
         private readonly BeatLeaderService _beatLeaderService;
+        private readonly ScoreEstimationSettings _scoreEstimationSettings;
         private readonly IHttpClientFactory _httpClientFactory;
 
         private PredictionEngine<ModelInput, ModelOutput> _predictEngine;
@@ -28,11 +29,13 @@ namespace MapMaven.Core.Services.Leaderboards.ScoreEstimation
         public BeatLeaderScoreEstimationService(
             LeaderboardDataService leaderboardDataService,
             BeatLeaderService beatLeaderService,
+            ScoreEstimationSettings scoreEstimationSettings,
             IHttpClientFactory httpClientFactory,
             ILogger<ScoreSaberScoreEstimationService> logger)
         {
             _leaderboardDataService = leaderboardDataService;
             _beatLeaderService = beatLeaderService;
+            _scoreEstimationSettings = scoreEstimationSettings;
             _httpClientFactory = httpClientFactory;
             _logger = logger;
 
@@ -41,6 +44,7 @@ namespace MapMaven.Core.Services.Leaderboards.ScoreEstimation
                 _beatLeaderService.PlayerScores,
                 _beatLeaderService.RankedMaps,
                 _leaderboardDataService.LeaderboardData,
+                _scoreEstimationSettings.DifficultyModifierValue,
                 GetEstimationsAsync).Concat().Replay(1);
 
             rankedMapScoreEstimates.Connect();
@@ -58,7 +62,7 @@ namespace MapMaven.Core.Services.Leaderboards.ScoreEstimation
             }
         }
 
-        private async Task<IEnumerable<ScoreEstimate>> GetEstimationsAsync(PlayerProfile? player, IEnumerable<PlayerScore> playerScores, Dictionary<string, RankedMapInfoItem> rankedMaps, LeaderboardData? leaderboardData)
+        private async Task<IEnumerable<ScoreEstimate>> GetEstimationsAsync(PlayerProfile? player, IEnumerable<PlayerScore> playerScores, Dictionary<string, RankedMapInfoItem> rankedMaps, LeaderboardData? leaderboardData, int difficultyModifierValue)
         {
             if (_predictEngine is null)
                 await InitializeEstimationEngine();
@@ -68,11 +72,13 @@ namespace MapMaven.Core.Services.Leaderboards.ScoreEstimation
 
             var scoresaber = new BeatLeader(player, playerScores, leaderboardData.BeatLeader);
 
+            var difficultyFactor = difficultyModifierValue / 100D;
+
             return rankedMaps.SelectMany(map => map.Value.Difficulties.Select(difficulty =>
             {
                 var output = Predict(new()
                 {
-                    Pp = Convert.ToSingle(player.Pp),
+                    Pp = Convert.ToSingle(player.Pp * (1 + difficultyFactor)),
                     StarDifficulty = Convert.ToSingle(difficulty.Stars),
                     TimeSet = DateTime.Now
                 });

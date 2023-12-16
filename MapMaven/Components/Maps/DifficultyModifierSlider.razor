@@ -1,0 +1,25 @@
+﻿@using System.Diagnostics;
+@using MapMaven.Core.Services.Leaderboards.ScoreEstimation;
+
+<MudSlider T="int"
+           @bind-Value="difficultyModifier"
+           @onmouseup="OnDifficultyAmplifierChanged"
+           Min="-100"
+           Max="100"
+           Step="1"
+           ValueLabel="true"
+           Class="mt-5" />
+
+<MudText Typo="Typo.caption">Difficulty: @(difficultyModifier >= 0 ? "+" : string.Empty)@difficultyModifier%</MudText>
+
+@code {
+    int difficultyModifier = 0;
+
+    [Inject]
+    ScoreEstimationSettings ScoreEstimationSettings { get; set; }
+
+    void OnDifficultyAmplifierChanged()
+    {
+        Task.Run(() => ScoreEstimationSettings.DifficultyModifierValue.OnNext(difficultyModifier));
+    }
+}

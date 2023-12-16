@@ -12,11 +12,13 @@
                 <MudSelectItem Value="@("Played")" />
                 <MudSelectItem Value="@("Not played")" />
             </MudSelect>
+
             <MudSelect T="string" Value="HiddenFilter" Label="Hidden / Not hidden" Class="mt-5" Variant="Variant.Outlined" ValueChanged="value => OnHiddenFilterChanged(value)">
                 <MudSelectItem Value="@("Both")" />
                 <MudSelectItem Value="@("Hidden")" />
                 <MudSelectItem Value="@("Not hidden")" />
             </MudSelect>
+
             <MudNumericField T="double"
                 Value="MinimumPredictedAccuracy"
                 Label="Min predicted accuracy"
@@ -25,7 +27,10 @@
                 Variant="Variant.Outlined"
                 Min="0"
                 Max="100"
-                ValueChanged="value => OnPredictedAccuracyFilterChanged(value)" />
+                ValueChanged="OnPredictedAccuracyFilterChanged" />
+
+            <DifficultyModifierSlider></DifficultyModifierSlider>
+
             <MudExpansionPanels Class="mt-3">
                 <MudExpansionPanel Text="Select..." Style="background-color: var(--mud-palette-drawer-background);">
                     <MudNumericField @bind-Value="MapSelectNumber" Label="Number of maps" Class="my-3" Min="1" />
