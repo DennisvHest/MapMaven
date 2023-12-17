@@ -8,9 +8,9 @@
            Max="100"
            Step="1"
            ValueLabel="true"
-           Class="mt-5" />
+           Color="Color.Info" />
 
-<MudText Typo="Typo.caption">Difficulty: @(difficultyModifier >= 0 ? "+" : string.Empty)@difficultyModifier%</MudText>
+<MudChip Size="Size.Small" Class="mx-0">Difficulty: @(difficultyModifier >= 0 ? "+" : string.Empty)@difficultyModifier%</MudChip>
 
 @code {
     int difficultyModifier = 0;
