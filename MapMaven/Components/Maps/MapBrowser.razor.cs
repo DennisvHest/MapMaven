@@ -11,6 +11,7 @@ using System.Reactive.Linq;
 using MapMaven.Components.Shared;
 using Microsoft.Maui.ApplicationModel;
 using MapMaven.Components.Playlists;
+using MapMaven.Core.Services.Leaderboards.ScoreEstimation;
 
 namespace MapMaven.Components.Maps
 {
@@ -33,6 +34,9 @@ namespace MapMaven.Components.Maps
 
         [Inject]
         protected DynamicPlaylistArrangementService DynamicPlaylistArrangementService { get; set; }
+
+        [Inject]
+        protected IEnumerable<IScoreEstimationService> ScoreEstimationServices { get; set; }
 
         [Inject]
         protected NavigationManager NavigationManager { get; set; }
@@ -75,11 +79,17 @@ namespace MapMaven.Components.Maps
         {
             NavigationManager.LocationChanged += LocationChanged;
 
+            var estimatingScoresObservable = Observable.CombineLatest(ScoreEstimationServices.Select(s => s.EstimatingScores), x => x.Any(estimatingScores => estimatingScores));
+
             var loadingObservable = Observable.CombineLatest(
                 BeatSaberDataService.LoadingMapInfo,
                 DynamicPlaylistArrangementService.ArrangingDynamicPlaylists,
+                estimatingScoresObservable,
                 PlaylistService.SelectedPlaylist,
-                (loadingMapInfo, arrangingDynamicPlaylists, selectedPlaylist) => loadingMapInfo || arrangingDynamicPlaylists && selectedPlaylist?.IsDynamicPlaylist == true
+                (loadingMapInfo, arrangingDynamicPlaylists, estimatingScores, selectedPlaylist) =>
+                    loadingMapInfo
+                    || arrangingDynamicPlaylists && selectedPlaylist?.IsDynamicPlaylist == true
+                    || estimatingScores
             );
 
             SubscribeAndBind(loadingObservable, loading => LoadingMapInfo = loading);

@@ -18,6 +18,11 @@
     [Inject]
     ScoreEstimationSettings ScoreEstimationSettings { get; set; }
 
+    protected override void OnInitialized()
+    {
+        difficultyModifier = ScoreEstimationSettings.DifficultyModifierValue.Value;
+    }
+
     void OnDifficultyAmplifierChanged()
     {
         Task.Run(() => ScoreEstimationSettings.DifficultyModifierValue.OnNext(difficultyModifier));

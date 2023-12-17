@@ -5,6 +5,7 @@ using MapMaven.Core.Utilities.BeatLeader;
 using Microsoft.Extensions.Logging;
 using Microsoft.ML;
 using System.Reactive.Linq;
+using System.Reactive.Subjects;
 using System.Reflection;
 using static MapMaven_Core.BeatLeaderScoreEstimateMLModel;
 
@@ -21,6 +22,9 @@ namespace MapMaven.Core.Services.Leaderboards.ScoreEstimation
 
         private PredictionEngine<ModelInput, ModelOutput> _predictEngine;
         public IObservable<IEnumerable<ScoreEstimate>> RankedMapScoreEstimates { get; private set; }
+
+        private readonly BehaviorSubject<bool> _estimatingScores = new(false);
+        public IObservable<bool> EstimatingScores => _estimatingScores;
 
         private readonly ILogger<ScoreSaberScoreEstimationService> _logger;
 
