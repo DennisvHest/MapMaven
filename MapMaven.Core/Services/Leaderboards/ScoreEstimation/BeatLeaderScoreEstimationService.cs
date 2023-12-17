@@ -44,8 +44,8 @@ namespace MapMaven.Core.Services.Leaderboards.ScoreEstimation
                 _beatLeaderService.PlayerScores,
                 _beatLeaderService.RankedMaps,
                 _leaderboardDataService.LeaderboardData,
-                _scoreEstimationSettings.DifficultyModifierValue,
-                GetEstimationsAsync).Concat().Replay(1);
+                _scoreEstimationSettings.DifficultyModifierValue.Throttle(TimeSpan.FromSeconds(1)),
+                GetEstimationsAsync).Switch().Replay(1);
 
             rankedMapScoreEstimates.Connect();
 

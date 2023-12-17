@@ -55,8 +55,8 @@ namespace MapMaven.Core.Services.Leaderboards.ScoreEstimation
                 _scoreSaberService.PlayerScores,
                 _scoreSaberService.RankedMaps,
                 _leaderboardDataService.LeaderboardData,
-                _scoreEstimationSettings.DifficultyModifierValue,
-                GetEstimationsAsync).Concat().Replay(1);
+                _scoreEstimationSettings.DifficultyModifierValue.Throttle(TimeSpan.FromSeconds(1)),
+                GetEstimationsAsync).Switch().Replay(1);
 
             rankedMapScoreEstimates.Connect();
 
@@ -64,28 +64,28 @@ namespace MapMaven.Core.Services.Leaderboards.ScoreEstimation
         }
 
         private async Task<IEnumerable<ScoreEstimate>> GetEstimationsAsync(PlayerProfile? player, IEnumerable<PlayerScore> playerScores, Dictionary<string, RankedMapInfoItem> rankedMaps, LeaderboardData? leaderboardData, int difficultyAmplifierValue)
-        {
-            if (_predictEngine is null)
-                await InitializeEstimationEngine();
-
-            if (player == null || leaderboardData?.ScoreSaber == null)
-                return Enumerable.Empty<ScoreEstimate>();
-
-            var scoresaber = new Scoresaber(player, playerScores, leaderboardData.ScoreSaber);
-
-            var difficultyFactor = difficultyAmplifierValue / 100D;
-
-            return rankedMaps.SelectMany(map => map.Value.Difficulties.Select(difficulty =>
             {
-                var output = Predict(new()
-                {
-                    PP = Convert.ToSingle(player.Pp * (1 + difficultyFactor)),
-                    StarDifficulty = Convert.ToSingle(difficulty.Stars),
-                    TimeSet = DateTime.Now
-                });
+                if (_predictEngine is null)
+                    await InitializeEstimationEngine();
 
-                return scoresaber.GetScoreEstimate(map.Value, difficulty, output.Score);
-            })).ToList();
+                if (player == null || leaderboardData?.ScoreSaber == null)
+                    return Enumerable.Empty<ScoreEstimate>();
+
+                var scoresaber = new Scoresaber(player, playerScores, leaderboardData.ScoreSaber);
+
+                var difficultyFactor = difficultyAmplifierValue / 100D;
+
+                return rankedMaps.SelectMany(map => map.Value.Difficulties.Select(difficulty =>
+                {
+                    var output = Predict(new()
+                    {
+                        PP = Convert.ToSingle(player.Pp * (1 + difficultyFactor)),
+                        StarDifficulty = Convert.ToSingle(difficulty.Stars),
+                        TimeSet = DateTime.Now
+                    });
+
+                    return scoresaber.GetScoreEstimate(map.Value, difficulty, output.Score);
+                })).ToList();
         }
 
         private ModelOutput Predict(ModelInput input) => _predictEngine.Predict(input);
