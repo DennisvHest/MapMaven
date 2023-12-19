@@ -41,6 +41,9 @@ namespace MapMaven.Components.Maps
         [Inject]
         protected NavigationManager NavigationManager { get; set; }
 
+        [Inject]
+        ScoreEstimationSettings ScoreEstimationSettings { get; set; }
+
         [Parameter]
         public IEnumerable<Map> Maps { get; set; } = new List<Map>();
         private bool LoadingMapInfo = false;
@@ -75,6 +78,8 @@ namespace MapMaven.Components.Maps
 
         private string SearchString = "";
 
+        private int DifficultyModifier = 0;
+
         protected override void OnInitialized()
         {
             NavigationManager.LocationChanged += LocationChanged;
@@ -103,6 +108,8 @@ namespace MapMaven.Components.Maps
             SubscribeAndBind(MapService.MapFilters, mapFilters => MapFilters = mapFilters);
             SubscribeAndBind(MapService.SelectedMaps, selectedMaps => SelectedMaps = selectedMaps);
             SubscribeAndBind(MapService.Selectable, selectable => Selectable = selectable);
+
+            SubscribeAndBind(ScoreEstimationSettings.DifficultyModifierValue, difficultyModifierValue => DifficultyModifier = difficultyModifierValue);
         }
 
         protected override void OnParametersSet()

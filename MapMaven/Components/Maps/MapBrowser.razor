@@ -104,6 +104,20 @@
                 </MudToolBar>
             </MudPaper>
         }
+        <div class="absolute full-height d-flex flex-row align-center px-3" style="height: 60px; z-index: 999">
+            @if (DifficultyModifier != 0)
+            {
+                var chipColor = DifficultyModifier >= 0 ? Colors.Purple.Darken3 : Colors.Green.Darken3;
+                var chipStyle = $"border: 1px solid {chipColor}";
+
+                <MudTooltip Text="Difficulty modifier">
+                    <MudChip Variant="Variant.Outlined" Style="@chipStyle">
+                        <MudIcon Icon="@Icons.Filled.Speed" Class="mr-2"></MudIcon>
+                        @(DifficultyModifier >= 0 ? "+" : string.Empty)@DifficultyModifier%
+                    </MudChip>
+                </MudTooltip>
+            }
+        </div>
         <MudDataGridPager T="Map" />
     </PagerContent>
 </MudDataGrid>
