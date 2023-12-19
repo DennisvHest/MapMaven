@@ -6,7 +6,7 @@ namespace MapMaven.Core.Services.Interfaces
     {
         IObservable<Dictionary<string, ApplicationSetting>> ApplicationSettings { get; }
 
-        Task AddOrUpdateAsync<T>(string key, T value) where T : class;
+        Task AddOrUpdateAsync<T>(string key, T value);
         Task LoadAsync();
     }
 }
