@@ -29,9 +29,19 @@
                 Max="100"
                 ValueChanged="OnPredictedAccuracyFilterChanged" />
 
-            <MudPaper Class="my-3 pa-3" Style="background-color: var(--mud-palette-drawer-background);">
-                <DifficultyModifierSlider></DifficultyModifierSlider>
-            </MudPaper>
+            <MudExpansionPanels Class="my-3">
+                <MudExpansionPanel Text="Difficulty settings" Style="background-color: var(--mud-palette-drawer-background);">
+                    <DifficultyModifierSlider></DifficultyModifierSlider>
+                    <MudAlert Severity="Severity.Normal" Square="true" Dense="true" NoIcon="true" Style="margin: 16px -24px -16px -24px">
+                        <div class="d-flex flex-row align-center gap-3">
+                            <MudIcon Icon="@Icons.Outlined.Info" Size="Size.Small"></MudIcon>
+                            <MudText Typo="Typo.caption" Style="font-size: 11px">
+                                Adjust the difficulty of recommended maps. This difficulty is applied globally and stays saved.
+                            </MudText>
+                        </div>
+                    </MudAlert>
+                </MudExpansionPanel>
+            </MudExpansionPanels>
 
             <MudExpansionPanels Class="mt-3">
                 <MudExpansionPanel Text="Select..." Style="background-color: var(--mud-palette-drawer-background);">
