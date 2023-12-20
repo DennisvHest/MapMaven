@@ -75,9 +75,9 @@ else if (BeatLeaderProfile is not null)
         SubscribeAndBind(BeatLeaderService.PlayerProfile, player => BeatLeaderProfile = player);
     }
 
-    void SetActiveLeaderboardProvider(LeaderboardProvider leaderboardProvider)
+    async Task SetActiveLeaderboardProvider(LeaderboardProvider leaderboardProvider)
     {
-        LeaderboardService.SetActiveLeaderboardProvider(leaderboardProvider);
+        await LeaderboardService.SetActiveLeaderboardProviderAsync(leaderboardProvider);
     }
 
     void RefreshData()

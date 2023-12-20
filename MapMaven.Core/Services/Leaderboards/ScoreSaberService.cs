@@ -29,6 +29,8 @@ namespace MapMaven.Core.Services.Leaderboards
 
         public IObservable<Dictionary<string, RankedMapInfoItem>> RankedMaps => _rankedMaps;
 
+        public IObservable<bool> Active { get; private set; }
+
         public string? PlayerId => _playerId.Value;
 
         private const string PlayerIdSettingKey = "PlayerId";
@@ -114,10 +116,13 @@ namespace MapMaven.Core.Services.Leaderboards
                 return Observable.Return(null as PlayerProfile);
             });
 
-            _applicationSettingService.ApplicationSettings
+            var playerId = _applicationSettingService.ApplicationSettings
                 .Select(applicationSettings => applicationSettings.TryGetValue(PlayerIdSettingKey, out var playerId) ? playerId.StringValue : null)
-                .DistinctUntilChanged()
-                .Subscribe(_playerId.OnNext);
+                .DistinctUntilChanged();
+                
+            playerId.Subscribe(_playerId.OnNext);
+
+            Active = playerId.Select(playerId => !string.IsNullOrEmpty(playerId));
         }
 
         public async Task SetPlayerId(string playerId)

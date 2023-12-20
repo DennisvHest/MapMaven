@@ -25,7 +25,7 @@ namespace MapMaven.Core.Services.Leaderboards
         string? GetReplayUrl(string mapId, Models.PlayerScore score);
         Task LoadRankedMaps();
         void RefreshPlayerData();
-        void SetActiveLeaderboardProvider(LeaderboardProvider leaderboardProviderName);
+        Task SetActiveLeaderboardProviderAsync(LeaderboardProvider leaderboardProviderName);
         Task SetPlayerId(string playerId);
     }
 }

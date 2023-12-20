@@ -115,7 +115,7 @@ namespace MapMaven.Components
                 await BeatLeaderService.SetPlayerId(BeatLeaderPlayerId);
 
                 if (ActiveLeaderboardProvider.HasValue)
-                    LeaderboardService.SetActiveLeaderboardProvider(ActiveLeaderboardProvider.Value);
+                    await LeaderboardService.SetActiveLeaderboardProviderAsync(ActiveLeaderboardProvider.Value);
             });
         }
 

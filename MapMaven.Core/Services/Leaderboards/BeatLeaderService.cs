@@ -32,6 +32,8 @@ namespace MapMaven.Core.Services.Leaderboards
 
         public IObservable<IEnumerable<PlayerScore>> PlayerScores { get; private set; }
 
+        public IObservable<bool> Active { get; private set; }
+
         private const string PlayerIdSettingKey = "BeatLeaderPlayerId";
 
         private static readonly TimeLimiter _beatLeaderApiLimit = TimeLimiter.GetFromMaxCountByInterval(10, TimeSpan.FromSeconds(10));
@@ -128,10 +130,13 @@ namespace MapMaven.Core.Services.Leaderboards
                 })
                 .Concat();
 
-            _applicationSettingService.ApplicationSettings
+            var playerId = _applicationSettingService.ApplicationSettings
                 .Select(applicationSettings => applicationSettings.TryGetValue(PlayerIdSettingKey, out var playerId) ? playerId.StringValue : null)
-                .DistinctUntilChanged()
-                .Subscribe(_playerId.OnNext);
+                .DistinctUntilChanged();
+                
+            playerId.Subscribe(_playerId.OnNext);
+
+            Active = playerId.Select(playerId => !string.IsNullOrEmpty(playerId));
         }
 
         public string? GetPlayerIdFromReplays(string beatSaberInstallLocation)

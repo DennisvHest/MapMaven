@@ -1,4 +1,5 @@
-﻿using MapMaven.Core.Models;
+﻿using MapMaven.Core.Extensions;
+using MapMaven.Core.Models;
 using MapMaven.Core.Models.Data.Leaderboards;
 using MapMaven.Core.Models.Data.RankedMaps;
 using MapMaven.Core.Services.Interfaces;
@@ -6,6 +7,7 @@ using MapMaven.Core.Services.Leaderboards.ScoreEstimation;
 using System;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace MapMaven.Core.Services.Leaderboards
 {
@@ -13,11 +15,12 @@ namespace MapMaven.Core.Services.Leaderboards
     {
         private readonly IEnumerable<ILeaderboardProviderService> _leaderboardProviders;
         private readonly IEnumerable<IScoreEstimationService> _scoreEstimationServices;
+        private readonly IApplicationSettingService _applicationSettingService;
 
         public Dictionary<LeaderboardProvider?, ILeaderboardProviderService> LeaderboardProviders { get; private set; }
         public Dictionary<LeaderboardProvider?, IScoreEstimationService> ScoreEstimationServices { get; private set; }
 
-        private readonly BehaviorSubject<LeaderboardProvider?> _activeLeaderboardProviderName = new(LeaderboardProvider.BeatLeader);
+        private readonly BehaviorSubject<LeaderboardProvider?> _activeLeaderboardProviderName = new(null);
 
         public IObservable<string?> PlayerIdObservable { get; private set; }
         public IObservable<PlayerProfile?> PlayerProfile { get; private set; }
@@ -32,35 +35,55 @@ namespace MapMaven.Core.Services.Leaderboards
 
         public const string ReplayBaseUrl = "https://www.replay.beatleader.xyz";
 
-        public LeaderboardService(IEnumerable<ILeaderboardProviderService> leaderboardProviders, IEnumerable<IScoreEstimationService> scoreEstimationServices)
+        public LeaderboardService(
+            IEnumerable<ILeaderboardProviderService> leaderboardProviders,
+            IEnumerable<IScoreEstimationService> scoreEstimationServices,
+            IApplicationSettingService applicationSettingService)
         {
             _leaderboardProviders = leaderboardProviders;
             _scoreEstimationServices = scoreEstimationServices;
+            _applicationSettingService = applicationSettingService;
 
             LeaderboardProviders = _leaderboardProviders.ToDictionary(x => x.LeaderboardProviderName as LeaderboardProvider?);
             ScoreEstimationServices = _scoreEstimationServices.ToDictionary(x => x.LeaderboardProviderName as LeaderboardProvider?);
 
-            // If there is only one leaderboard provider, set it as the active one
-            _leaderboardProviders
-                .Select(x => x.PlayerIdObservable.StartWith(null as string))
-                .CombineLatest()
-                .Subscribe(playerIds =>
+            var activeLeaderboardProviderSettingObservable = _applicationSettingService.ApplicationSettings
+                .Select(x => x.TryGetValue("ActiveLeaderboardProvider", out var value) ? value : null);
+            
+            var activeLeaderboardProvidersObservable = _leaderboardProviders
+                .Select(x => x.Active.Select(active => new
                 {
-                    if (playerIds.Where(x => !string.IsNullOrEmpty(x)).Count() > 1)
-                        return;
+                    Active = active,
+                    LeaderboardProvider = x
+                }))
+                .CombineLatest()
+                .Select(x => x.Where(p => p.Active));
 
-                    var activeLeaderboardProvider = _leaderboardProviders.FirstOrDefault(p => !string.IsNullOrEmpty(p.PlayerId));
+            Observable.CombineLatest(
+                activeLeaderboardProvidersObservable, activeLeaderboardProviderSettingObservable,
+                (activeLeaderboardProviders, activeLeaderboardProviderSetting) => (activeLeaderboardProviders, activeLeaderboardProviderSetting)
+            ).SubscribeAsync(async x =>
+            {
+                LeaderboardProvider? activeLeaderboardProvider = null;
 
-                    if (activeLeaderboardProvider == null)
-                        return;
+                // If there is only one active leaderboard provider, set it as the active one
+                if (x.activeLeaderboardProviders.Count() == 1)
+                {
+                    activeLeaderboardProvider = x.activeLeaderboardProviders.FirstOrDefault()?.LeaderboardProvider?.LeaderboardProviderName;
+                }
+                else
+                {
+                    activeLeaderboardProvider = Enum.TryParse<LeaderboardProvider>(x.activeLeaderboardProviderSetting?.StringValue, out var leaderboardProviderName) ? leaderboardProviderName : null;
+                }
 
-                    SetActiveLeaderboardProvider(activeLeaderboardProvider.LeaderboardProviderName);
-                });
+                if (activeLeaderboardProvider.HasValue && _activeLeaderboardProviderName.Value != activeLeaderboardProvider)
+                    await SetActiveLeaderboardProviderAsync(activeLeaderboardProvider.Value);
+            });
 
             var activeLeaderboardProviderService = _activeLeaderboardProviderName
                 .Select(leaderboardProviderName =>
                 {
-                    if (!LeaderboardProviders.ContainsKey(leaderboardProviderName))
+                    if (leaderboardProviderName is null || !LeaderboardProviders.ContainsKey(leaderboardProviderName))
                         return null;
 
                     return LeaderboardProviders[leaderboardProviderName];
@@ -91,6 +114,9 @@ namespace MapMaven.Core.Services.Leaderboards
             RankedMapScoreEstimates = activeLeaderboardProviderService
                 .Select(activeLeaderboardProvider =>
                 {
+                    if (activeLeaderboardProvider is null)
+                        return Observable.Return(Enumerable.Empty<ScoreEstimate>());
+
                     if (ScoreEstimationServices.TryGetValue(activeLeaderboardProvider?.LeaderboardProviderName, out var activeScoreEstimationService))
                     {
                         return activeScoreEstimationService.RankedMapScoreEstimates;
@@ -107,8 +133,10 @@ namespace MapMaven.Core.Services.Leaderboards
                 .Switch();
         }
 
-        public void SetActiveLeaderboardProvider(LeaderboardProvider leaderboardProviderName)
+        public async Task SetActiveLeaderboardProviderAsync(LeaderboardProvider leaderboardProviderName)
         {
+            await _applicationSettingService.AddOrUpdateAsync("ActiveLeaderboardProvider", leaderboardProviderName.ToString());
+
             _activeLeaderboardProviderName.OnNext(leaderboardProviderName);
         }
 

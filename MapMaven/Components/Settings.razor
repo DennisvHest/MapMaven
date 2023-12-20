@@ -52,8 +52,18 @@
             if (!string.IsNullOrEmpty(BeatLeaderPlayerId))
                 availableLeaderboards.Add(LeaderboardProvider.BeatLeader);
 
-            if (availableLeaderboards.Count == 1)
+            if (!availableLeaderboards.Any())
+            {
+                ActiveLeaderboardProvider = null;
+            }
+            else if (availableLeaderboards.Count == 1)
+            {
                 ActiveLeaderboardProvider = availableLeaderboards.First();
+            }
+            else if (availableLeaderboards.Count > 1 && ActiveLeaderboardProvider is null)
+            {
+                ActiveLeaderboardProvider = availableLeaderboards.First();
+            }
         }
 
         @if (availableLeaderboards.Any())
