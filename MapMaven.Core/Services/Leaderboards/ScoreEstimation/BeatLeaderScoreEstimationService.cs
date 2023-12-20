@@ -68,27 +68,35 @@ namespace MapMaven.Core.Services.Leaderboards.ScoreEstimation
 
         private async Task<IEnumerable<ScoreEstimate>> GetEstimationsAsync(PlayerProfile? player, IEnumerable<PlayerScore> playerScores, Dictionary<string, RankedMapInfoItem> rankedMaps, LeaderboardData? leaderboardData, int difficultyModifierValue)
         {
+            _estimatingScores.OnNext(true);
+
             if (_predictEngine is null)
                 await InitializeEstimationEngine();
 
-            if (player == null || leaderboardData?.ScoreSaber == null)
-                return Enumerable.Empty<ScoreEstimate>();
+            var estimates = Enumerable.Empty<ScoreEstimate>();
 
-            var scoresaber = new BeatLeader(player, playerScores, leaderboardData.BeatLeader);
-
-            var difficultyFactor = difficultyModifierValue / 100D;
-
-            return rankedMaps.SelectMany(map => map.Value.Difficulties.Select(difficulty =>
+            if (player != null && leaderboardData?.ScoreSaber != null)
             {
-                var output = Predict(new()
-                {
-                    Pp = Convert.ToSingle(player.Pp * (1 + difficultyFactor)),
-                    StarDifficulty = Convert.ToSingle(difficulty.Stars),
-                    TimeSet = DateTime.Now
-                });
+                var scoresaber = new BeatLeader(player, playerScores, leaderboardData.BeatLeader);
 
-                return scoresaber.GetScoreEstimate(map.Value, difficulty, output.Score);
-            })).ToList();
+                var difficultyFactor = difficultyModifierValue / 100D;
+
+                estimates = rankedMaps.SelectMany(map => map.Value.Difficulties.Select(difficulty =>
+                {
+                    var output = Predict(new()
+                    {
+                        Pp = Convert.ToSingle(player.Pp * (1 + difficultyFactor)),
+                        StarDifficulty = Convert.ToSingle(difficulty.Stars),
+                        TimeSet = DateTime.Now
+                    });
+
+                    return scoresaber.GetScoreEstimate(map.Value, difficulty, output.Score);
+                })).ToList();
+            }
+
+            _estimatingScores.OnNext(false);
+
+            return estimates;
         }
 
         private ModelOutput Predict(ModelInput input) => _predictEngine.Predict(input);

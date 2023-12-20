@@ -75,24 +75,26 @@ namespace MapMaven.Core.Services.Leaderboards.ScoreEstimation
             if (_predictEngine is null)
                 await InitializeEstimationEngine();
 
-            if (player == null || leaderboardData?.ScoreSaber == null)
-                return Enumerable.Empty<ScoreEstimate>();
+            var estimates = Enumerable.Empty<ScoreEstimate>();
 
-            var scoresaber = new Scoresaber(player, playerScores, leaderboardData.ScoreSaber);
-
-            var difficultyFactor = difficultyAmplifierValue / 100D;
-
-            var estimates = rankedMaps.SelectMany(map => map.Value.Difficulties.Select(difficulty =>
+            if (player != null && leaderboardData?.ScoreSaber != null)
             {
-                var output = Predict(new()
-                {
-                    PP = Convert.ToSingle(player.Pp * (1 + difficultyFactor)),
-                    StarDifficulty = Convert.ToSingle(difficulty.Stars),
-                    TimeSet = DateTime.Now
-                });
+                var scoresaber = new Scoresaber(player, playerScores, leaderboardData.ScoreSaber);
 
-                return scoresaber.GetScoreEstimate(map.Value, difficulty, output.Score);
-            })).ToList();
+                var difficultyFactor = difficultyAmplifierValue / 100D;
+
+                estimates = rankedMaps.SelectMany(map => map.Value.Difficulties.Select(difficulty =>
+                {
+                    var output = Predict(new()
+                    {
+                        PP = Convert.ToSingle(player.Pp * (1 + difficultyFactor)),
+                        StarDifficulty = Convert.ToSingle(difficulty.Stars),
+                        TimeSet = DateTime.Now
+                    });
+
+                    return scoresaber.GetScoreEstimate(map.Value, difficulty, output.Score);
+                })).ToList();
+            }
 
             _estimatingScores.OnNext(false);
 
