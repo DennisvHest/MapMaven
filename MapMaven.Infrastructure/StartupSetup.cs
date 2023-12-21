@@ -67,7 +67,7 @@ namespace MapMaven.Infrastructure
             services.Add(new ServiceDescriptor(typeof(DynamicPlaylistArrangementService), typeof(DynamicPlaylistArrangementService), serviceScope));
             services.Add(new ServiceDescriptor(typeof(IApplicationSettingService), typeof(ApplicationSettingService), serviceScope));
             services.Add(new ServiceDescriptor(typeof(IApplicationEventService), typeof(ApplicationEventService), serviceScope));
-            services.Add(new ServiceDescriptor(typeof(LeaderboardDataService), typeof(LeaderboardDataService), serviceScope));
+            services.Add(new ServiceDescriptor(typeof(ILeaderboardDataService), typeof(LeaderboardDataService), serviceScope));
             services.Add(new ServiceDescriptor(typeof(IScoreEstimationService), typeof(ScoreSaberScoreEstimationService), serviceScope));
             services.Add(new ServiceDescriptor(typeof(IScoreEstimationService), typeof(BeatLeaderScoreEstimationService), serviceScope));
             services.Add(new ServiceDescriptor(typeof(ScoreEstimationSettings), typeof(ScoreEstimationSettings), serviceScope));

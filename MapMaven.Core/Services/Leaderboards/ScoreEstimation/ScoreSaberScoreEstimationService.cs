@@ -15,7 +15,7 @@ namespace MapMaven.Core.Services.Leaderboards.ScoreEstimation
     {
         public LeaderboardProvider LeaderboardProviderName => LeaderboardProvider.ScoreSaber;
 
-        private readonly LeaderboardDataService _leaderboardDataService;
+        private readonly ILeaderboardDataService _leaderboardDataService;
         private readonly ScoreSaberService _scoreSaberService;
         private readonly ScoreEstimationSettings _scoreEstimationSettings;
         private readonly IHttpClientFactory _httpClientFactory;
@@ -43,7 +43,7 @@ namespace MapMaven.Core.Services.Leaderboards.ScoreEstimation
         }
 
         public ScoreSaberScoreEstimationService(
-            LeaderboardDataService leaderboardDataService,
+            ILeaderboardDataService leaderboardDataService,
             ScoreSaberService scoreSaberService,
             ScoreEstimationSettings scoreEstimationSettings,
             IHttpClientFactory httpClientFactory,

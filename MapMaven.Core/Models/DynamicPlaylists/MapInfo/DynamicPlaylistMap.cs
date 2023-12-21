@@ -30,9 +30,6 @@ namespace MapMaven.Core.Models.DynamicPlaylists.MapInfo
         [ApplicableForMapPool(MapPool.Improvement)]
         public string Difficulty { get; set; }
 
-        [DisplayName("Max PP")]
-        [ApplicableForMapPool(MapPool.Improvement)]
-        public double Pp { get; set; }
         public DynamicPlaylistScore? Score { get; set; }
         public DynamicPlaylistScoreEstimate? ScoreEstimate { get; set; }
 
@@ -48,7 +45,6 @@ namespace MapMaven.Core.Models.DynamicPlaylists.MapInfo
             Played = map.Played;
             Stars = map.Difficulty?.Stars ?? 0;
             Difficulty = map.Difficulty?.Difficulty ?? "";
-            Pp = 0; //map.Difficulty?.MaxPP ?? 0; TODO: can this still be done with BeatLeader?
             Score = map.HighestPlayerScore != null
                 ? new DynamicPlaylistScore(map.HighestPlayerScore)
                 : null;

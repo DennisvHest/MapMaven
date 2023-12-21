@@ -15,7 +15,7 @@ namespace MapMaven.Core.Services.Leaderboards.ScoreEstimation
     {
         public LeaderboardProvider LeaderboardProviderName => LeaderboardProvider.BeatLeader;
 
-        private readonly LeaderboardDataService _leaderboardDataService;
+        private readonly ILeaderboardDataService _leaderboardDataService;
         private readonly BeatLeaderService _beatLeaderService;
         private readonly ScoreEstimationSettings _scoreEstimationSettings;
         private readonly IHttpClientFactory _httpClientFactory;
@@ -31,7 +31,7 @@ namespace MapMaven.Core.Services.Leaderboards.ScoreEstimation
         private const string _scoreEstimationModelFileName = "BeatLeaderScoreEstimateMLModel.mlnet";
 
         public BeatLeaderScoreEstimationService(
-            LeaderboardDataService leaderboardDataService,
+            ILeaderboardDataService leaderboardDataService,
             BeatLeaderService beatLeaderService,
             ScoreEstimationSettings scoreEstimationSettings,
             IHttpClientFactory httpClientFactory,

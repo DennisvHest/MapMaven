@@ -21,6 +21,7 @@ using MapMaven.Core.Models.Data.RankedMaps;
 using MapMaven.Core.Services.Leaderboards;
 using MapMaven.Core.Models;
 using MapMaven.Core.Models.Data.Leaderboards;
+using MapMaven.Core.Services.Leaderboards.ScoreEstimation;
 
 namespace MapMaven.Core.Tests.Playlists.DynamicPlaylists;
 
@@ -29,15 +30,15 @@ public class DynamicPlaylistArrangementIntegrationTests
     private readonly Mock<IApplicationSettingService> _applicationSettingServiceMock = new();
     private readonly Mock<IPlaylistService> _playlistServiceMock = new();
     private readonly Mock<IBeatSaberDataService> _beatSaberDataServiceMock = new();
-    private readonly Mock<ILeaderboardService> _scoreSaberServiceMock = new();
+    private readonly Mock<ILeaderboardService> _leaderboardService = new();
     private readonly Mock<IMapService> _mapServiceMock = new();
     private readonly Mock<ILogger<DynamicPlaylistArrangementService>> _dynamicPlaylistArrangementServiceLoggerMock = new();
     private readonly Mock<ILogger<BeatSaberDataService>> _beatSaberDataServiceLoggerMock = new();
     private readonly Mock<IServiceProvider> _serviceProviderMock = new();
-    private readonly Mock<ScoreSaberApiClient> _scoreSaberApiClientMock = new();
-    private readonly Mock<IHttpClientFactory> _httpClientFactoryMock = new();
-    private readonly Mock<IApplicationEventService> _applicationEventServiceMock = new();
     private readonly Mock<IBeatmapHasher> _hasherMock = new();
+    private readonly Mock<ILeaderboardDataService> _leaderboardDataService = new();
+    private readonly Mock<IScoreEstimationService> _scoreEstimationService = new();
+    private readonly Mock<ILeaderboardProviderService> _leaderboardProviderService = new();
 
     private readonly BeatSaberDataService _beatSaberDataService;
     private readonly BeatSaberFileService _beatSaberFileService;
@@ -98,7 +99,15 @@ public class DynamicPlaylistArrangementIntegrationTests
             .SetupGet(x => x.MapInfo)
             .Returns(() => _beatSaberDataService.MapInfo);
 
-        _scoreSaberServiceMock
+        _leaderboardService
+            .SetupGet(x => x.LeaderboardProviders)
+            .Returns(() => new() { { LeaderboardProvider.ScoreSaber, _leaderboardProviderService.Object } });
+
+        _leaderboardService
+            .SetupGet(x => x.PlayerScores)
+            .Returns(() => Observable.Return(Enumerable.Empty<Models.PlayerScore>()));
+
+        _leaderboardProviderService
             .SetupGet(x => x.PlayerScores)
             .Returns(() => Observable.Return(Enumerable.Empty<Models.PlayerScore>()));
 
@@ -106,11 +115,11 @@ public class DynamicPlaylistArrangementIntegrationTests
 
         MockScoreEstimates();
 
-        _scoreSaberServiceMock
+        _leaderboardService
             .SetupGet(x => x.PlayerProfile)
             .Returns(() => Observable.Return(new PlayerProfile { Id = "1" }));
 
-        _mapService = new(_beatSaberDataService, _scoreSaberServiceMock.Object, null!, _beatSaberFileService, _serviceProviderMock.Object, _songPlayerService);
+        _mapService = new(_beatSaberDataService, _leaderboardService.Object, null!, _beatSaberFileService, _serviceProviderMock.Object, _songPlayerService, _leaderboardDataService.Object);
 
         _mapServiceMock
             .SetupGet(x => x.CompleteMapData)
@@ -119,6 +128,10 @@ public class DynamicPlaylistArrangementIntegrationTests
         _mapServiceMock
             .SetupGet(x => x.CompleteRankedMapData)
             .Returns(() => _mapService.CompleteRankedMapData);
+
+        _mapServiceMock
+            .Setup(x => x.GetCompleteRankedMapDataForLeaderboardProvider(It.IsAny<LeaderboardProvider>()))
+            .Returns<LeaderboardProvider>(provider => _mapService.GetCompleteRankedMapDataForLeaderboardProvider(provider));
 
         _mapServiceMock
             .Setup(x => x.RefreshDataAsync(true))
@@ -132,7 +145,7 @@ public class DynamicPlaylistArrangementIntegrationTests
             _beatSaberDataServiceMock.Object,
             _mapServiceMock.Object,
             _playlistServiceMock.Object,
-            _scoreSaberServiceMock.Object,
+            _leaderboardService.Object,
             _applicationSettingServiceMock.Object,
             _dynamicPlaylistArrangementServiceLoggerMock.Object);
     }
@@ -145,7 +158,15 @@ public class DynamicPlaylistArrangementIntegrationTests
             new() { MapHash = "2", PPIncrease = 10, Difficulty = "ExpertPlus" },
         };
 
-        _scoreSaberServiceMock
+        _scoreEstimationService
+            .SetupGet(x => x.RankedMapScoreEstimates)
+            .Returns(() => Observable.Return(scoreEstimates));
+
+        _leaderboardService
+            .SetupGet(x => x.ScoreEstimationServices)
+            .Returns(() => new() { { LeaderboardProvider.ScoreSaber, _scoreEstimationService.Object } });
+
+        _leaderboardService
             .SetupGet(x => x.RankedMapScoreEstimates)
             .Returns(() => Observable.Return(scoreEstimates));
     }
@@ -188,7 +209,11 @@ public class DynamicPlaylistArrangementIntegrationTests
             }
         };
 
-        _scoreSaberServiceMock
+        _leaderboardService
+            .SetupGet(x => x.RankedMaps)
+            .Returns(() => Observable.Return(rankedMaps));
+
+        _leaderboardProviderService
             .SetupGet(x => x.RankedMaps)
             .Returns(() => Observable.Return(rankedMaps));
     }
@@ -329,7 +354,7 @@ public class DynamicPlaylistArrangementIntegrationTests
                         {
                             new JObject
                             {
-                                { nameof(SortOperation.Field), nameof(DynamicPlaylistMap.Pp) },
+                                { nameof(SortOperation.Field), nameof(DynamicPlaylistMap.Name) },
                                 { nameof(SortOperation.Direction), nameof(SortDirection.Descending) }
                             }
                         }

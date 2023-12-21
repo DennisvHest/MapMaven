@@ -23,7 +23,7 @@ namespace MapMaven.Services
         private readonly ILeaderboardService _leaderBoardService;
         private readonly BeatSaberFileService _fileService;
         private readonly SongPlayerService _songPlayerService;
-        private readonly LeaderboardDataService _leaderboardDataService;
+        private readonly ILeaderboardDataService _leaderboardDataService;
 
         private readonly BeatSaver _beatSaver;
 
@@ -56,7 +56,7 @@ namespace MapMaven.Services
             BeatSaberFileService fileService,
             IServiceProvider serviceProvider,
             SongPlayerService songPlayerService,
-            LeaderboardDataService leaderboardDataService)
+            ILeaderboardDataService leaderboardDataService)
         {
             _beatSaberDataService = beatSaberDataService;
             _leaderBoardService = leaderBoardService;
@@ -64,6 +64,7 @@ namespace MapMaven.Services
             _fileService = fileService;
             _beatSaver = beatSaver;
             _serviceProvider = serviceProvider;
+            _leaderboardDataService = leaderboardDataService;
 
             MapsByHash = _beatSaberDataService.MapInfoByHash
                 .Select(x => x
@@ -107,7 +108,6 @@ namespace MapMaven.Services
                 _leaderBoardService.PlayerScores,
                 HiddenMaps,
                 CombineRankedMapData);
-            _leaderboardDataService = leaderboardDataService;
         }
 
         private IEnumerable<Map> CombineMapData(IEnumerable<MapInfo> maps, Dictionary<string, RankedMapInfoItem> rankedMaps, IEnumerable<PlayerScore> playerScores, IEnumerable<ScoreEstimate> scoreEstimates)

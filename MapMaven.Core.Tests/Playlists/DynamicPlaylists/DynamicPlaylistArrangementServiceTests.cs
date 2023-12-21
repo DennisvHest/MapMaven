@@ -167,12 +167,6 @@ public class DynamicPlaylistArrangementServiceTests
                         {
                             new JObject
                             {
-                                { nameof(FilterOperation.Field), nameof(DynamicPlaylistMap.Pp) },
-                                { nameof(FilterOperation.Value), 20 },
-                                { nameof(FilterOperation.Operator), nameof(FilterOperator.Equals) }
-                            },
-                            new JObject
-                            {
                                 { nameof(FilterOperation.Field), nameof(DynamicPlaylistMap.Stars) },
                                 { nameof(FilterOperation.Value), 43.2 },
                                 { nameof(FilterOperation.Operator), nameof(FilterOperator.NotEquals) }

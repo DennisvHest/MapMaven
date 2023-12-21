@@ -6,7 +6,7 @@ using System.Text.Json;
 
 namespace MapMaven.Core.Services.Leaderboards
 {
-    public class LeaderboardDataService
+    public class LeaderboardDataService : ILeaderboardDataService
     {
         private readonly IHttpClientFactory _httpClientFactory;
 
