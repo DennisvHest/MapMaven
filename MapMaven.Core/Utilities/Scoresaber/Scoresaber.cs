@@ -11,6 +11,8 @@ namespace MapMaven.Core.Utilities.Scoresaber
         private readonly IEnumerable<PlayerScore> _playerScores;
         private readonly ScoreSaberLeaderboardData _leaderboardData;
 
+        public const double PPPerStar = 42.114296; // Approximation
+
         public Scoresaber(PlayerProfile player, IEnumerable<PlayerScore> playerScores, ScoreSaberLeaderboardData leaderboardData)
         {
             _player = player;

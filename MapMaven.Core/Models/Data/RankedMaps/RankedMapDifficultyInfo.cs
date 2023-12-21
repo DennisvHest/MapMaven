@@ -8,6 +8,7 @@ namespace MapMaven.Core.Models.Data.RankedMaps
     public class RankedMapDifficultyInfo
     {
         public double Stars { get; set; }
+        public double MaxPP { get; set; }
         public string Difficulty { get; set; }
         public string? Label { get; set; }
         public double Njs { get; set; }
@@ -25,6 +26,7 @@ namespace MapMaven.Core.Models.Data.RankedMaps
         public RankedMapDifficultyInfo(LeaderboardInfo leaderboard, ApiClients.BeatSaver.MapDifficulty difficulty)
         {
             Stars = leaderboard.Stars;
+            MaxPP = leaderboard.Stars * Scoresaber.PPPerStar;
             Difficulty = leaderboard.Difficulty.DifficultyName;
 
             SetBeatSaverMapDiffultyProperties(difficulty);
@@ -35,6 +37,7 @@ namespace MapMaven.Core.Models.Data.RankedMaps
             var stars = (double)leaderboard.Difficulty.Stars;
 
             Stars = stars;
+            MaxPP = 0; // Not supported by BeatLeader(?)
             BeatLeaderRating = new()
             {
                 PassRating = leaderboard.Difficulty.PassRating.Value,
