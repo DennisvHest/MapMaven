@@ -16,7 +16,6 @@ namespace MapMaven.Core.Models.DynamicPlaylists.MapInfo
         [DisplayName("Score PP")]
         public double Pp { get; set; }
         public double Weight { get; set; }
-        public double Multiplier { get; set; }
 
         [DisplayName("Bad cuts")]
         public double BadCuts { get; set; }
@@ -46,7 +45,6 @@ namespace MapMaven.Core.Models.DynamicPlaylists.MapInfo
             Accuracy = score.Score.Accuracy;
             Pp = score.Score.Pp;
             Weight = score.Score.Weight;
-            Multiplier = 1; // TODO: remove if safe (BeatLeader does not supply this field)
             BadCuts = score.Score.BadCuts;
             MissedNotes = score.Score.MissedNotes;
             MaxCombo = score.Score.MaxCombo;

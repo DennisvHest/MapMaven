@@ -59,18 +59,21 @@ namespace MapMaven.Components
 
         public void AutoFillPlayerId(string beatSaberInstallLocation)
         {
-            if (!string.IsNullOrEmpty(ScoreSaberPlayerId))
-                return;
+            if (string.IsNullOrEmpty(ScoreSaberPlayerId))
+            {
+                var scoreSaberPlayerId = ScoreSaberService.GetPlayerIdFromReplays(beatSaberInstallLocation);
 
-            var scoreSaberPlayerId = ScoreSaberService.GetPlayerIdFromReplays(beatSaberInstallLocation);
+                if (!string.IsNullOrEmpty(scoreSaberPlayerId))
+                    ScoreSaberPlayerId = scoreSaberPlayerId;
+            }
 
-            if (!string.IsNullOrEmpty(scoreSaberPlayerId))
-                ScoreSaberPlayerId = scoreSaberPlayerId;
+            if (string.IsNullOrEmpty(BeatLeaderPlayerId))
+            {
+                var beatLeaderPlayerId = BeatLeaderService.GetPlayerIdFromReplays(beatSaberInstallLocation);
 
-            var beatLeaderPlayerId = BeatLeaderService.GetPlayerIdFromReplays(beatSaberInstallLocation);
-
-            if (!string.IsNullOrEmpty(beatLeaderPlayerId))
-                BeatLeaderPlayerId = beatLeaderPlayerId;
+                if (!string.IsNullOrEmpty(beatLeaderPlayerId))
+                    BeatLeaderPlayerId = beatLeaderPlayerId;
+            }
         }
 
         public async Task PickFolder()
