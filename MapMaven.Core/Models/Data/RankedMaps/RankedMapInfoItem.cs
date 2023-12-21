@@ -55,7 +55,10 @@ namespace MapMaven.Core.Models.Data.RankedMaps
             BeatSaverId = fullRankedMapInfoItem.MapDetail.Id;
             Duration = TimeSpan.FromSeconds(fullRankedMapInfoItem.MapDetail.Metadata.Duration ?? 0);
 
-            var mapVersion = fullRankedMapInfoItem.MapDetail.Versions.First(x => x.Hash.Equals(SongHash, StringComparison.OrdinalIgnoreCase));
+            var mapVersion = fullRankedMapInfoItem.MapDetail.Versions.FirstOrDefault(x => x.Hash.Equals(SongHash, StringComparison.OrdinalIgnoreCase));
+
+            if (mapVersion is null)
+                mapVersion = fullRankedMapInfoItem.MapDetail.Versions.First();
 
             CoverImageUrl = mapVersion.CoverURL;
 
