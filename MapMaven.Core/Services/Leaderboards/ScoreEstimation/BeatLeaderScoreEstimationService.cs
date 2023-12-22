@@ -26,7 +26,7 @@ namespace MapMaven.Core.Services.Leaderboards.ScoreEstimation
         private readonly BehaviorSubject<bool> _estimatingScores = new(false);
         public IObservable<bool> EstimatingScores => _estimatingScores;
 
-        private readonly ILogger<ScoreSaberScoreEstimationService> _logger;
+        private readonly ILogger<BeatLeaderScoreEstimationService> _logger;
 
         private const string _scoreEstimationModelFileName = "BeatLeaderScoreEstimateMLModel.mlnet";
 
@@ -35,7 +35,7 @@ namespace MapMaven.Core.Services.Leaderboards.ScoreEstimation
             BeatLeaderService beatLeaderService,
             ScoreEstimationSettings scoreEstimationSettings,
             IHttpClientFactory httpClientFactory,
-            ILogger<ScoreSaberScoreEstimationService> logger)
+            ILogger<BeatLeaderScoreEstimationService> logger)
         {
             _leaderboardDataService = leaderboardDataService;
             _beatLeaderService = beatLeaderService;
