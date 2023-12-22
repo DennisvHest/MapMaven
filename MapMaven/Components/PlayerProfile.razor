@@ -7,7 +7,7 @@
 
 @if (ScoreSaberProfile is not null && BeatLeaderProfile is not null)
 {
-    <MudTabs MinimumTabWidth="20px" Position="Position.Left" ActivePanelIndex="ActivePanelIndex">
+    <MudTabs MinimumTabWidth="20px" Position="Position.Left" ActivePanelIndex="ActivePanelIndex" Class="leaderboard-tabs">
         @if (ScoreSaberProfile is not null)
         {
             <MudTabPanel Class="px-1" Style="min-height: 43px" OnClick="() => SetActiveLeaderboardProvider(LeaderboardProvider.ScoreSaber)">
