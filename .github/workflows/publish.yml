@@ -37,7 +37,7 @@ jobs:
         reporter: dotnet-trx
         fail-on-error: true
     - name: Publish
-      run: dotnet publish -f net8.0-windows10.0.19041.0 -c Release
+      run: dotnet publish -f net8.0-windows10.0.19041.0 -c Release --self-contained
       working-directory: "${{ github.workspace }}/MapMaven"
     - name: Zip build
       uses: TheDoctor0/zip-release@0.7.1
