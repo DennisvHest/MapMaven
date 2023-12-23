@@ -108,4 +108,16 @@
       <ProjectReference Include="..\MapMaven.Infrastructure\MapMaven.Infrastructure.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Update="Microsoft.AspNetCore.Components.WebView.Maui" Version="8.0.3" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Update="Microsoft.Maui.Controls" Version="8.0.3" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Update="Microsoft.Maui.Controls.Compatibility" Version="8.0.3" />
+    </ItemGroup>
+
 </Project>
