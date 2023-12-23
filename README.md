@@ -28,7 +28,7 @@ https://github.com/DennisvHest/MapMaven/assets/18610083/ba3ce28a-8f07-4c54-86c0-
 ## Map recommendation
 The "improve" page shows maps that are recommended for you to improve your skills. It recommends maps based on a machine learning model trained on almost every score on ScoreSaber, predicting what accuracy you can get and how much pp you can gain. You can create a playlist with the recommended maps. Maps that you don't have on your PC will be downloaded.
 
-https://github.com/DennisvHest/MapMaven/assets/18610083/7f379c4e-0e71-44ea-bb7e-0f31e429af35
+https://github.com/DennisvHest/MapMaven/assets/18610083/49b2a941-c779-447d-aa00-2daf42c17e5f
 
 ## Map browsing
 Browse and search through your maps and add maps to a playlist or watch one of your replays.
