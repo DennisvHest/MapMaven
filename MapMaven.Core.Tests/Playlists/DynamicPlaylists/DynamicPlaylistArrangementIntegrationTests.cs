@@ -446,7 +446,7 @@ public class DynamicPlaylistArrangementIntegrationTests
             }
         });
 
-        const string songDirectory = "C:\\Beat Saber_Data\\CustomLevels\\235b (Halcyon - splake)";
+        const string songDirectory = @"c:\beat saber_data\customlevels\235b (halcyon - splake)";
 
         _hasherMock
             .Setup(x => x.HashDirectoryAsync(songDirectory, It.IsAny<CancellationToken>()))
