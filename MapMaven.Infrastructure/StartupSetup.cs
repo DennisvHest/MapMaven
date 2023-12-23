@@ -14,6 +14,9 @@ using Newtonsoft.Json;
 using System.IO.Abstractions;
 using MapMaven.Core.OpenAPI;
 using MapMaven.Core.ApiClients.BeatSaver;
+using MapMaven.Core.ApiClients.BeatLeader;
+using MapMaven.Core.Services.Leaderboards;
+using MapMaven.Core.Services.Leaderboards.ScoreEstimation;
 
 namespace MapMaven.Infrastructure
 {
@@ -38,8 +41,16 @@ namespace MapMaven.Infrastructure
             services.AddScoped(_ => new BeatSaver("MapMaven", new Version(1, 0)));
 
             services.AddHttpClient<ScoreSaberApiClient>(client => client.BaseAddress = new Uri("https://scoresaber.com"));
+            services.AddHttpClient<BeatLeaderApiClient>(client => client.BaseAddress = new Uri("https://api.beatleader.xyz"));
             services.AddHttpClient<BeatSaverApiClient>(client => client.BaseAddress = new Uri("https://api.beatsaver.com"));
-            services.AddHttpClient("MapMavenFiles", client => client.BaseAddress = new Uri("http://files.map-maven.com"));
+            services.AddHttpClient("MapMavenFiles", client =>
+            {
+#if DEBUG
+                client.BaseAddress = new Uri("https://mapmavenstoragetest.z6.web.core.windows.net");
+#else
+                client.BaseAddress = new Uri("http://files.map-maven.com");
+#endif
+            });
 
             var serviceScope = useStatefulServices ? ServiceLifetime.Singleton : ServiceLifetime.Scoped;
 
@@ -48,10 +59,18 @@ namespace MapMaven.Infrastructure
             services.Add(new ServiceDescriptor(typeof(IMapService), typeof(MapService), serviceScope));
             services.Add(new ServiceDescriptor(typeof(SongPlayerService), typeof(SongPlayerService), serviceScope));
             services.Add(new ServiceDescriptor(typeof(IPlaylistService), typeof(PlaylistService), serviceScope));
-            services.Add(new ServiceDescriptor(typeof(IScoreSaberService), typeof(ScoreSaberService), serviceScope));
+            services.Add(new ServiceDescriptor(typeof(ILeaderboardService), typeof(LeaderboardService), serviceScope));
+            services.Add(new ServiceDescriptor(typeof(ScoreSaberService), typeof(ScoreSaberService), serviceScope));
+            services.Add(new ServiceDescriptor(typeof(BeatLeaderService), typeof(BeatLeaderService), serviceScope));
+            services.Add(new ServiceDescriptor(typeof(ILeaderboardProviderService), services => services.GetRequiredService<ScoreSaberService>(), serviceScope));
+            services.Add(new ServiceDescriptor(typeof(ILeaderboardProviderService), services => services.GetRequiredService<BeatLeaderService>(), serviceScope));
             services.Add(new ServiceDescriptor(typeof(DynamicPlaylistArrangementService), typeof(DynamicPlaylistArrangementService), serviceScope));
             services.Add(new ServiceDescriptor(typeof(IApplicationSettingService), typeof(ApplicationSettingService), serviceScope));
             services.Add(new ServiceDescriptor(typeof(IApplicationEventService), typeof(ApplicationEventService), serviceScope));
+            services.Add(new ServiceDescriptor(typeof(ILeaderboardDataService), typeof(LeaderboardDataService), serviceScope));
+            services.Add(new ServiceDescriptor(typeof(IScoreEstimationService), typeof(ScoreSaberScoreEstimationService), serviceScope));
+            services.Add(new ServiceDescriptor(typeof(IScoreEstimationService), typeof(BeatLeaderScoreEstimationService), serviceScope));
+            services.Add(new ServiceDescriptor(typeof(ScoreEstimationSettings), typeof(ScoreEstimationSettings), serviceScope));
         }
 
         public static void Initialize(IServiceProvider serviceProvider)

@@ -11,6 +11,7 @@ using MapMaven.Core.Models.DynamicPlaylists;
 using MapMaven.Core.Models.Data;
 using MapMaven.Core.Services.Interfaces;
 using MapMaven.Core.Extensions;
+using MapMaven.Core.Models;
 
 namespace MapMaven.Services
 {
@@ -86,6 +87,8 @@ namespace MapMaven.Services
         {
             IPlaylist addedPlaylist = CreateIPlaylist(editDynamicPlaylistModel, null);
 
+            CreateValidConfiguration(editDynamicPlaylistModel);
+
             addedPlaylist.SetCustomData("mapMaven", new
             {
                 isDynamicPlaylist = true,
@@ -102,7 +105,8 @@ namespace MapMaven.Services
         public async Task<Playlist> EditDynamicPlaylist(EditDynamicPlaylistModel editPlaylistModel)
         {
             var playlistToModify = _beatSaberDataService.PlaylistManager.GetPlaylist(editPlaylistModel.FileName);
-            
+
+            CreateValidConfiguration(editPlaylistModel);
             UpdatePlaylist(editPlaylistModel, playlistToModify);
 
             playlistToModify.SetCustomData("mapMaven", new
@@ -116,6 +120,14 @@ namespace MapMaven.Services
             await _beatSaberDataService.LoadAllPlaylists();
 
             return new Playlist(playlistToModify);
+        }
+
+        private static void CreateValidConfiguration(EditDynamicPlaylistModel editDynamicPlaylistModel)
+        {
+            var configuration = editDynamicPlaylistModel.DynamicPlaylistConfiguration;
+
+            if (configuration.MapPool == MapPool.Standard)
+                configuration.LeaderboardProvider = null;
         }
 
         private static void UpdatePlaylist(EditPlaylistModel editPlaylistModel, IPlaylist? playlistToModify)

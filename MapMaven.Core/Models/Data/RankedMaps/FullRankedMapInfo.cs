@@ -1,7 +1,7 @@
 ﻿namespace MapMaven.Core.Models.Data.RankedMaps
 {
-    public class FullRankedMapInfo
+    public class FullRankedMapInfo<TFullRankedMapInfoItem> where TFullRankedMapInfoItem : FullRankedMapInfoItem
     {
-        public IEnumerable<FullRankedMapInfoItem> RankedMaps { get; set; } = Array.Empty<FullRankedMapInfoItem>();
+        public IEnumerable<TFullRankedMapInfoItem> RankedMaps { get; set; } = Array.Empty<TFullRankedMapInfoItem>();
     }
 }

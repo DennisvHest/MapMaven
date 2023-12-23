@@ -55,17 +55,17 @@
 <SortableTemplateColumn
     T="Map"
     TProperty="double"
-    Property="m => m.AllPlayerScores.Any() ? m.AllPlayerScores.Max(x => x.AccuracyWithMods()) : 0"
-    SortBy="m => m.AllPlayerScores.Any() ? m.AllPlayerScores.Max(x => x.AccuracyWithMods()) : 0"
+    Property="m => m.AllPlayerScores.Any() ? m.AllPlayerScores.Max(x => x.Score.Accuracy) : 0"
+    SortBy="m => m.AllPlayerScores.Any() ? m.AllPlayerScores.Max(x => x.Score.Accuracy) : 0"
     Title="%"
     CellStyle="max-width: 150px; min-width: 150px;"
     Visible="!string.IsNullOrEmpty(PlayerId)">
     <CellTemplate>
         @foreach (var playerScore in context.Item.AllPlayerScores)
         {
-            var chipStyle = $"border: 1px solid {DifficultyDisplayUtils.GetColor(playerScore.Leaderboard?.Difficulty?.DifficultyName)}";
+            var chipStyle = $"border: 1px solid {DifficultyDisplayUtils.GetColor(playerScore.Leaderboard?.Difficulty)}";
             <MudChip Size="Size.Small" Variant="Variant.Outlined" Style="@chipStyle">
-                @DifficultyDisplayUtils.GetShortName(playerScore.Leaderboard?.Difficulty?.DifficultyName) | @playerScore.AccuracyWithMods().ToString("#0.##")%
+                @DifficultyDisplayUtils.GetShortName(playerScore.Leaderboard?.Difficulty) | @playerScore.Score.Accuracy.ToString("#0.##")%
             </MudChip>
         }
     </CellTemplate>
@@ -81,9 +81,9 @@
     <CellTemplate>
         @foreach (var playerScore in context.Item.AllPlayerScores)
         {
-            var chipStyle = $"border: 1px solid {DifficultyDisplayUtils.GetColor(playerScore.Leaderboard?.Difficulty?.DifficultyName)}";
+            var chipStyle = $"border: 1px solid {DifficultyDisplayUtils.GetColor(playerScore.Leaderboard?.Difficulty)}";
             <MudChip Size="Size.Small" Variant="Variant.Outlined" Style="@chipStyle">
-                @DifficultyDisplayUtils.GetShortName(playerScore.Leaderboard?.Difficulty?.DifficultyName) | @playerScore.Score.Pp.ToString("#0.##") pp
+                @DifficultyDisplayUtils.GetShortName(playerScore.Leaderboard?.Difficulty) | @playerScore.Score.Pp.ToString("#0.##") pp
             </MudChip>
         }
     </CellTemplate>
@@ -109,7 +109,7 @@
                 var chipStyle = $"border: 1px solid {DifficultyDisplayUtils.GetColor(scoreEstimate.Difficulty)}";
                 <MudChip Size="Size.Small" Variant="Variant.Outlined" Style="@chipStyle">
                     @DifficultyDisplayUtils.GetShortName(scoreEstimate.Difficulty) |
-                    @scoreEstimate.Stars <MudIcon Icon="@Icons.Filled.Star" Size="Size.Small"></MudIcon> |
+                    @scoreEstimate.Stars.ToString("#0.##") <MudIcon Icon="@Icons.Filled.Star" Size="Size.Small"></MudIcon> |
                     @scoreEstimate.Accuracy.ToString("#0.##") % |
                     +@scoreEstimate.PPIncrease.ToString("#0.##") pp
                 </MudChip>
@@ -124,10 +124,10 @@
     <CellTemplate>
         @foreach (var playerScore in context.Item.AllPlayerScores.Where(s => s.Score.HasReplay))
         {
-            var chipStyle = $"cursor: pointer; border: 1px solid {DifficultyDisplayUtils.GetColor(playerScore.Leaderboard?.Difficulty?.DifficultyName)}";
+            var chipStyle = $"cursor: pointer; border: 1px solid {DifficultyDisplayUtils.GetColor(playerScore.Leaderboard?.Difficulty)}";
             <MudButton Class="replay-button pa-0" OnClick="() => OpenReplay(context.Item, playerScore)" Style="min-width: 0; border-radius: 100%;">
                 <MudChip Size="Size.Small" Variant="Variant.Text" Style="@chipStyle">
-                    @DifficultyDisplayUtils.GetShortName(playerScore.Leaderboard?.Difficulty?.DifficultyName)
+                    @DifficultyDisplayUtils.GetShortName(playerScore.Leaderboard?.Difficulty)
                     <img src="images/replay-icon.png" class="ml-1" style="width: 18px" />
                 </MudChip>
             </MudButton>

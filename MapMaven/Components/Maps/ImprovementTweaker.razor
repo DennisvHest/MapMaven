@@ -12,11 +12,13 @@
                 <MudSelectItem Value="@("Played")" />
                 <MudSelectItem Value="@("Not played")" />
             </MudSelect>
+
             <MudSelect T="string" Value="HiddenFilter" Label="Hidden / Not hidden" Class="mt-5" Variant="Variant.Outlined" ValueChanged="value => OnHiddenFilterChanged(value)">
                 <MudSelectItem Value="@("Both")" />
                 <MudSelectItem Value="@("Hidden")" />
                 <MudSelectItem Value="@("Not hidden")" />
             </MudSelect>
+
             <MudNumericField T="double"
                 Value="MinimumPredictedAccuracy"
                 Label="Min predicted accuracy"
@@ -25,7 +27,22 @@
                 Variant="Variant.Outlined"
                 Min="0"
                 Max="100"
-                ValueChanged="value => OnPredictedAccuracyFilterChanged(value)" />
+                ValueChanged="OnPredictedAccuracyFilterChanged" />
+
+            <MudExpansionPanels Class="my-3">
+                <MudExpansionPanel Text="Difficulty settings" Style="background-color: var(--mud-palette-drawer-background);">
+                    <DifficultyModifierSlider></DifficultyModifierSlider>
+                    <MudAlert Severity="Severity.Normal" Square="true" Dense="true" NoIcon="true" Style="margin: 16px -24px -16px -24px">
+                        <div class="d-flex flex-row align-center gap-3">
+                            <MudIcon Icon="@Icons.Outlined.Info" Size="Size.Small"></MudIcon>
+                            <MudText Typo="Typo.caption" Style="font-size: 11px">
+                                Increase or decrease the difficulty of recommended maps. This difficulty is applied globally and stays saved.
+                            </MudText>
+                        </div>
+                    </MudAlert>
+                </MudExpansionPanel>
+            </MudExpansionPanels>
+
             <MudExpansionPanels Class="mt-3">
                 <MudExpansionPanel Text="Select..." Style="background-color: var(--mud-palette-drawer-background);">
                     <MudNumericField @bind-Value="MapSelectNumber" Label="Number of maps" Class="my-3" Min="1" />

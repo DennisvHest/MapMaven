@@ -5,7 +5,7 @@ namespace MapMaven.Core.Extensions
 {
     public static class DbSetExtensions
     {
-        public static async Task AddOrUpdateAsync<T>(this DbSet<ApplicationSetting> applicationSettings, string key, T value) where T : class
+        public static async Task AddOrUpdateAsync<T>(this DbSet<ApplicationSetting> applicationSettings, string key, T value)
         {
             ApplicationSetting applicationSetting;
 
@@ -21,7 +21,13 @@ namespace MapMaven.Core.Extensions
             }
 
             applicationSetting.Key = key;
-            applicationSetting.StringValue = value is string stringValue ? stringValue : null;
+
+            applicationSetting.StringValue = value switch
+            {
+                string => value as string,
+                int => value.ToString(),
+                _ => null
+            };
 
             if (existing == null)
             {

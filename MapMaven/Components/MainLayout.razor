@@ -1,6 +1,7 @@
 ﻿@using System.Reactive.Threading.Tasks
 @using MapMaven.Core.Services
 @using System.Reactive.Linq;
+@using MapMaven.Core.Services.Leaderboards;
 
 @inherits LayoutComponentBase
 
@@ -32,7 +33,7 @@
     protected IMapService MapService { get; set; }
 
     [Inject]
-    protected IScoreSaberService ScoreSaberService { get; set; }
+    protected ILeaderboardService ScoreSaberService { get; set; }
 
     [Inject]
     protected BeatSaberFileService BeatSaberToolFileService { get; set; }

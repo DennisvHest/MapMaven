@@ -1,10 +1,7 @@
-﻿using MapMaven.Core.ApiClients.ScoreSaber;
-using MapMaven.Core.Models;
+﻿using MapMaven.Core.Models;
 using MapMaven.Core.Models.Data;
-using MapMaven.Core.Models.Data.ScoreSaber;
 using MapMaven.Core.Services;
 using MapMaven.Core.Utilities.BeatSaver;
-using MapMaven.Core.Utilities.Scoresaber;
 using MapMaven.Models.Data;
 using BeatSaverSharp;
 using Microsoft.EntityFrameworkCore;
@@ -15,15 +12,18 @@ using Map = MapMaven.Models.Map;
 using MapMaven.Core.Services.Interfaces;
 using MapMaven.Core.Utilities;
 using MapMaven.Core.Models.Data.RankedMaps;
+using MapMaven.Core.Services.Leaderboards;
+using MapMaven.Core.Models.Data.Leaderboards;
 
 namespace MapMaven.Services
 {
     public class MapService : IMapService
     {
         private readonly IBeatSaberDataService _beatSaberDataService;
-        private readonly IScoreSaberService _scoreSaberService;
+        private readonly ILeaderboardService _leaderBoardService;
         private readonly BeatSaberFileService _fileService;
         private readonly SongPlayerService _songPlayerService;
+        private readonly ILeaderboardDataService _leaderboardDataService;
 
         private readonly BeatSaver _beatSaver;
 
@@ -41,6 +41,7 @@ namespace MapMaven.Services
         public IObservable<IEnumerable<Map>> CompleteMapData { get; private set; }
         public IObservable<IEnumerable<Map>> CompleteRankedMapData { get; private set; }
         public IObservable<Dictionary<string, Map>> MapsByHash { get; private set; }
+        public IObservable<IEnumerable<HiddenMap>> HiddenMaps { get; private set; }
 
         public IObservable<HashSet<Map>> SelectedMaps => _selectedMaps;
         public IObservable<bool> Selectable => _selectable;
@@ -50,18 +51,20 @@ namespace MapMaven.Services
 
         public MapService(
             IBeatSaberDataService beatSaberDataService,
-            IScoreSaberService scoreSaberService,
+            ILeaderboardService leaderBoardService,
             BeatSaver beatSaver,
             BeatSaberFileService fileService,
             IServiceProvider serviceProvider,
-            SongPlayerService songPlayerService)
+            SongPlayerService songPlayerService,
+            ILeaderboardDataService leaderboardDataService)
         {
             _beatSaberDataService = beatSaberDataService;
-            _scoreSaberService = scoreSaberService;
+            _leaderBoardService = leaderBoardService;
             _songPlayerService = songPlayerService;
             _fileService = fileService;
             _beatSaver = beatSaver;
             _serviceProvider = serviceProvider;
+            _leaderboardDataService = leaderboardDataService;
 
             MapsByHash = _beatSaberDataService.MapInfoByHash
                 .Select(x => x
@@ -72,12 +75,12 @@ namespace MapMaven.Services
 
             Maps = Observable.CombineLatest(
                 _beatSaberDataService.MapInfo,
-                _scoreSaberService.RankedMaps.StartWith(new Dictionary<string, RankedMapInfoItem>()),
-                _scoreSaberService.PlayerScores.StartWith(Enumerable.Empty<PlayerScore>()),
-                _scoreSaberService.RankedMapScoreEstimates.StartWith(Enumerable.Empty<ScoreEstimate>()),
+                _leaderBoardService.RankedMaps.StartWith(new Dictionary<string, RankedMapInfoItem>()),
+                _leaderBoardService.PlayerScores.StartWith(Enumerable.Empty<PlayerScore>()),
+                _leaderBoardService.RankedMapScoreEstimates.StartWith(Enumerable.Empty<ScoreEstimate>()),
                 CombineMapData);
 
-            var hiddenMaps = Observable.CombineLatest(_hiddenMaps, _scoreSaberService.PlayerProfile, (hiddenMaps, player) =>
+            HiddenMaps = Observable.CombineLatest(_hiddenMaps, _leaderBoardService.PlayerProfile, (hiddenMaps, player) =>
             {
                 if (hiddenMaps == null || player == null)
                     return Enumerable.Empty<HiddenMap>();
@@ -86,24 +89,24 @@ namespace MapMaven.Services
             });
 
             RankedMaps = Observable.CombineLatest(
-                _scoreSaberService.RankedMaps,
-                _scoreSaberService.RankedMapScoreEstimates,
-                _scoreSaberService.PlayerScores,
-                hiddenMaps,
+                _leaderBoardService.RankedMaps,
+                _leaderBoardService.RankedMapScoreEstimates,
+                _leaderBoardService.PlayerScores,
+                HiddenMaps,
                 CombineRankedMapData);
 
             CompleteMapData = Observable.CombineLatest(
                 _beatSaberDataService.MapInfo,
-                _scoreSaberService.RankedMaps,
-                _scoreSaberService.PlayerScores,
-                _scoreSaberService.RankedMapScoreEstimates,
+                _leaderBoardService.RankedMaps,
+                _leaderBoardService.PlayerScores,
+                _leaderBoardService.RankedMapScoreEstimates,
                 CombineMapData);
 
             CompleteRankedMapData = Observable.CombineLatest(
-                _scoreSaberService.RankedMaps,
-                _scoreSaberService.RankedMapScoreEstimates,
-                _scoreSaberService.PlayerScores,
-                hiddenMaps,
+                _leaderBoardService.RankedMaps,
+                _leaderBoardService.RankedMapScoreEstimates,
+                _leaderBoardService.PlayerScores,
+                HiddenMaps,
                 CombineRankedMapData);
         }
 
@@ -118,7 +121,7 @@ namespace MapMaven.Services
                 return map;
             }).GroupJoin(playerScores, mapInfo => mapInfo.Hash, score => score.Leaderboard.SongHash, (map, scores) =>
             {
-                map.AllPlayerScores = scores.OrderByDescending(s => s.Leaderboard.Difficulty.Difficulty1).ToList();
+                map.AllPlayerScores = scores.OrderByDescending(s => DifficultyUtils.GetOrder(s.Leaderboard.Difficulty)).ToList();
                 map.HighestPlayerScore = scores.MaxBy(s => s.Score.Pp);
 
                 return map;
@@ -146,7 +149,7 @@ namespace MapMaven.Services
                     map.Difficulty = rankedMap.Difficulty;
 
                     return map;
-                }).GroupJoin(playerScores, map => map.Hash + map.Difficulty.Difficulty, score => score.Leaderboard.SongHash + score.Leaderboard.Difficulty.DifficultyName, (map, scores) =>
+                }).GroupJoin(playerScores, map => map.Hash + map.Difficulty.Difficulty, score => score.Leaderboard.SongHash + score.Leaderboard.Difficulty, (map, scores) =>
                 {
                     map.HighestPlayerScore = scores.MaxBy(s => s.Score.Pp);
 
@@ -157,6 +160,21 @@ namespace MapMaven.Services
 
                     return map;
                 }).ToList();
+        }
+
+        public async Task<IEnumerable<Map>> GetCompleteRankedMapDataForLeaderboardProvider(LeaderboardProvider leaderboardProvider)
+        {
+            var leaderBoardService = _leaderBoardService.LeaderboardProviders[leaderboardProvider];
+            var scoreEstimationService = _leaderBoardService.ScoreEstimationServices[leaderboardProvider];
+
+            var combinedData = Observable.CombineLatest(
+                leaderBoardService.RankedMaps,
+                scoreEstimationService.RankedMapScoreEstimates,
+                leaderBoardService.PlayerScores,
+                HiddenMaps,
+                CombineRankedMapData);
+
+            return await combinedData.FirstAsync();
         }
 
         public void AddMapFilter(MapFilter filter)
@@ -297,19 +315,19 @@ namespace MapMaven.Services
             await _beatSaberDataService.DeleteMaps(mapHashes);
         }
 
-        private async Task<Core.Models.Data.Player> AddPlayerIfNotExists(IDataStore dataStore)
+        private async Task<Player> AddPlayerIfNotExists(IDataStore dataStore)
         {
-            var playerId = _scoreSaberService.PlayerId;
+            var playerId = _leaderBoardService.PlayerId;
 
-            var player = await dataStore.Set<Core.Models.Data.Player>()
+            var player = await dataStore.Set<Player>()
                 .Include(p => p.HiddenMaps)
                 .FirstOrDefaultAsync(p => p.Id == playerId);
 
             if (player == null)
             {
-                player = new Core.Models.Data.Player { Id = playerId };
+                player = new Player { Id = playerId };
 
-                dataStore.Set<Core.Models.Data.Player>().Add(player);
+                dataStore.Set<Player>().Add(player);
             }
 
             return player;
@@ -319,7 +337,8 @@ namespace MapMaven.Services
         {
             IEnumerable<Task> tasks = new List<Task>()
             {
-                _scoreSaberService.LoadRankedMaps(),
+                _leaderBoardService.LoadRankedMaps(),
+                _leaderboardDataService.LoadLeaderboardDataAsync(),
                 _beatSaberDataService.LoadAllPlaylists(),
                 LoadHiddenMaps()
             };
@@ -327,7 +346,7 @@ namespace MapMaven.Services
             if (forceRefresh)
             {
                 tasks = new Task[] { _beatSaberDataService.LoadAllMapInfo() }.Concat(tasks);
-                _scoreSaberService.RefreshPlayerData();
+                _leaderBoardService.RefreshPlayerData();
             }
 
             await Task.WhenAll(tasks);

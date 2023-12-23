@@ -1,8 +1,7 @@
 ﻿using BeatSaverSharp.Models;
-using MapMaven.Core.ApiClients.BeatSaver;
-using MapMaven.Core.ApiClients.ScoreSaber;
+using MapMaven.Core.Models;
+using MapMaven.Core.Models.Data.Leaderboards;
 using MapMaven.Core.Models.Data.RankedMaps;
-using MapMaven.Core.Utilities.Scoresaber;
 
 namespace MapMaven.Models
 {
@@ -30,7 +29,7 @@ namespace MapMaven.Models
         public PlayerScore? HighestPlayerScore { get; set; }
         public IEnumerable<PlayerScore> AllPlayerScores { get; set; } = Enumerable.Empty<PlayerScore>();
         public RankedMapInfoItem RankedMap { get; private set; }
-        public IEnumerable<Core.Models.MapDifficulty> Difficulties { get; set; } = Enumerable.Empty<Core.Models.MapDifficulty>();
+        public IEnumerable<MapDifficulty> Difficulties { get; set; } = Enumerable.Empty<MapDifficulty>();
         public RankedMapDifficultyInfo? Difficulty { get; set; }
         public IEnumerable<ScoreEstimate> ScoreEstimates { get; set; } = Enumerable.Empty<ScoreEstimate>();
         public ScoreEstimate? ScoreEstimate => ScoreEstimates.FirstOrDefault();
@@ -41,7 +40,7 @@ namespace MapMaven.Models
                 return;
 
             RankedMap = rankedMap;
-            Difficulties = rankedMap.Difficulties.Select(d => new Core.Models.MapDifficulty(d));
+            Difficulties = rankedMap.Difficulties.Select(d => new MapDifficulty(d));
         }
 
         public void SetMapDetails(Beatmap beatmap)

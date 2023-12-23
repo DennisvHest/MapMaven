@@ -1,6 +1,4 @@
-﻿using MapMaven.Core.ApiClients.ScoreSaber;
-using MapMaven.Core.Utilities.Scoresaber;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 
 namespace MapMaven.Core.Models.DynamicPlaylists.MapInfo
 {
@@ -18,7 +16,6 @@ namespace MapMaven.Core.Models.DynamicPlaylists.MapInfo
         [DisplayName("Score PP")]
         public double Pp { get; set; }
         public double Weight { get; set; }
-        public double Multiplier { get; set; }
 
         [DisplayName("Bad cuts")]
         public double BadCuts { get; set; }
@@ -45,10 +42,9 @@ namespace MapMaven.Core.Models.DynamicPlaylists.MapInfo
             Rank = score.Score.Rank;
             BaseScore = score.Score.BaseScore;
             ModifiedScore = score.Score.ModifiedScore;
-            Accuracy = score.AccuracyWithMods();
+            Accuracy = score.Score.Accuracy;
             Pp = score.Score.Pp;
             Weight = score.Score.Weight;
-            Multiplier = score.Score.Multiplier;
             BadCuts = score.Score.BadCuts;
             MissedNotes = score.Score.MissedNotes;
             MaxCombo = score.Score.MaxCombo;

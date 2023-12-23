@@ -23,7 +23,13 @@
             <MudItem xs="12" Class="d-flex align-center">
                 @if (SelectedPlaylist != null)
                 {
-                    <MudChip Variant="Variant.Outlined">@SelectedPlaylist.Title</MudChip>
+                    <MudChip Variant="Variant.Outlined">
+                        @if (SelectedPlaylist.DynamicPlaylistConfiguration?.LeaderboardProvider is not null)
+                        {
+                            <img src="@LeaderboardUtility.GetLogoPath(SelectedPlaylist.DynamicPlaylistConfiguration.LeaderboardProvider.Value)" class="mr-1" style="width: 24px;" />
+                        }
+                        @SelectedPlaylist.Title
+                    </MudChip>
                 }
                 @foreach (var mapFilter in MapFilters.Where(f => f.Visible))
                 {
@@ -98,6 +104,20 @@
                 </MudToolBar>
             </MudPaper>
         }
+        <div class="absolute full-height d-flex flex-row align-center px-3" style="height: 60px; z-index: 999">
+            @if (DifficultyModifier != 0)
+            {
+                var chipColor = DifficultyModifier >= 0 ? Colors.Purple.Darken3 : Colors.Green.Darken3;
+                var chipStyle = $"border: 1px solid {chipColor}";
+
+                <MudTooltip Text="Difficulty modifier">
+                    <MudChip Variant="Variant.Outlined" Style="@chipStyle">
+                        <MudIcon Icon="@Icons.Filled.Speed" Class="mr-2"></MudIcon>
+                        @(DifficultyModifier >= 0 ? "+" : string.Empty)@DifficultyModifier%
+                    </MudChip>
+                </MudTooltip>
+            }
+        </div>
         <MudDataGridPager T="Map" />
     </PagerContent>
 </MudDataGrid>

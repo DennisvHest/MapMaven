@@ -1,10 +1,10 @@
 using BeatSaberPlaylistsLib.Types;
-using MapMaven.Core.ApiClients.ScoreSaber;
-using MapMaven.Core.Models.Data.ScoreSaber;
+using MapMaven.Core.Models;
 using MapMaven.Core.Models.DynamicPlaylists;
 using MapMaven.Core.Models.DynamicPlaylists.MapInfo;
 using MapMaven.Core.Services;
 using MapMaven.Core.Services.Interfaces;
+using MapMaven.Core.Services.Leaderboards;
 using MapMaven.Core.Tests.Maps;
 using MapMaven.Models;
 using Microsoft.Extensions.Logging;
@@ -21,7 +21,7 @@ public class DynamicPlaylistArrangementServiceTests
     private readonly Mock<IApplicationSettingService> _applicationSettingServiceMock = new();
     private readonly Mock<IPlaylistService> _playlistServiceMock = new();
     private readonly Mock<IBeatSaberDataService> _beatSaberDataServiceMock = new();
-    private readonly Mock<IScoreSaberService> _scoreSaberServiceMock = new();
+    private readonly Mock<ILeaderboardService> _leaderboardServiceMock = new();
     private readonly Mock<IMapService> _mapServiceMock = new();
     private readonly Mock<ILogger<DynamicPlaylistArrangementService>> _loggerMock = new();
 
@@ -33,7 +33,7 @@ public class DynamicPlaylistArrangementServiceTests
             _beatSaberDataServiceMock.Object,
             _mapServiceMock.Object,
             _playlistServiceMock.Object,
-            _scoreSaberServiceMock.Object,
+            _leaderboardServiceMock.Object,
             _applicationSettingServiceMock.Object,
             _loggerMock.Object);
     }
@@ -168,8 +168,8 @@ public class DynamicPlaylistArrangementServiceTests
                         {
                             new JObject
                             {
-                                { nameof(FilterOperation.Field), nameof(DynamicPlaylistMap.Pp) },
-                                { nameof(FilterOperation.Value), 20 },
+                                { nameof(FilterOperation.Field), nameof(DynamicPlaylistMap.Stars) },
+                                { nameof(FilterOperation.Value), 1 },
                                 { nameof(FilterOperation.Operator), nameof(FilterOperator.Equals) }
                             },
                             new JObject
@@ -592,14 +592,24 @@ public class DynamicPlaylistArrangementServiceTests
             .SetupGet(x => x.CompleteMapData)
             .Returns(Observable.Return(MapTestData.Maps));
 
+        var rankedMapData = new Map[]
+        {
+            new Map
+            {
+                Id = "102",
+            }
+        };
+
         _mapServiceMock
             .SetupGet(x => x.CompleteRankedMapData)
-            .Returns(Observable.Return(new Map[]
-            {
-                new Map
-                {
-                    Id = "102",
-                }
-            }));
+            .Returns(Observable.Return(rankedMapData));
+
+        _leaderboardServiceMock
+            .SetupGet(x => x.LeaderboardProviders)
+            .Returns(() => new() { { LeaderboardProvider.ScoreSaber, new Mock<ILeaderboardProviderService>().Object } });
+
+        _mapServiceMock
+            .Setup(x => x.GetCompleteRankedMapDataForLeaderboardProvider(It.IsAny<LeaderboardProvider>()))
+            .Returns<LeaderboardProvider>(provider => Task.FromResult(rankedMapData.AsEnumerable()));
     }
 }

@@ -1,4 +1,6 @@
-﻿@using MapMaven.Core.Models.DynamicPlaylists;
+﻿@inherits ReactiveComponent
+
+@using MapMaven.Core.Models.DynamicPlaylists;
 @using MapMaven.Extensions;
 @using MapMaven.Components.Playlists;
 
@@ -64,16 +66,34 @@ else
                                                OnClick="() => ChangeMapPool(MapPool.Standard)">
                                         Downloaded maps
                                     </MudButton>
-                                    <MudButton Variant="Variant.Filled"
-                                               Color="@(configuration.MapPool == MapPool.Improvement ? Color.Primary : Color.Default)"
-                                               OnClick="() => ChangeMapPool(MapPool.Improvement)">
-                                        Improvement maps
-                                    </MudButton>
+                                    @if (LeaderboardAvailable)
+                                    {
+                                        <MudButton Variant="Variant.Filled"
+                                                   Color="@(configuration.MapPool == MapPool.Improvement ? Color.Primary : Color.Default)"
+                                                   OnClick="() => ChangeMapPool(MapPool.Improvement)">
+                                            Improvement maps
+                                        </MudButton>
+                                    }
                                 </MudButtonGroup>
                             </div>
                         </MudListItem>
                     </MudList>
                 </MudPaper>
+                @if (configuration.MapPool == MapPool.Improvement)
+                {
+                    <MudPaper Class="my-4" Style="background-color: var(--mud-palette-drawer-background);">
+                        <MudList>
+                            <MudListItem Class="py-0">
+                                <div class="d-flex flex-row align-center">
+                                    <b class="mud-list-subheader pa-0 mr-1">Leaderboard</b>
+                                    <div class="ml-auto">
+                                        <LeaderboardSelector @bind-SelectedLeaderboardProvider="SelectedPlaylist.DynamicPlaylistConfiguration.LeaderboardProvider" NewLeaderboardSelection="NewPlaylist"></LeaderboardSelector>
+                                    </div>
+                                </div>
+                            </MudListItem>
+                        </MudList>
+                    </MudPaper>
+                }
                 <MudPaper Class="my-4" Style="background-color: var(--mud-palette-drawer-background);">
                     <MudList>
                         <MudListSubheader Class="d-flex align-center justify-space-between">

@@ -1,5 +1,7 @@
+using MapMaven.Core.Models;
 using MapMaven.Core.Services;
 using MapMaven.Core.Services.Interfaces;
+using MapMaven.Core.Services.Leaderboards;
 using MapMaven.Services;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
@@ -10,6 +12,7 @@ namespace MapMaven.Components
     public partial class Settings
     {
         private static readonly Regex _scoreSaberPlayerIdUrlRegex = new Regex(@"scoresaber.com\/u\/(?<playerId>[^\/\?]+)");
+        private static readonly Regex _beatLeaderPlayerIdUrlRegex = new Regex(@"beatleader.xyz\/u\/(?<playerId>[^\/\?]+)");
 
         [Inject]
         protected IFolderPicker FolderPicker { get; set; }
@@ -21,7 +24,13 @@ namespace MapMaven.Components
         protected IBeatSaberDataService BeatSaberDataService { get; set; }
 
         [Inject]
-        protected IScoreSaberService ScoreSaberService { get; set; }
+        protected ILeaderboardService LeaderboardService { get; set; }
+
+        [Inject]
+        protected ScoreSaberService ScoreSaberService { get; set; }
+
+        [Inject]
+        protected BeatLeaderService BeatLeaderService { get; set; }
 
         [CascadingParameter]
         MudDialogInstance MudDialog { get; set; }
@@ -30,7 +39,9 @@ namespace MapMaven.Components
         public bool InitialSetup { get; set; } = false;
 
         public string BeatSaberInstallLocation { get; set; }
-        public string PlayerId { get; set; }
+        public LeaderboardProvider? ActiveLeaderboardProvider { get; set; }
+        public string ScoreSaberPlayerId { get; set; }
+        public string BeatLeaderPlayerId { get; set; }
 
         private string? OldBeatSaberInstallLocation { get; set; }
 
@@ -41,18 +52,28 @@ namespace MapMaven.Components
                 OldBeatSaberInstallLocation = installLocation;
                 BeatSaberInstallLocation = installLocation;
             });
-            SubscribeAndBind(ScoreSaberService.PlayerIdObservable, playerId => PlayerId = playerId);
+            SubscribeAndBind(LeaderboardService.ActiveLeaderboardProviderName, provider => ActiveLeaderboardProvider = provider);
+            SubscribeAndBind(ScoreSaberService.PlayerIdObservable, playerId => ScoreSaberPlayerId = playerId);
+            SubscribeAndBind(BeatLeaderService.PlayerIdObservable, playerId => BeatLeaderPlayerId = playerId);
         }
 
         public void AutoFillPlayerId(string beatSaberInstallLocation)
         {
-            if (!string.IsNullOrEmpty(PlayerId))
-                return;
+            if (string.IsNullOrEmpty(ScoreSaberPlayerId))
+            {
+                var scoreSaberPlayerId = ScoreSaberService.GetPlayerIdFromReplays(beatSaberInstallLocation);
 
-            var playerId = ScoreSaberService.GetPlayerIdFromReplays(beatSaberInstallLocation);
+                if (!string.IsNullOrEmpty(scoreSaberPlayerId))
+                    ScoreSaberPlayerId = scoreSaberPlayerId;
+            }
 
-            if (!string.IsNullOrEmpty(playerId))
-                PlayerId = playerId;
+            if (string.IsNullOrEmpty(BeatLeaderPlayerId))
+            {
+                var beatLeaderPlayerId = BeatLeaderService.GetPlayerIdFromReplays(beatSaberInstallLocation);
+
+                if (!string.IsNullOrEmpty(beatLeaderPlayerId))
+                    BeatLeaderPlayerId = beatLeaderPlayerId;
+            }
         }
 
         public async Task PickFolder()
@@ -64,12 +85,20 @@ namespace MapMaven.Components
 
         public async Task SaveSettings()
         {
-            if (!string.IsNullOrEmpty(PlayerId))
+            if (!string.IsNullOrEmpty(ScoreSaberPlayerId))
             {
-                var playerIdMatch = _scoreSaberPlayerIdUrlRegex.Match(PlayerId);
+                var playerIdMatch = _scoreSaberPlayerIdUrlRegex.Match(ScoreSaberPlayerId);
 
                 if (playerIdMatch.Success)
-                    PlayerId = playerIdMatch.Groups.GetValueOrDefault("playerId")?.Value;
+                    ScoreSaberPlayerId = playerIdMatch.Groups.GetValueOrDefault("playerId")?.Value;
+            }
+
+            if (!string.IsNullOrEmpty(BeatLeaderPlayerId))
+            {
+                var playerIdMatch = _beatLeaderPlayerIdUrlRegex.Match(BeatLeaderPlayerId);
+
+                if (playerIdMatch.Success)
+                    BeatLeaderPlayerId = playerIdMatch.Groups.GetValueOrDefault("playerId")?.Value;
             }
 
             Close();
@@ -82,8 +111,15 @@ namespace MapMaven.Components
 
             BeatSaberDataService.SetInitialMapLoad(InitialSetup);
 
-            Task.Run(() => BeatSaberToolFileService.SetBeatSaberInstallLocation(BeatSaberInstallLocation));
-            Task.Run(() => ScoreSaberService.SetPlayerId(PlayerId));
+            Task.Run(async () =>
+            {
+                await BeatSaberToolFileService.SetBeatSaberInstallLocation(BeatSaberInstallLocation);
+                await ScoreSaberService.SetPlayerId(ScoreSaberPlayerId);
+                await BeatLeaderService.SetPlayerId(BeatLeaderPlayerId);
+
+                if (ActiveLeaderboardProvider.HasValue)
+                    await LeaderboardService.SetActiveLeaderboardProviderAsync(ActiveLeaderboardProvider.Value);
+            });
         }
 
         public void Close()

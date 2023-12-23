@@ -1,4 +1,5 @@
-﻿using MapMaven.Models;
+﻿using MapMaven.Core.ApiClients.BeatSaver;
+using MapMaven.Models;
 
 namespace MapMaven.Core.Models.Data.RankedMaps
 {
@@ -16,25 +17,52 @@ namespace MapMaven.Core.Models.Data.RankedMaps
 
         public RankedMapInfoItem() { }
 
-        public RankedMapInfoItem(FullRankedMapInfoItem fullRankedMapInfoItem)
+        public RankedMapInfoItem(ScoreSaberFullRankedMapInfoItem fullRankedMapInfoItem)
         {
+            var mapVersion = MapBaseProperties(fullRankedMapInfoItem);
+
             var leaderboard = fullRankedMapInfoItem.Leaderboards.First();
 
-            SongHash = fullRankedMapInfoItem.SongHash;
-            BeatSaverId = fullRankedMapInfoItem.MapDetail.Id;
             Name = leaderboard.SongName;
             SongAuthorName = leaderboard.SongAuthorName;
             MapAuthorName = leaderboard.LevelAuthorName;
-            Duration = TimeSpan.FromSeconds(fullRankedMapInfoItem.MapDetail.Metadata.Duration ?? 0);
-
-            var mapVersion = fullRankedMapInfoItem.MapDetail.Versions.First(x => x.Hash.Equals(SongHash, StringComparison.OrdinalIgnoreCase));
-
-            CoverImageUrl = mapVersion.CoverURL;
 
             Difficulties = fullRankedMapInfoItem.Leaderboards.GroupJoin(
                 mapVersion.Diffs, l => l.Difficulty.DifficultyName, d => d.Difficulty.ToString(),
                 (leaderboard, difficulty) => new RankedMapDifficultyInfo(leaderboard, difficulty.First(d => d.Characteristic == "Standard"))
             );
+        }
+
+        public RankedMapInfoItem(BeatLeaderFullRankedMapInfoItem fullRankedMapInfoItem)
+        {
+            var mapVersion = MapBaseProperties(fullRankedMapInfoItem);
+
+            var leaderboard = fullRankedMapInfoItem.Leaderboards.First();
+
+            Name = leaderboard.Song.Name;
+            SongAuthorName = leaderboard.Song.Author;
+            MapAuthorName = leaderboard.Song.Mapper;
+
+            Difficulties = fullRankedMapInfoItem.Leaderboards.GroupJoin(
+                mapVersion.Diffs, l => l.Difficulty.DifficultyName, d => d.Difficulty.ToString(),
+                (leaderboard, difficulty) => new RankedMapDifficultyInfo(leaderboard, difficulty.FirstOrDefault(d => d.Characteristic == "Standard") ?? difficulty.First())
+            );
+        }
+
+        private MapVersion MapBaseProperties(FullRankedMapInfoItem fullRankedMapInfoItem)
+        {
+            SongHash = fullRankedMapInfoItem.SongHash;
+            BeatSaverId = fullRankedMapInfoItem.MapDetail.Id;
+            Duration = TimeSpan.FromSeconds(fullRankedMapInfoItem.MapDetail.Metadata.Duration ?? 0);
+
+            var mapVersion = fullRankedMapInfoItem.MapDetail.Versions.FirstOrDefault(x => x.Hash.Equals(SongHash, StringComparison.OrdinalIgnoreCase));
+
+            if (mapVersion is null)
+                mapVersion = fullRankedMapInfoItem.MapDetail.Versions.First();
+
+            CoverImageUrl = mapVersion.CoverURL;
+
+            return mapVersion;
         }
 
         public Map ToMap()

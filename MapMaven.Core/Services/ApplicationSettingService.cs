@@ -32,7 +32,7 @@ namespace MapMaven.Core.Services
             _applicationSettings.OnNext(settings.ToDictionary(s => s.Key));
         }
 
-        public async Task AddOrUpdateAsync<T>(string key, T value) where T : class
+        public async Task AddOrUpdateAsync<T>(string key, T value)
         {
             using var scope = _serviceProvider.CreateScope();
 

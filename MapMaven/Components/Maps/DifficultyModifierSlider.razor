@@ -1,0 +1,32 @@
+﻿@inherits ReactiveComponent
+
+@using System.Diagnostics;
+@using MapMaven.Core.Services.Leaderboards.ScoreEstimation;
+
+<MudSlider T="int"
+           @bind-Value="DifficultyModifier"
+           @onmouseup="OnDifficultyAmplifierChanged"
+           Min="-100"
+           Max="100"
+           Step="1"
+           ValueLabel="true"
+           Color="Color.Info" />
+
+<MudChip Size="Size.Small" Class="mx-0">Difficulty: @(DifficultyModifier >= 0 ? "+" : string.Empty)@DifficultyModifier%</MudChip>
+
+@code {
+    int DifficultyModifier = 0;
+
+    [Inject]
+    ScoreEstimationSettings ScoreEstimationSettings { get; set; }
+
+    protected override void OnInitialized()
+    {
+        SubscribeAndBind(ScoreEstimationSettings.DifficultyModifierValue, x => DifficultyModifier = x);
+    }
+
+    void OnDifficultyAmplifierChanged()
+    {
+        Task.Run(() => ScoreEstimationSettings.SetDifficultyModifierValueAsync(DifficultyModifier));
+    }
+}

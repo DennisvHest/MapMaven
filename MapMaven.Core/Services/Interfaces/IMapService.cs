@@ -21,6 +21,7 @@ namespace MapMaven.Core.Services.Interfaces
         Task DeleteMap(string mapHash);
         Task DeleteMaps(IEnumerable<string> mapHashes);
         Task DownloadMap(Map map, bool force = false, IProgress<double>? progress = null, bool loadMapInfo = true, CancellationToken cancellationToken = default);
+        Task<IEnumerable<Map>> GetCompleteRankedMapDataForLeaderboardProvider(LeaderboardProvider leaderboardProvider);
         Task<Map> GetMapDetails(Map map);
         Task HideUnhideMap(Map map);
         Task HideUnhideMap(IEnumerable<Map> maps, bool hide);

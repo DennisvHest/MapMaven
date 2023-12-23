@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
@@ -6,10 +6,12 @@
   </PropertyGroup>
   <ItemGroup>
     <None Remove="C:\Users\denni\.nuget\packages\naudio.vorbis\1.5.0\contentFiles\any\netstandard2.0\README.md" />
+    <None Remove="OpenAPI\beatleader-api.json" />
     <None Remove="OpenAPI\beatsaver-api.json" />
     <None Remove="OpenAPI\scoresaber-api.json" />
   </ItemGroup>
   <ItemGroup>
+    <OpenApiReference Include="OpenAPI\beatleader-api.json" CodeGenerator="NSwagCSharp" Namespace="MapMaven.Core.ApiClients.BeatLeader" ClassName="BeatLeaderApiClient" Options="/UseBaseUrl:false" />
     <OpenApiReference Include="OpenAPI\beatsaver-api.json" CodeGenerator="NSwagCSharp" Namespace="MapMaven.Core.ApiClients.BeatSaver" ClassName="BeatSaverApiClient" Options="/UseBaseUrl:false" />
     <OpenApiReference Include="OpenAPI\scoresaber-api.json" CodeGenerator="NSwagCSharp" Namespace="MapMaven.Core.ApiClients.ScoreSaber" ClassName="ScoreSaberApiClient" />
   </ItemGroup>
@@ -25,9 +27,9 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Http" Version="7.0.0" />
-    <PackageReference Include="Microsoft.ML" Version="2.0.1" />
-    <PackageReference Include="Microsoft.ML.FastTree" Version="2.0.1" />
-    <PackageReference Include="Microsoft.ML.LightGbm" Version="2.0.1" />
+    <PackageReference Include="Microsoft.ML" Version="3.0.0" />
+    <PackageReference Include="Microsoft.ML.FastTree" Version="3.0.0" />
+    <PackageReference Include="Microsoft.ML.LightGbm" Version="3.0.0" />
     <PackageReference Include="Microsoft.VisualStudio.Utilities" Version="17.7.37355" />
     <PackageReference Include="NAudio" Version="2.2.1" />
     <PackageReference Include="NAudio.Vorbis" Version="1.5.0" />
@@ -37,22 +39,30 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Pather.CSharp" Version="2.1.0" />
+    <PackageReference Include="Plotly.NET" Version="3.0.1" />
+    <PackageReference Include="RateLimiter" Version="2.2.0" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.3" />
     <PackageReference Include="System.Drawing.Common" Version="7.0.0" />
     <PackageReference Include="System.Reactive" Version="6.0.0" />
     <PackageReference Include="TestableIO.System.IO.Abstractions" Version="19.2.69" />
     <PackageReference Include="TestableIO.System.IO.Abstractions.Wrappers" Version="19.2.69" />
   </ItemGroup>
-  <ItemGroup Label="ScoreEstimateMLModel">
-    <None Include="ScoreEstimation\ScoreEstimateMLModel.consumption.cs">
-      <DependentUpon>ScoreEstimateMLModel.mbconfig</DependentUpon>
+  <ItemGroup Label="ScoreSaberScoreEstimateMLModel">
+    <None Include="ScoreEstimation\ScoreSaberScoreEstimateMLModel.consumption.cs">
+      <DependentUpon>ScoreSaberScoreEstimateMLModel.mbconfig</DependentUpon>
     </None>
-    <None Include="ScoreEstimation\ScoreEstimateMLModel.training.cs">
-      <DependentUpon>ScoreEstimateMLModel.mbconfig</DependentUpon>
+    <None Include="ScoreEstimation\ScoreSaberScoreEstimateMLModel.training.cs">
+      <DependentUpon>ScoreSaberScoreEstimateMLModel.mbconfig</DependentUpon>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Update="ScoreEstimation\ScoreEstimateMLModel.zip">
-      <DependentUpon>ScoreEstimateMLModel.mbconfig</DependentUpon>
+    <None Update="ScoreEstimation\ScoreSaberScoreEstimateMLModel.mlnet">
+      <DependentUpon>ScoreSaberScoreEstimateMLModel.mbconfig</DependentUpon>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup Label="BeatLeaderScoreEstimateMLModel">
+    <None Include="ScoreEstimation\BeatLeaderScoreEstimateMLModel.mlnet">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

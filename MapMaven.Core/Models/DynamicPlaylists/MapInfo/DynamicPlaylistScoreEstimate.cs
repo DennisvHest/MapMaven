@@ -1,4 +1,4 @@
-﻿using MapMaven.Core.Utilities.Scoresaber;
+﻿using MapMaven.Core.Models.Data.Leaderboards;
 using MapMaven.Utilities.DynamicPlaylists;
 using System.ComponentModel;
 

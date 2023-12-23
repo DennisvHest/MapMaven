@@ -49,6 +49,18 @@
     transform: translateX(-50%);
 }
 
+.leaderboard-tabs .mud-tab:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.mud-tab.mud-tab-active {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.leaderboard-tabs .mud-tab-slider {
+    background-color: var(--mud-palette-action-default);
+}
+
 /* MudBlazor overrides */
 .mud-main-content {
     height: 100vh;

@@ -9,6 +9,9 @@ namespace MapMaven.Core.Models.DynamicPlaylists
         [JsonConverter(typeof(StringEnumConverter))]
         public MapPool MapPool { get; set; } = MapPool.Standard;
 
+        [JsonConverter(typeof(StringEnumConverter))]
+        public LeaderboardProvider? LeaderboardProvider { get; set; } = Models.LeaderboardProvider.ScoreSaber;
+
         [ValidateComplexType]
         public List<FilterOperation> FilterOperations { get; set; } = new();
 

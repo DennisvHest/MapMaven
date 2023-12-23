@@ -1,0 +1,64 @@
+﻿@inherits ReactiveComponent
+
+@using MapMaven.Core.Models;
+@using MapMaven.Core.Services.Leaderboards;
+
+@if (AvailableLeaderboardProviders.Contains(LeaderboardProvider.ScoreSaber))
+{
+    <MudChip OnClick="() => SetLeaderboardProvider(LeaderboardProvider.ScoreSaber)"
+             Variant="Variant.Outlined"
+             Disabled="SelectedLeaderboardProvider != LeaderboardProvider.ScoreSaber"
+             Style="border: 1px solid #ffde18; pointer-events: all;">
+        <img src="@LeaderboardUtility.GetLogoPath(LeaderboardProvider.ScoreSaber)" class="mr-1" style="width: 24px;" />
+        ScoreSaber
+    </MudChip>
+}
+
+@if (AvailableLeaderboardProviders.Contains(LeaderboardProvider.BeatLeader))
+{
+    <MudChip OnClick="() => SetLeaderboardProvider(LeaderboardProvider.BeatLeader)"
+             Variant="Variant.Outlined"
+             Disabled="SelectedLeaderboardProvider != LeaderboardProvider.BeatLeader"
+             Style="border: 1px solid #a437b0; pointer-events: all;">
+        <img src="@LeaderboardUtility.GetLogoPath(LeaderboardProvider.BeatLeader)" class="mr-1" style="width: 24px;" />
+        BeatLeader
+    </MudChip>
+}
+
+@code {
+    [Parameter]
+    public LeaderboardProvider? SelectedLeaderboardProvider { get; set; } = null;
+
+    [Parameter]
+    public EventCallback<LeaderboardProvider?> SelectedLeaderboardProviderChanged { get; set; }
+
+    [Parameter]
+    public bool NewLeaderboardSelection { get; set; } = false;
+
+    [Parameter]
+    public IEnumerable<LeaderboardProvider?> AvailableLeaderboardProviders { get; set; }
+
+    [Inject]
+    ILeaderboardService LeaderboardService { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        SubscribeAndBind(LeaderboardService.AvailableLeaderboardProviderServices, leaderboardProviders =>
+        {
+            AvailableLeaderboardProviders ??= leaderboardProviders.Select(x => x.LeaderboardProviderName as LeaderboardProvider?);
+
+            var defaultLeaderboardProvider = AvailableLeaderboardProviders.FirstOrDefault(x => x == SelectedLeaderboardProvider);
+
+            if (NewLeaderboardSelection)
+                defaultLeaderboardProvider = LeaderboardService.ActiveLeaderboardProviderNameValue;
+
+            InvokeAsync(() => SetLeaderboardProvider(defaultLeaderboardProvider));
+        });
+    }
+
+    async Task SetLeaderboardProvider(LeaderboardProvider? leaderboardProvider)
+    {
+        SelectedLeaderboardProvider = leaderboardProvider;
+        await SelectedLeaderboardProviderChanged.InvokeAsync(leaderboardProvider);
+    }
+}

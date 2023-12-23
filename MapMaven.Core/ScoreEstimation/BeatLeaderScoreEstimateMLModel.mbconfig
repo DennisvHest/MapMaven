@@ -1,0 +1,317 @@
+﻿{
+  "Scenario": "Regression",
+  "DataSource": {
+    "Type": "SQL",
+    "Version": 1,
+    "ColumnProperties": [
+      {
+        "ColumnName": "Pp",
+        "ColumnPurpose": "Feature",
+        "ColumnDataFormat": "Single",
+        "IsCategorical": false,
+        "Type": "Column",
+        "Version": 4
+      },
+      {
+        "ColumnName": "StarDifficulty",
+        "ColumnPurpose": "Feature",
+        "ColumnDataFormat": "Single",
+        "IsCategorical": false,
+        "Type": "Column",
+        "Version": 4
+      },
+      {
+        "ColumnName": "Accuracy",
+        "ColumnPurpose": "Label",
+        "ColumnDataFormat": "Single",
+        "IsCategorical": false,
+        "Type": "Column",
+        "Version": 4
+      },
+      {
+        "ColumnName": "TimeSet",
+        "ColumnPurpose": "Feature",
+        "ColumnDataFormat": "DateTime",
+        "IsCategorical": false,
+        "Type": "Column",
+        "Version": 4
+      }
+    ],
+    "ConnectionString": "Data Source=map-maven-db-server.database.windows.net;Initial Catalog=map-maven-beatleader-data-db;User ID=MapMaven",
+    "CommandString": "SELECT CAST([Pp] as REAL), CAST([StarDifficulty] as REAL), CAST([Accuracy] as REAL), [TimeSet] FROM [dbo].[TraningData]",
+    "DatabaseName": "map-maven-beatleader-data-db",
+    "SelectedTableDbo": "dbo",
+    "TableName": "TraningData"
+  },
+  "Environment": {
+    "Type": "LocalCPU",
+    "Version": 1
+  },
+  "RunHistory": {
+    "Version": 3,
+    "Type": "Result",
+    "Trials": [
+      {
+        "Version": 1,
+        "Type": "Trial",
+        "TrainerName": "FastTreeRegression",
+        "Score": 0.46695028375294845,
+        "RuntimeInSeconds": 7.857,
+        "Parameter": {
+          "_SCHEMA_": "e0 * e1 * e2 * e3",
+          "e0": {
+            "OutputColumnNames": [
+              "Pp",
+              "StarDifficulty"
+            ],
+            "InputColumnNames": [
+              "Pp",
+              "StarDifficulty"
+            ]
+          },
+          "e1": {
+            "OutputColumnNames": [
+              "TimeSet"
+            ],
+            "InputColumnNames": [
+              "TimeSet"
+            ]
+          },
+          "e2": {
+            "InputColumnNames": [
+              "Pp",
+              "StarDifficulty",
+              "TimeSet"
+            ],
+            "OutputColumnName": "Features"
+          },
+          "e3": {
+            "NumberOfLeaves": 16,
+            "MinimumExampleCountPerLeaf": 25,
+            "NumberOfTrees": 9,
+            "MaximumBinCountPerFeature": 134,
+            "FeatureFraction": 0.97522560716588169,
+            "LearningRate": 0.99999977667298645,
+            "LabelColumnName": "Accuracy",
+            "FeatureColumnName": "Features",
+            "DiskTranspose": false
+          }
+        }
+      },
+      {
+        "Version": 1,
+        "Type": "Trial",
+        "TrainerName": "FastTreeRegression",
+        "Score": 0.46177364911700436,
+        "RuntimeInSeconds": 9.096,
+        "Parameter": {
+          "_SCHEMA_": "e0 * e1 * e2 * e3",
+          "e0": {
+            "OutputColumnNames": [
+              "Pp",
+              "StarDifficulty"
+            ],
+            "InputColumnNames": [
+              "Pp",
+              "StarDifficulty"
+            ]
+          },
+          "e1": {
+            "OutputColumnNames": [
+              "TimeSet"
+            ],
+            "InputColumnNames": [
+              "TimeSet"
+            ]
+          },
+          "e2": {
+            "InputColumnNames": [
+              "Pp",
+              "StarDifficulty",
+              "TimeSet"
+            ],
+            "OutputColumnName": "Features"
+          },
+          "e3": {
+            "NumberOfLeaves": 6,
+            "MinimumExampleCountPerLeaf": 7,
+            "NumberOfTrees": 16,
+            "MaximumBinCountPerFeature": 237,
+            "FeatureFraction": 0.99999999,
+            "LearningRate": 0.99999977667298645,
+            "LabelColumnName": "Accuracy",
+            "FeatureColumnName": "Features",
+            "DiskTranspose": false
+          }
+        }
+      },
+      {
+        "Version": 1,
+        "Type": "Trial",
+        "TrainerName": "FastTreeRegression",
+        "Score": 0.45838112802981068,
+        "RuntimeInSeconds": 8.189,
+        "Parameter": {
+          "_SCHEMA_": "e0 * e1 * e2 * e3",
+          "e0": {
+            "OutputColumnNames": [
+              "Pp",
+              "StarDifficulty"
+            ],
+            "InputColumnNames": [
+              "Pp",
+              "StarDifficulty"
+            ]
+          },
+          "e1": {
+            "OutputColumnNames": [
+              "TimeSet"
+            ],
+            "InputColumnNames": [
+              "TimeSet"
+            ]
+          },
+          "e2": {
+            "InputColumnNames": [
+              "Pp",
+              "StarDifficulty",
+              "TimeSet"
+            ],
+            "OutputColumnName": "Features"
+          },
+          "e3": {
+            "NumberOfLeaves": 6,
+            "MinimumExampleCountPerLeaf": 17,
+            "NumberOfTrees": 26,
+            "MaximumBinCountPerFeature": 94,
+            "FeatureFraction": 0.89864455876691607,
+            "LearningRate": 0.2070077870371794,
+            "LabelColumnName": "Accuracy",
+            "FeatureColumnName": "Features",
+            "DiskTranspose": false
+          }
+        }
+      },
+      {
+        "Version": 1,
+        "Type": "Trial",
+        "TrainerName": "FastTreeRegression",
+        "Score": 0.45534371859327927,
+        "RuntimeInSeconds": 8.275,
+        "Parameter": {
+          "_SCHEMA_": "e0 * e1 * e2 * e3",
+          "e0": {
+            "OutputColumnNames": [
+              "Pp",
+              "StarDifficulty"
+            ],
+            "InputColumnNames": [
+              "Pp",
+              "StarDifficulty"
+            ]
+          },
+          "e1": {
+            "OutputColumnNames": [
+              "TimeSet"
+            ],
+            "InputColumnNames": [
+              "TimeSet"
+            ]
+          },
+          "e2": {
+            "InputColumnNames": [
+              "Pp",
+              "StarDifficulty",
+              "TimeSet"
+            ],
+            "OutputColumnName": "Features"
+          },
+          "e3": {
+            "NumberOfLeaves": 5,
+            "MinimumExampleCountPerLeaf": 10,
+            "NumberOfTrees": 13,
+            "MaximumBinCountPerFeature": 358,
+            "FeatureFraction": 0.99999999,
+            "LearningRate": 0.58784167636731088,
+            "LabelColumnName": "Accuracy",
+            "FeatureColumnName": "Features",
+            "DiskTranspose": false
+          }
+        }
+      },
+      {
+        "Version": 1,
+        "Type": "Trial",
+        "TrainerName": "FastTreeRegression",
+        "Score": 0.44721031080458662,
+        "RuntimeInSeconds": 7.903,
+        "Parameter": {
+          "_SCHEMA_": "e0 * e1 * e2 * e3",
+          "e0": {
+            "OutputColumnNames": [
+              "Pp",
+              "StarDifficulty"
+            ],
+            "InputColumnNames": [
+              "Pp",
+              "StarDifficulty"
+            ]
+          },
+          "e1": {
+            "OutputColumnNames": [
+              "TimeSet"
+            ],
+            "InputColumnNames": [
+              "TimeSet"
+            ]
+          },
+          "e2": {
+            "InputColumnNames": [
+              "Pp",
+              "StarDifficulty",
+              "TimeSet"
+            ],
+            "OutputColumnName": "Features"
+          },
+          "e3": {
+            "NumberOfLeaves": 37,
+            "MinimumExampleCountPerLeaf": 84,
+            "NumberOfTrees": 5,
+            "MaximumBinCountPerFeature": 75,
+            "FeatureFraction": 0.947507967182168,
+            "LearningRate": 0.56314455204975711,
+            "LabelColumnName": "Accuracy",
+            "FeatureColumnName": "Features",
+            "DiskTranspose": false
+          }
+        }
+      }
+    ],
+    "Estimators": {
+      "e0": "ReplaceMissingValues",
+      "e1": "ConvertType",
+      "e2": "Concatenate",
+      "e3": "FastTreeRegression",
+      "e4": "FastForestRegression",
+      "e5": "LbfgsPoissonRegressionRegression",
+      "e6": "SdcaRegression"
+    },
+    "Schema": "e0 * e1 * e2 * (e3 + e4 + e5 + e6)",
+    "MetricName": "RSquared",
+    "ModelFilePath": "C:\\dev\\MapMaven\\MapMaven.Core\\ScoreEstimation\\BeatLeaderScoreEstimateMLModel.mlnet"
+  },
+  "Type": "TrainingConfig",
+  "Version": 4,
+  "TrainingOption": {
+    "Version": 2,
+    "Subsampling": false,
+    "Type": "RegressionTrainingOption",
+    "TrainingTime": 1200,
+    "LabelColumn": "Accuracy",
+    "ValidationOption": {
+      "Version": 0,
+      "Type": "TrainValidateSplitValidationOption",
+      "SplitRatio": 0.2
+    }
+  }
+}

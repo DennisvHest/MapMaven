@@ -12,13 +12,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{AEA01E80
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MapMaven.Core.Tests", "MapMaven.Core.Tests\MapMaven.Core.Tests.csproj", "{64D846D6-23E4-4293-A4E5-7A906BBBBAB7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MapMaven.RankedMapUpdater", "MapMaven.RankedMapUpdater\MapMaven.RankedMapUpdater.csproj", "{2929A3FB-EEDC-4FC6-9701-E25FFCCE4FA0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MapMaven.Functions", "MapMaven.Functions\MapMaven.Functions.csproj", "{2929A3FB-EEDC-4FC6-9701-E25FFCCE4FA0}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ModelTraining", "ModelTraining", "{E0366F45-2595-483F-9DFE-582334B40F40}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MapMaven.DataGatherers.ScoreSaber", "MapMaven.DataGatherers.ScoreSaber\MapMaven.DataGatherers.ScoreSaber.csproj", "{4F1ACA12-49D0-4309-943E-F43240E2BCE4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MapMaven.DataGatherers.Shared", "MapMaven.DataGatherers.Shared\MapMaven.DataGatherers.Shared.csproj", "{C0651AC0-D854-4ED1-BECE-4972829E5BF2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MapMaven.DataGatherers.Shared", "MapMaven.DataGatherers.Shared\MapMaven.DataGatherers.Shared.csproj", "{C0651AC0-D854-4ED1-BECE-4972829E5BF2}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MapMaven.DataGatherers.BeatLeader", "MapMaven.DataGatherers.BeatLeader\MapMaven.DataGatherers.BeatLeader.csproj", "{A3CD3E97-FE61-405B-AE61-1501532DA0AF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -56,6 +58,10 @@ Global
 		{C0651AC0-D854-4ED1-BECE-4972829E5BF2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C0651AC0-D854-4ED1-BECE-4972829E5BF2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C0651AC0-D854-4ED1-BECE-4972829E5BF2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A3CD3E97-FE61-405B-AE61-1501532DA0AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A3CD3E97-FE61-405B-AE61-1501532DA0AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A3CD3E97-FE61-405B-AE61-1501532DA0AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A3CD3E97-FE61-405B-AE61-1501532DA0AF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -64,6 +70,7 @@ Global
 		{64D846D6-23E4-4293-A4E5-7A906BBBBAB7} = {AEA01E80-C7DA-4D45-AAD5-8DC9510BB0AA}
 		{4F1ACA12-49D0-4309-943E-F43240E2BCE4} = {E0366F45-2595-483F-9DFE-582334B40F40}
 		{C0651AC0-D854-4ED1-BECE-4972829E5BF2} = {E0366F45-2595-483F-9DFE-582334B40F40}
+		{A3CD3E97-FE61-405B-AE61-1501532DA0AF} = {E0366F45-2595-483F-9DFE-582334B40F40}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {61F7FB11-1E47-470C-91E2-47F8143E1572}
