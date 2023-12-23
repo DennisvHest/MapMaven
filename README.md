@@ -23,7 +23,7 @@ https://github.com/DennisvHest/MapMaven/assets/18610083/56fd3498-1764-434e-b95c-
 
 Dynamic playlists can be completely customized by creating a custom dynamic playlist. The custom dynamic playlist will be periodically updated with maps based on filters and sortings you configure. For example, you can create a dynamic playlists that will always contain maps from your favourite mapper, by adding a filter for the map author. Then you can sort by the added date, so the latest map is always at the top of the playlist! Custom dynamic playlists can be created from maps that you have downloaded, or from improvement (ranked) maps.
 
-https://github.com/DennisvHest/MapMaven/assets/18610083/f913604d-7213-4eb0-b6ae-8b05f2725308
+https://github.com/DennisvHest/MapMaven/assets/18610083/ba3ce28a-8f07-4c54-86c0-85ef081f4e01
 
 ## Map recommendation
 The "improve" page shows maps that are recommended for you to improve your skills. It recommends maps based on a machine learning model trained on almost every score on ScoreSaber, predicting what accuracy you can get and how much pp you can gain. You can create a playlist with the recommended maps. Maps that you don't have on your PC will be downloaded.
