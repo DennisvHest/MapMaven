@@ -33,7 +33,7 @@ https://github.com/DennisvHest/MapMaven/assets/18610083/49b2a941-c779-447d-aa00-
 ## Map browsing
 Browse and search through your maps and add maps to a playlist or watch one of your replays.
 
-https://github.com/DennisvHest/MapMaven/assets/18610083/4bf22b8a-8ac8-4484-9ff1-92b2808c69d9
+https://github.com/DennisvHest/MapMaven/assets/18610083/0f65527c-71f1-478f-8edf-5aaf5afb02b4
 
 # Installation
 ## Method 1: Installer (recommended)
