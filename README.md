@@ -27,8 +27,13 @@ Dynamic playlists can be completely customized by creating a custom dynamic play
 
 https://github.com/DennisvHest/MapMaven/assets/18610083/ba3ce28a-8f07-4c54-86c0-85ef081f4e01
 
+## Integration with ScoreSaber and BeatLeader
+You can link your ScoreSaber and/or BeatLeader profile to Map Maven to get recommended ranked maps and see scores and replays from both leaderboards. You can easily switch between showing ScoreSaber or BeatLeader data.
+
+https://github.com/DennisvHest/MapMaven/assets/18610083/c500c09b-a1bc-48f1-812f-887207cd5085
+
 ## Map recommendation
-The "improve" page shows maps that are recommended for you to improve your skills. It recommends maps based on a machine learning model trained on almost every score on ScoreSaber, predicting what accuracy you can get and how much pp you can gain. You can create a playlist with the recommended maps. Maps that you don't have on your PC will be downloaded.
+The "improve" page shows maps that are recommended for you to improve your skills. It recommends maps based on a machine learning model trained on almost every score on ScoreSaber and BeatLeader, predicting what accuracy you can get and how much pp you can gain. You can create a playlist with the recommended maps. Maps that you don't have on your PC will be downloaded.
 
 https://github.com/DennisvHest/MapMaven/assets/18610083/49b2a941-c779-447d-aa00-2daf42c17e5f
 
