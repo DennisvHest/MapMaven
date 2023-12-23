@@ -14,7 +14,7 @@ Map Maven is an application for managing Beat Saber playlists, discovering new m
 ## Playlist Management
 Easily create and manage your Beat Saber playlists. You can add, edit, and delete maps from your playlists with just a few clicks.
 
-https://github.com/DennisvHest/MapMaven/assets/18610083/758ffeef-5870-4cb7-9465-05a63aaf814f
+https://github.com/DennisvHest/MapMaven/assets/18610083/882a06dc-0858-4878-ad00-a69e460fab91
 
 ## Dynamic playlists
 Dynamic playlists are playlists that are periodically updated with new maps. For example: the "Recently added maps" playlist always contains the most recently added maps. The "Improvement maps" playlist always contains the latest maps from the improvement page (see "Map recommendation" below).
