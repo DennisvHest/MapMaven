@@ -14,7 +14,7 @@
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
                 <Image Margin="7" Source="Platforms/Windows/trayicon.ico"/>
-                <TextBlock Grid.Column="1" Text="Map Maven" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" Margin="5,0,0,2"/>
+                <TextBlock Grid.Column="1" Text="Map Maven" Foreground="White" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" Margin="5,0,0,2"/>
             </Grid>
         </DataTemplate>
 

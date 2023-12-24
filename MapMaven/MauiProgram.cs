@@ -84,6 +84,11 @@ public static class MauiProgram
                         Platforms.Windows.WindowExtensions.MinimizeToTray();
                     };
 
+                    winuiAppWindow.TitleBar.ButtonForegroundColor = Windows.UI.Color.FromArgb(255, 255, 255, 255);
+                    winuiAppWindow.TitleBar.ButtonInactiveForegroundColor = Windows.UI.Color.FromArgb(255, 255, 255, 255);
+                    winuiAppWindow.TitleBar.ButtonBackgroundColor = Windows.UI.Color.FromArgb(255, 0, 0, 0);
+                    winuiAppWindow.TitleBar.ButtonInactiveBackgroundColor = Windows.UI.Color.FromArgb(255, 0, 0, 0);
+
                     Platforms.Windows.WindowExtensions.Hwnd = nativeWindowHandle;
                 });
             });
