@@ -17,6 +17,7 @@
     <PackageReference Include="TestableIO.System.IO.Abstractions" Version="20.0.4" />
     <PackageReference Include="TestableIO.System.IO.Abstractions.Wrappers" Version="20.0.4" />
     <PackageReference Include="xunit" Version="2.6.4" />
+    <PackageReference Include="Xunit.Microsoft.DependencyInjection" Version="8.0.5" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.5.6">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
@@ -29,6 +30,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\MapMaven.Core\MapMaven.Core.csproj" />
+    <ProjectReference Include="..\MapMaven.Infrastructure\MapMaven.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
