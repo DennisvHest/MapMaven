@@ -1,10 +1,8 @@
 ﻿using MapMaven.Core.ApiClients.ScoreSaber;
 using MapMaven.Core.Models;
-using MapMaven.Core.Models.Data.Leaderboards;
 using MapMaven.Core.Models.Data.RankedMaps;
 using MapMaven.Core.Services.Interfaces;
-using MapMaven.Core.Utilities.Scoresaber;
-using MapMaven_Core;
+using System.IO.Abstractions;
 using System.Net.Http.Json;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
@@ -19,6 +17,7 @@ namespace MapMaven.Core.Services.Leaderboards
         private readonly IApplicationSettingService _applicationSettingService;
         private readonly IApplicationEventService _applicationEventService;
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IFileSystem _fileSystem;
 
         private readonly BehaviorSubject<string?> _playerId = new(null);
         private readonly BehaviorSubject<Dictionary<string, RankedMapInfoItem>> _rankedMaps = new(new());
@@ -39,12 +38,14 @@ namespace MapMaven.Core.Services.Leaderboards
             ScoreSaberApiClient scoreSaber,
             IHttpClientFactory httpClientFactory,
             IApplicationSettingService applicationSettingService,
-            IApplicationEventService applicationEventService)
+            IApplicationEventService applicationEventService,
+            IFileSystem fileSystem)
         {
             _scoreSaber = scoreSaber;
             _httpClientFactory = httpClientFactory;
             _applicationSettingService = applicationSettingService;
             _applicationEventService = applicationEventService;
+            _fileSystem = fileSystem;
 
             var playerScores = _playerId.Select(playerId =>
             {
@@ -119,7 +120,7 @@ namespace MapMaven.Core.Services.Leaderboards
             var playerId = _applicationSettingService.ApplicationSettings
                 .Select(applicationSettings => applicationSettings.TryGetValue(PlayerIdSettingKey, out var playerId) ? playerId.StringValue : null)
                 .DistinctUntilChanged();
-                
+
             playerId.Subscribe(_playerId.OnNext);
 
             Active = playerId.Select(playerId => !string.IsNullOrEmpty(playerId));
@@ -139,10 +140,10 @@ namespace MapMaven.Core.Services.Leaderboards
         {
             var scoreSaberReplaysLocation = Path.Combine(BeatSaberFileService.GetUserDataLocation(beatSaberInstallLocation), "ScoreSaber", "Replays");
 
-            if (!Directory.Exists(scoreSaberReplaysLocation))
+            if (!_fileSystem.Directory.Exists(scoreSaberReplaysLocation))
                 return null;
 
-            var replayFileName = Directory.EnumerateFiles(scoreSaberReplaysLocation, "*.dat").FirstOrDefault();
+            var replayFileName = _fileSystem.Directory.EnumerateFiles(scoreSaberReplaysLocation, "*.dat").FirstOrDefault();
 
             if (string.IsNullOrEmpty(replayFileName))
                 return null;
