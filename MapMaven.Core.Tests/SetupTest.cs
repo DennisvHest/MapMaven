@@ -1,4 +1,5 @@
-﻿using MapMaven.Core.Services.Interfaces;
+﻿using MapMaven.Core.Models.Data;
+using MapMaven.Core.Services.Interfaces;
 using MapMaven.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using System.Reactive.Linq;
@@ -12,19 +13,27 @@ namespace MapMaven.Core.Tests
     {
         private readonly MapMavenContext _db;
         private readonly IApplicationSettingService _applicationSettingService;
-        private readonly IMapService _mapService;
+        private IMapService _mapService;
 
 
         public SetupTest(ITestOutputHelper testOutputHelper, MapMavenTestBedFixture fixture) : base(testOutputHelper, fixture)
         {
             _db = _fixture.GetService<MapMavenContext>(_testOutputHelper)!;
             _applicationSettingService = _fixture.GetService<IApplicationSettingService>(_testOutputHelper)!;
-            _mapService = _fixture.GetService<IMapService>(_testOutputHelper)!;
         }
 
         public async Task InitializeAsync()
         {
-            await _db.Database.MigrateAsync();
+            _db.ApplicationSettings.Add(new ApplicationSetting
+            {
+                Key = "BeatSaberInstallLocation",
+                StringValue = $"C:/{MapMavenTestBedFixture.MockFilesBasePath}"
+            });
+
+            await _db.SaveChangesAsync();
+
+            _mapService = _fixture.GetService<IMapService>(_testOutputHelper)!;
+
             await _applicationSettingService.LoadAsync();
             await _mapService.RefreshDataAsync();
         }
