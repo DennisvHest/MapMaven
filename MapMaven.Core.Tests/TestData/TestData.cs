@@ -23,5 +23,16 @@ namespace MapMaven.Core.Tests.TestData
                 Total = 100
             }
         };
+
+        public static ApiClients.BeatLeader.ScoreResponseWithMyScoreResponseWithMetadata TestBeatLeaderPlayerScores = new()
+        {
+            Data = new List<ApiClients.BeatLeader.ScoreResponseWithMyScore>(),
+            Metadata = new()
+            {
+                ItemsPerPage = 100,
+                Page = 1,
+                Total = 100
+            }
+        };
     }
 }

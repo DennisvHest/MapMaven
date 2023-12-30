@@ -44,6 +44,7 @@ namespace MapMaven.Core.Tests
         public async Task Test1()
         {
             await _applicationSettingService.AddOrUpdateAsync(ScoreSaberService.PlayerIdSettingKey, "test123");
+            await _applicationSettingService.AddOrUpdateAsync(BeatLeaderService.PlayerIdSettingKey, "test123");
 
             var maps = await _mapService.Maps.FirstAsync();
         }

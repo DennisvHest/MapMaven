@@ -36,7 +36,7 @@ namespace MapMaven.Core.Services.Leaderboards
 
         public IObservable<bool> Active { get; private set; }
 
-        private const string PlayerIdSettingKey = "BeatLeaderPlayerId";
+        public const string PlayerIdSettingKey = "BeatLeaderPlayerId";
 
         private static readonly TimeLimiter _beatLeaderApiLimit = TimeLimiter.GetFromMaxCountByInterval(10, TimeSpan.FromSeconds(10));
 
