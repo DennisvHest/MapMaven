@@ -10,6 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Dapper" Version="2.1.24" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="8.0.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
     <PackageReference Include="MockQueryable.Moq" Version="7.0.0" />
@@ -32,6 +33,12 @@
   <ItemGroup>
     <ProjectReference Include="..\MapMaven.Core\MapMaven.Core.csproj" />
     <ProjectReference Include="..\MapMaven.Infrastructure\MapMaven.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="TestData\TestData.db">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

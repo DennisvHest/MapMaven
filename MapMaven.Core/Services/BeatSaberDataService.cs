@@ -377,6 +377,9 @@ namespace MapMaven.Services
                 {
                     var audioFilePath = _fileSystem.Path.Combine(info.DirectoryPath, info.SongFileName);
 
+                    if (!_fileSystem.File.Exists(audioFilePath))
+                        return;
+
                     using (var audioFile = new VorbisReader(audioFilePath))
                     {
                         info.SongDuration = audioFile.TotalTime;

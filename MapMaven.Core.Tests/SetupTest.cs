@@ -27,7 +27,7 @@ namespace MapMaven.Core.Tests
             _db.ApplicationSettings.Add(new ApplicationSetting
             {
                 Key = "BeatSaberInstallLocation",
-                StringValue = $"C:/{MapMavenTestBedFixture.MockFilesBasePath}"
+                StringValue = $"{MapMavenTestBedFixture.MockFilesBasePath}"
             });
 
             await _db.SaveChangesAsync();
