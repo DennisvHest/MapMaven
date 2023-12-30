@@ -15,7 +15,6 @@ using Microsoft.Extensions.Hosting;
 using MapMaven.Utility;
 using Serilog.Events;
 using MapMaven.Services.Workers;
-using Newtonsoft.Json;
 
 namespace MapMaven;
 

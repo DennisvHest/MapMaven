@@ -1,10 +1,7 @@
 ﻿using MapMaven.Core.ApiClients.ScoreSaber;
 using MapMaven.Core.Models;
-using MapMaven.Core.Models.Data.Leaderboards;
 using MapMaven.Core.Models.Data.RankedMaps;
 using MapMaven.Core.Services.Interfaces;
-using MapMaven.Core.Utilities.Scoresaber;
-using MapMaven_Core;
 using System.Net.Http.Json;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;

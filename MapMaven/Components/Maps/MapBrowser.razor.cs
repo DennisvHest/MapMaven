@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Components;
-using MapMaven.Services;
 using Map = MapMaven.Models.Map;
 using MapMaven.Models;
 using MapMaven.Core.Models;
@@ -9,7 +8,6 @@ using MapMaven.Core.Services.Interfaces;
 using MapMaven.Core.Services;
 using System.Reactive.Linq;
 using MapMaven.Components.Shared;
-using Microsoft.Maui.ApplicationModel;
 using MapMaven.Components.Playlists;
 using MapMaven.Core.Services.Leaderboards.ScoreEstimation;
 

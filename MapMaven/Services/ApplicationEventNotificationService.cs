@@ -1,5 +1,4 @@
-﻿using MapMaven.Core.Services;
-using MapMaven.Core.Services.Interfaces;
+﻿using MapMaven.Core.Services.Interfaces;
 using MudBlazor;
 
 namespace MapMaven.Services

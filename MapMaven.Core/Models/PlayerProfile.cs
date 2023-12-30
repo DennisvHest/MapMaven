@@ -1,6 +1,4 @@
-﻿using MapMaven.Core.Services.Leaderboards;
-
-namespace MapMaven.Core.Models
+﻿namespace MapMaven.Core.Models
 {
     public class PlayerProfile
     {
