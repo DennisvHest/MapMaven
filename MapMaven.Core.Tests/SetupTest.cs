@@ -1,5 +1,6 @@
 ﻿using MapMaven.Core.Models.Data;
 using MapMaven.Core.Services.Interfaces;
+using MapMaven.Core.Services.Leaderboards;
 using MapMaven.Core.Tests.TestData;
 using MapMaven.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -42,6 +43,8 @@ namespace MapMaven.Core.Tests
         [Fact]
         public async Task Test1()
         {
+            await _applicationSettingService.AddOrUpdateAsync(ScoreSaberService.PlayerIdSettingKey, "test123");
+
             var maps = await _mapService.Maps.FirstAsync();
         }
 

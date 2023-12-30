@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using MapMaven.Core.ApiClients.ScoreSaber;
 using MapMaven.Core.Tests.TestData;
 using MapMaven.Infrastructure;
 using MapMaven.Infrastructure.Data;
@@ -7,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Moq;
 using System.IO.Abstractions;
 using System.IO.Abstractions.TestingHelpers;
 using System.Text.Json;
@@ -30,14 +32,14 @@ namespace MapMaven.Core.Tests
 
             services.AddSingleton<IFileSystem>(_ => MapMavenMockFileSystem.Get());
 
-            //var scoreSaberApiClientMock = new Mock<ScoreSaberApiClient>(MockBehavior.Strict);
+            var scoreSaberApiClientMock = new Mock<ScoreSaberApiClient>(MockBehavior.Strict);
 
-            //scoreSaberApiClientMock
-            //    .Setup(x => x.ScoresAsync(It.IsAny<string>(), It.IsAny<int?>(), It.IsAny<Sort?>(), It.IsAny<int?>(), It.IsAny<bool?>()))
-            //    .re
+            scoreSaberApiClientMock
+                .Setup(x => x.ScoresAsync(It.IsAny<string>(), It.IsAny<int?>(), It.IsAny<Sort?>(), It.IsAny<int?>(), It.IsAny<bool?>()))
+                .Returns(Task.FromResult(TestData.TestData.TestScoreSaberPlayerScores));
 
-            //services.RemoveAll<ScoreSaberApiClient>();
-            //services.AddSingleton<ScoreSaberApiClient>(() => );
+            services.RemoveAll<ScoreSaberApiClient>();
+            services.AddSingleton(scoreSaberApiClientMock.Object);
         }
 
         protected override ValueTask DisposeAsyncCore() => ValueTask.CompletedTask;

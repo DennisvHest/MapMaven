@@ -12,5 +12,16 @@ namespace MapMaven.Core.Tests.TestData
 
             return db.Query<MapInfo>("SELECT * FROM MapInfos");
         });
+
+        public static ApiClients.ScoreSaber.PlayerScoreCollection TestScoreSaberPlayerScores = new()
+        {
+            PlayerScores = new List<ApiClients.ScoreSaber.PlayerScore>(),
+            Metadata = new()
+            {
+                ItemsPerPage = 100,
+                Page = 1,
+                Total = 100
+            }
+        };
     }
 }

@@ -32,7 +32,7 @@ namespace MapMaven.Core.Services.Leaderboards
 
         public string? PlayerId => _playerId.Value;
 
-        private const string PlayerIdSettingKey = "PlayerId";
+        public const string PlayerIdSettingKey = "PlayerId";
 
         public ScoreSaberService(
             ScoreSaberApiClient scoreSaber,
