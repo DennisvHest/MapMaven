@@ -1,5 +1,4 @@
 ﻿using MapMaven.Core.Models;
-using MapMaven.Core.Models.Data.Leaderboards;
 using MapMaven.Core.Models.Data.RankedMaps;
 
 namespace MapMaven.Core.Services.Leaderboards

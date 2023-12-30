@@ -1,7 +1,5 @@
-using MapMaven.Core.Services;
 using MapMaven.Core.Services.Interfaces;
 using MapMaven.Core.Services.Leaderboards;
-using MapMaven.Services;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 

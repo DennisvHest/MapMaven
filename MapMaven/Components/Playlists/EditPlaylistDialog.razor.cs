@@ -1,11 +1,8 @@
 using MapMaven.Core.Services.Interfaces;
-using MapMaven.Extensions;
 using MapMaven.Models;
-using MapMaven.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using MudBlazor;
-using Image = System.Drawing.Image;
 
 namespace MapMaven.Components.Playlists
 {

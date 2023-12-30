@@ -3,8 +3,6 @@ using MapMaven.DataGatherers.ScoreSaber.Data;
 using MapMaven.DataGatherers.Shared;
 using Microsoft.EntityFrameworkCore;
 using RateLimiter;
-using System.Diagnostics;
-using System.Threading;
 
 namespace MapMaven.DataGatherers.ScoreSaber
 {
