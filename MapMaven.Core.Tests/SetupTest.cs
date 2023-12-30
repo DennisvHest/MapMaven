@@ -1,5 +1,6 @@
 ﻿using MapMaven.Core.Models.Data;
 using MapMaven.Core.Services.Interfaces;
+using MapMaven.Core.Tests.TestData;
 using MapMaven.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using System.Reactive.Linq;
@@ -27,7 +28,7 @@ namespace MapMaven.Core.Tests
             _db.ApplicationSettings.Add(new ApplicationSetting
             {
                 Key = "BeatSaberInstallLocation",
-                StringValue = $"{MapMavenTestBedFixture.MockFilesBasePath}"
+                StringValue = MapMavenMockFileSystem.MockFilesBasePath
             });
 
             await _db.SaveChangesAsync();

@@ -13,12 +13,4 @@ namespace MapMaven.Core.Tests.TestData
             return db.Query<MapInfo>("SELECT * FROM MapInfos");
         });
     }
-
-    public class TestMap
-    {
-        public MapInfo MapInfo { get; set; }
-        public string? Hash { get; set; }
-        public bool HasSongCoreHash { get; set; } = true;
-        public DateTimeOffset CreatedDateTime { get; set; } = DateTimeOffset.Now;
-    }
 }
