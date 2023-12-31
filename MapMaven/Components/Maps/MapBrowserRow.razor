@@ -55,8 +55,8 @@
 <SortableTemplateColumn
     T="Map"
     TProperty="double"
-    Property="m => m.AllPlayerScores.Any() ? m.AllPlayerScores.Max(x => x.Score.Accuracy) : 0"
-    SortBy="m => m.AllPlayerScores.Any() ? m.AllPlayerScores.Max(x => x.Score.Accuracy) : 0"
+    Property="m => m.AllPlayerScores.Any() ? m.AllPlayerScores.Max(x => x.Score.AccuracyWithMods) : 0"
+    SortBy="m => m.AllPlayerScores.Any() ? m.AllPlayerScores.Max(x => x.Score.AccuracyWithMods) : 0"
     Title="%"
     CellStyle="max-width: 150px; min-width: 150px;"
     Visible="!string.IsNullOrEmpty(PlayerId)">
@@ -65,7 +65,7 @@
         {
             var chipStyle = $"border: 1px solid {DifficultyDisplayUtils.GetColor(playerScore.Leaderboard?.Difficulty)}";
             <MudChip Size="Size.Small" Variant="Variant.Outlined" Style="@chipStyle">
-                @DifficultyDisplayUtils.GetShortName(playerScore.Leaderboard?.Difficulty) | @playerScore.Score.Accuracy.ToString("#0.##")%
+                @DifficultyDisplayUtils.GetShortName(playerScore.Leaderboard?.Difficulty) | @playerScore.Score.AccuracyWithMods.ToString("#0.##")%
             </MudChip>
         }
     </CellTemplate>

@@ -13,6 +13,9 @@ namespace MapMaven.Core.Models.DynamicPlaylists.MapInfo
         public double ModifiedScore { get; set; }
         public double Accuracy { get; set; }
 
+        [DisplayName("Accuracy with mods")]
+        public double AccuracyWithMods { get; set; }
+
         [DisplayName("Score PP")]
         public double Pp { get; set; }
         public double Weight { get; set; }

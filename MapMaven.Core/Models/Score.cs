@@ -9,6 +9,7 @@ namespace MapMaven.Core.Models
         public double BaseScore { get; set; }
         public double ModifiedScore { get; set; }
         public double Accuracy { get; set; }
+        public double AccuracyWithMods { get; set; }
         public double Pp { get; set; }
         public double Weight { get; set; }
         public double BadCuts { get; set; }
@@ -27,6 +28,7 @@ namespace MapMaven.Core.Models
             BaseScore = playerScore.Score.BaseScore;
             ModifiedScore = playerScore.Score.ModifiedScore;
             Accuracy = playerScore.Accuracy();
+            AccuracyWithMods = playerScore.AccuracyWithMods();
             Pp = playerScore.Score.Pp;
             Weight = playerScore.Score.Weight;
             BadCuts = playerScore.Score.BadCuts;
@@ -37,30 +39,14 @@ namespace MapMaven.Core.Models
             TimeSet = playerScore.Score.TimeSet;
         }
 
-        public Score(ApiClients.BeatLeader.Score score)
-        {
-            Id = score.Id.ToString();
-            Rank = score.Rank;
-            BaseScore = score.BaseScore;
-            ModifiedScore = score.ModifiedScore;
-            Accuracy = score.Accuracy * 100;
-            Pp = score.Pp;
-            Weight = score.Weight;
-            BadCuts = score.BadCuts;
-            MissedNotes = score.MissedNotes;
-            MaxCombo = score.MaxCombo;
-            FullCombo = score.FullCombo;
-            HasReplay = true;
-            TimeSet = DateTimeOffset.FromUnixTimeSeconds(score.Timepost);
-        }
-
         public Score(ApiClients.BeatLeader.ScoreResponseWithMyScore score)
         {
             Id = score.Id.ToString();
             Rank = score.Rank;
             BaseScore = score.BaseScore;
             ModifiedScore = score.ModifiedScore;
-            Accuracy = score.Accuracy * 100;
+            Accuracy = score.Accuracy();
+            AccuracyWithMods = score.AccuracyWithMods();
             Pp = score.Pp;
             Weight = score.Weight;
             BadCuts = score.BadCuts;
