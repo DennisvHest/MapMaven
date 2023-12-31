@@ -46,6 +46,7 @@ namespace MapMaven.Core.Models.DynamicPlaylists.MapInfo
             BaseScore = score.Score.BaseScore;
             ModifiedScore = score.Score.ModifiedScore;
             Accuracy = score.Score.Accuracy;
+            AccuracyWithMods = score.Score.AccuracyWithMods;
             Pp = score.Score.Pp;
             Weight = score.Score.Weight;
             BadCuts = score.Score.BadCuts;
