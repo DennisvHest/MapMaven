@@ -48,7 +48,8 @@
                 <TooltipContent>
                     <p style="text-align: left; max-width: 300px;">
                         <b>Accuracy:</b> @context.Item.HighestPlayerScore.Score.Accuracy.ToString("#0.##")%<br />
-                        <b>Accuracy with mods:</b> @context.Item.HighestPlayerScore.Score.AccuracyWithMods.ToString("#0.##")%
+                        <b>Accuracy with modifiers:</b> @context.Item.HighestPlayerScore.Score.AccuracyWithMods.ToString("#0.##")%<br />
+                        <b>Modifiers:</b> @string.Join(", ", context.Item.HighestPlayerScore.Score.Modifiers)
                     </p>
                 </TooltipContent>
             </MudTooltip>

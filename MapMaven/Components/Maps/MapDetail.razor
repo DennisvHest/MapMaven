@@ -155,8 +155,17 @@
                                                 <td>@playerScore.Score.Accuracy.ToString("#0.##")%</td>
                                             </tr>
                                             <tr>
-                                                <td><b>Accuracy with mods</b></td>
+                                                <td><b>Accuracy with modifiers</b></td>
                                                 <td>@playerScore.Score.AccuracyWithMods.ToString("#0.##")%</td>
+                                            </tr>
+                                            <tr>
+                                                <td><b>Modifiers</b></td>
+                                                <td>
+                                                    @foreach (var modifier in playerScore.Score.Modifiers)
+                                                    {
+                                                        <MudChip Size="Size.Small">@modifier</MudChip>
+                                                    }
+                                                </td>
                                             </tr>
                                             <tr>
                                                 <td><b>Rank</b></td>
