@@ -6,7 +6,7 @@ namespace MapMaven
     {
         public static readonly MudTheme Theme = new MudTheme()
         {
-            Palette = new Palette()
+            Palette = new PaletteDark()
             {
                 Primary = "#174167",
                 Secondary = "#8A0000",
