@@ -18,6 +18,7 @@ namespace MapMaven.Core.Models.Data.RankedMaps
         public int Obstacles { get; set; }
         public double NotesPerSecond { get; set; }
         public int MaxScore { get; set; }
+        public string GameMode { get; set; }
 
         public BeatLeaderRating? BeatLeaderRating { get; set; }
 
@@ -28,6 +29,10 @@ namespace MapMaven.Core.Models.Data.RankedMaps
             Stars = leaderboard.Stars;
             MaxPP = leaderboard.Stars * Scoresaber.PPPerStar;
             Difficulty = leaderboard.Difficulty.DifficultyName;
+            GameMode = leaderboard.Difficulty.GameMode;
+
+            if (GameMode == "SoloStandard")
+                GameMode = "Standard";
 
             SetBeatSaverMapDiffultyProperties(difficulty);
         }
@@ -45,6 +50,7 @@ namespace MapMaven.Core.Models.Data.RankedMaps
                 TechRating = leaderboard.Difficulty.TechRating.Value
             };
             Difficulty = leaderboard.Difficulty.DifficultyName;
+            GameMode = leaderboard.Difficulty.ModeName;
 
             SetBeatSaverMapDiffultyProperties(difficulty);
         }
