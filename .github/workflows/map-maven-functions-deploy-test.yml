@@ -1,0 +1,27 @@
+name: Publish Map Maven Functions TEST
+on:
+  push:
+    branches:
+    - development
+env:
+  AZURE_FUNCTIONAPP_NAME: map-maven-functions-test
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: MapMaven.Functions\published
+jobs:
+  build:
+    uses: ./.github/workflows/map-maven-functions-build.yml
+  deploy:
+    runs-on: windows-latest
+    needs: build
+    environment: test
+    steps:
+    - name: Download artifact from build job
+      uses: actions/download-artifact@v3
+      with:
+        name: functionapp
+        path: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
+    - name: Deploy to Azure Function App
+      uses: Azure/functions-action@v1
+      with:
+        app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
+        publish-profile: ${{ secrets.MAP_MAVEN_FUNCTIONS_TEST_PUBLISH_PROFILE }}
+        package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
