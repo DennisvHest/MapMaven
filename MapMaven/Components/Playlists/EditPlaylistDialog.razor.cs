@@ -20,6 +20,9 @@ namespace MapMaven.Components.Playlists
         [Parameter]
         public EditPlaylistModel EditPlaylistModel { get; set; }
 
+        [Parameter]
+        public bool SavePlaylistOnSubmit { get; set; } = true;
+
         bool NewPlaylist => EditPlaylistModel.FileName == null;
 
         protected override void OnInitialized()
@@ -30,6 +33,12 @@ namespace MapMaven.Components.Playlists
 
         async Task OnValidSubmit(EditContext context)
         {
+            if (!SavePlaylistOnSubmit)
+            {
+                MudDialog.Close(DialogResult.Ok(EditPlaylistModel));
+                return;
+            }
+
             Playlist playlist;
 
             if (NewPlaylist)
