@@ -13,7 +13,6 @@ using BeatSaber.SongHashing;
 using System.Reactive.Linq;
 using MapMaven.Core.Models.Data;
 using System.IO.Abstractions.TestingHelpers;
-using MapMaven.Core.ApiClients.ScoreSaber;
 using Microsoft.Extensions.DependencyInjection;
 using MapMaven.Models.Data;
 using MockQueryable.Moq;
@@ -446,7 +445,7 @@ public class DynamicPlaylistArrangementIntegrationTests
             }
         });
 
-        const string songDirectory = "C:\\Beat Saber_Data\\CustomLevels\\235b (Halcyon - splake)";
+        const string songDirectory = @"c:\beat saber_data\customlevels\235b (halcyon - splake)";
 
         _hasherMock
             .Setup(x => x.HashDirectoryAsync(songDirectory, It.IsAny<CancellationToken>()))

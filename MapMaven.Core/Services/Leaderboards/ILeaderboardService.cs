@@ -1,5 +1,4 @@
-﻿using MapMaven.Core.ApiClients.ScoreSaber;
-using MapMaven.Core.Models;
+﻿using MapMaven.Core.Models;
 using MapMaven.Core.Models.Data.Leaderboards;
 using MapMaven.Core.Models.Data.RankedMaps;
 using MapMaven.Core.Services.Leaderboards.ScoreEstimation;

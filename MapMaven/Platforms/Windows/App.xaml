@@ -4,5 +4,19 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:maui="using:Microsoft.Maui"
     xmlns:local="using:MapMaven.WinUI">
+    <Application.Resources>
 
+        <DataTemplate x:Key="MauiAppTitleBarTemplate">
+            <!--<Border Style="{StaticResource TitleBarStyle}" VerticalAlignment="Stretch"/>-->
+            <Grid Background="Black" Canvas.ZIndex="1" Height="32" VerticalAlignment="Stretch">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="32"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Image Margin="7" Source="Platforms/Windows/trayicon.ico"/>
+                <TextBlock Grid.Column="1" Text="Map Maven" Foreground="White" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" Margin="5,0,0,2"/>
+            </Grid>
+        </DataTemplate>
+
+    </Application.Resources>
 </maui:MauiWinUIApplication>

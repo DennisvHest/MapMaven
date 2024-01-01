@@ -13,12 +13,6 @@
             Leaderboard = new Leaderboard(playerScore.Leaderboard);
         }
 
-        public PlayerScore(ApiClients.BeatLeader.Score score)
-        {
-            Score = new Score(score);
-            Leaderboard = new Leaderboard(score.Leaderboard);
-        }
-
         public PlayerScore(ApiClients.BeatLeader.ScoreResponseWithMyScore score)
         {
             Score = new Score(score);

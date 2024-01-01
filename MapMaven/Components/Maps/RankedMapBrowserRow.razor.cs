@@ -1,7 +1,6 @@
 using MapMaven.Components.Shared;
 using MapMaven.Core.Models.Data;
 using MapMaven.Core.Services.Interfaces;
-using MapMaven.Services;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using System.Reactive.Linq;

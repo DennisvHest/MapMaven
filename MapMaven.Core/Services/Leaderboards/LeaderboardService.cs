@@ -4,10 +4,8 @@ using MapMaven.Core.Models.Data.Leaderboards;
 using MapMaven.Core.Models.Data.RankedMaps;
 using MapMaven.Core.Services.Interfaces;
 using MapMaven.Core.Services.Leaderboards.ScoreEstimation;
-using System;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace MapMaven.Core.Services.Leaderboards
 {

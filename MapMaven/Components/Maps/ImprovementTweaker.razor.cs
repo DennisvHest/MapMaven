@@ -1,12 +1,11 @@
+using MapMaven.Components.Playlists;
 using MapMaven.Components.Shared;
 using MapMaven.Core.Models;
 using MapMaven.Core.Models.Data;
 using MapMaven.Core.Services.Interfaces;
 using MapMaven.Models;
-using MapMaven.Services;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
-using System.Diagnostics;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using Map = MapMaven.Models.Map;
@@ -133,6 +132,30 @@ namespace MapMaven.Components.Maps
 
         async Task CreatePlaylistFromSelectedMaps()
         {
+            var editPlaylistDialog = await DialogService.ShowAsync<EditPlaylistDialog>(
+                title: "Add improvement playlist",
+                parameters: new()
+                {
+                    { nameof(EditPlaylistDialog.SavePlaylistOnSubmit), false },
+                    {
+                        nameof(EditPlaylistDialog.EditPlaylistModel),
+                        new EditPlaylistModel { Name = $"Improvement Maps ({DateTime.Now:dd-MM-yyyy HH:mm:ss})" }
+                    }
+                },
+                options: new()
+                {
+                    MaxWidth = MaxWidth.Small,
+                    FullWidth = true
+                }
+            );
+
+            var result = await editPlaylistDialog.Result;
+
+            if (result.Canceled)
+                return;
+
+            var playlistModel = (EditPlaylistModel)result.Data;
+
             var subject = new BehaviorSubject<ItemProgress<Map>>(null);
 
             var cancellationToken = new CancellationTokenSource();
@@ -147,12 +170,6 @@ namespace MapMaven.Components.Maps
                 config.RequireInteraction = true;
                 config.ShowCloseIcon = false;
             });
-
-            var playlistModel = new EditPlaylistModel
-            {
-                Name = $"Improvement Maps ({DateTime.Now:dd-MM-yyyy HH:mm:ss})",
-                FileName = $"Improvement Maps ({DateTime.Now:dd-MM-yyyy_HH-mm-ss})"
-            };
 
             var progress = new Progress<ItemProgress<Map>>(subject.OnNext);
 

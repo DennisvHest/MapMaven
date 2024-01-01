@@ -94,7 +94,7 @@
                                 {
                                     <tr>
                                         <td><b>Star difficulty</b></td>
-                                        <td>@difficulty.Stars</td>
+                                        <td>@difficulty.Stars?.ToString("#0.##")</td>
                                     </tr>
                                     <tr>
                                         <td><b>Max score</b></td>
@@ -153,6 +153,19 @@
                                             <tr>
                                                 <td><b>Accuracy</b></td>
                                                 <td>@playerScore.Score.Accuracy.ToString("#0.##")%</td>
+                                            </tr>
+                                            <tr>
+                                                <td><b>Accuracy with modifiers</b></td>
+                                                <td>@playerScore.Score.AccuracyWithMods.ToString("#0.##")%</td>
+                                            </tr>
+                                            <tr>
+                                                <td><b>Modifiers</b></td>
+                                                <td>
+                                                    @foreach (var modifier in playerScore.Score.Modifiers)
+                                                    {
+                                                        <MudChip Size="Size.Small">@modifier</MudChip>
+                                                    }
+                                                </td>
                                             </tr>
                                             <tr>
                                                 <td><b>Rank</b></td>

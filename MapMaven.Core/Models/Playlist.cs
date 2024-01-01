@@ -1,7 +1,6 @@
 ﻿using BeatSaberPlaylistsLib.Types;
 using MapMaven.Core.Models.DynamicPlaylists;
 using MapMaven.Extensions;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Image = System.Drawing.Image;
 

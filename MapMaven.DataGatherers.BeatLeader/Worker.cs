@@ -2,7 +2,6 @@ using ComposableAsync;
 using MapMaven.DataGatherers.BeatLeader.Data;
 using MapMaven.DataGatherers.Shared;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
 using RateLimiter;
 
 namespace MapMaven.DataGatherers.BeatLeader

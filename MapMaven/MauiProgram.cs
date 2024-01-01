@@ -15,7 +15,6 @@ using Microsoft.Extensions.Hosting;
 using MapMaven.Utility;
 using Serilog.Events;
 using MapMaven.Services.Workers;
-using Newtonsoft.Json;
 
 namespace MapMaven;
 
@@ -83,6 +82,11 @@ public static class MauiProgram
                         e.Cancel = true;
                         Platforms.Windows.WindowExtensions.MinimizeToTray();
                     };
+
+                    winuiAppWindow.TitleBar.ButtonForegroundColor = Windows.UI.Color.FromArgb(255, 255, 255, 255);
+                    winuiAppWindow.TitleBar.ButtonInactiveForegroundColor = Windows.UI.Color.FromArgb(255, 255, 255, 255);
+                    winuiAppWindow.TitleBar.ButtonBackgroundColor = Windows.UI.Color.FromArgb(255, 0, 0, 0);
+                    winuiAppWindow.TitleBar.ButtonInactiveBackgroundColor = Windows.UI.Color.FromArgb(255, 0, 0, 0);
 
                     Platforms.Windows.WindowExtensions.Hwnd = nativeWindowHandle;
                 });

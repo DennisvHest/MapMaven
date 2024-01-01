@@ -1,6 +1,4 @@
-﻿using BeatSaberPlaylistsLib.Legacy;
-using BeatSaberPlaylistsLib;
-using MapMaven.Models;
+﻿using MapMaven.Models;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using Playlist = MapMaven.Models.Playlist;
@@ -11,7 +9,6 @@ using MapMaven.Core.Models.DynamicPlaylists;
 using MapMaven.Core.Models.Data;
 using MapMaven.Core.Services.Interfaces;
 using MapMaven.Core.Extensions;
-using MapMaven.Core.Models;
 
 namespace MapMaven.Services
 {

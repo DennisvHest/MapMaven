@@ -13,6 +13,9 @@ namespace MapMaven.Core.Models.DynamicPlaylists.MapInfo
         public double ModifiedScore { get; set; }
         public double Accuracy { get; set; }
 
+        [DisplayName("Accuracy with modifiers")]
+        public double AccuracyWithMods { get; set; }
+
         [DisplayName("Score PP")]
         public double Pp { get; set; }
         public double Weight { get; set; }
@@ -43,6 +46,7 @@ namespace MapMaven.Core.Models.DynamicPlaylists.MapInfo
             BaseScore = score.Score.BaseScore;
             ModifiedScore = score.Score.ModifiedScore;
             Accuracy = score.Score.Accuracy;
+            AccuracyWithMods = score.Score.AccuracyWithMods;
             Pp = score.Score.Pp;
             Weight = score.Score.Weight;
             BadCuts = score.Score.BadCuts;

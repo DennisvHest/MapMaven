@@ -1,11 +1,8 @@
 using MapMaven.Core.Services.Interfaces;
-using MapMaven.Extensions;
 using MapMaven.Models;
-using MapMaven.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using MudBlazor;
-using Image = System.Drawing.Image;
 
 namespace MapMaven.Components.Playlists
 {
@@ -23,6 +20,9 @@ namespace MapMaven.Components.Playlists
         [Parameter]
         public EditPlaylistModel EditPlaylistModel { get; set; }
 
+        [Parameter]
+        public bool SavePlaylistOnSubmit { get; set; } = true;
+
         bool NewPlaylist => EditPlaylistModel.FileName == null;
 
         protected override void OnInitialized()
@@ -33,6 +33,12 @@ namespace MapMaven.Components.Playlists
 
         async Task OnValidSubmit(EditContext context)
         {
+            if (!SavePlaylistOnSubmit)
+            {
+                MudDialog.Close(DialogResult.Ok(EditPlaylistModel));
+                return;
+            }
+
             Playlist playlist;
 
             if (NewPlaylist)

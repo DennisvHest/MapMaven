@@ -303,9 +303,9 @@ namespace MapMaven.Services
 
                 if (mapHash == null)
                 {
-                    Debug.WriteLine($"Dit not find hash for {mapDirectory}");
+                    Debug.WriteLine($"Dit not find hash for {normalizedMapDirectory}");
 
-                    var hashResult = await _beatmapHasher.HashDirectoryAsync(mapDirectory, new CancellationToken());
+                    var hashResult = await _beatmapHasher.HashDirectoryAsync(normalizedMapDirectory, new CancellationToken());
 
                     if (hashResult.ResultType != HashResultType.Success)
                         return null;
@@ -320,7 +320,7 @@ namespace MapMaven.Services
                 }
                 else
                 {
-                    var infoFilePath = _fileSystem.Path.Combine(mapDirectory, "Info.dat");
+                    var infoFilePath = _fileSystem.Path.Combine(normalizedMapDirectory, "Info.dat");
                     var mapInfoText = await _fileSystem.File.ReadAllTextAsync(infoFilePath);
 
                     info = JsonSerializer.Deserialize<MapInfo>(mapInfoText);
@@ -336,7 +336,7 @@ namespace MapMaven.Services
                 if (string.IsNullOrEmpty(info.Id))
                     return null;
 
-                var mapDirectoryInfo = _fileSystem.DirectoryInfo.New(mapDirectory);
+                var mapDirectoryInfo = _fileSystem.DirectoryInfo.New(normalizedMapDirectory);
 
                 info.AddedDateTime = mapDirectoryInfo.CreationTime;
 
