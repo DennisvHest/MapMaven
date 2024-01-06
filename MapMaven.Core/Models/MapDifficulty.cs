@@ -15,6 +15,7 @@ namespace MapMaven.Core.Models
         public int Obstacles { get; set; }
         public double NotesPerSecond { get; set; }
         public int MaxScore { get; set; }
+        public string GameMode { get; set; }
 
         public MapDifficulty() { }
 
@@ -27,6 +28,7 @@ namespace MapMaven.Core.Models
             Bombs = beatmapDifficulty.Bombs;
             Obstacles = beatmapDifficulty.Obstacles;
             NotesPerSecond = beatmapDifficulty.NPS;
+            GameMode = beatmapDifficulty.Characteristic.ToString();
         }
 
         public MapDifficulty(RankedMapDifficultyInfo difficultyInfo)
@@ -41,6 +43,7 @@ namespace MapMaven.Core.Models
             Obstacles = difficultyInfo.Obstacles;
             NotesPerSecond = difficultyInfo.NotesPerSecond;
             MaxScore = difficultyInfo.MaxScore;
+            GameMode = difficultyInfo.GameMode;
         }
     }
 }

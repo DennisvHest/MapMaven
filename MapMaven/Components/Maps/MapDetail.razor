@@ -86,6 +86,13 @@
                                                 }
                                             </MudChip>
                                         }
+
+                                        @if (!string.IsNullOrEmpty(difficulty.GameMode) && difficulty.GameMode != "Standard")
+                                        {
+                                            <MudChip Size="Size.Small" Variant="Variant.Outlined" Class="ml-2">
+                                                @difficulty.GameMode
+                                            </MudChip>
+                                        }
                                     </td>
                                 </tr>
                             </thead>
