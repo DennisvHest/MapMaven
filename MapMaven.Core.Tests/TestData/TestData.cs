@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using MapMaven.Core.Models.Data.RankedMaps;
 using MapMaven.Models.Data;
 using Microsoft.Data.Sqlite;
 
@@ -33,6 +34,16 @@ namespace MapMaven.Core.Tests.TestData
                 Page = 1,
                 Total = 100
             }
+        };
+
+        public static RankedMapInfo TestScoreSaberRankedMaps = new()
+        {
+            RankedMaps = new()
+        };
+
+        public static RankedMapInfo TestBeatLeaderRankedMaps = new()
+        {
+            RankedMaps = new()
         };
     }
 }

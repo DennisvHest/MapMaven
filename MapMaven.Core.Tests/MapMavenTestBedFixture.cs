@@ -9,7 +9,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Moq;
+using RichardSzalay.MockHttp;
 using System.IO.Abstractions;
+using System.Net.Mime;
+using System.Text.Json;
 using Xunit.Microsoft.DependencyInjection;
 using Xunit.Microsoft.DependencyInjection.Abstracts;
 
@@ -32,6 +35,8 @@ namespace MapMaven.Core.Tests
 
             MockScoreSaberClient(services);
             MockBeatLeaderClient(services);
+
+            MockRankedMapsHttpClient(services);
         }
 
         private static void MockScoreSaberClient(IServiceCollection services)
@@ -56,6 +61,31 @@ namespace MapMaven.Core.Tests
 
             services.RemoveAll<BeatLeaderApiClient>();
             services.AddSingleton(beatLeaderApiClientMock.Object);
+        }
+
+        private static void MockRankedMapsHttpClient(IServiceCollection services)
+        {
+            var mockHttp = new MockHttpMessageHandler();
+
+            mockHttp
+                .When("/scoresaber/ranked-maps.json")
+                .Respond(MediaTypeNames.Application.Json, JsonSerializer.Serialize(TestData.TestData.TestScoreSaberRankedMaps));
+
+            mockHttp
+                .When("/beatleader/ranked-maps.json")
+                .Respond(MediaTypeNames.Application.Json, JsonSerializer.Serialize(TestData.TestData.TestBeatLeaderPlayerScores));
+
+            var mockHttpClientFactory = new Mock<IHttpClientFactory>(MockBehavior.Strict);
+
+            var mockHttpClient = mockHttp.ToHttpClient();
+            mockHttpClient.BaseAddress = new Uri("https://localhost");
+
+            mockHttpClientFactory
+                .Setup(x => x.CreateClient("MapMavenFiles"))
+                .Returns(mockHttpClient);
+
+            services.RemoveAll<IHttpClientFactory>();
+            services.AddSingleton(mockHttpClientFactory.Object);
         }
 
         protected override ValueTask DisposeAsyncCore() => ValueTask.CompletedTask;
