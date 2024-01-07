@@ -7,7 +7,6 @@ using MapMaven.Core.Services;
 using MapMaven.Core.Tests.TestData;
 using MapMaven.Infrastructure;
 using MapMaven.Infrastructure.Data;
-using MapMaven.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -36,6 +35,7 @@ namespace MapMaven.Core.Tests
 
             services.RemoveAll<DbContextOptions<MapMavenContext>>();
             services.AddDbContext<MapMavenContext>(options =>
+                // An in-memory database is created for every test collection (CollectionDefinition attribute)
                 options.UseInMemoryDatabase($"MapMavenTest-{TestFixtureId}")
             );
 
@@ -102,26 +102,29 @@ namespace MapMaven.Core.Tests
 
         protected override IEnumerable<TestAppSettings> GetTestAppSettings() => Enumerable.Empty<TestAppSettings>();
 
+        /// <summary>
+        /// Load initial data before every integration test collection starts
+        /// </summary>
         public async Task InitializeAsync()
         {
             var testOutputHelper = new NoOpTestOutputHelper();
 
             using var scope = GetServiceProvider(testOutputHelper).CreateScope();
 
-            var Db = scope.ServiceProvider.GetService<IDataStore>()!;
-            var ApplicationSettingService = scope.ServiceProvider.GetService<IApplicationSettingService>()!;
-            var MapService = scope.ServiceProvider.GetService<IMapService>()!;
+            var db = scope.ServiceProvider.GetService<IDataStore>()!;
+            var applicationSettingService = scope.ServiceProvider.GetService<IApplicationSettingService>()!;
+            var mapService = scope.ServiceProvider.GetService<IMapService>()!;
 
-            Db.Set<ApplicationSetting>().Add(new ApplicationSetting
+            db.Set<ApplicationSetting>().Add(new ApplicationSetting
             {
                 Key = "BeatSaberInstallLocation",
                 StringValue = MapMavenMockFileSystem.MockFilesBasePath
             });
 
-            await Db.SaveChangesAsync();
+            await db.SaveChangesAsync();
 
-            await ApplicationSettingService.LoadAsync();
-            await MapService.RefreshDataAsync();
+            await applicationSettingService.LoadAsync();
+            await mapService.RefreshDataAsync();
         }
 
         Task IAsyncLifetime.DisposeAsync() => Task.CompletedTask;
