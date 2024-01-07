@@ -16,7 +16,26 @@ namespace MapMaven.Core.Tests.TestData
 
         public static ApiClients.ScoreSaber.PlayerScoreCollection TestScoreSaberPlayerScores = new()
         {
-            PlayerScores = new List<ApiClients.ScoreSaber.PlayerScore>(),
+            PlayerScores = new List<ApiClients.ScoreSaber.PlayerScore>
+            {
+                new()
+                {
+                    Leaderboard = new()
+                    {
+                        Id = 1,
+                        SongHash = "051709ED4264F353EA329FB8803780E45D3BF8E5",
+                        Difficulty = new()
+                        {
+                            DifficultyRaw = "ExpertPlus_SoloStandard"
+                        }
+                    },
+                    Score = new()
+                    {
+                        Id = 1,
+                        BaseScore = 100,
+                    }
+                }
+            },
             Metadata = new()
             {
                 ItemsPerPage = 100,
@@ -27,7 +46,25 @@ namespace MapMaven.Core.Tests.TestData
 
         public static ApiClients.BeatLeader.ScoreResponseWithMyScoreResponseWithMetadata TestBeatLeaderPlayerScores = new()
         {
-            Data = new List<ApiClients.BeatLeader.ScoreResponseWithMyScore>(),
+            Data = new List<ApiClients.BeatLeader.ScoreResponseWithMyScore>
+            {
+                new()
+                {
+                    Leaderboard = new()
+                    {
+                        Id = "1",
+                        Song = new()
+                        {
+                            Hash = "051709ED4264F353EA329FB8803780E45D3BF8E5",
+                        },
+                        Difficulty = new()
+                        {
+                            DifficultyName = "ExpertPlus"
+                        }
+                    },
+                    BaseScore = 200
+                }
+            },
             Metadata = new()
             {
                 ItemsPerPage = 100,

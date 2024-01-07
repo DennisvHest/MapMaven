@@ -97,21 +97,22 @@ namespace MapMaven.Core.Services.Leaderboards
                     while ((page - 1) * 100 < totalScores);
 
                     return playerScores;
+                })
+                .Catch((Exception exception) =>
+                {
+                    _applicationEventService.RaiseError(new ErrorEvent
+                    {
+                        Exception = exception,
+                        Message = "Failed to load player scores from ScoreSaber."
+                    });
+
+                    return Observable.Return(Enumerable.Empty<PlayerScore>());
                 });
             }).Concat().Replay(1);
 
             playerScores.Connect();
 
-            PlayerScores = playerScores.Catch((Exception exception) =>
-            {
-                _applicationEventService.RaiseError(new ErrorEvent
-                {
-                    Exception = exception,
-                    Message = "Failed to load player scores from ScoreSaber."
-                });
-
-                return Observable.Return(Enumerable.Empty<PlayerScore>());
-            });
+            PlayerScores = playerScores;
 
             PlayerProfile = _playerId
                 .Select(playerId =>
