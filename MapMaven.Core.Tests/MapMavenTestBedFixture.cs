@@ -59,6 +59,7 @@ namespace MapMaven.Core.Tests
 
             services.RemoveAll<ScoreSaberApiClient>();
             services.AddSingleton(scoreSaberApiClientMock.Object);
+            services.AddSingleton(scoreSaberApiClientMock);
         }
 
         private static void MockBeatLeaderClient(IServiceCollection services)
@@ -66,11 +67,12 @@ namespace MapMaven.Core.Tests
             var beatLeaderApiClientMock = new Mock<BeatLeaderApiClient>(MockBehavior.Strict);
 
             beatLeaderApiClientMock
-                .Setup(x => x.ScoresAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Order?>(), It.IsAny<int?>(), It.IsAny<int?>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Requirements?>(), It.IsAny<ScoreFilterStatus>(), It.IsAny<LeaderboardContexts?>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<float?>(), It.IsAny<float?>(), It.IsAny<int?>(), It.IsAny<int?>(), It.IsAny<int?>()))
+                .Setup(x => x.ScoresAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Order?>(), It.IsAny<int?>(), It.IsAny<int?>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Requirements?>(), It.IsAny<ScoreFilterStatus?>(), It.IsAny<LeaderboardContexts?>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<float?>(), It.IsAny<float?>(), It.IsAny<int?>(), It.IsAny<int?>(), It.IsAny<int?>()))
                 .Returns(Task.FromResult(TestData.TestData.TestBeatLeaderPlayerScores));
 
             services.RemoveAll<BeatLeaderApiClient>();
             services.AddSingleton(beatLeaderApiClientMock.Object);
+            services.AddSingleton(beatLeaderApiClientMock);
         }
 
         private static void MockRankedMapsHttpClient(IServiceCollection services)
