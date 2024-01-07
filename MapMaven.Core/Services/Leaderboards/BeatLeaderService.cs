@@ -103,7 +103,7 @@ namespace MapMaven.Core.Services.Leaderboards
                     _applicationEventService.RaiseError(new ErrorEvent
                     {
                         Exception = exception,
-                        Message = "Failed to load player scores from ScoreSaber."
+                        Message = "Failed to load player scores from BeatLeader."
                     });
 
                     return Observable.Return(Enumerable.Empty<PlayerScore>());
