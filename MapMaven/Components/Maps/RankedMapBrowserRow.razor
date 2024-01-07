@@ -41,7 +41,18 @@
     <CellTemplate>
         @if (context.Item.HighestPlayerScore != null)
         {
-            <MudChip Size="Size.Small">@context.Item.HighestPlayerScore.Score.Accuracy.ToString("#0.##") %</MudChip>
+            <MudTooltip RootClass="d-flex">
+                <ChildContent>
+                    <MudChip Size="Size.Small">@context.Item.HighestPlayerScore.Score.AccuracyWithMods.ToString("#0.##") %</MudChip>
+                </ChildContent>
+                <TooltipContent>
+                    <p style="text-align: left; max-width: 300px;">
+                        <b>Accuracy:</b> @context.Item.HighestPlayerScore.Score.Accuracy.ToString("#0.##")%<br />
+                        <b>Accuracy with modifiers:</b> @context.Item.HighestPlayerScore.Score.AccuracyWithMods.ToString("#0.##")%<br />
+                        <b>Modifiers:</b> @string.Join(", ", context.Item.HighestPlayerScore.Score.Modifiers)
+                    </p>
+                </TooltipContent>
+            </MudTooltip>
             <MudChip Size="Size.Small">@context.Item.HighestPlayerScore.Score.Pp.ToString("#0.##") pp</MudChip>
         }
     </CellTemplate>
@@ -55,10 +66,20 @@
         {
             @foreach (var scoreEstimate in context.Item.ScoreEstimates)
             {
-                <MudChip Color="Color.Primary" Size="Size.Small">
-                    @scoreEstimate.Accuracy.ToString("#0.##") % |
-                    +@scoreEstimate.PPIncrease.ToString("#0.##") pp
-                </MudChip>
+                <MudTooltip RootClass="d-flex">
+                    <ChildContent>
+                        <MudChip Color="Color.Primary" Size="Size.Small">
+                            @scoreEstimate.Accuracy.ToString("#0.##")% |
+                            +@scoreEstimate.PPIncrease.ToString("#0.##") pp
+                        </MudChip>
+                    </ChildContent>
+                    <TooltipContent>
+                        <p style="text-align: left; max-width: 300px;">
+                            <b>Estimated accuracy:</b> @scoreEstimate.Accuracy.ToString("#0.##")%<br />
+                            <b>Estimated PP increase:</b> +@scoreEstimate.PPIncrease.ToString("#0.##") pp
+                        </p>
+                    </TooltipContent>
+                </MudTooltip>
             }
         }
     </CellTemplate>
