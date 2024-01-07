@@ -1,9 +1,13 @@
 ﻿using Dapper;
 using MapMaven.Core.ApiClients.BeatLeader;
 using MapMaven.Core.ApiClients.ScoreSaber;
+using MapMaven.Core.Models.Data;
+using MapMaven.Core.Services.Interfaces;
+using MapMaven.Core.Services;
 using MapMaven.Core.Tests.TestData;
 using MapMaven.Infrastructure;
 using MapMaven.Infrastructure.Data;
+using MapMaven.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,18 +19,24 @@ using System.Net.Mime;
 using System.Text.Json;
 using Xunit.Microsoft.DependencyInjection;
 using Xunit.Microsoft.DependencyInjection.Abstracts;
+using Xunit.Abstractions;
 
 namespace MapMaven.Core.Tests
 {
-    public class MapMavenTestBedFixture : TestBedFixture
+    /// <summary>
+    /// Sets up the test bed for Map Maven tests where only the file system, cache db and api calls are mocked.
+    /// </summary>
+    public class MapMavenTestBedFixture : TestBedFixture, IAsyncLifetime
     {
+        protected Guid TestFixtureId = Guid.NewGuid();
+
         protected override void AddServices(IServiceCollection services, IConfiguration? configuration)
         {
             services.AddMapMaven(useStatefulServices: true);
 
             services.RemoveAll<DbContextOptions<MapMavenContext>>();
             services.AddDbContext<MapMavenContext>(options =>
-                options.UseInMemoryDatabase("MapMavenTest")
+                options.UseInMemoryDatabase($"MapMavenTest-{TestFixtureId}")
             );
 
             SqlMapper.AddTypeHandler(new TimeSpanSqlMapper());
@@ -91,5 +101,36 @@ namespace MapMaven.Core.Tests
         protected override ValueTask DisposeAsyncCore() => ValueTask.CompletedTask;
 
         protected override IEnumerable<TestAppSettings> GetTestAppSettings() => Enumerable.Empty<TestAppSettings>();
+
+        public async Task InitializeAsync()
+        {
+            var testOutputHelper = new NoOpTestOutputHelper();
+
+            using var scope = GetServiceProvider(testOutputHelper).CreateScope();
+
+            var Db = scope.ServiceProvider.GetService<IDataStore>()!;
+            var ApplicationSettingService = scope.ServiceProvider.GetService<IApplicationSettingService>()!;
+            var MapService = scope.ServiceProvider.GetService<IMapService>()!;
+
+            Db.Set<ApplicationSetting>().Add(new ApplicationSetting
+            {
+                Key = "BeatSaberInstallLocation",
+                StringValue = MapMavenMockFileSystem.MockFilesBasePath
+            });
+
+            await Db.SaveChangesAsync();
+
+            await ApplicationSettingService.LoadAsync();
+            await MapService.RefreshDataAsync();
+        }
+
+        Task IAsyncLifetime.DisposeAsync() => Task.CompletedTask;
+    }
+
+    class NoOpTestOutputHelper : ITestOutputHelper
+    {
+        public void WriteLine(string message) { }
+
+        public void WriteLine(string format, params object[] args) { }
     }
 }
