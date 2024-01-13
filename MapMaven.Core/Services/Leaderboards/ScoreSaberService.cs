@@ -2,6 +2,7 @@
 using MapMaven.Core.Models;
 using MapMaven.Core.Models.Data.RankedMaps;
 using MapMaven.Core.Services.Interfaces;
+using System.IO.Abstractions;
 using MapMaven.Core.Utilities;
 using Microsoft.Extensions.Logging;
 using System.Net.Http.Json;
@@ -18,6 +19,7 @@ namespace MapMaven.Core.Services.Leaderboards
         private readonly IApplicationSettingService _applicationSettingService;
         private readonly IApplicationEventService _applicationEventService;
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IFileSystem _fileSystem;
 
         private readonly ILogger<ScoreSaberService> _logger;
 
@@ -35,19 +37,21 @@ namespace MapMaven.Core.Services.Leaderboards
 
         public string? PlayerId => _playerId.Value;
 
-        private const string PlayerIdSettingKey = "PlayerId";
+        public const string PlayerIdSettingKey = "PlayerId";
 
         public ScoreSaberService(
             ScoreSaberApiClient scoreSaber,
             IHttpClientFactory httpClientFactory,
             IApplicationSettingService applicationSettingService,
             IApplicationEventService applicationEventService,
+            IFileSystem fileSystem,
             ILogger<ScoreSaberService> logger)
         {
             _scoreSaber = scoreSaber;
             _httpClientFactory = httpClientFactory;
             _applicationSettingService = applicationSettingService;
             _applicationEventService = applicationEventService;
+            _fileSystem = fileSystem;
             _logger = logger;
 
             var playerScores = _playerId.Select(playerId =>
@@ -80,21 +84,22 @@ namespace MapMaven.Core.Services.Leaderboards
                     while ((page - 1) * 100 < totalScores);
 
                     return playerScores;
+                })
+                .Catch((Exception exception) =>
+                {
+                    _applicationEventService.RaiseError(new ErrorEvent
+                    {
+                        Exception = exception,
+                        Message = "Failed to load player scores from ScoreSaber."
+                    });
+
+                    return Observable.Return(Enumerable.Empty<Models.PlayerScore>());
                 });
             }).Concat().Replay(1);
 
             playerScores.Connect();
 
-            PlayerScores = playerScores.Catch((Exception exception) =>
-            {
-                _applicationEventService.RaiseError(new ErrorEvent
-                {
-                    Exception = exception,
-                    Message = "Failed to load player scores from ScoreSaber."
-                });
-
-                return Observable.Return(Enumerable.Empty<Models.PlayerScore>());
-            });
+            PlayerScores = playerScores;
 
             PlayerProfile = _playerId.Select(playerId =>
             {
@@ -145,10 +150,10 @@ namespace MapMaven.Core.Services.Leaderboards
         {
             var scoreSaberReplaysLocation = Path.Combine(BeatSaberFileService.GetUserDataLocation(beatSaberInstallLocation), "ScoreSaber", "Replays");
 
-            if (!Directory.Exists(scoreSaberReplaysLocation))
+            if (!_fileSystem.Directory.Exists(scoreSaberReplaysLocation))
                 return null;
 
-            var replayFileName = Directory.EnumerateFiles(scoreSaberReplaysLocation, "*.dat").FirstOrDefault();
+            var replayFileName = _fileSystem.Directory.EnumerateFiles(scoreSaberReplaysLocation, "*.dat").FirstOrDefault();
 
             if (string.IsNullOrEmpty(replayFileName))
                 return null;

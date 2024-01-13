@@ -7,6 +7,7 @@ using MapMaven.Core.Services.Interfaces;
 using MapMaven.Core.Utilities;
 using Microsoft.Extensions.Logging;
 using RateLimiter;
+using System.IO.Abstractions;
 using System.Net.Http.Json;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
@@ -19,6 +20,7 @@ namespace MapMaven.Core.Services.Leaderboards
         private readonly IApplicationSettingService _applicationSettingService;
         private readonly IApplicationEventService _applicationEventService;
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IFileSystem _fileSystem;
 
         private readonly ILogger<BeatLeaderService> _logger;
 
@@ -40,7 +42,7 @@ namespace MapMaven.Core.Services.Leaderboards
 
         public IObservable<bool> Active { get; private set; }
 
-        private const string PlayerIdSettingKey = "BeatLeaderPlayerId";
+        public const string PlayerIdSettingKey = "BeatLeaderPlayerId";
 
         private static readonly TimeLimiter _beatLeaderApiLimit = TimeLimiter.GetFromMaxCountByInterval(10, TimeSpan.FromSeconds(10));
 
@@ -49,12 +51,14 @@ namespace MapMaven.Core.Services.Leaderboards
             IApplicationSettingService applicationSettingService,
             IApplicationEventService applicationEventService,
             IHttpClientFactory httpClientFactory,
+            IFileSystem fileSystem,
             ILogger<BeatLeaderService> logger)
         {
             _beatLeader = beatLeader;
             _applicationSettingService = applicationSettingService;
             _applicationEventService = applicationEventService;
             _httpClientFactory = httpClientFactory;
+            _fileSystem = fileSystem;
             _logger = logger;
 
             var playerScores = _playerId.Select(playerId =>
@@ -101,21 +105,22 @@ namespace MapMaven.Core.Services.Leaderboards
                     while ((page - 1) * 100 < totalScores);
 
                     return playerScores;
+                })
+                .Catch((Exception exception) =>
+                {
+                    _applicationEventService.RaiseError(new ErrorEvent
+                    {
+                        Exception = exception,
+                        Message = "Failed to load player scores from BeatLeader."
+                    });
+
+                    return Observable.Return(Enumerable.Empty<PlayerScore>());
                 });
             }).Concat().Replay(1);
 
             playerScores.Connect();
 
-            PlayerScores = playerScores.Catch((Exception exception) =>
-            {
-                _applicationEventService.RaiseError(new ErrorEvent
-                {
-                    Exception = exception,
-                    Message = "Failed to load player scores from ScoreSaber."
-                });
-
-                return Observable.Return(Enumerable.Empty<PlayerScore>());
-            });
+            PlayerScores = playerScores;
 
             PlayerProfile = _playerId
                 .Select(playerId =>
@@ -154,15 +159,15 @@ namespace MapMaven.Core.Services.Leaderboards
         {
             var beatLeaderReplaysLocation = Path.Combine(BeatSaberFileService.GetUserDataLocation(beatSaberInstallLocation), "BeatLeader", "Replays");
 
-            if (!Directory.Exists(beatLeaderReplaysLocation))
+            if (!_fileSystem.Directory.Exists(beatLeaderReplaysLocation))
                 return null;
 
-            var replayFileName = Directory.EnumerateFiles(beatLeaderReplaysLocation, "*.bsor").FirstOrDefault();
+            var replayFileName = _fileSystem.Directory.EnumerateFiles(beatLeaderReplaysLocation, "*.bsor").FirstOrDefault();
 
             if (string.IsNullOrEmpty(replayFileName))
                 return null;
 
-            var replayFile = new FileInfo(replayFileName);
+            var replayFile = _fileSystem.FileInfo.New(replayFileName);
 
             var playerId = replayFile.Name
                 .Split('-')

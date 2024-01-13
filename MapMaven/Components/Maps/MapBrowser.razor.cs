@@ -145,7 +145,8 @@ namespace MapMaven.Components.Maps
             {
                 var searchString = SearchString.Trim();
 
-                searchFilter = $"{map.Name} {map.SongAuthorName} {map.MapAuthorName}".Contains(searchString, StringComparison.OrdinalIgnoreCase);
+                searchFilter = map.Hash.Equals(searchString, StringComparison.OrdinalIgnoreCase)
+                    || $"{map.Name} {map.SongAuthorName} {map.MapAuthorName}".Contains(searchString, StringComparison.OrdinalIgnoreCase);
             }
 
             var mapHashFilter = MapHashFilter switch

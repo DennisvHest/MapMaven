@@ -14,8 +14,15 @@ namespace MapMaven.Infrastructure.Data
 
         public static string DbPath => Path.Join(BeatSaberFileService.AppDataLocation, "MapMaven.db");
 
+        public MapMavenContext() { }
+
+        public MapMavenContext(DbContextOptions<MapMavenContext> options) : base(options) { }
+
         protected override void OnConfiguring(DbContextOptionsBuilder options)
         {
+            if (options.IsConfigured)
+                return;
+
             if (!Directory.Exists(BeatSaberFileService.AppDataLocation))
                 Directory.CreateDirectory(BeatSaberFileService.AppDataLocation);
 

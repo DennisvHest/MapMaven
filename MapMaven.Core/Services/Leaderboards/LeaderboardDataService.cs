@@ -2,6 +2,7 @@
 using MapMaven.Core.Services.Interfaces;
 using MapMaven.Core.Utilities;
 using Microsoft.Extensions.Logging;
+using System.IO.Abstractions;
 using System.Reactive.Subjects;
 using System.Text.Json;
 
@@ -13,6 +14,7 @@ namespace MapMaven.Core.Services.Leaderboards
 
         private readonly IApplicationEventService _applicationEventService;
         private readonly ILogger<LeaderboardDataService> _logger;
+        private readonly IFileSystem _fileSystem;
 
         private readonly CachedValue<LeaderboardData?> _leaderboardData;
 
@@ -20,11 +22,12 @@ namespace MapMaven.Core.Services.Leaderboards
 
         public static string LeaderboardDataPath => Path.Join(BeatSaberFileService.AppDataCacheLocation, "leaderboard-data.json");
 
-        public LeaderboardDataService(IHttpClientFactory httpClientFactory, IApplicationEventService applicationEventService, ILogger<LeaderboardDataService> logger)
+        public LeaderboardDataService(IHttpClientFactory httpClientFactory, IApplicationEventService applicationEventService, ILogger<LeaderboardDataService> logger, IFileSystem fileSystem)
         {
             _httpClientFactory = httpClientFactory;
             _applicationEventService = applicationEventService;
             _logger = logger;
+            _fileSystem = fileSystem;
 
             _leaderboardData = new(GetLeaderboardDataAsync, TimeSpan.FromHours(6));
         }
@@ -52,13 +55,13 @@ namespace MapMaven.Core.Services.Leaderboards
                 {
                     _logger.LogError(ex, "Failed to load leaderboard data from server. Falling back to local cache.");
 
-                    leaderboardDataJson = await File.ReadAllTextAsync(LeaderboardDataPath);
+                    leaderboardDataJson = await _fileSystem.File.ReadAllTextAsync(LeaderboardDataPath);
                 }
 
-                if (!Directory.Exists(BeatSaberFileService.AppDataCacheLocation))
-                    Directory.CreateDirectory(BeatSaberFileService.AppDataCacheLocation);
+                if (!_fileSystem.Directory.Exists(BeatSaberFileService.AppDataCacheLocation))
+                    _fileSystem.Directory.CreateDirectory(BeatSaberFileService.AppDataCacheLocation);
 
-                await File.WriteAllTextAsync(LeaderboardDataPath, leaderboardDataJson);
+                await _fileSystem.File.WriteAllTextAsync(LeaderboardDataPath, leaderboardDataJson);
 
                 return JsonSerializer.Deserialize<LeaderboardData>(leaderboardDataJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
             }
