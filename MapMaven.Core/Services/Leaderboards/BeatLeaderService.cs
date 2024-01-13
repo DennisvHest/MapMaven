@@ -5,6 +5,7 @@ using MapMaven.Core.Models.Data.Leaderboards.ScoreSaber;
 using MapMaven.Core.Models.Data.RankedMaps;
 using MapMaven.Core.Services.Interfaces;
 using MapMaven.Core.Utilities;
+using Microsoft.Extensions.Logging;
 using RateLimiter;
 using System.Net.Http.Json;
 using System.Reactive.Linq;
@@ -18,6 +19,8 @@ namespace MapMaven.Core.Services.Leaderboards
         private readonly IApplicationSettingService _applicationSettingService;
         private readonly IApplicationEventService _applicationEventService;
         private readonly IHttpClientFactory _httpClientFactory;
+
+        private readonly ILogger<BeatLeaderService> _logger;
 
         private readonly BehaviorSubject<string?> _playerId = new(null);
 
@@ -45,12 +48,14 @@ namespace MapMaven.Core.Services.Leaderboards
             BeatLeaderApiClient beatLeader,
             IApplicationSettingService applicationSettingService,
             IApplicationEventService applicationEventService,
-            IHttpClientFactory httpClientFactory)
+            IHttpClientFactory httpClientFactory,
+            ILogger<BeatLeaderService> logger)
         {
             _beatLeader = beatLeader;
             _applicationSettingService = applicationSettingService;
             _applicationEventService = applicationEventService;
             _httpClientFactory = httpClientFactory;
+            _logger = logger;
 
             var playerScores = _playerId.Select(playerId =>
             {
@@ -132,14 +137,14 @@ namespace MapMaven.Core.Services.Leaderboards
                     });
                 })
                 .Concat();
-            
 
-            _rankedMaps = new(GetRankedMaps, TimeSpan.FromHours(6));
+
+            _rankedMaps = new(GetRankedMaps, TimeSpan.FromHours(6), []);
 
             var playerId = _applicationSettingService.ApplicationSettings
                 .Select(applicationSettings => applicationSettings.TryGetValue(PlayerIdSettingKey, out var playerId) ? playerId.StringValue : null)
                 .DistinctUntilChanged();
-                
+
             playerId.Subscribe(_playerId.OnNext);
 
             Active = playerId.Select(playerId => !string.IsNullOrEmpty(playerId));
@@ -183,6 +188,8 @@ namespace MapMaven.Core.Services.Leaderboards
         {
             try
             {
+                _logger.LogInformation("Loading ranked maps for BeatLeader.");
+
                 var httpClient = _httpClientFactory.CreateClient("MapMavenFiles");
 
                 var response = await httpClient.GetFromJsonAsync<RankedMapInfo>("/beatleader/ranked-maps.json");

@@ -337,7 +337,6 @@ namespace MapMaven.Services
         {
             var tasks = new List<Task>()
             {
-                _leaderboardDataService.LoadLeaderboardDataAsync(),
                 _beatSaberDataService.LoadAllPlaylists(),
                 LoadHiddenMaps()
             };
@@ -351,6 +350,7 @@ namespace MapMaven.Services
             if (forceReloadCachedData)
             {
                 _leaderBoardService.ReloadRankedMaps();
+                _leaderboardDataService.ReloadLeaderboardData();
             }
 
             await Task.WhenAll(tasks);

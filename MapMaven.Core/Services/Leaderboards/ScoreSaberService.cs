@@ -3,6 +3,7 @@ using MapMaven.Core.Models;
 using MapMaven.Core.Models.Data.RankedMaps;
 using MapMaven.Core.Services.Interfaces;
 using MapMaven.Core.Utilities;
+using Microsoft.Extensions.Logging;
 using System.Net.Http.Json;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
@@ -17,6 +18,8 @@ namespace MapMaven.Core.Services.Leaderboards
         private readonly IApplicationSettingService _applicationSettingService;
         private readonly IApplicationEventService _applicationEventService;
         private readonly IHttpClientFactory _httpClientFactory;
+
+        private readonly ILogger<ScoreSaberService> _logger;
 
         private readonly BehaviorSubject<string?> _playerId = new(null);
 
@@ -38,12 +41,14 @@ namespace MapMaven.Core.Services.Leaderboards
             ScoreSaberApiClient scoreSaber,
             IHttpClientFactory httpClientFactory,
             IApplicationSettingService applicationSettingService,
-            IApplicationEventService applicationEventService)
+            IApplicationEventService applicationEventService,
+            ILogger<ScoreSaberService> logger)
         {
             _scoreSaber = scoreSaber;
             _httpClientFactory = httpClientFactory;
             _applicationSettingService = applicationSettingService;
             _applicationEventService = applicationEventService;
+            _logger = logger;
 
             var playerScores = _playerId.Select(playerId =>
             {
@@ -115,12 +120,12 @@ namespace MapMaven.Core.Services.Leaderboards
                 return Observable.Return(null as PlayerProfile);
             });
 
-            _rankedMaps = new(GetRankedMaps, TimeSpan.FromHours(6));
+            _rankedMaps = new(GetRankedMaps, TimeSpan.FromHours(6), []);
 
             var playerId = _applicationSettingService.ApplicationSettings
                 .Select(applicationSettings => applicationSettings.TryGetValue(PlayerIdSettingKey, out var playerId) ? playerId.StringValue : null)
                 .DistinctUntilChanged();
-                
+
             playerId.Subscribe(_playerId.OnNext);
 
             Active = playerId.Select(playerId => !string.IsNullOrEmpty(playerId));
@@ -166,6 +171,8 @@ namespace MapMaven.Core.Services.Leaderboards
         {
             try
             {
+                _logger.LogInformation("Loading ranked maps for ScoreSaber.");
+
                 var httpClient = _httpClientFactory.CreateClient("MapMavenFiles");
 
                 var response = await httpClient.GetFromJsonAsync<RankedMapInfo>("/scoresaber/ranked-maps.json");
