@@ -3,6 +3,8 @@ using MapMaven.Core.Models;
 using MapMaven.Core.Models.Data.RankedMaps;
 using MapMaven.Core.Services.Interfaces;
 using System.IO.Abstractions;
+using MapMaven.Core.Utilities;
+using Microsoft.Extensions.Logging;
 using System.Net.Http.Json;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
@@ -19,14 +21,17 @@ namespace MapMaven.Core.Services.Leaderboards
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly IFileSystem _fileSystem;
 
+        private readonly ILogger<ScoreSaberService> _logger;
+
         private readonly BehaviorSubject<string?> _playerId = new(null);
-        private readonly BehaviorSubject<Dictionary<string, RankedMapInfoItem>> _rankedMaps = new(new());
+
+        private readonly CachedValue<Dictionary<string, RankedMapInfoItem>> _rankedMaps;
 
         public IObservable<string?> PlayerIdObservable => _playerId;
         public IObservable<PlayerProfile?> PlayerProfile { get; private set; }
         public IObservable<IEnumerable<Models.PlayerScore>> PlayerScores { get; private set; }
 
-        public IObservable<Dictionary<string, RankedMapInfoItem>> RankedMaps => _rankedMaps;
+        public IObservable<Dictionary<string, RankedMapInfoItem>> RankedMaps => _rankedMaps.ValueObservable;
 
         public IObservable<bool> Active { get; private set; }
 
@@ -39,13 +44,15 @@ namespace MapMaven.Core.Services.Leaderboards
             IHttpClientFactory httpClientFactory,
             IApplicationSettingService applicationSettingService,
             IApplicationEventService applicationEventService,
-            IFileSystem fileSystem)
+            IFileSystem fileSystem,
+            ILogger<ScoreSaberService> logger)
         {
             _scoreSaber = scoreSaber;
             _httpClientFactory = httpClientFactory;
             _applicationSettingService = applicationSettingService;
             _applicationEventService = applicationEventService;
             _fileSystem = fileSystem;
+            _logger = logger;
 
             var playerScores = _playerId.Select(playerId =>
             {
@@ -118,6 +125,8 @@ namespace MapMaven.Core.Services.Leaderboards
                 return Observable.Return(null as PlayerProfile);
             });
 
+            _rankedMaps = new(GetRankedMaps, TimeSpan.FromHours(6), []);
+
             var playerId = _applicationSettingService.ApplicationSettings
                 .Select(applicationSettings => applicationSettings.TryGetValue(PlayerIdSettingKey, out var playerId) ? playerId.StringValue : null)
                 .DistinctUntilChanged();
@@ -158,13 +167,22 @@ namespace MapMaven.Core.Services.Leaderboards
             return playerId;
         }
 
-        public async Task LoadRankedMaps()
+        public void ReloadRankedMaps()
+        {
+            _rankedMaps.UpdateValue();
+        }
+
+        public async Task<Dictionary<string, RankedMapInfoItem>> GetRankedMaps()
         {
             try
             {
-                var rankedMaps = await GetRankedMaps();
+                _logger.LogInformation("Loading ranked maps for ScoreSaber.");
 
-                _rankedMaps.OnNext(rankedMaps);
+                var httpClient = _httpClientFactory.CreateClient("MapMavenFiles");
+
+                var response = await httpClient.GetFromJsonAsync<RankedMapInfo>("/scoresaber/ranked-maps.json");
+
+                return response?.RankedMaps ?? [];
             }
             catch (Exception ex)
             {
@@ -174,17 +192,8 @@ namespace MapMaven.Core.Services.Leaderboards
                     Message = "Failed to load ranked maps from ScoreSaber."
                 });
 
-                _rankedMaps.OnNext(new());
+                return _rankedMaps.Value;
             }
-        }
-
-        public async Task<Dictionary<string, RankedMapInfoItem>> GetRankedMaps()
-        {
-            var httpClient = _httpClientFactory.CreateClient("MapMavenFiles");
-
-            var response = await httpClient.GetFromJsonAsync<RankedMapInfo>("/scoresaber/ranked-maps.json");
-
-            return response?.RankedMaps ?? new();
         }
 
         public string? GetReplayUrl(string mapId, Models.PlayerScore score)

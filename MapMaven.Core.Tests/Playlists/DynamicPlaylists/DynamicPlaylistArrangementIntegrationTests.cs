@@ -133,11 +133,11 @@ public class DynamicPlaylistArrangementIntegrationTests
             .Returns<LeaderboardProvider>(provider => _mapService.GetCompleteRankedMapDataForLeaderboardProvider(provider));
 
         _mapServiceMock
-            .Setup(x => x.RefreshDataAsync(true))
+            .Setup(x => x.RefreshDataAsync(It.IsAny<bool>(), It.IsAny<bool>()))
             .Returns(() =>
             {
                 MockMapInfoCache();
-                return _mapService.RefreshDataAsync(true);
+                return _mapService.RefreshDataAsync(true, true);
             });
 
         _sut = new DynamicPlaylistArrangementService(

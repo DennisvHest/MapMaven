@@ -79,9 +79,4 @@ else if (BeatLeaderProfile is not null)
     {
         await LeaderboardService.SetActiveLeaderboardProviderAsync(leaderboardProvider);
     }
-
-    void RefreshData()
-    {
-        Task.Run(() => MapService.RefreshDataAsync(forceRefresh: true));
-    }
 }

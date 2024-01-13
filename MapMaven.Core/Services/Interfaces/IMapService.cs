@@ -27,7 +27,7 @@ namespace MapMaven.Core.Services.Interfaces
         Task HideUnhideMap(IEnumerable<Map> maps, bool hide);
         Task LoadHiddenMaps();
         bool MapIsInstalled(Map map);
-        Task RefreshDataAsync(bool forceRefresh = false);
+        Task RefreshDataAsync(bool reloadMapAndLeaderboardInfo = false, bool forceReloadCachedData = false);
         void RemoveMapFilter(MapFilter filter);
         void ResetSelectedMaps();
         void SelectMaps(IEnumerable<Map> selectedMaps);

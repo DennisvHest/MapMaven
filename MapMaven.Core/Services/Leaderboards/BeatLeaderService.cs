@@ -1,8 +1,11 @@
 ﻿using ComposableAsync;
 using MapMaven.Core.ApiClients.BeatLeader;
 using MapMaven.Core.Models;
+using MapMaven.Core.Models.Data.Leaderboards.ScoreSaber;
 using MapMaven.Core.Models.Data.RankedMaps;
 using MapMaven.Core.Services.Interfaces;
+using MapMaven.Core.Utilities;
+using Microsoft.Extensions.Logging;
 using RateLimiter;
 using System.IO.Abstractions;
 using System.Net.Http.Json;
@@ -19,8 +22,11 @@ namespace MapMaven.Core.Services.Leaderboards
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly IFileSystem _fileSystem;
 
+        private readonly ILogger<BeatLeaderService> _logger;
+
         private readonly BehaviorSubject<string?> _playerId = new(null);
-        private readonly BehaviorSubject<Dictionary<string, RankedMapInfoItem>> _rankedMaps = new(new());
+
+        private readonly CachedValue<Dictionary<string, RankedMapInfoItem>> _rankedMaps;
 
         public LeaderboardProvider LeaderboardProviderName => LeaderboardProvider.BeatLeader;
 
@@ -28,7 +34,7 @@ namespace MapMaven.Core.Services.Leaderboards
 
         public IObservable<string?> PlayerIdObservable => _playerId;
 
-        public IObservable<Dictionary<string, RankedMapInfoItem>> RankedMaps => _rankedMaps;
+        public IObservable<Dictionary<string, RankedMapInfoItem>> RankedMaps => _rankedMaps.ValueObservable;
 
         public IObservable<PlayerProfile?> PlayerProfile { get; private set; }
 
@@ -45,13 +51,15 @@ namespace MapMaven.Core.Services.Leaderboards
             IApplicationSettingService applicationSettingService,
             IApplicationEventService applicationEventService,
             IHttpClientFactory httpClientFactory,
-            IFileSystem fileSystem)
+            IFileSystem fileSystem,
+            ILogger<BeatLeaderService> logger)
         {
             _beatLeader = beatLeader;
             _applicationSettingService = applicationSettingService;
             _applicationEventService = applicationEventService;
             _httpClientFactory = httpClientFactory;
             _fileSystem = fileSystem;
+            _logger = logger;
 
             var playerScores = _playerId.Select(playerId =>
             {
@@ -135,6 +143,9 @@ namespace MapMaven.Core.Services.Leaderboards
                 })
                 .Concat();
 
+
+            _rankedMaps = new(GetRankedMaps, TimeSpan.FromHours(6), []);
+
             var playerId = _applicationSettingService.ApplicationSettings
                 .Select(applicationSettings => applicationSettings.TryGetValue(PlayerIdSettingKey, out var playerId) ? playerId.StringValue : null)
                 .DistinctUntilChanged();
@@ -173,13 +184,22 @@ namespace MapMaven.Core.Services.Leaderboards
             return $"{LeaderboardService.ReplayBaseUrl}/?scoreId={score.Score.Id}";
         }
 
-        public async Task LoadRankedMaps()
+        public void ReloadRankedMaps()
+        {
+            _rankedMaps.UpdateValue();
+        }
+
+        public async Task<Dictionary<string, RankedMapInfoItem>> GetRankedMaps()
         {
             try
             {
-                var rankedMaps = await GetRankedMaps();
+                _logger.LogInformation("Loading ranked maps for BeatLeader.");
 
-                _rankedMaps.OnNext(rankedMaps);
+                var httpClient = _httpClientFactory.CreateClient("MapMavenFiles");
+
+                var response = await httpClient.GetFromJsonAsync<RankedMapInfo>("/beatleader/ranked-maps.json");
+
+                return response?.RankedMaps ?? [];
             }
             catch (Exception ex)
             {
@@ -189,17 +209,8 @@ namespace MapMaven.Core.Services.Leaderboards
                     Message = "Failed to load ranked maps from BeatLeader."
                 });
 
-                _rankedMaps.OnNext(new());
+                return _rankedMaps.Value;
             }
-        }
-
-        public async Task<Dictionary<string, RankedMapInfoItem>> GetRankedMaps()
-        {
-            var httpClient = _httpClientFactory.CreateClient("MapMavenFiles");
-
-            var response = await httpClient.GetFromJsonAsync<RankedMapInfo>("/beatleader/ranked-maps.json");
-
-            return response?.RankedMaps ?? new();
         }
 
         public void RefreshPlayerData()

@@ -48,6 +48,6 @@
 
     void RefreshData()
     {
-        Task.Run(() => MapService.RefreshDataAsync(forceRefresh: true));
+        Task.Run(() => MapService.RefreshDataAsync(reloadMapAndLeaderboardInfo: true, forceReloadCachedData: true));
     }
 }

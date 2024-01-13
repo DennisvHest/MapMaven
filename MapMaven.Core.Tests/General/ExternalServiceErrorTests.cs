@@ -40,7 +40,7 @@ namespace MapMaven.Core.Tests.General
 
             Assert.Empty(testMap.AllPlayerScores);
 
-            await MapService.RefreshDataAsync(forceRefresh: true);
+            await MapService.RefreshDataAsync(reloadMapAndLeaderboardInfo: true, forceReloadCachedData: true);
 
             maps = await MapService.Maps.FirstAsync();
 
@@ -68,7 +68,7 @@ namespace MapMaven.Core.Tests.General
 
             Assert.Empty(testMap.AllPlayerScores);
 
-            await MapService.RefreshDataAsync(forceRefresh: true);
+            await MapService.RefreshDataAsync(reloadMapAndLeaderboardInfo: true, forceReloadCachedData: true);
 
             maps = await MapService.Maps.FirstAsync();
 
