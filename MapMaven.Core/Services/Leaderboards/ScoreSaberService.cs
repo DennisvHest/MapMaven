@@ -2,6 +2,7 @@
 using MapMaven.Core.Models;
 using MapMaven.Core.Models.Data.RankedMaps;
 using MapMaven.Core.Services.Interfaces;
+using MapMaven.Core.Utilities;
 using System.Net.Http.Json;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
@@ -19,14 +20,13 @@ namespace MapMaven.Core.Services.Leaderboards
 
         private readonly BehaviorSubject<string?> _playerId = new(null);
 
-        private Dictionary<string, RankedMapInfoItem> _rankedMaps = [];
-        private Subject<long> _rankedMapsReset = new();
+        private readonly CachedValue<Dictionary<string, RankedMapInfoItem>> _rankedMaps;
 
         public IObservable<string?> PlayerIdObservable => _playerId;
         public IObservable<PlayerProfile?> PlayerProfile { get; private set; }
         public IObservable<IEnumerable<Models.PlayerScore>> PlayerScores { get; private set; }
 
-        public IObservable<Dictionary<string, RankedMapInfoItem>> RankedMaps { get; private set; }
+        public IObservable<Dictionary<string, RankedMapInfoItem>> RankedMaps => _rankedMaps.ValueObservable;
 
         public IObservable<bool> Active { get; private set; }
 
@@ -115,14 +115,7 @@ namespace MapMaven.Core.Services.Leaderboards
                 return Observable.Return(null as PlayerProfile);
             });
 
-            var rankedMaps = Observable.Merge(Observable.Timer(DateTimeOffset.UtcNow, TimeSpan.FromHours(6)), _rankedMapsReset)
-                .Select(_ => GetRankedMaps())
-                .Concat()
-                .Replay(1);
-
-            rankedMaps.Connect();
-
-            RankedMaps = rankedMaps;
+            _rankedMaps = new(GetRankedMaps, TimeSpan.FromHours(6));
 
             var playerId = _applicationSettingService.ApplicationSettings
                 .Select(applicationSettings => applicationSettings.TryGetValue(PlayerIdSettingKey, out var playerId) ? playerId.StringValue : null)
@@ -166,7 +159,7 @@ namespace MapMaven.Core.Services.Leaderboards
 
         public void ReloadRankedMaps()
         {
-            _rankedMapsReset.OnNext(0);
+            _rankedMaps.UpdateValue();
         }
 
         public async Task<Dictionary<string, RankedMapInfoItem>> GetRankedMaps()
@@ -177,9 +170,7 @@ namespace MapMaven.Core.Services.Leaderboards
 
                 var response = await httpClient.GetFromJsonAsync<RankedMapInfo>("/scoresaber/ranked-maps.json");
 
-                _rankedMaps = response?.RankedMaps ?? [];
-
-                return _rankedMaps;
+                return response?.RankedMaps ?? [];
             }
             catch (Exception ex)
             {
@@ -189,7 +180,7 @@ namespace MapMaven.Core.Services.Leaderboards
                     Message = "Failed to load ranked maps from ScoreSaber."
                 });
 
-                return _rankedMaps;
+                return _rankedMaps.Value;
             }
         }
 
