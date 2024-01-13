@@ -71,7 +71,7 @@ namespace MapMaven.Core.Services
                     })
                     .Where(x => x.Playlist.IsDynamicPlaylist);
 
-                await _mapService.RefreshDataAsync(forceRefresh: true);
+                await _mapService.RefreshDataAsync(reloadMapAndLeaderboardInfo: true);
 
                 if (!dynamicPlaylists.Any())
                     return;

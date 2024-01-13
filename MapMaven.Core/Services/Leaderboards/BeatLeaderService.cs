@@ -1,6 +1,7 @@
 ﻿using ComposableAsync;
 using MapMaven.Core.ApiClients.BeatLeader;
 using MapMaven.Core.Models;
+using MapMaven.Core.Models.Data.Leaderboards.ScoreSaber;
 using MapMaven.Core.Models.Data.RankedMaps;
 using MapMaven.Core.Services.Interfaces;
 using RateLimiter;
@@ -18,7 +19,9 @@ namespace MapMaven.Core.Services.Leaderboards
         private readonly IHttpClientFactory _httpClientFactory;
 
         private readonly BehaviorSubject<string?> _playerId = new(null);
-        private readonly BehaviorSubject<Dictionary<string, RankedMapInfoItem>> _rankedMaps = new(new());
+
+        private Dictionary<string, RankedMapInfoItem> _rankedMaps = [];
+        private Subject<long> _rankedMapsReset = new();
 
         public LeaderboardProvider LeaderboardProviderName => LeaderboardProvider.BeatLeader;
 
@@ -26,7 +29,7 @@ namespace MapMaven.Core.Services.Leaderboards
 
         public IObservable<string?> PlayerIdObservable => _playerId;
 
-        public IObservable<Dictionary<string, RankedMapInfoItem>> RankedMaps => _rankedMaps;
+        public IObservable<Dictionary<string, RankedMapInfoItem>> RankedMaps { get; private set; }
 
         public IObservable<PlayerProfile?> PlayerProfile { get; private set; }
 
@@ -129,6 +132,15 @@ namespace MapMaven.Core.Services.Leaderboards
                     });
                 })
                 .Concat();
+            
+            var rankedMaps = Observable.Merge(Observable.Timer(DateTimeOffset.UtcNow, TimeSpan.FromHours(6)), _rankedMapsReset)
+                .Select(_ => GetRankedMaps())
+                .Concat()
+                .Replay(1);
+
+            rankedMaps.Connect();
+
+            RankedMaps = rankedMaps;
 
             var playerId = _applicationSettingService.ApplicationSettings
                 .Select(applicationSettings => applicationSettings.TryGetValue(PlayerIdSettingKey, out var playerId) ? playerId.StringValue : null)
@@ -168,13 +180,22 @@ namespace MapMaven.Core.Services.Leaderboards
             return $"{LeaderboardService.ReplayBaseUrl}/?scoreId={score.Score.Id}";
         }
 
-        public async Task LoadRankedMaps()
+        public void ReloadRankedMaps()
+        {
+            _rankedMapsReset.OnNext(0);
+        }
+
+        public async Task<Dictionary<string, RankedMapInfoItem>> GetRankedMaps()
         {
             try
             {
-                var rankedMaps = await GetRankedMaps();
+                var httpClient = _httpClientFactory.CreateClient("MapMavenFiles");
 
-                _rankedMaps.OnNext(rankedMaps);
+                var response = await httpClient.GetFromJsonAsync<RankedMapInfo>("/beatleader/ranked-maps.json");
+
+                _rankedMaps = response?.RankedMaps ?? [];
+
+                return _rankedMaps;
             }
             catch (Exception ex)
             {
@@ -184,17 +205,8 @@ namespace MapMaven.Core.Services.Leaderboards
                     Message = "Failed to load ranked maps from BeatLeader."
                 });
 
-                _rankedMaps.OnNext(new());
+                return _rankedMaps;
             }
-        }
-
-        public async Task<Dictionary<string, RankedMapInfoItem>> GetRankedMaps()
-        {
-            var httpClient = _httpClientFactory.CreateClient("MapMavenFiles");
-
-            var response = await httpClient.GetFromJsonAsync<RankedMapInfo>("/beatleader/ranked-maps.json");
-
-            return response?.RankedMaps ?? new();
         }
 
         public void RefreshPlayerData()

@@ -333,20 +333,24 @@ namespace MapMaven.Services
             return player;
         }
 
-        public async Task RefreshDataAsync(bool forceRefresh = false)
+        public async Task RefreshDataAsync(bool reloadMapAndLeaderboardInfo = false, bool forceReloadCachedData = false)
         {
-            IEnumerable<Task> tasks = new List<Task>()
+            var tasks = new List<Task>()
             {
-                _leaderBoardService.LoadRankedMaps(),
                 _leaderboardDataService.LoadLeaderboardDataAsync(),
                 _beatSaberDataService.LoadAllPlaylists(),
                 LoadHiddenMaps()
             };
 
-            if (forceRefresh)
+            if (reloadMapAndLeaderboardInfo)
             {
-                tasks = new Task[] { _beatSaberDataService.LoadAllMapInfo() }.Concat(tasks);
+                tasks.Add(_beatSaberDataService.LoadAllMapInfo());
                 _leaderBoardService.RefreshPlayerData();
+            }
+
+            if (forceReloadCachedData)
+            {
+                _leaderBoardService.ReloadRankedMaps();
             }
 
             await Task.WhenAll(tasks);

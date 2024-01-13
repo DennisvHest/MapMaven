@@ -153,11 +153,12 @@ namespace MapMaven.Core.Services.Leaderboards
 
         public string? GetPlayerIdFromReplays(string beatSaberInstallLocation) => LeaderboardProviders[_activeLeaderboardProviderName.Value].GetPlayerIdFromReplays(beatSaberInstallLocation);
 
-        public async Task LoadRankedMaps()
+        public void ReloadRankedMaps()
         {
-            await Task.WhenAll(
-                LeaderboardProviders.Values.Select(x => x.LoadRankedMaps())
-            );
+            foreach (var leaderboardProviderService in LeaderboardProviders.Values)
+            {
+                leaderboardProviderService.ReloadRankedMaps();
+            }
         }
 
         public async Task<Dictionary<string, RankedMapInfoItem>> GetRankedMaps() => await LeaderboardProviders[_activeLeaderboardProviderName.Value].GetRankedMaps();

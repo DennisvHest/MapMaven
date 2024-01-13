@@ -22,7 +22,7 @@ namespace MapMaven.Core.Services.Leaderboards
         string? GetPlayerIdFromReplays(string beatSaberInstallLocation);
         Task<Dictionary<string, RankedMapInfoItem>> GetRankedMaps();
         string? GetReplayUrl(string mapId, Models.PlayerScore score);
-        Task LoadRankedMaps();
+        void ReloadRankedMaps();
         void RefreshPlayerData();
         Task SetActiveLeaderboardProviderAsync(LeaderboardProvider leaderboardProviderName);
         Task SetPlayerId(string playerId);
