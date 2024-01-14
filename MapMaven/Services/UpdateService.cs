@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
-using Squirrel;
+using Velopack;
+using Velopack.Sources;
 
 namespace MapMaven.Services
 {
@@ -12,32 +13,42 @@ namespace MapMaven.Services
             _logger = logger;
         }
 
-        public static UpdateManager GetUpdateManager() => new GithubUpdateManager("https://github.com/DennisvHest/MapMaven");
+        public static UpdateManager GetUpdateManager() => GetUpdateManager(null);
+
+        private static UpdateManager GetUpdateManager(ILogger logger) => new(
+            new GithubSource(
+                repoUrl: "https://github.com/DennisvHest/MapMaven",
+                accessToken: null,
+                prerelease: false,
+                logger: logger
+            )
+        );
 
         public async Task CheckForUpdates()
         {
-            using var updateManager = GetUpdateManager();
+            var updateManager = GetUpdateManager(_logger);
 
             try
             {
                 _logger?.LogInformation("Checking for updates...");
 
-                if (!updateManager.IsInstalledApp)
+                if (!updateManager.IsInstalled)
                 {
                     _logger?.LogInformation("App is not an installed app. Skipping update check.");
                     return;
                 }
 
-                var update = await updateManager.UpdateApp();
+                var newVersion = await updateManager.CheckForUpdatesAsync();
 
-                if (update == null)
+                if (newVersion is null)
                 {
                     _logger?.LogInformation("No new update found.");
+                    return;
                 }
-                else
-                {
-                    _logger?.LogInformation($"Update {update.Version} installed from {update.BaseUrl}.");
-                }
+
+                await updateManager.DownloadUpdatesAsync(newVersion);
+
+                _logger?.LogInformation($"Update {newVersion.TargetFullRelease.Version} installed from {newVersion.TargetFullRelease.BaseUrl}.");
             }
             catch (Exception ex)
             {

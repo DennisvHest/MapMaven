@@ -117,9 +117,9 @@ public static class MauiProgram
 
         try
         {
-            using var updateManager = UpdateService.GetUpdateManager();
+            var updateManager = UpdateService.GetUpdateManager();
 
-            AddShortcutToStartupFolder(logger, updateManager.IsInstalledApp);
+            AddShortcutToStartupFolder(logger, updateManager.IsInstalled);
         }
         catch (Exception ex)
         {

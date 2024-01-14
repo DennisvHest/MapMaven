@@ -3,7 +3,7 @@
 
 using MapMaven.Platforms.Windows;
 using Microsoft.UI.Xaml;
-using Squirrel;
+using Velopack;
 
 namespace MapMaven.WinUI;
 
@@ -38,11 +38,7 @@ public partial class App : MauiWinUIApplication
 
     protected override void OnLaunched(LaunchActivatedEventArgs args)
     {
-        SquirrelAwareApp.HandleEvents(
-            onInitialInstall: OnAppInstall,
-            onAppUninstall: OnAppUninstall,
-            onEveryRun: OnAppRun
-        );
+        VelopackApp.Build().Run();
 
         _launchEventArgs = args;
         _singleInstanceApp.Launch(args.Arguments);
@@ -61,21 +57,6 @@ public partial class App : MauiWinUIApplication
         {
             Platforms.Windows.WindowExtensions.BringToFront();
         }
-    }
-
-    private static void OnAppInstall(SemanticVersion version, IAppTools tools)
-    {
-        tools.CreateShortcutForThisExe(ShortcutLocation.StartMenu | ShortcutLocation.Desktop);
-    }
-
-    private static void OnAppUninstall(SemanticVersion version, IAppTools tools)
-    {
-        tools.RemoveShortcutForThisExe(ShortcutLocation.StartMenu | ShortcutLocation.Desktop);
-    }
-
-    private static void OnAppRun(SemanticVersion version, IAppTools tools, bool firstRun)
-    {
-        tools.SetProcessAppUserModelId();
     }
 }
 
