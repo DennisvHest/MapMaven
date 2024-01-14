@@ -15,6 +15,9 @@ namespace MapMaven.Services
 
         public static UpdateManager GetUpdateManager() => GetUpdateManager(null);
 
+#if DEBUG
+        private static UpdateManager GetUpdateManager(ILogger logger) => new(@"C:\Users\denni\Desktop\BSTools\releases-test", logger: logger);
+#else
         private static UpdateManager GetUpdateManager(ILogger logger) => new(
             new GithubSource(
                 repoUrl: "https://github.com/DennisvHest/MapMaven",
@@ -23,6 +26,7 @@ namespace MapMaven.Services
                 logger: logger
             )
         );
+#endif
 
         public async Task CheckForUpdates()
         {
