@@ -32,6 +32,9 @@ namespace MapMaven.Components
         [Inject]
         protected BeatLeaderService BeatLeaderService { get; set; }
 
+        [Inject]
+        protected UpdateService UpdateService { get; set; }
+
         [CascadingParameter]
         MudDialogInstance MudDialog { get; set; }
 
