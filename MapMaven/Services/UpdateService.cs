@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using System.Reactive.Subjects;
 using Velopack;
 using Velopack.Sources;
 
@@ -6,11 +7,21 @@ namespace MapMaven.Services
 {
     public class UpdateService
     {
+        private readonly UpdateManager _updateManager;
+
         private readonly ILogger<App> _logger;
+
+        private ReplaySubject<UpdateInfo> _availableUpdate = new(1);
+        public IObservable<UpdateInfo> AvailableUpdate => _availableUpdate;
+
+        public bool IsInstalled => _updateManager.IsInstalled;
+        public string CurrentVersion => _updateManager.CurrentVersion?.ToString() ?? "0.0.0";
 
         public UpdateService(ILogger<App> logger)
         {
             _logger = logger;
+
+            _updateManager = GetUpdateManager(_logger);
         }
 
         public static UpdateManager GetUpdateManager() => GetUpdateManager(null);
@@ -30,19 +41,17 @@ namespace MapMaven.Services
 
         public async Task CheckForUpdates()
         {
-            var updateManager = GetUpdateManager(_logger);
-
             try
             {
                 _logger?.LogInformation("Checking for updates...");
 
-                if (!updateManager.IsInstalled)
+                if (!_updateManager.IsInstalled)
                 {
                     _logger?.LogInformation("App is not an installed app. Skipping update check.");
                     return;
                 }
 
-                var newVersion = await updateManager.CheckForUpdatesAsync();
+                var newVersion = await _updateManager.CheckForUpdatesAsync();
 
                 if (newVersion is null)
                 {
@@ -50,14 +59,18 @@ namespace MapMaven.Services
                     return;
                 }
 
-                await updateManager.DownloadUpdatesAsync(newVersion);
+                await _updateManager.DownloadUpdatesAsync(newVersion);
 
                 _logger?.LogInformation($"Update {newVersion.TargetFullRelease.Version} installed from {newVersion.TargetFullRelease.BaseUrl}.");
+
+                _availableUpdate.OnNext(newVersion);
             }
             catch (Exception ex)
             {
                 _logger?.LogError(ex, "Error during update.");
             }
         }
+
+        public void ApplyUpdatesAndRestart() => _updateManager.ApplyUpdatesAndRestart();
     }
 }
