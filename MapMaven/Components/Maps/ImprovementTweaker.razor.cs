@@ -36,7 +36,9 @@ namespace MapMaven.Components.Maps
         MapFilter HiddenMapFilter = null;
 
         double MinimumPredictedAccuracy = 80;
+        double MaximumPredictedAccuracy = 100;
         MapFilter MinimumPredictedAccuracyFilter = null;
+        MapFilter MaximumPredictedAccuracyFilter = null;
 
         HashSet<Map> SelectedMaps = new();
 
@@ -54,7 +56,7 @@ namespace MapMaven.Components.Maps
         protected override void OnAfterRender(bool firstRender)
         {
             OnHiddenFilterChanged(HiddenFilter);
-            OnPredictedAccuracyFilterChanged(MinimumPredictedAccuracy);
+            OnMinimumPredictedAccuracyFilterChanged(MinimumPredictedAccuracy);
         }
 
         void OnPlayedFilterChanged(string value)
@@ -113,7 +115,7 @@ namespace MapMaven.Components.Maps
             MapService.AddMapFilter(HiddenMapFilter);
         }
 
-        void OnPredictedAccuracyFilterChanged(double value)
+        void OnMinimumPredictedAccuracyFilterChanged(double value)
         {
             MinimumPredictedAccuracy = value;
 
@@ -122,12 +124,29 @@ namespace MapMaven.Components.Maps
 
             MinimumPredictedAccuracyFilter = new MapFilter
             {
-                Name = $"Predicted accuracy >= {MinimumPredictedAccuracy}%",
+                Name = $"Minimum predicted accuracy >= {MinimumPredictedAccuracy}%",
                 Visible = false,
                 Filter = map => map.ScoreEstimate?.Accuracy >= MinimumPredictedAccuracy
             };
 
             MapService.AddMapFilter(MinimumPredictedAccuracyFilter);
+        }
+
+        void OnMaximumPredictedAccuracyFilterChanged(double value)
+        {
+            MaximumPredictedAccuracy = value;
+
+            if (MaximumPredictedAccuracyFilter != null)
+                MapService.RemoveMapFilter(MaximumPredictedAccuracyFilter);
+
+            MaximumPredictedAccuracyFilter = new MapFilter
+            {
+                Name = $"Maximum predicted accuracy <= {MaximumPredictedAccuracy}%",
+                Visible = false,
+                Filter = map => map.ScoreEstimate?.Accuracy <= MaximumPredictedAccuracy
+            };
+
+            MapService.AddMapFilter(MaximumPredictedAccuracyFilter);
         }
 
         async Task CreatePlaylistFromSelectedMaps()
