@@ -110,6 +110,15 @@ namespace MapMaven.Components.Maps
             });
         }
 
+        void SelectMapAuthor(Map map)
+        {
+            MapService.AddMapFilter(new MapFilter
+            {
+                Name = map.MapAuthorName,
+                Filter = otherMap => map.MapAuthorName == otherMap.MapAuthorName
+            });
+        }
+
         void OpenDetails(Map map)
         {
             DialogService.Show<MapDetail>(
