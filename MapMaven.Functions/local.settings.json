@@ -3,6 +3,7 @@
   "Values": {
     "MapMavenStorageConnection": "UseDevelopmentStorage=true",
     "AzureWebJobsStorage": "UseDevelopmentStorage=true",
-    "MapMavenStorageContainerName": "mapmaven"
+    "MapMavenStorageContainerName": "mapmaven",
+    "FUNCTIONS_WORKER_RUNTIME": "dotnet-isolated"
   }
 }
