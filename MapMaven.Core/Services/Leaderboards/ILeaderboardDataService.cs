@@ -7,6 +7,6 @@ namespace MapMaven.Core.Services.Leaderboards
         IObservable<LeaderboardData?> LeaderboardData { get; }
 
         Task<LeaderboardData?> GetLeaderboardDataAsync();
-        Task LoadLeaderboardDataAsync();
+        void ReloadLeaderboardData();
     }
 }

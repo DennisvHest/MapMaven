@@ -2,6 +2,9 @@
 using MapMaven.Core.Models;
 using MapMaven.Core.Models.Data.RankedMaps;
 using MapMaven.Core.Services.Interfaces;
+using System.IO.Abstractions;
+using MapMaven.Core.Utilities;
+using Microsoft.Extensions.Logging;
 using System.Net.Http.Json;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
@@ -16,32 +19,40 @@ namespace MapMaven.Core.Services.Leaderboards
         private readonly IApplicationSettingService _applicationSettingService;
         private readonly IApplicationEventService _applicationEventService;
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IFileSystem _fileSystem;
+
+        private readonly ILogger<ScoreSaberService> _logger;
 
         private readonly BehaviorSubject<string?> _playerId = new(null);
-        private readonly BehaviorSubject<Dictionary<string, RankedMapInfoItem>> _rankedMaps = new(new());
+
+        private readonly CachedValue<Dictionary<string, RankedMapInfoItem>> _rankedMaps;
 
         public IObservable<string?> PlayerIdObservable => _playerId;
         public IObservable<PlayerProfile?> PlayerProfile { get; private set; }
         public IObservable<IEnumerable<Models.PlayerScore>> PlayerScores { get; private set; }
 
-        public IObservable<Dictionary<string, RankedMapInfoItem>> RankedMaps => _rankedMaps;
+        public IObservable<Dictionary<string, RankedMapInfoItem>> RankedMaps => _rankedMaps.ValueObservable;
 
         public IObservable<bool> Active { get; private set; }
 
         public string? PlayerId => _playerId.Value;
 
-        private const string PlayerIdSettingKey = "PlayerId";
+        public const string PlayerIdSettingKey = "PlayerId";
 
         public ScoreSaberService(
             ScoreSaberApiClient scoreSaber,
             IHttpClientFactory httpClientFactory,
             IApplicationSettingService applicationSettingService,
-            IApplicationEventService applicationEventService)
+            IApplicationEventService applicationEventService,
+            IFileSystem fileSystem,
+            ILogger<ScoreSaberService> logger)
         {
             _scoreSaber = scoreSaber;
             _httpClientFactory = httpClientFactory;
             _applicationSettingService = applicationSettingService;
             _applicationEventService = applicationEventService;
+            _fileSystem = fileSystem;
+            _logger = logger;
 
             var playerScores = _playerId.Select(playerId =>
             {
@@ -73,21 +84,22 @@ namespace MapMaven.Core.Services.Leaderboards
                     while ((page - 1) * 100 < totalScores);
 
                     return playerScores;
+                })
+                .Catch((Exception exception) =>
+                {
+                    _applicationEventService.RaiseError(new ErrorEvent
+                    {
+                        Exception = exception,
+                        Message = "Failed to load player scores from ScoreSaber."
+                    });
+
+                    return Observable.Return(Enumerable.Empty<Models.PlayerScore>());
                 });
             }).Concat().Replay(1);
 
             playerScores.Connect();
 
-            PlayerScores = playerScores.Catch((Exception exception) =>
-            {
-                _applicationEventService.RaiseError(new ErrorEvent
-                {
-                    Exception = exception,
-                    Message = "Failed to load player scores from ScoreSaber."
-                });
-
-                return Observable.Return(Enumerable.Empty<Models.PlayerScore>());
-            });
+            PlayerScores = playerScores;
 
             PlayerProfile = _playerId.Select(playerId =>
             {
@@ -113,10 +125,12 @@ namespace MapMaven.Core.Services.Leaderboards
                 return Observable.Return(null as PlayerProfile);
             });
 
+            _rankedMaps = new(GetRankedMaps, TimeSpan.FromHours(6), []);
+
             var playerId = _applicationSettingService.ApplicationSettings
                 .Select(applicationSettings => applicationSettings.TryGetValue(PlayerIdSettingKey, out var playerId) ? playerId.StringValue : null)
                 .DistinctUntilChanged();
-                
+
             playerId.Subscribe(_playerId.OnNext);
 
             Active = playerId.Select(playerId => !string.IsNullOrEmpty(playerId));
@@ -136,10 +150,10 @@ namespace MapMaven.Core.Services.Leaderboards
         {
             var scoreSaberReplaysLocation = Path.Combine(BeatSaberFileService.GetUserDataLocation(beatSaberInstallLocation), "ScoreSaber", "Replays");
 
-            if (!Directory.Exists(scoreSaberReplaysLocation))
+            if (!_fileSystem.Directory.Exists(scoreSaberReplaysLocation))
                 return null;
 
-            var replayFileName = Directory.EnumerateFiles(scoreSaberReplaysLocation, "*.dat").FirstOrDefault();
+            var replayFileName = _fileSystem.Directory.EnumerateFiles(scoreSaberReplaysLocation, "*.dat").FirstOrDefault();
 
             if (string.IsNullOrEmpty(replayFileName))
                 return null;
@@ -153,13 +167,22 @@ namespace MapMaven.Core.Services.Leaderboards
             return playerId;
         }
 
-        public async Task LoadRankedMaps()
+        public void ReloadRankedMaps()
+        {
+            _rankedMaps.UpdateValue();
+        }
+
+        public async Task<Dictionary<string, RankedMapInfoItem>> GetRankedMaps()
         {
             try
             {
-                var rankedMaps = await GetRankedMaps();
+                _logger.LogInformation("Loading ranked maps for ScoreSaber.");
 
-                _rankedMaps.OnNext(rankedMaps);
+                var httpClient = _httpClientFactory.CreateClient("MapMavenFiles");
+
+                var response = await httpClient.GetFromJsonAsync<RankedMapInfo>("/scoresaber/ranked-maps.json");
+
+                return response?.RankedMaps ?? [];
             }
             catch (Exception ex)
             {
@@ -169,17 +192,8 @@ namespace MapMaven.Core.Services.Leaderboards
                     Message = "Failed to load ranked maps from ScoreSaber."
                 });
 
-                _rankedMaps.OnNext(new());
+                return _rankedMaps.Value;
             }
-        }
-
-        public async Task<Dictionary<string, RankedMapInfoItem>> GetRankedMaps()
-        {
-            var httpClient = _httpClientFactory.CreateClient("MapMavenFiles");
-
-            var response = await httpClient.GetFromJsonAsync<RankedMapInfo>("/scoresaber/ranked-maps.json");
-
-            return response?.RankedMaps ?? new();
         }
 
         public string? GetReplayUrl(string mapId, Models.PlayerScore score)

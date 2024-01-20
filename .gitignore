@@ -363,3 +363,5 @@ MigrationBackup/
 FodyWeavers.xsd
 
 MapMaven/Worker
+/MapMaven.Core.Tests/TestData/TestData.db-shm
+/MapMaven.Core.Tests/TestData/TestData.db-wal

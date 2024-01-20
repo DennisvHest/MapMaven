@@ -4,6 +4,7 @@ using MapMaven.Core.Models.Data.RankedMaps;
 using MapMaven.Core.Utilities.Scoresaber;
 using Microsoft.Extensions.Logging;
 using Microsoft.ML;
+using System.IO.Abstractions;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Reflection;
@@ -19,6 +20,7 @@ namespace MapMaven.Core.Services.Leaderboards.ScoreEstimation
         private readonly ScoreSaberService _scoreSaberService;
         private readonly ScoreEstimationSettings _scoreEstimationSettings;
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IFileSystem _fileSystem;
 
         private PredictionEngine<ModelInput, ModelOutput> _predictEngine;
 
@@ -32,11 +34,11 @@ namespace MapMaven.Core.Services.Leaderboards.ScoreEstimation
 
         private const string _scoreEstimationModelFileName = "ScoreSaberScoreEstimateMLModel.mlnet";
 
-        private static string _modelPath
+        private string _modelPath
         {
             get
             {
-                var currentDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+                var currentDirectory = _fileSystem.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
                 return Path.Join(currentDirectory, "ScoreEstimation", _scoreEstimationModelFileName);
             }
@@ -47,13 +49,15 @@ namespace MapMaven.Core.Services.Leaderboards.ScoreEstimation
             ScoreSaberService scoreSaberService,
             ScoreEstimationSettings scoreEstimationSettings,
             IHttpClientFactory httpClientFactory,
-            ILogger<ScoreSaberScoreEstimationService> logger)
+            ILogger<ScoreSaberScoreEstimationService> logger,
+            IFileSystem fileSystem)
         {
             _leaderboardDataService = leaderboardDataService;
             _scoreSaberService = scoreSaberService;
             _scoreEstimationSettings = scoreEstimationSettings;
             _httpClientFactory = httpClientFactory;
             _logger = logger;
+            _fileSystem = fileSystem;
 
             var rankedMapScoreEstimates = Observable.CombineLatest(
                 _scoreSaberService.PlayerProfile,
@@ -121,7 +125,7 @@ namespace MapMaven.Core.Services.Leaderboards.ScoreEstimation
 
                 var modelStream = await httpClient.GetStreamAsync($"scoresaber/models/{_scoreEstimationModelFileName}");
 
-                using (var fileStream = File.OpenWrite(_modelPath))
+                using (var fileStream = _fileSystem.File.OpenWrite(_modelPath))
                 {
                     await modelStream.CopyToAsync(fileStream);
                 }
@@ -131,7 +135,7 @@ namespace MapMaven.Core.Services.Leaderboards.ScoreEstimation
                 _logger.LogError(ex, "Failed to load score estimation model from server. Falling back to local cache.");
             }
 
-            return File.OpenRead(_modelPath);
+            return _fileSystem.File.OpenRead(_modelPath);
         }
     }
 }

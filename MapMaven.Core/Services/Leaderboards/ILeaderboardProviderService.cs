@@ -16,7 +16,7 @@ namespace MapMaven.Core.Services.Leaderboards
         string? GetPlayerIdFromReplays(string beatSaberInstallLocation);
         Task<Dictionary<string, RankedMapInfoItem>> GetRankedMaps();
         string? GetReplayUrl(string mapId, PlayerScore score);
-        Task LoadRankedMaps();
+        void ReloadRankedMaps();
         void RefreshPlayerData();
         Task SetPlayerId(string playerId);
     }
