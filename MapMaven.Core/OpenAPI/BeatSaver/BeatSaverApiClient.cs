@@ -4,7 +4,7 @@ namespace MapMaven.Core.ApiClients.BeatSaver
 {
     public partial class BeatSaverApiClient
     {
-        partial void UpdateJsonSerializerSettings(JsonSerializerSettings settings)
+        static partial void UpdateJsonSerializerSettings(JsonSerializerSettings settings)
         {
             settings.DateTimeZoneHandling = DateTimeZoneHandling.Utc;
         }

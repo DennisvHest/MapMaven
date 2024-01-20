@@ -7,7 +7,7 @@ namespace MapMaven.Core.ApiClients.ScoreSaber
     {
         public ScoreSaberApiClient() { }
 
-        partial void UpdateJsonSerializerSettings(JsonSerializerSettings settings)
+        static partial void UpdateJsonSerializerSettings(JsonSerializerSettings settings)
         {
             settings.ContractResolver = new SafeContractResolver();
         }
