@@ -29,14 +29,15 @@
             {
                 <MudListItem title="@playlist.Title" OnClick="() => OnPlaylistSelect(playlist)" Class="@(playlist == SelectedPlaylist ? "mud-selected-item mud-primary-text py-0 px-1" : "py-0 px-1")" Style="height: 46px;">
                     <div class="playlist-list-item">
-                        @if (!string.IsNullOrEmpty(playlist.CoverImageSmall.Value))
+                        <PlaylistCover Playlist="playlist" Small="true"></PlaylistCover>
+@*                         @if (!string.IsNullOrEmpty(playlist.CoverImageSmall.Value))
                         {
                             <img src="data:image/png;@playlist.CoverImageSmall.Value" class="ml-3 mr-3" />
                         }
                         else
                         {
                             <MudIcon Icon="@Icons.Filled.PlaylistPlay" Class="ml-3 mr-3" Style="width: 30px; height: 30px"></MudIcon>
-                        }
+                        } *@
                         <span>@playlist.Title</span>
                         <MudMenu Icon="@Icons.Material.Filled.MoreVert" Class="ml-auto">
                             <MudMenuItem OnClick="() => OpenEditPlaylistDialog(playlist)">
@@ -82,14 +83,15 @@
             {
                 <MudListItem title="@playlist.Title" OnClick="() => OnPlaylistSelect(playlist)" Class="@(playlist == SelectedPlaylist ? "mud-selected-item mud-primary-text py-0 px-1" : "py-0 px-1")" Style="height: 46px;">
                     <div class="playlist-list-item">
-                        @if (!string.IsNullOrEmpty(playlist.CoverImageSmall.Value))
+                        <PlaylistCover Playlist="playlist" Small="true"></PlaylistCover>
+@*                         @if (!string.IsNullOrEmpty(playlist.CoverImageSmall.Value))
                         {
                             <img src="data:image/png;@playlist.CoverImageSmall.Value" class="ml-3 mr-3" />
                         }
                         else
                         {
                             <MudIcon Icon="@Icons.Filled.PlaylistPlay" Class="ml-3 mr-3" Style="width: 30px; height: 30px"></MudIcon>
-                        }
+                        } *@
                         <span>@playlist.Title</span>
                         <MudMenu Icon="@Icons.Material.Filled.MoreVert" Class="ml-auto">
                             <MudMenuItem OnClick="() => OpenEditDynamicPlaylistDialog(playlist)">

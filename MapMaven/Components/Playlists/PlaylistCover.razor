@@ -1,0 +1,73 @@
+﻿@using System.Reactive.Linq
+@using MapMaven.Core.Utilities
+
+@inherits ReactiveComponent
+
+<img src="@CoverImage" />
+
+@code {
+    [Inject]
+    IMapService MapService { get; set; }
+
+    [Inject]
+    IBeatSaberDataService BeatSaberDataService { get; set; }
+
+    [Inject]
+    IHttpClientFactory HttpClientFactory { get; set; }
+
+    [Parameter]
+    public Playlist Playlist { get; set; }
+
+    [Parameter]
+    public bool Small { get; set; } = false;
+
+    string CoverImage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var mapCoverImageHttpClient = HttpClientFactory.CreateClient();
+
+        IObservable<string> coverImageObservable;
+
+        var coverImage = Small ? Playlist.CoverImageSmall : Playlist.CoverImage;
+
+        if (!string.IsNullOrEmpty(coverImage.Value))
+        {
+            coverImageObservable = Observable.Return(coverImage.Value);
+        }
+        else
+        {
+            var first4Maps = Playlist.Maps.Take(4).ToList();
+
+            coverImageObservable = MapService.MapsByHash
+                .Select(maps =>
+                    first4Maps.Select(map => maps.GetValueOrDefault(map.Hash))
+                )
+                .Select(async maps =>
+                {
+                    var mapImages = maps
+                        .Select(map => BeatSaberDataService.GetMapCoverImageStream(map.Hash))
+                        .ToArray();
+
+                    var completeImage = mapImages.Length switch
+                    {
+                        1 => mapImages[0],
+                        2 => await ImageUtilities.GenerateCollage(mapImages[0], mapImages[1]),
+                        3 => await ImageUtilities.GenerateCollage(mapImages[0], mapImages[1], mapImages[2]),
+                        4 => await ImageUtilities.GenerateCollage(mapImages[0], mapImages[1], mapImages[2], mapImages[3]),
+                        _ => null
+                    };
+
+                    var image = System.Drawing.Image.FromStream(completeImage);
+
+                    if (Small)
+                        image = image.GetResizedImage(50, 50);
+
+                    return image.ToDataUrl();
+                })
+                .Concat();
+        }
+
+        SubscribeAndBind(coverImageObservable, x => CoverImage = x);
+    }
+}
