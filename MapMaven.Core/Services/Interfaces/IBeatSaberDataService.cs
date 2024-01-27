@@ -21,6 +21,8 @@ namespace MapMaven.Core.Services.Interfaces
         Task<IEnumerable<MapInfo>> GetAllMapInfo();
         Task<IEnumerable<IPlaylist>> GetAllPlaylists();
         Image GetMapCoverImage(string mapId);
+        string GetMapCoverImageFilePath(string mapId);
+        Stream GetMapCoverImageStream(string mapId);
         string GetMapSongPath(string mapId);
         string GetRelativeMapPath(string path);
         Task LoadAllMapInfo();

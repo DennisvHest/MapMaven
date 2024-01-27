@@ -1,0 +1,37 @@
+﻿@using System.Reactive.Linq
+@using MapMaven.Core.Utilities
+
+@inherits ReactiveComponent
+
+@if (!string.IsNullOrEmpty(CoverImage))
+{
+    <img src="@CoverImage" class="@Class" style="@Style" />
+}
+else
+{
+    <MudIcon Icon="@Icons.Filled.PlaylistPlay" Class="@Class" Style="@Style"></MudIcon>
+}
+
+@code {
+    [Inject]
+    PlaylistCoverService PlaylistCoverService { get; set; }
+
+    [Parameter]
+    public Playlist Playlist { get; set; }
+
+    [Parameter]
+    public bool Small { get; set; } = false;
+
+    [Parameter]
+    public string Class { get; set; }
+
+    [Parameter]
+    public string Style { get; set; }
+
+    string CoverImage;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        CoverImage = await PlaylistCoverService.GetCoverImageAsync(Playlist);
+    }
+}
