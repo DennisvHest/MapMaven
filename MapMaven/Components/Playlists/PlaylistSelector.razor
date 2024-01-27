@@ -19,14 +19,7 @@
             {
                 <MudListItem title="@playlist.Title" OnClick="() => OnPlaylistSelect(playlist)" Value="playlist" Class="py-1 px-2" Style="min-height: 46px;">
                     <div class="playlist-list-item">
-                        @if (!string.IsNullOrEmpty(playlist.CoverImageSmall.Value))
-                        {
-                            <img src="data:image/png;@playlist.CoverImageSmall.Value" class="ml-3 mr-3" />
-                        }
-                        else
-                        {
-                            <MudIcon Icon="@Icons.Filled.PlaylistPlay" Class="ml-3 mr-3" Style="width: 30px; height: 30px"></MudIcon>
-                        }
+                        <PlaylistCover Playlist="playlist" Class="ml-3 mr-3" Style="width: 30px; height: 30px"></PlaylistCover>
                         <span>@playlist.Title</span>
                     </div>
                 </MudListItem>
