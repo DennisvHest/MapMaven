@@ -19,6 +19,7 @@ namespace MapMaven.Models
 
         public Lazy<string?> CoverImage { get; private set; }
         public Lazy<string?> CoverImageSmall { get; private set; }
+        public bool HasCover => _playlist.HasCover;
 
         private IPlaylist _playlist;
 
@@ -72,6 +73,11 @@ namespace MapMaven.Models
                 /* Ignore invalid cover images */
                 return null;
             }
+        }
+
+        public Stream? GetCoverImageStream()
+        {
+            return _playlist.GetCoverStream();
         }
     }
 }

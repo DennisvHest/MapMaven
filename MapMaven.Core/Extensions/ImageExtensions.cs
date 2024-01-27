@@ -8,7 +8,7 @@ namespace MapMaven.Extensions
     {
         public static string ToDataUrl(this Image image)
         {
-            using MemoryStream ms = new MemoryStream();
+            using var ms = new MemoryStream();
 
             image.Save(ms, ImageFormat.Jpeg);
             byte[] imageBytes = ms.ToArray();
@@ -18,7 +18,7 @@ namespace MapMaven.Extensions
 
         public static string ToBase64PrependedString(this Image image)
         {
-            using MemoryStream ms = new MemoryStream();
+            using var ms = new MemoryStream();
 
             image.Save(ms, ImageFormat.Jpeg);
             byte[] imageBytes = ms.ToArray();
