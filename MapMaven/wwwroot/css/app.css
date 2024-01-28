@@ -61,6 +61,23 @@
     background-color: var(--mud-palette-action-default);
 }
 
+.map-browser {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.row-selected {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.row-selected-active {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
 /* MudBlazor overrides */
 .mud-main-content {
     height: 100vh;

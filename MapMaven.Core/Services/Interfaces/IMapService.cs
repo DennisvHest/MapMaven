@@ -34,5 +34,7 @@ namespace MapMaven.Core.Services.Interfaces
         void SetSelectable(bool selectable);
         void SetSelectedMaps(HashSet<Map> selectedMaps);
         void ToggleMapSelected(Map map);
+        void SelectMaps(IEnumerable<Map> maps);
+        bool MapIsSelected(Map map);
     }
 }

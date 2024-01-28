@@ -224,6 +224,15 @@ namespace MapMaven.Services
             SetSelectedMaps(selectedMaps);
         }
 
+        public void SelectMaps(IEnumerable<Map> maps)
+        {
+            var selectedMaps = _selectedMaps.Value;
+
+            selectedMaps.UnionWith(maps);
+
+            SetSelectedMaps(selectedMaps);
+        }
+
         public void SetSelectable(bool selectable)
         {
             _selectable.OnNext(selectable);
@@ -231,6 +240,8 @@ namespace MapMaven.Services
             if (!selectable)
                 ClearSelectedMaps();
         }
+
+        public bool MapIsSelected(Map map) => _selectedMaps.Value.Contains(map);
 
         public async Task<Map> GetMapDetails(Map map)
         {

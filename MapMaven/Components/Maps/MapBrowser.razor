@@ -7,7 +7,7 @@
           T="Map"
           Items="Maps"
           Height="@Height"
-          Class="full-height full-width background-transparent"
+          Class="map-browser full-height full-width background-transparent"
           Loading="LoadingMapInfo"
           QuickFilter="Filter"
           FixedHeader="true"
@@ -19,7 +19,8 @@
           RowClick="OnRowClick"
           RowsPerPage="25"
           Style="@Style"
-          RowStyle="height: 88px;">
+          RowStyle="height: 88px;"
+          RowClassFunc="RowClassFunc">
     <ToolBarContent>
         <MudGrid>
             <MudItem xs="12" Class="d-flex align-center">
