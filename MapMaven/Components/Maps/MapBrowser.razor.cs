@@ -10,6 +10,7 @@ using System.Reactive.Linq;
 using MapMaven.Components.Shared;
 using MapMaven.Components.Playlists;
 using MapMaven.Core.Services.Leaderboards.ScoreEstimation;
+using KeyboardEventArgs = Microsoft.AspNetCore.Components.Web.KeyboardEventArgs;
 
 namespace MapMaven.Components.Maps
 {
@@ -78,6 +79,8 @@ namespace MapMaven.Components.Maps
 
         private int DifficultyModifier = 0;
 
+        private int? LastSelectedRowIndex = null;
+
         protected override void OnInitialized()
         {
             NavigationManager.LocationChanged += LocationChanged;
@@ -105,7 +108,13 @@ namespace MapMaven.Components.Maps
             });
             SubscribeAndBind(MapService.MapFilters, mapFilters => MapFilters = mapFilters);
             SubscribeAndBind(MapService.SelectedMaps, selectedMaps => SelectedMaps = selectedMaps);
-            SubscribeAndBind(MapService.Selectable, selectable => Selectable = selectable);
+            SubscribeAndBind(MapService.Selectable, selectable =>
+            {
+                Selectable = selectable;
+
+                if (!selectable)
+                    LastSelectedRowIndex = null;
+            });
 
             SubscribeAndBind(ScoreEstimationSettings.DifficultyModifierValue, difficultyModifierValue => DifficultyModifier = difficultyModifierValue);
         }
@@ -243,6 +252,66 @@ namespace MapMaven.Components.Maps
         }
 
         public void ToggleSelectable() => MapService.SetSelectable(!Selectable);
+
+        public void OnRowClick(DataGridRowClickEventArgs<Map> args)
+        {
+            if (args.MouseEventArgs.CtrlKey || args.MouseEventArgs.ShiftKey)
+            {
+                if (!Selectable)
+                    ToggleSelectable();
+
+                if (args.MouseEventArgs.CtrlKey)
+                    MapService.ToggleMapSelected(args.Item);
+
+                if (args.MouseEventArgs.ShiftKey)
+                {
+                    var lastSelectedRowIndex = LastSelectedRowIndex ?? args.RowIndex;
+
+                    var mapsToSelect = TableRef.FilteredItems
+                        .Skip(Math.Min(lastSelectedRowIndex, args.RowIndex))
+                        .Take(Math.Abs(args.RowIndex - lastSelectedRowIndex) + 1)
+                        .ToList();
+
+                    MapService.SelectMaps(mapsToSelect);
+                }
+            }
+
+            if (Selectable)
+                LastSelectedRowIndex = args.RowIndex;
+        }
+
+        /// <summary>
+        /// Keyboard shortcuts
+        /// </summary>
+        public async Task OnKeyDown(KeyboardEventArgs args)
+        {
+            if (args.Code == "Escape")
+                MapService.CancelSelection();
+
+            if (args.Code == "KeyA" && args.CtrlKey)
+            {
+                if (!Selectable)
+                    ToggleSelectable();
+
+                MapService.SelectMaps(TableRef.FilteredItems);
+            }
+        }
+
+        public string RowClassFunc(Map map, int index)
+        {
+            if (!Selectable)
+                return string.Empty;
+
+            string classes = string.Empty;
+
+            if (MapService.MapIsSelected(map))
+                classes += "row-selected";
+
+            if (index == LastSelectedRowIndex)
+                classes += " row-selected-active";
+
+            return classes;
+        }
 
         public void Dispose()
         {
