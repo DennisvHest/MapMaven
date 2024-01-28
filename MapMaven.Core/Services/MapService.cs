@@ -206,9 +206,22 @@ namespace MapMaven.Services
 
         public void CancelSelection() => SetSelectable(false);
 
-        public void SelectMaps(IEnumerable<Map> selectedMaps)
+        public void SetSelectedMaps(IEnumerable<Map> selectedMaps) => SetSelectedMaps(selectedMaps.ToHashSet());
+
+        public void ToggleMapSelected(Map map)
         {
-            _selectedMaps.OnNext(selectedMaps.ToHashSet());
+            var selectedMaps = _selectedMaps.Value;
+
+            if (selectedMaps.Contains(map))
+            {
+                selectedMaps.Remove(map);
+            }
+            else
+            {
+                selectedMaps.Add(map);
+            }
+
+            SetSelectedMaps(selectedMaps);
         }
 
         public void SetSelectable(bool selectable)

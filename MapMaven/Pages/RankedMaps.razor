@@ -31,6 +31,6 @@
             .Skip(mapSelectionConfig.MapSelectStartFromNumber - 1)
             .Take(mapSelectionConfig.MapSelectNumber);
 
-        MapService.SelectMaps(selectedMaps);
+        MapService.SetSelectedMaps(selectedMaps);
     }
 }

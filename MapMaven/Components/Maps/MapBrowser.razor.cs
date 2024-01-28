@@ -244,6 +244,17 @@ namespace MapMaven.Components.Maps
 
         public void ToggleSelectable() => MapService.SetSelectable(!Selectable);
 
+        public void OnRowClick(DataGridRowClickEventArgs<Map> args)
+        {
+            if (args.MouseEventArgs.CtrlKey)
+            {
+                if (!Selectable)
+                    ToggleSelectable();
+
+                MapService.ToggleMapSelected(args.Item);
+            }
+        }
+
         public void Dispose()
         {
             NavigationManager.LocationChanged -= LocationChanged;
