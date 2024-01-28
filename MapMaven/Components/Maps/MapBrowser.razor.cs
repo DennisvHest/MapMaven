@@ -10,6 +10,7 @@ using System.Reactive.Linq;
 using MapMaven.Components.Shared;
 using MapMaven.Components.Playlists;
 using MapMaven.Core.Services.Leaderboards.ScoreEstimation;
+using KeyboardEventArgs = Microsoft.AspNetCore.Components.Web.KeyboardEventArgs;
 
 namespace MapMaven.Components.Maps
 {
@@ -277,6 +278,23 @@ namespace MapMaven.Components.Maps
 
             if (Selectable)
                 LastSelectedRowIndex = args.RowIndex;
+        }
+
+        /// <summary>
+        /// Keyboard shortcuts
+        /// </summary>
+        public async Task OnKeyDown(KeyboardEventArgs args)
+        {
+            if (args.Code == "Escape")
+                MapService.CancelSelection();
+
+            if (args.Code == "KeyA" && args.CtrlKey)
+            {
+                if (!Selectable)
+                    ToggleSelectable();
+
+                MapService.SelectMaps(TableRef.FilteredItems);
+            }
         }
 
         public string RowClassFunc(Map map, int index)
