@@ -1,7 +1,6 @@
 ﻿using ComposableAsync;
 using MapMaven.Core.ApiClients.BeatLeader;
 using MapMaven.Core.Models;
-using MapMaven.Core.Models.Data.Leaderboards.ScoreSaber;
 using MapMaven.Core.Models.Data.RankedMaps;
 using MapMaven.Core.Services.Interfaces;
 using MapMaven.Core.Utilities;

@@ -3,7 +3,6 @@ using MapMaven.Core.Services.Interfaces;
 using MapMaven.Core.Utilities;
 using Microsoft.Extensions.Logging;
 using System.IO.Abstractions;
-using System.Reactive.Subjects;
 using System.Text.Json;
 
 namespace MapMaven.Core.Services.Leaderboards
