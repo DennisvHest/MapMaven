@@ -15,6 +15,7 @@ using Microsoft.Extensions.Hosting;
 using MapMaven.Utility;
 using Serilog.Events;
 using MapMaven.Services.Workers;
+using MapMaven.Services.Playlists;
 
 namespace MapMaven;
 
@@ -60,6 +61,7 @@ public static class MauiProgram
         builder.Services.AddSingleton<IHostedService, DynamicPlaylistWorker>();
         builder.Services.AddSingleton<IHostedService, MemoryCleaningWorker>();
         builder.Services.AddSingleton<HostedServiceExecutor>();
+        builder.Services.AddSingleton<PlaylistCoverService>();
 
         builder.ConfigureLifecycleEvents(lifecycle =>
         {

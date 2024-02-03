@@ -394,11 +394,23 @@ namespace MapMaven.Services
 
         public Image GetMapCoverImage(string mapId)
         {
-            var mapInfo = _mapInfo.Value[mapId];
-
-            var imageFilePath = _fileSystem.Path.Combine(mapInfo.DirectoryPath, mapInfo.CoverImageFilename);
+            var imageFilePath = GetMapCoverImageFilePath(mapId);
 
             return Image.FromFile(imageFilePath);
+        }
+
+        public Stream GetMapCoverImageStream(string mapId)
+        {
+            var imageFilePath = GetMapCoverImageFilePath(mapId);
+
+            return File.OpenRead(imageFilePath);
+        }
+
+        public string GetMapCoverImageFilePath(string mapId)
+        {
+            var mapInfo = _mapInfo.Value[mapId];
+
+            return _fileSystem.Path.Combine(mapInfo.DirectoryPath, mapInfo.CoverImageFilename);
         }
 
         public string GetMapSongPath(string mapId)

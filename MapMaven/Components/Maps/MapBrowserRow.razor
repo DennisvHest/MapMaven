@@ -46,7 +46,11 @@
         <MudLink @onclick="() => SelectSongAuthor(context.Item)" Color="Color.Default" Typo="Typo.body2">@context.Item.SongAuthorName</MudLink>
     </CellTemplate>
 </SortableTemplateColumn>
-<PropertyColumn T="Map" TProperty="string" Property="m => m.MapAuthorName" SortBy="m => m.MapAuthorName" Title="Map Author" CellStyle="max-width: 130px; min-width: 130px;"></PropertyColumn>
+<SortableTemplateColumn T="Map" TProperty="string" Property="m => m.MapAuthorName" SortBy="m => m.MapAuthorName" Title="Map Author" CellStyle="max-width: 130px; min-width: 130px;">
+    <CellTemplate>
+        <MudLink @onclick="() => SelectMapAuthor(context.Item)" Color="Color.Default" Typo="Typo.body2">@context.Item.MapAuthorName</MudLink>
+    </CellTemplate>
+</SortableTemplateColumn>
 <SortableTemplateColumn T="Map" TProperty="TimeSpan" CellStyle="max-width: 130px; min-width: 130px" Property="m => m.SongDuration" SortBy="m => m.SongDuration" Title="Duration">
     <CellTemplate>
         @context.Item.SongDuration.ToString("mm':'ss")

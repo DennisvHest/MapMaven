@@ -83,20 +83,20 @@
       <PackageReference Include="BeatSaberPlaylistsLib" Version="1.6.6" />
       <PackageReference Include="Clowd.Squirrel" Version="2.11.1" />
       <PackageReference Include="Microsoft.AspNetCore.Components.DataAnnotations.Validation" Version="3.2.0-rc1.20223.4" />
-      <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.0">
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.1">
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
       <PackageReference Include="Microsoft.VisualStudio.Utilities" Version="17.8.37221" />
-	  <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.4.231115000" />
-      <PackageReference Include="MudBlazor" Version="6.11.2" />
+	  <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.4.231219000" />
+      <PackageReference Include="MudBlazor" Version="6.12.0" />
       <PackageReference Include="NAudio" Version="2.2.1" />
       <PackageReference Include="NAudio.Vorbis" Version="1.5.0" />
       <PackageReference Include="PInvoke.User32" Version="0.7.124" />
       <PackageReference Include="securifybv.ShellLink" Version="0.1.0" />
       <PackageReference Include="Serilog.Extensions.Hosting" Version="8.0.0" />
       <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
-      <PackageReference Include="System.Drawing.Common" Version="8.0.0" />
+      <PackageReference Include="System.Drawing.Common" Version="8.0.1" />
       <PackageReference Include="System.Reactive" Version="6.0.0" />
     </ItemGroup>
 
@@ -106,9 +106,9 @@
     </ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
-		<PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="$(MauiVersion)" />
-		<PackageReference Include="Microsoft.AspNetCore.Components.WebView.Maui" Version="$(MauiVersion)" />
+		<PackageReference Include="Microsoft.Maui.Controls" Version="8.0.6" />
+		<PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="8.0.6" />
+		<PackageReference Include="Microsoft.AspNetCore.Components.WebView.Maui" Version="8.0.6" />
 	</ItemGroup>
 
 </Project>

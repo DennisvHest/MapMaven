@@ -29,6 +29,7 @@
             <img src="@LeaderboardUtility.GetLogoPath(LeaderboardProvider.ScoreSaber)" style="width: 24px;" class="mr-3" />
             <MudTextField @bind-Value="ScoreSaberPlayerId"
                           DebounceInterval="300"
+                          Clearable="true"
                           Variant="Variant.Outlined"
                           Label="ScoreSaber player ID / URL (optional)">
             </MudTextField>
@@ -38,6 +39,7 @@
             <img src="@LeaderboardUtility.GetLogoPath(LeaderboardProvider.BeatLeader)" style="width: 24px;" class="mr-3" />
             <MudTextField @bind-Value="BeatLeaderPlayerId"
                           DebounceInterval="300"
+                          Clearable="true"
                           Variant="Variant.Outlined"
                           Label="BeatLeader player ID / URL (optional)">
             </MudTextField>

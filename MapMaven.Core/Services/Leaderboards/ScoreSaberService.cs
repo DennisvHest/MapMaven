@@ -111,19 +111,18 @@ namespace MapMaven.Core.Services.Leaderboards
                     var playerProfile = await _scoreSaber.FullAsync(playerId);
 
                     return new PlayerProfile(playerProfile);
+                })
+                .Catch((Exception exception) =>
+                {
+                    _applicationEventService.RaiseError(new ErrorEvent
+                    {
+                        Exception = exception,
+                        Message = "Failed to load player profile from ScoreSaber."
+                    });
+
+                    return Observable.Return(null as PlayerProfile);
                 });
             }).Concat();
-
-            PlayerProfile = PlayerProfile.Catch((Exception exception) =>
-            {
-                _applicationEventService.RaiseError(new ErrorEvent
-                {
-                    Exception = exception,
-                    Message = "Failed to load player profile from ScoreSaber."
-                });
-
-                return Observable.Return(null as PlayerProfile);
-            });
 
             _rankedMaps = new(GetRankedMaps, TimeSpan.FromHours(6), []);
 

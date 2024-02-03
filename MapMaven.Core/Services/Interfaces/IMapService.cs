@@ -30,8 +30,11 @@ namespace MapMaven.Core.Services.Interfaces
         Task RefreshDataAsync(bool reloadMapAndLeaderboardInfo = false, bool forceReloadCachedData = false);
         void RemoveMapFilter(MapFilter filter);
         void ResetSelectedMaps();
-        void SelectMaps(IEnumerable<Map> selectedMaps);
+        void SetSelectedMaps(IEnumerable<Map> selectedMaps);
         void SetSelectable(bool selectable);
         void SetSelectedMaps(HashSet<Map> selectedMaps);
+        void ToggleMapSelected(Map map);
+        void SelectMaps(IEnumerable<Map> maps);
+        bool MapIsSelected(Map map);
     }
 }

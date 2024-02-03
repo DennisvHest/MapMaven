@@ -7,7 +7,7 @@ namespace MapMaven.Core.ApiClients.BeatLeader
     {
         public BeatLeaderApiClient() { }
 
-        partial void UpdateJsonSerializerSettings(JsonSerializerSettings settings)
+        static partial void UpdateJsonSerializerSettings(JsonSerializerSettings settings)
         {
             settings.ContractResolver = new SafeContractResolver();
         }

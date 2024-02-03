@@ -27,7 +27,17 @@
                 Variant="Variant.Outlined"
                 Min="0"
                 Max="100"
-                ValueChanged="OnPredictedAccuracyFilterChanged" />
+                ValueChanged="OnMinimumPredictedAccuracyFilterChanged" />
+
+            <MudNumericField T="double"
+                Value="MaximumPredictedAccuracy"
+                Label="Max predicted accuracy"
+                DebounceInterval="300"
+                Class="mt-5"
+                Variant="Variant.Outlined"
+                Min="0"
+                Max="100"
+                ValueChanged="OnMaximumPredictedAccuracyFilterChanged" />
 
             <MudExpansionPanels Class="my-3">
                 <MudExpansionPanel Text="Difficulty settings" Style="background-color: var(--mud-palette-drawer-background);">
