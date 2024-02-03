@@ -139,10 +139,19 @@ namespace MapMaven.Core.Services.Leaderboards
                             leaderboardContext: (ApiClients.BeatLeader.LeaderboardContexts)Models.Data.Leaderboards.BeatLeader.LeaderboardContexts.General
                         );
                         return new PlayerProfile(playerProfile);
+                    })
+                    .Catch((Exception exception) =>
+                    {
+                        _applicationEventService.RaiseError(new ErrorEvent
+                        {
+                            Exception = exception,
+                            Message = "Failed to load player profile from BeatLeader."
+                        });
+
+                        return Observable.Return(null as PlayerProfile);
                     });
                 })
                 .Concat();
-
 
             _rankedMaps = new(GetRankedMaps, TimeSpan.FromHours(6), []);
 
