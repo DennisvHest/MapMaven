@@ -31,7 +31,7 @@ namespace MapMaven.Core.Services.Leaderboards
         public string? PlayerId => LeaderboardProviders[_activeLeaderboardProviderName.Value].PlayerId;
         public LeaderboardProvider? ActiveLeaderboardProviderNameValue => _activeLeaderboardProviderName.Value;
 
-        public const string ReplayBaseUrl = "https://www.replay.beatleader.xyz";
+        public const string ReplayBaseUrl = "https://replay.beatleader.xyz";
 
         public LeaderboardService(
             IEnumerable<ILeaderboardProviderService> leaderboardProviders,
