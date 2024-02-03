@@ -89,7 +89,7 @@
       </PackageReference>
       <PackageReference Include="Microsoft.VisualStudio.Utilities" Version="17.8.37221" />
 	  <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.4.231219000" />
-      <PackageReference Include="MudBlazor" Version="6.12.0" />
+      <PackageReference Include="MudBlazor" Version="6.15.0" />
       <PackageReference Include="NAudio" Version="2.2.1" />
       <PackageReference Include="NAudio.Vorbis" Version="1.5.0" />
       <PackageReference Include="PInvoke.User32" Version="0.7.124" />
