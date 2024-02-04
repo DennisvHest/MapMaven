@@ -167,7 +167,7 @@ namespace MapMaven.Components.Maps
 
             TagsFilter = new MapFilter
             {
-                Name = $"Has tags: {string.Join(", ", tags)}%",
+                Name = $"Has tags: {string.Join(", ", tags)}",
                 Visible = false,
                 Filter = map =>
                 {
