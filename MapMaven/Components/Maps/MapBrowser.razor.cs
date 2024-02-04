@@ -65,6 +65,7 @@ namespace MapMaven.Components.Maps
 
         string Style => $"width: {Width}";
 
+        ElementReference TableWrapperRef;
         MudDataGrid<Map> TableRef;
 
         private Playlist SelectedPlaylist = null;
@@ -105,6 +106,7 @@ namespace MapMaven.Components.Maps
                 SelectedPlaylist = selectedPlaylist;
                 MapHashFilter = selectedPlaylist?.Maps.Select(m => m.Hash).ToList();
                 SortMapsWithDefaultSort();
+                InvokeAsync(() => TableWrapperRef.FocusAsync());
             });
             SubscribeAndBind(MapService.MapFilters, mapFilters => MapFilters = mapFilters);
             SubscribeAndBind(MapService.SelectedMaps, selectedMaps => SelectedMaps = selectedMaps);
@@ -188,7 +190,11 @@ namespace MapMaven.Components.Maps
 
         public IEnumerable<Map> GetFilteredMaps() => TableRef.FilteredItems;
 
-        void CancelSelection() => MapService.CancelSelection();
+        async Task CancelSelectionAsync()
+        {
+            MapService.CancelSelection();
+            await TableWrapperRef.FocusAsync();
+        }
 
         async Task DeleteSelectedMaps()
         {
@@ -205,7 +211,7 @@ namespace MapMaven.Components.Maps
 
             await MapService.DeleteMaps(SelectedMaps.Select(m => m.Hash));
 
-            MapService.CancelSelection();
+            await CancelSelectionAsync();
 
             Snackbar.Add($"Succesfully deleted selected maps", Severity.Normal, config => config.Icon = Icons.Filled.Check);
         }
@@ -246,7 +252,7 @@ namespace MapMaven.Components.Maps
 
             await PlaylistService.RemoveMapsFromPlaylist(SelectedMaps, SelectedPlaylist);
 
-            MapService.CancelSelection();
+            await CancelSelectionAsync();
 
             Snackbar.Add($"Removed selected maps from \"{SelectedPlaylist.Title}\"", Severity.Normal, config => config.Icon = Icons.Filled.Check);
         }
@@ -286,7 +292,7 @@ namespace MapMaven.Components.Maps
         public async Task OnKeyDown(KeyboardEventArgs args)
         {
             if (args.Code == "Escape")
-                MapService.CancelSelection();
+                await CancelSelectionAsync();
 
             if (args.Code == "KeyA" && args.CtrlKey)
             {
