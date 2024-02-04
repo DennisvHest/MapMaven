@@ -1,10 +1,9 @@
 ﻿body {
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
     user-select: none;
+}
+
+.text-selectable * {
+    user-select: text !important;
 }
 
 .full-height {
