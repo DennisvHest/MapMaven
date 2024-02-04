@@ -65,6 +65,7 @@ namespace MapMaven.Components.Maps
 
         string Style => $"width: {Width}";
 
+        ElementReference TableWrapperRef;
         MudDataGrid<Map> TableRef;
 
         private Playlist SelectedPlaylist = null;
@@ -105,6 +106,7 @@ namespace MapMaven.Components.Maps
                 SelectedPlaylist = selectedPlaylist;
                 MapHashFilter = selectedPlaylist?.Maps.Select(m => m.Hash).ToList();
                 SortMapsWithDefaultSort();
+                InvokeAsync(() => TableWrapperRef.FocusAsync());
             });
             SubscribeAndBind(MapService.MapFilters, mapFilters => MapFilters = mapFilters);
             SubscribeAndBind(MapService.SelectedMaps, selectedMaps => SelectedMaps = selectedMaps);
