@@ -78,7 +78,8 @@ namespace MapMaven.Core.Models.Data.RankedMaps
                 SongAuthorName = SongAuthorName,
                 MapAuthorName = MapAuthorName,
                 SongDuration = Duration,
-                CoverImageUrl = CoverImageUrl
+                CoverImageUrl = CoverImageUrl,
+                Tags = Tags ?? Enumerable.Empty<string>(),
             };
         }
     }

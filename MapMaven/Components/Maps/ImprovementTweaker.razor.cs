@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
+using static Plotly.NET.StyleParam.BackOff;
 using Map = MapMaven.Models.Map;
 
 namespace MapMaven.Components.Maps
@@ -40,6 +41,8 @@ namespace MapMaven.Components.Maps
         MapFilter MinimumPredictedAccuracyFilter = null;
         MapFilter MaximumPredictedAccuracyFilter = null;
 
+        MapFilter TagsFilter = null;
+
         HashSet<Map> SelectedMaps = new();
 
         bool CreatingPlaylist = false;
@@ -47,10 +50,18 @@ namespace MapMaven.Components.Maps
         int MapSelectNumber = 10;
         int MapSelectStartFromNumber = 1;
 
+        HashSet<string> MapTags = new();
+
         protected override void OnInitialized()
         {
             SubscribeAndBind(MapService.SelectedMaps, selectedMaps => SelectedMaps = selectedMaps);
             SubscribeAndBind(PlaylistService.CreatingPlaylist, creatingPlaylist => CreatingPlaylist = creatingPlaylist);
+            SubscribeAndBind(MapService.RankedMaps, rankedMaps =>
+                MapTags = rankedMaps
+                    .SelectMany(map => map.Tags)
+                    .OrderBy(tag => tag)
+                    .ToHashSet()
+            );
         }
 
         protected override void OnAfterRender(bool firstRender)
@@ -147,6 +158,27 @@ namespace MapMaven.Components.Maps
             };
 
             MapService.AddMapFilter(MaximumPredictedAccuracyFilter);
+        }
+
+        void OnTagsFilterChanged(IEnumerable<string> tags)
+        {
+            if (TagsFilter != null)
+                MapService.RemoveMapFilter(TagsFilter);
+
+            TagsFilter = new MapFilter
+            {
+                Name = $"Has tags: {string.Join(", ", tags)}%",
+                Visible = false,
+                Filter = map =>
+                {
+                    if (!tags.Any() || map.Tags is null)
+                        return true;
+
+                    return tags.All(t => map.Tags.Contains(t));
+                }
+            };
+
+            MapService.AddMapFilter(TagsFilter);
         }
 
         async Task CreatePlaylistFromSelectedMaps()

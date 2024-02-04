@@ -41,6 +41,7 @@ namespace MapMaven.Models
 
             RankedMap = rankedMap;
             Difficulties = rankedMap.Difficulties.Select(d => new MapDifficulty(d));
+            Tags = rankedMap.Tags ?? Enumerable.Empty<string>();
         }
 
         public void SetMapDetails(Beatmap beatmap)
