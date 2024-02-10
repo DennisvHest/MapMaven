@@ -3,7 +3,7 @@
 @using MapMaven.Core.Utilities.Scoresaber
 @using MapMaven.Core.Models.DynamicPlaylists
 
-<div @onkeydown="OnKeyDown" class="d-inline full-width" tabindex="-1">
+<div @ref="TableWrapperRef" @onkeydown="OnKeyDown" class="d-inline full-width" tabindex="-1">
     <MudDataGrid @ref="TableRef"
                  T="Map"
                  Items="Maps"
@@ -23,7 +23,7 @@
                  RowStyle="height: 88px;"
                  RowClassFunc="RowClassFunc">
         <ToolBarContent>
-            <MudGrid>
+            <MudGrid @onkeydown:stopPropagation="true">
                 <MudItem xs="12" Class="d-flex align-center">
                     @if (SelectedPlaylist != null)
                     {
@@ -87,7 +87,7 @@
                 <MudPaper Elevation="25" Class="bulk-actions-toolbar">
                     <MudToolBar Class="pr-0 border-l-2">
                         <MudChip Variant="Variant.Outlined">@SelectedMaps.Count maps</MudChip>
-                        <MudButton Variant="Variant.Text" Class="px-5 full-height" StartIcon="@Icons.Material.Filled.Close" OnClick="CancelSelection">
+                        <MudButton Variant="Variant.Text" Class="px-5 full-height" StartIcon="@Icons.Material.Filled.Close" OnClick="CancelSelectionAsync">
                             Cancel selection
                         </MudButton>
                         <MudDivider Vertical="true" FlexItem="true" />

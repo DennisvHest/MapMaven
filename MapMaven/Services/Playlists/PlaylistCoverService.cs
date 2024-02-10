@@ -4,7 +4,6 @@ using MapMaven.Models;
 using Microsoft.VisualStudio.Threading;
 using System.Reactive.Linq;
 using MapMaven.Extensions;
-using System.Linq;
 
 namespace MapMaven.Services.Playlists
 {
