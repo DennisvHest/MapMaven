@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
-using static Plotly.NET.StyleParam.BackOff;
 using Map = MapMaven.Models.Map;
 
 namespace MapMaven.Components.Maps
