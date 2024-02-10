@@ -2,11 +2,17 @@ using Microsoft.AspNetCore.Components;
 using MapMaven.Core.Models.DynamicPlaylists;
 using MapMaven.Utility;
 using System.Globalization;
+using MapMaven.Core.Models.DynamicPlaylists.MapInfo;
+using MapMaven.Core.Services.Interfaces;
+using MapMaven.Core.Services;
 
 namespace MapMaven.Components.Playlists
 {
     public partial class FilterOperationInput
     {
+        [Inject]
+        IMapService MapService { get; set; }
+
         [Parameter]
         public MapPool MapPool { get; set; }
 
@@ -34,11 +40,12 @@ namespace MapMaven.Components.Playlists
             FilterOperation.Operator = default;
             FilterOperation.Value = null;
 
+            FilterOperation.Operator = DynamicPlaylistArrangementService.FilterOperatorsForType[SelectedFieldOption.Type].First();
+
             if (SelectedFieldOption.Type == typeof(bool))
-            {
-                FilterOperation.Operator = FilterOperator.Equals;
                 BooleanValueChanged(false);
-            }
+
+            StateHasChanged();
         }
 
         void BooleanValueChanged(bool value)
@@ -54,6 +61,23 @@ namespace MapMaven.Components.Playlists
         void DoubleValueChanged(string value)
         {
             FilterOperation.Value = value?.Replace(',', '.');
+        }
+
+        ICollection<string> GetFieldOptions()
+        {
+            var options = FilterOperation.Field switch
+            {
+                nameof(DynamicPlaylistMap.Tags) => MapService.MapTags,
+                _ => []
+            };
+
+            if (FilterOperation.Value is not null)
+                options = options.Concat([FilterOperation.Value]);
+
+            return options
+                .Distinct()
+                .OrderBy(x => x)
+                .ToList();
         }
     }
 }

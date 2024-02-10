@@ -16,6 +16,7 @@ using MapMaven.Utility;
 using Serilog.Events;
 using MapMaven.Services.Workers;
 using MapMaven.Services.Playlists;
+using MudExtensions.Services;
 
 namespace MapMaven;
 
@@ -53,6 +54,8 @@ public static class MauiProgram
         {
             config.SnackbarConfiguration.PositionClass = Defaults.Classes.Position.BottomCenter;
         });
+
+        builder.Services.AddMudExtensions();
 
         builder.Services.AddMapMaven(useStatefulServices: true);
 

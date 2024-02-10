@@ -13,6 +13,7 @@ namespace MapMaven.Core.Services.Interfaces
         IObservable<IEnumerable<Map>> RankedMaps { get; }
         IObservable<HashSet<Map>> SelectedMaps { get; }
         IObservable<bool> Selectable { get; }
+        IEnumerable<string> MapTags { get; }
 
         void AddMapFilter(MapFilter filter);
         void CancelSelection();
