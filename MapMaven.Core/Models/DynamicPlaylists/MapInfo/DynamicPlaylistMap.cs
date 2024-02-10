@@ -30,6 +30,9 @@ namespace MapMaven.Core.Models.DynamicPlaylists.MapInfo
         [ApplicableForMapPool(MapPool.Improvement)]
         public string Difficulty { get; set; }
 
+        [ApplicableForMapPool(MapPool.Improvement)]
+        public IEnumerable<string> Tags { get; set; } = [];
+
         public DynamicPlaylistScore? Score { get; set; }
         public DynamicPlaylistScoreEstimate? ScoreEstimate { get; set; }
 
@@ -45,6 +48,7 @@ namespace MapMaven.Core.Models.DynamicPlaylists.MapInfo
             Played = map.Played;
             Stars = map.Difficulty?.Stars ?? 0;
             Difficulty = map.Difficulty?.Difficulty ?? "";
+            Tags = map.Tags ?? [];
             Score = map.HighestPlayerScore != null
                 ? new DynamicPlaylistScore(map.HighestPlayerScore)
                 : null;

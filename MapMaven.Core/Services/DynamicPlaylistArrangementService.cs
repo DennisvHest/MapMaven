@@ -32,6 +32,7 @@ namespace MapMaven.Core.Services
             { typeof(bool), new[] { FilterOperator.Equals, FilterOperator.NotEquals } },
             { typeof(double), new[] { FilterOperator.Equals, FilterOperator.NotEquals, FilterOperator.GreaterThan, FilterOperator.LessThan, FilterOperator.GreaterThanOrEqual, FilterOperator.LessThanOrEqual } },
             { typeof(DateTime), new[] { FilterOperator.Equals, FilterOperator.NotEquals, FilterOperator.GreaterThan, FilterOperator.LessThan, FilterOperator.GreaterThanOrEqual, FilterOperator.LessThanOrEqual } },
+            { typeof(IEnumerable<string>), new[] { FilterOperator.Contains } },
         };
 
         public DynamicPlaylistArrangementService(
@@ -234,6 +235,15 @@ namespace MapMaven.Core.Services
                 {
                     FilterOperator.Equals => boolValue == compareValue,
                     FilterOperator.NotEquals => boolValue != compareValue,
+                    _ => false
+                };
+            }
+
+            if (value is IEnumerable<string> stringEnumerableValue)
+            {
+                return filterOperation.Operator switch
+                {
+                    FilterOperator.Contains => stringEnumerableValue.Contains(filterOperation.Value, StringComparer.OrdinalIgnoreCase),
                     _ => false
                 };
             }

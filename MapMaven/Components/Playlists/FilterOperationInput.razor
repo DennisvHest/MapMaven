@@ -55,6 +55,18 @@
         case Type type when type == typeof(DateTime):
             <MudDatePicker Date="@(DateTime.TryParse(FilterOperation.Value, CultureInfo.InvariantCulture, out var dateValue) ? dateValue : null)" DateChanged="DateValueChanged" Label="Value" Variant="Variant.Outlined" Margin="Margin.Dense" Class="pl-2 d-block" Style="max-width: 168px;" />
             break;
+        case Type type when type == typeof(IEnumerable<string>):
+            <MudSelectExtended T="string"
+                ItemCollection="GetFieldOptions()"
+                Margin="Margin.Dense"
+                Dense="true"
+                SearchBox="true"
+                SearchBoxAutoFocus="true"
+                SearchBoxClearable="true"
+                Variant="Variant.Outlined"
+                Class="pl-2 d-block"
+                @bind-Value="FilterOperation.Value" />
+            break;
         default:
             <MudTextField @bind-Value="FilterOperation.Value" Label="Value" Variant="Variant.Outlined" Margin="Margin.Dense" Class="pl-2 d-block" Style="max-width: 168px;" />
             break;

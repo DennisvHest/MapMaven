@@ -48,6 +48,7 @@ namespace MapMaven.Services
 
         public IObservable<IEnumerable<MapFilter>> MapFilters => _mapFilters;
 
+        public IEnumerable<string> MapTags { get; private set; } = [];
 
         public MapService(
             IBeatSaberDataService beatSaberDataService,
@@ -112,7 +113,7 @@ namespace MapMaven.Services
 
         private IEnumerable<Map> CombineMapData(IEnumerable<MapInfo> maps, Dictionary<string, RankedMapInfoItem> rankedMaps, IEnumerable<PlayerScore> playerScores, IEnumerable<ScoreEstimate> scoreEstimates)
         {
-            return maps.GroupJoin(rankedMaps, mapInfo => mapInfo.Hash, rankedMap => rankedMap.Key, (mapInfo, rankedMaps) =>
+            var mapData = maps.GroupJoin(rankedMaps, mapInfo => mapInfo.Hash, rankedMap => rankedMap.Key, (mapInfo, rankedMaps) =>
             {
                 var map = mapInfo.ToMap();
 
@@ -131,6 +132,13 @@ namespace MapMaven.Services
 
                 return map;
             }).ToList();
+
+            MapTags = mapData
+                .SelectMany(m => m.Tags)
+                .Distinct()
+                .ToList();
+
+            return mapData;
         }
 
         private IEnumerable<Map> CombineRankedMapData(
