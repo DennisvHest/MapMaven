@@ -136,10 +136,10 @@ namespace MapMaven.Core.Services
                         playlistMaps = FilterMaps(playlistMaps, configuration);
                         playlistMaps = SortMaps(playlistMaps, configuration);
 
-                        playlistMaps = playlistMaps.Take(configuration.MapCount);
-
                         var resultPlaylistMaps = playlistMaps
                             .Select(m => m.Map)
+                            .DistinctBy(m => m.Hash)
+                            .Take(configuration.MapCount)
                             .ToList();
 
                         await _playlistService.DownloadPlaylistMapsIfNotExist(resultPlaylistMaps, loadMapInfo: false);
