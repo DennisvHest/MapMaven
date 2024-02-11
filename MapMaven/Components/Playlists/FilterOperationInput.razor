@@ -44,7 +44,23 @@
     @switch (SelectedFieldOption?.Type)
     {
         case Type type when type == typeof(string):
-            <MudTextField @bind-Value="FilterOperation.Value" Label="Value" Variant="Variant.Outlined" Margin="Margin.Dense" Class="pl-2 d-block" Style="max-width: 168px;" />
+            @if (SelectedFieldOption.HasPredefinedOptions)
+            {
+                <MudSelectExtended T="string"
+                    ItemCollection="GetFieldOptions()"
+                    Margin="Margin.Dense"
+                    Dense="true"
+                    SearchBox="true"
+                    SearchBoxAutoFocus="true"
+                    SearchBoxClearable="true"
+                    Variant="Variant.Outlined"
+                    Class="pl-2 d-block"
+                    @bind-Value="FilterOperation.Value" />
+            }
+            else
+            {
+                <MudTextField @bind-Value="FilterOperation.Value" Label="Value" Variant="Variant.Outlined" Margin="Margin.Dense" Class="pl-2 d-block" Style="max-width: 168px;" />
+            }
             break;
         case Type type when Numeric.Is(type):
             <MudNumericField Value="FilterOperation.Value" TextChanged="DoubleValueChanged" Label="Value" Variant="Variant.Outlined" Margin="Margin.Dense" Class="pl-2 d-block" Style="max-width: 168px;" />

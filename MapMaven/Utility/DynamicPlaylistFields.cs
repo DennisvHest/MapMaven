@@ -3,6 +3,7 @@ using MapMaven.Core.Models.DynamicPlaylists;
 using System.Reflection;
 using System.ComponentModel;
 using MapMaven.Utilities.DynamicPlaylists;
+using MapMaven.Core.Utilities.DynamicPlaylists;
 
 namespace MapMaven.Utility
 {
@@ -28,13 +29,16 @@ namespace MapMaven.Utility
 
                 var name = displayNameAttribute?.DisplayName ?? property.Name;
 
+                var hasPredefinedOptionsAttribute = property.GetCustomAttribute<HasPredefinedOptions>(); 
+
                 return new[]
                 {
                     new DynamicPlaylistFieldOption
                     {
                         Value = value,
                         Name = name,
-                        Type = property.PropertyType
+                        Type = property.PropertyType,
+                        HasPredefinedOptions = hasPredefinedOptionsAttribute is not null
                     }
                 };
             });

@@ -14,5 +14,13 @@
                 _ => 0
             };
         }
+
+        public static IEnumerable<string> Difficulties => [
+            "Easy",
+            "Normal",
+            "Hard",
+            "Expert",
+            "ExpertPlus"
+        ];
     }
 }

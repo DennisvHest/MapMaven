@@ -28,11 +28,11 @@ namespace MapMaven.Core.Services
 
         public static readonly Dictionary<Type, IEnumerable<FilterOperator>> FilterOperatorsForType = new()
         {
-            { typeof(string), new[] { FilterOperator.Equals, FilterOperator.NotEquals, FilterOperator.Contains } },
+            { typeof(string), new[] { FilterOperator.Equals, FilterOperator.NotEquals, FilterOperator.Contains, FilterOperator.NotContains } },
             { typeof(bool), new[] { FilterOperator.Equals, FilterOperator.NotEquals } },
             { typeof(double), new[] { FilterOperator.Equals, FilterOperator.NotEquals, FilterOperator.GreaterThan, FilterOperator.LessThan, FilterOperator.GreaterThanOrEqual, FilterOperator.LessThanOrEqual } },
             { typeof(DateTime), new[] { FilterOperator.Equals, FilterOperator.NotEquals, FilterOperator.GreaterThan, FilterOperator.LessThan, FilterOperator.GreaterThanOrEqual, FilterOperator.LessThanOrEqual } },
-            { typeof(IEnumerable<string>), new[] { FilterOperator.Contains } },
+            { typeof(IEnumerable<string>), new[] { FilterOperator.Contains, FilterOperator.NotContains } },
         };
 
         public DynamicPlaylistArrangementService(
@@ -136,10 +136,10 @@ namespace MapMaven.Core.Services
                         playlistMaps = FilterMaps(playlistMaps, configuration);
                         playlistMaps = SortMaps(playlistMaps, configuration);
 
-                        playlistMaps = playlistMaps.Take(configuration.MapCount);
-
                         var resultPlaylistMaps = playlistMaps
                             .Select(m => m.Map)
+                            .DistinctBy(m => m.Hash)
+                            .Take(configuration.MapCount)
                             .ToList();
 
                         await _playlistService.DownloadPlaylistMapsIfNotExist(resultPlaylistMaps, loadMapInfo: false);
@@ -191,6 +191,7 @@ namespace MapMaven.Core.Services
                     FilterOperator.Equals => stringValue.Equals(filterOperation.Value, StringComparison.OrdinalIgnoreCase),
                     FilterOperator.NotEquals => !stringValue.Equals(filterOperation.Value, StringComparison.OrdinalIgnoreCase),
                     FilterOperator.Contains => stringValue.Contains(filterOperation.Value, StringComparison.OrdinalIgnoreCase),
+                    FilterOperator.NotContains => !stringValue.Contains(filterOperation.Value, StringComparison.OrdinalIgnoreCase),
                     _ => false
                 };
             }
@@ -244,6 +245,7 @@ namespace MapMaven.Core.Services
                 return filterOperation.Operator switch
                 {
                     FilterOperator.Contains => stringEnumerableValue.Contains(filterOperation.Value, StringComparer.OrdinalIgnoreCase),
+                    FilterOperator.NotContains => !stringEnumerableValue.Contains(filterOperation.Value, StringComparer.OrdinalIgnoreCase),
                     _ => false
                 };
             }

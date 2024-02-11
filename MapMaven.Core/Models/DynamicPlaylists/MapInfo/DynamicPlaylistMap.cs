@@ -1,4 +1,5 @@
-﻿using MapMaven.Models;
+﻿using MapMaven.Core.Utilities.DynamicPlaylists;
+using MapMaven.Models;
 using MapMaven.Utilities.DynamicPlaylists;
 using System.ComponentModel;
 
@@ -28,9 +29,11 @@ namespace MapMaven.Core.Models.DynamicPlaylists.MapInfo
         public double Stars { get; set; }
 
         [ApplicableForMapPool(MapPool.Improvement)]
+        [HasPredefinedOptions]
         public string Difficulty { get; set; }
 
         [ApplicableForMapPool(MapPool.Improvement)]
+        [HasPredefinedOptions]
         public IEnumerable<string> Tags { get; set; } = [];
 
         public DynamicPlaylistScore? Score { get; set; }
