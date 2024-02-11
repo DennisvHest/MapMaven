@@ -5,6 +5,9 @@ using System.Globalization;
 using MapMaven.Core.Models.DynamicPlaylists.MapInfo;
 using MapMaven.Core.Services.Interfaces;
 using MapMaven.Core.Services;
+using System.Reflection;
+using MapMaven.Core.Utilities.DynamicPlaylists;
+using MapMaven.Core.Utilities;
 
 namespace MapMaven.Components.Playlists
 {
@@ -67,6 +70,7 @@ namespace MapMaven.Components.Playlists
         {
             var options = FilterOperation.Field switch
             {
+                nameof(DynamicPlaylistMap.Difficulty) => DifficultyUtils.Difficulties,
                 nameof(DynamicPlaylistMap.Tags) => MapService.MapTags,
                 _ => []
             };
@@ -74,10 +78,12 @@ namespace MapMaven.Components.Playlists
             if (FilterOperation.Value is not null)
                 options = options.Concat([FilterOperation.Value]);
 
-            return options
-                .Distinct()
-                .OrderBy(x => x)
-                .ToList();
+            options = options.Distinct();
+
+            if (FilterOperation.Field != nameof(DynamicPlaylistMap.Difficulty))
+                options = options.OrderBy(x => x);
+
+            return options.ToList();
         }
     }
 }
