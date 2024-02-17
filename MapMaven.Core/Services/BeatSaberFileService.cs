@@ -31,7 +31,7 @@ namespace MapMaven.Core.Services
                 BeatSaberInstallLocation = applicationSettings.TryGetValue(BeatSaberInstallLocationKey, out var beatSaberInstallLocation) ? beatSaberInstallLocation.StringValue : null;
 
                 return BeatSaberInstallLocation;
-            });
+            }).Where(installLocation => !string.IsNullOrEmpty(installLocation));
         }
 
         public static string GetUserDataLocation(string beatSaberInstallLocation)
