@@ -5,7 +5,7 @@ using System.ComponentModel;
 
 namespace MapMaven.Core.Models.DynamicPlaylists.MapInfo
 {
-    public class DynamicPlaylistMap
+    public class AdvancedSearchMap
     {
         [DisplayName("Map name")]
         public string Name { get; set; }
@@ -39,9 +39,9 @@ namespace MapMaven.Core.Models.DynamicPlaylists.MapInfo
         public DynamicPlaylistScore? Score { get; set; }
         public DynamicPlaylistScoreEstimate? ScoreEstimate { get; set; }
 
-        public DynamicPlaylistMap() { }
+        public AdvancedSearchMap() { }
 
-        public DynamicPlaylistMap(Map map)
+        public AdvancedSearchMap(Map map)
         {
             Name = map.Name;
             SongAuthorName = map.SongAuthorName;

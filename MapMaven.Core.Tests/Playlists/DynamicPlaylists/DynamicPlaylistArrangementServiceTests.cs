@@ -87,13 +87,13 @@ public class DynamicPlaylistArrangementServiceTests
                         {
                             new JObject
                             {
-                                { nameof(FilterOperation.Field), nameof(DynamicPlaylistMap.SongAuthorName) },
+                                { nameof(FilterOperation.Field), nameof(AdvancedSearchMap.SongAuthorName) },
                                 { nameof(FilterOperation.Value), "Camellia" },
                                 { nameof(FilterOperation.Operator), nameof(FilterOperator.Equals) }
                             },
                             new JObject
                             {
-                                { nameof(FilterOperation.Field), nameof(DynamicPlaylistMap.Name) },
+                                { nameof(FilterOperation.Field), nameof(AdvancedSearchMap.Name) },
                                 { nameof(FilterOperation.Value), "Other test map" },
                                 { nameof(FilterOperation.Operator), nameof(FilterOperator.NotEquals) }
                             }
@@ -122,25 +122,25 @@ public class DynamicPlaylistArrangementServiceTests
                         {
                             new JObject
                             {
-                                { nameof(FilterOperation.Field), nameof(DynamicPlaylistMap.Stars) },
+                                { nameof(FilterOperation.Field), nameof(AdvancedSearchMap.Stars) },
                                 { nameof(FilterOperation.Value), 3.3 },
                                 { nameof(FilterOperation.Operator), nameof(FilterOperator.GreaterThan) }
                             },
                             new JObject
                             {
-                                { nameof(FilterOperation.Field), nameof(DynamicPlaylistMap.Stars) },
+                                { nameof(FilterOperation.Field), nameof(AdvancedSearchMap.Stars) },
                                 { nameof(FilterOperation.Value), 5.2 },
                                 { nameof(FilterOperation.Operator), nameof(FilterOperator.GreaterThanOrEqual) }
                             },
                             new JObject
                             {
-                                { nameof(FilterOperation.Field), nameof(DynamicPlaylistMap.Stars) },
+                                { nameof(FilterOperation.Field), nameof(AdvancedSearchMap.Stars) },
                                 { nameof(FilterOperation.Value), 5.21 },
                                 { nameof(FilterOperation.Operator), nameof(FilterOperator.LessThan) }
                             },
                             new JObject
                             {
-                                { nameof(FilterOperation.Field), nameof(DynamicPlaylistMap.Stars) },
+                                { nameof(FilterOperation.Field), nameof(AdvancedSearchMap.Stars) },
                                 { nameof(FilterOperation.Value), 5.2 },
                                 { nameof(FilterOperation.Operator), nameof(FilterOperator.LessThanOrEqual) }
                             }
@@ -169,13 +169,13 @@ public class DynamicPlaylistArrangementServiceTests
                         {
                             new JObject
                             {
-                                { nameof(FilterOperation.Field), nameof(DynamicPlaylistMap.Stars) },
+                                { nameof(FilterOperation.Field), nameof(AdvancedSearchMap.Stars) },
                                 { nameof(FilterOperation.Value), 1 },
                                 { nameof(FilterOperation.Operator), nameof(FilterOperator.Equals) }
                             },
                             new JObject
                             {
-                                { nameof(FilterOperation.Field), nameof(DynamicPlaylistMap.Stars) },
+                                { nameof(FilterOperation.Field), nameof(AdvancedSearchMap.Stars) },
                                 { nameof(FilterOperation.Value), 43.2 },
                                 { nameof(FilterOperation.Operator), nameof(FilterOperator.NotEquals) }
                             },
@@ -204,25 +204,25 @@ public class DynamicPlaylistArrangementServiceTests
                         {
                             new JObject
                             {
-                                { nameof(FilterOperation.Field), $"{nameof(DynamicPlaylistMap.Score)}.{nameof(DynamicPlaylistScore.TimeSet)}" },
+                                { nameof(FilterOperation.Field), $"{nameof(AdvancedSearchMap.Score)}.{nameof(DynamicPlaylistScore.TimeSet)}" },
                                 { nameof(FilterOperation.Value), new DateTime(2022, 1, 1).ToString(CultureInfo.InvariantCulture) },
                                 { nameof(FilterOperation.Operator), nameof(FilterOperator.GreaterThan) }
                             },
                             new JObject
                             {
-                                { nameof(FilterOperation.Field), $"{nameof(DynamicPlaylistMap.Score)}.{nameof(DynamicPlaylistScore.TimeSet)}" },
+                                { nameof(FilterOperation.Field), $"{nameof(AdvancedSearchMap.Score)}.{nameof(DynamicPlaylistScore.TimeSet)}" },
                                 { nameof(FilterOperation.Value), new DateTime(2022, 3, 25).ToString(CultureInfo.InvariantCulture) },
                                 { nameof(FilterOperation.Operator), nameof(FilterOperator.GreaterThanOrEqual) }
                             },
                             new JObject
                             {
-                                { nameof(FilterOperation.Field), $"{nameof(DynamicPlaylistMap.Score)}.{nameof(DynamicPlaylistScore.TimeSet)}" },
+                                { nameof(FilterOperation.Field), $"{nameof(AdvancedSearchMap.Score)}.{nameof(DynamicPlaylistScore.TimeSet)}" },
                                 { nameof(FilterOperation.Value), new DateTime(2023, 1, 1).ToString(CultureInfo.InvariantCulture) },
                                 { nameof(FilterOperation.Operator), nameof(FilterOperator.LessThan) }
                             },
                             new JObject
                             {
-                                { nameof(FilterOperation.Field), $"{nameof(DynamicPlaylistMap.Score)}.{nameof(DynamicPlaylistScore.TimeSet)}" },
+                                { nameof(FilterOperation.Field), $"{nameof(AdvancedSearchMap.Score)}.{nameof(DynamicPlaylistScore.TimeSet)}" },
                                 { nameof(FilterOperation.Value), new DateTime(2022, 3, 25).ToString(CultureInfo.InvariantCulture) },
                                 { nameof(FilterOperation.Operator), nameof(FilterOperator.LessThanOrEqual) }
                             }
@@ -251,13 +251,13 @@ public class DynamicPlaylistArrangementServiceTests
                         {
                             new JObject
                             {
-                                { nameof(FilterOperation.Field), $"{nameof(DynamicPlaylistMap.Score)}.{nameof(DynamicPlaylistScore.TimeSet)}" },
+                                { nameof(FilterOperation.Field), $"{nameof(AdvancedSearchMap.Score)}.{nameof(DynamicPlaylistScore.TimeSet)}" },
                                 { nameof(FilterOperation.Value), new DateTime(2022, 3, 25).ToString(CultureInfo.InvariantCulture) },
                                 { nameof(FilterOperation.Operator), nameof(FilterOperator.Equals) }
                             },
                             new JObject
                             {
-                                { nameof(FilterOperation.Field), $"{nameof(DynamicPlaylistMap.Score)}.{nameof(DynamicPlaylistScore.TimeSet)}" },
+                                { nameof(FilterOperation.Field), $"{nameof(AdvancedSearchMap.Score)}.{nameof(DynamicPlaylistScore.TimeSet)}" },
                                 { nameof(FilterOperation.Value), new DateTime(2023, 1, 12).ToString(CultureInfo.InvariantCulture) },
                                 { nameof(FilterOperation.Operator), nameof(FilterOperator.NotEquals) }
                             },
@@ -286,7 +286,7 @@ public class DynamicPlaylistArrangementServiceTests
                         {
                             new JObject
                             {
-                                { nameof(FilterOperation.Field), nameof(DynamicPlaylistMap.Played) },
+                                { nameof(FilterOperation.Field), nameof(AdvancedSearchMap.Played) },
                                 { nameof(FilterOperation.Value), true },
                                 { nameof(FilterOperation.Operator), nameof(FilterOperator.Equals) }
                             }
@@ -316,7 +316,7 @@ public class DynamicPlaylistArrangementServiceTests
                         {
                             new JObject
                             {
-                                { nameof(SortOperation.Field), nameof(DynamicPlaylistMap.Name) },
+                                { nameof(SortOperation.Field), nameof(AdvancedSearchMap.Name) },
                                 { nameof(SortOperation.Direction), nameof(SortDirection.Ascending) }
                             }
                         }
@@ -348,12 +348,12 @@ public class DynamicPlaylistArrangementServiceTests
                         {
                             new JObject
                             {
-                                { nameof(SortOperation.Field), nameof(DynamicPlaylistMap.SongAuthorName) },
+                                { nameof(SortOperation.Field), nameof(AdvancedSearchMap.SongAuthorName) },
                                 { nameof(SortOperation.Direction), nameof(SortDirection.Descending) }
                             },
                             new JObject
                             {
-                                { nameof(SortOperation.Field), nameof(DynamicPlaylistMap.Name) },
+                                { nameof(SortOperation.Field), nameof(AdvancedSearchMap.Name) },
                                 { nameof(SortOperation.Direction), nameof(SortDirection.Ascending) }
                             }
                         }
@@ -385,7 +385,7 @@ public class DynamicPlaylistArrangementServiceTests
                         {
                             new JObject
                             {
-                                { nameof(SortOperation.Field), nameof(DynamicPlaylistMap.Stars) },
+                                { nameof(SortOperation.Field), nameof(AdvancedSearchMap.Stars) },
                                 { nameof(SortOperation.Direction), nameof(SortDirection.Ascending) }
                             }
                         }
@@ -417,7 +417,7 @@ public class DynamicPlaylistArrangementServiceTests
                         {
                             new JObject
                             {
-                                { nameof(SortOperation.Field), $"{nameof(DynamicPlaylistMap.Score)}.{nameof(DynamicPlaylistScore.TimeSet)}" },
+                                { nameof(SortOperation.Field), $"{nameof(AdvancedSearchMap.Score)}.{nameof(DynamicPlaylistScore.TimeSet)}" },
                                 { nameof(SortOperation.Direction), nameof(SortDirection.Descending) }
                             }
                         }
@@ -449,7 +449,7 @@ public class DynamicPlaylistArrangementServiceTests
                         {
                             new JObject
                             {
-                                { nameof(SortOperation.Field), nameof(DynamicPlaylistMap.Played) },
+                                { nameof(SortOperation.Field), nameof(AdvancedSearchMap.Played) },
                                 { nameof(SortOperation.Direction), nameof(SortDirection.Descending) }
                             }
                         }
@@ -483,7 +483,7 @@ public class DynamicPlaylistArrangementServiceTests
                         {
                             new JObject
                             {
-                                { nameof(FilterOperation.Field), $"{nameof(DynamicPlaylistMap.Score)}.{nameof(DynamicPlaylistScore.TimeSet)}" },
+                                { nameof(FilterOperation.Field), $"{nameof(AdvancedSearchMap.Score)}.{nameof(DynamicPlaylistScore.TimeSet)}" },
                                 { nameof(FilterOperation.Value), "99-99-9999 99:99:99" }, // Invalid DateTime
                                 { nameof(FilterOperation.Operator), nameof(FilterOperator.Equals) }
                             }
@@ -513,7 +513,7 @@ public class DynamicPlaylistArrangementServiceTests
                         {
                             new JObject
                             {
-                                { nameof(FilterOperation.Field), nameof(DynamicPlaylistMap.Played) },
+                                { nameof(FilterOperation.Field), nameof(AdvancedSearchMap.Played) },
                                 { nameof(FilterOperation.Value), true },
                                 { nameof(FilterOperation.Operator), nameof(FilterOperator.Equals) }
                             }

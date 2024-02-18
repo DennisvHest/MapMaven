@@ -91,7 +91,7 @@ namespace MapMaven.Core.Services
                             var rankedMapsData = await _mapService.GetCompleteRankedMapDataForLeaderboardProvider(leaderboard.Key.Value);
                             rankedMaps = rankedMapsData.Select(m => new DynamicPlaylistMapPair
                             {
-                                DynamicPlaylistMap = new DynamicPlaylistMap(m),
+                                DynamicPlaylistMap = new AdvancedSearchMap(m),
                                 Map = m
                             });
                         }
@@ -112,7 +112,7 @@ namespace MapMaven.Core.Services
 
                 var maps = mapData.Select(m => new DynamicPlaylistMapPair
                 {
-                    DynamicPlaylistMap = new DynamicPlaylistMap(m),
+                    DynamicPlaylistMap = new AdvancedSearchMap(m),
                     Map = m
                 });
 
@@ -217,7 +217,7 @@ namespace MapMaven.Core.Services
         private class DynamicPlaylistMapPair
         {
             public Map Map { get; set; }
-            public DynamicPlaylistMap DynamicPlaylistMap { get; set; }
+            public AdvancedSearchMap DynamicPlaylistMap { get; set; }
         }
     }
 }

@@ -10,7 +10,7 @@ namespace MapMaven.Core.Services
     {
         private static readonly IResolver _resolver = new Resolver();
 
-        public static bool FilterOperationMatches(DynamicPlaylistMap map, FilterOperation filterOperation)
+        public static bool FilterOperationMatches(AdvancedSearchMap map, FilterOperation filterOperation)
         {
             var value = _resolver.ResolveSafe(map, filterOperation.Field);
 

@@ -10,7 +10,7 @@ namespace MapMaven.Utility
 {
     public static class DynamicPlaylistFields
     {
-        public static IEnumerable<DynamicPlaylistFieldOption> FieldOptions(MapPool mapPool) => GetFieldOptionsForType(typeof(DynamicPlaylistMap), mapPool);
+        public static IEnumerable<DynamicPlaylistFieldOption> FieldOptions(MapPool mapPool) => GetFieldOptionsForType(typeof(AdvancedSearchMap), mapPool);
 
         private static IEnumerable<DynamicPlaylistFieldOption> GetFieldOptionsForType(Type type, MapPool mapPool, string? parentObjectName = null)
         {
