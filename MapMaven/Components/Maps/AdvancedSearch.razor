@@ -1,6 +1,8 @@
 ﻿@using MapMaven.Core.Models
 @using MapMaven.Core.Models.AdvancedSearch
 @using MapMaven.Core.Models.DynamicPlaylists
+@using MapMaven.Core.Models.DynamicPlaylists.MapInfo
+@using MapMaven.Core.Services
 
 <EditForm Model="@Configuration" OnValidSubmit="SetMapFilters">
     <MudDialog>
@@ -47,6 +49,9 @@
     [Inject]
     IMapService MapService { get; set; }
 
+    [CascadingParameter]
+    MudDialogInstance MudDialog { get; set; }
+
     AdvancedSearchConfiguration Configuration { get; set; } = new();
 
     IEnumerable<MapFilter> MapFilters { get; set; } = Enumerable.Empty<MapFilter>();
@@ -80,7 +85,7 @@
 
         MapFilters = Configuration.FilterOperations.Select(filterOperation => new MapFilter
         {
-            Filter = map => true,
+            Filter = map => MapSearchService.FilterOperationMatches(new(map), filterOperation),
             Name = $"{filterOperation.Field} {filterOperation.Operator.DisplayName()} {filterOperation.Value}"
         });
 
@@ -88,5 +93,7 @@
         {
             MapService.AddMapFilter(mapFilter);
         }
+
+        MudDialog.Close(DialogResult.Ok(Configuration));
     }
 }
