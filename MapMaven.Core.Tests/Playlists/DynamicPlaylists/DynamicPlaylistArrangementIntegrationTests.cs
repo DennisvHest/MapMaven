@@ -21,6 +21,7 @@ using MapMaven.Core.Services.Leaderboards;
 using MapMaven.Core.Models;
 using MapMaven.Core.Models.Data.Leaderboards;
 using MapMaven.Core.Services.Leaderboards.ScoreEstimation;
+using MapMaven.Core.Models.AdvancedSearch;
 
 namespace MapMaven.Core.Tests.Playlists.DynamicPlaylists;
 

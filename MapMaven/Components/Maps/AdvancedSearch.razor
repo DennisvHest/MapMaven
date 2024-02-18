@@ -1,0 +1,92 @@
+﻿@using MapMaven.Core.Models
+@using MapMaven.Core.Models.AdvancedSearch
+@using MapMaven.Core.Models.DynamicPlaylists
+
+<EditForm Model="@Configuration" OnValidSubmit="SetMapFilters">
+    <MudDialog>
+        <DialogContent>
+            <MudPaper Class="my-4" Style="background-color: var(--mud-palette-drawer-background);">
+                <MudList>
+                    <MudListSubheader Class="d-flex align-center justify-space-between">
+                        Filters
+                        <MudIconButton Icon="@Icons.Filled.Add" Variant="Variant.Outlined" Size="Size.Small" OnClick="AddFilterOperation" />
+                    </MudListSubheader>
+                    @foreach (var filterOperation in Configuration.FilterOperations)
+                    {
+                        <MudListItem Class="py-0">
+                            <FilterOperationInput FilterOperation="filterOperation" MapPool="MapPool.Standard" OnRemove="() => RemoveFilterOperation(filterOperation)"></FilterOperationInput>
+                        </MudListItem>
+                    }
+                </MudList>
+            </MudPaper>
+
+            <MudPaper Class="my-4" Style="background-color: var(--mud-palette-drawer-background);">
+                <MudList>
+                    <MudListSubheader Class="d-flex align-center justify-space-between">
+                        Sorting
+                        <MudIconButton Icon="@Icons.Filled.Add" Variant="Variant.Outlined" Size="Size.Small" OnClick="AddSortOperation" />
+                    </MudListSubheader>
+                    @for (var i = 0; i < Configuration.SortOperations.Count; i++)
+                    {
+                        var index = i;
+                        var sortOperation = Configuration.SortOperations[index];
+
+                        <MudListItem Class="py-0">
+                            <SortOperationInput SortOperation="sortOperation" MapPool="MapPool.Standard" OnRemove="() => RemoveSortOperation(sortOperation)" FirstSortOperation="index == 0"></SortOperationInput>
+                        </MudListItem>
+                    }
+                </MudList>
+            </MudPaper>
+
+            <MudButton ButtonType="ButtonType.Submit">Search</MudButton>
+        </DialogContent>
+    </MudDialog>
+</EditForm>
+
+@code {
+    [Inject]
+    IMapService MapService { get; set; }
+
+    AdvancedSearchConfiguration Configuration { get; set; } = new();
+
+    IEnumerable<MapFilter> MapFilters { get; set; } = Enumerable.Empty<MapFilter>();
+
+    void AddFilterOperation()
+    {
+        Configuration.FilterOperations.Add(new());
+    }
+
+    void AddSortOperation()
+    {
+        Configuration.SortOperations.Add(new());
+    }
+
+    void RemoveFilterOperation(FilterOperation filterOperation)
+    {
+        Configuration.FilterOperations.Remove(filterOperation);
+    }
+
+    void RemoveSortOperation(SortOperation sortOperation)
+    {
+        Configuration.SortOperations.Remove(sortOperation);
+    }
+
+    void SetMapFilters()
+    {
+        foreach (var mapFilter in MapFilters)
+        {
+            MapService.RemoveMapFilter(mapFilter);
+        }
+
+        MapFilters = Configuration.FilterOperations.Select(filterOperation => new MapFilter
+        {
+            Filter = map => true,
+            Name = $"{filterOperation.Field} {filterOperation.Operator.DisplayName()} {filterOperation.Value}"
+        });
+
+        foreach (var mapFilter in MapFilters)
+        {
+            MapService.AddMapFilter(mapFilter);
+        }
+    }
+}

@@ -1,4 +1,5 @@
-﻿using MapMaven.Core.Models.DynamicPlaylists;
+﻿using MapMaven.Core.Models.AdvancedSearch;
+using MapMaven.Core.Models.DynamicPlaylists;
 using MapMaven.Core.Models.DynamicPlaylists.MapInfo;
 
 namespace MapMaven.Components.Playlists

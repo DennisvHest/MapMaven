@@ -319,6 +319,15 @@ namespace MapMaven.Components.Maps
             return classes;
         }
 
+        public void OpenAdvancedSearch()
+        {
+            DialogService.Show<AdvancedSearch>(null, new DialogOptions
+            {
+                MaxWidth = MaxWidth.Small,
+                FullWidth = true
+            });
+        }
+
         public void Dispose()
         {
             NavigationManager.LocationChanged -= LocationChanged;

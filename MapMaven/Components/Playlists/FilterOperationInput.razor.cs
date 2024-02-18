@@ -8,6 +8,7 @@ using MapMaven.Core.Services;
 using System.Reflection;
 using MapMaven.Core.Utilities.DynamicPlaylists;
 using MapMaven.Core.Utilities;
+using MapMaven.Core.Models.AdvancedSearch;
 
 namespace MapMaven.Components.Playlists
 {

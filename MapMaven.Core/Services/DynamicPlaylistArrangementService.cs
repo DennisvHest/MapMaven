@@ -8,6 +8,7 @@ using System.Globalization;
 using Microsoft.Extensions.Logging;
 using System.Reactive.Subjects;
 using MapMaven.Core.Services.Leaderboards;
+using MapMaven.Core.Models.AdvancedSearch;
 
 namespace MapMaven.Core.Services
 {

@@ -52,8 +52,11 @@
                     </MudTextField>
                     @if (!RankedMaps)
                     {
+                        <MudTooltip Text="Advanced&nbsp;search">
+                            <MudIconButton Icon="@Icons.Material.Filled.ManageSearch" Class="ml-5 mr-2" OnClick="OpenAdvancedSearch" />
+                        </MudTooltip>
                         <MudTooltip Text="Bulk&nbsp;edit">
-                            <MudIconButton Icon="@(Selectable ? Icons.Material.Filled.LibraryAddCheck : Icons.Material.Outlined.LibraryAddCheck)" Class="mx-5" OnClick="ToggleSelectable" />
+                            <MudIconButton Icon="@(Selectable ? Icons.Material.Filled.LibraryAddCheck : Icons.Material.Outlined.LibraryAddCheck)" Class="mx-2" OnClick="ToggleSelectable" />
                         </MudTooltip>
                     }
                 </MudItem>
