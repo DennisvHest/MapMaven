@@ -192,9 +192,28 @@ namespace MapMaven.Services
             _mapFilters.OnNext(_mapFilters.Value);
         }
 
+        public void AddMapFilters(IEnumerable<MapFilter> filters)
+        {
+            _mapFilters.Value.AddRange(filters);
+
+            _mapFilters.OnNext(_mapFilters.Value);
+        }
+
+        public void UpdateMapFilters() => _mapFilters.OnNext(_mapFilters.Value.ToList());
+
         public void RemoveMapFilter(MapFilter filter)
         {
             _mapFilters.Value.Remove(filter);
+
+            _mapFilters.OnNext(_mapFilters.Value);
+        }
+
+        public void RemoveMapFilters(IEnumerable<MapFilter> filters)
+        {
+            foreach (var filter in filters)
+            {
+                _mapFilters.Value.Remove(filter);
+            }
 
             _mapFilters.OnNext(_mapFilters.Value);
         }

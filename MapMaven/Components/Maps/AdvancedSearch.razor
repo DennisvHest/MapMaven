@@ -1,4 +1,6 @@
-﻿@using MapMaven.Core.Models
+﻿@inherits ReactiveComponent
+
+@using MapMaven.Core.Models
 @using MapMaven.Core.Models.AdvancedSearch
 @using MapMaven.Core.Models.DynamicPlaylists
 @using MapMaven.Core.Models.DynamicPlaylists.MapInfo
@@ -16,7 +18,7 @@
                     @foreach (var filterOperation in Configuration.FilterOperations)
                     {
                         <MudListItem Class="py-0">
-                            <FilterOperationInput FilterOperation="filterOperation" MapPool="MapPool.Standard" OnRemove="() => RemoveFilterOperation(filterOperation)"></FilterOperationInput>
+                            <FilterOperationInput FilterOperation="filterOperation.FilterOperation" MapPool="MapPool.Standard" OnRemove="() => RemoveFilterOperation(filterOperation)"></FilterOperationInput>
                         </MudListItem>
                     }
                 </MudList>
@@ -49,12 +51,21 @@
     [Inject]
     IMapService MapService { get; set; }
 
+    [Inject]
+    AdvancedSearchConfiguration Configuration { get; set; }
+
     [CascadingParameter]
     MudDialogInstance MudDialog { get; set; }
 
-    AdvancedSearchConfiguration Configuration { get; set; } = new();
+    List<MapFilterOperationPair> FilterOperationsToRemove { get; set; } = [];
 
-    IEnumerable<MapFilter> MapFilters { get; set; } = Enumerable.Empty<MapFilter>();
+    protected override void OnInitialized()
+    {
+        SubscribeAndBind(MapService.MapFilters, mapFilters =>
+        {
+            Configuration.FilterOperations.RemoveAll(x => !mapFilters.Contains(x.MapFilter));
+        });
+    }
 
     void AddFilterOperation()
     {
@@ -66,8 +77,9 @@
         Configuration.SortOperations.Add(new());
     }
 
-    void RemoveFilterOperation(FilterOperation filterOperation)
+    void RemoveFilterOperation(MapFilterOperationPair filterOperation)
     {
+        FilterOperationsToRemove.Add(filterOperation);
         Configuration.FilterOperations.Remove(filterOperation);
     }
 
@@ -78,21 +90,28 @@
 
     void SetMapFilters()
     {
-        foreach (var mapFilter in MapFilters)
+        var mapFiltersToAdd = new List<MapFilter>();
+
+        foreach (var filter in Configuration.FilterOperations)
         {
-            MapService.RemoveMapFilter(mapFilter);
+            if (filter.MapFilter is null)
+            {
+                filter.MapFilter = new()
+                {
+                    Filter = map => MapSearchService.FilterOperationMatches(new(map), filter.FilterOperation)
+                };
+
+                mapFiltersToAdd.Add(filter.MapFilter);
+            }
+
+            filter.MapFilter.Name = $"{filter.FilterOperation.Field} {filter.FilterOperation.Operator.DisplayName()} {filter.FilterOperation.Value}";
         }
 
-        MapFilters = Configuration.FilterOperations.Select(filterOperation => new MapFilter
-        {
-            Filter = map => MapSearchService.FilterOperationMatches(new(map), filterOperation),
-            Name = $"{filterOperation.Field} {filterOperation.Operator.DisplayName()} {filterOperation.Value}"
-        });
+        MapService.AddMapFilters(mapFiltersToAdd);
 
-        foreach (var mapFilter in MapFilters)
-        {
-            MapService.AddMapFilter(mapFilter);
-        }
+        MapService.RemoveMapFilters(FilterOperationsToRemove.Select(f => f.MapFilter));
+        FilterOperationsToRemove.Clear();
+
 
         MudDialog.Close(DialogResult.Ok(Configuration));
     }

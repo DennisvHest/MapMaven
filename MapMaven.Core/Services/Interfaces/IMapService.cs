@@ -37,5 +37,8 @@ namespace MapMaven.Core.Services.Interfaces
         void ToggleMapSelected(Map map);
         void SelectMaps(IEnumerable<Map> maps);
         bool MapIsSelected(Map map);
+        void UpdateMapFilters();
+        void AddMapFilters(IEnumerable<MapFilter> filters);
+        void RemoveMapFilters(IEnumerable<MapFilter> filters);
     }
 }
