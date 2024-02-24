@@ -82,5 +82,40 @@ namespace MapMaven.Core.Services
 
             return false;
         }
+
+        public static IEnumerable<TSourceType> SortMaps<TSourceType>(IEnumerable<TSourceType> maps, IEnumerable<SortOperation> sortOperations, Func<TSourceType, AdvancedSearchMap> advancedSearchMapGetter)
+        {
+            var firstSortOperation = sortOperations.FirstOrDefault();
+
+            if (firstSortOperation != null)
+            {
+                IOrderedEnumerable<TSourceType> orderedMaps;
+
+                if (firstSortOperation.Direction == SortDirection.Ascending)
+                {
+                    orderedMaps = maps.OrderBy(m => _resolver.ResolveSafe(advancedSearchMapGetter(m), firstSortOperation.Field));
+                }
+                else
+                {
+                    orderedMaps = maps.OrderByDescending(m => _resolver.ResolveSafe(advancedSearchMapGetter(m), firstSortOperation.Field));
+                }
+
+                foreach (var otherSortOperation in sortOperations.Skip(1))
+                {
+                    if (otherSortOperation.Direction == SortDirection.Ascending)
+                    {
+                        orderedMaps = orderedMaps.ThenBy(m => _resolver.ResolveSafe(advancedSearchMapGetter(m), otherSortOperation.Field));
+                    }
+                    else
+                    {
+                        orderedMaps = orderedMaps.ThenByDescending(m => _resolver.ResolveSafe(advancedSearchMapGetter(m), otherSortOperation.Field));
+                    }
+                }
+
+                maps = orderedMaps;
+            }
+
+            return maps;
+        }
     }
 }

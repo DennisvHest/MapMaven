@@ -135,7 +135,7 @@ namespace MapMaven.Core.Services
                         };
 
                         playlistMaps = FilterMaps(playlistMaps, configuration);
-                        playlistMaps = SortMaps(playlistMaps, configuration);
+                        playlistMaps = MapSearchService.SortMaps(playlistMaps, configuration.SortOperations, x => x.DynamicPlaylistMap);
 
                         var resultPlaylistMaps = playlistMaps
                             .Select(m => m.Map)
@@ -174,41 +174,6 @@ namespace MapMaven.Core.Services
             foreach (var filterOperation in configuration.FilterOperations)
             {
                 maps = maps.Where(map => MapSearchService.FilterOperationMatches(map.DynamicPlaylistMap, filterOperation));
-            }
-
-            return maps;
-        }
-
-        private IEnumerable<DynamicPlaylistMapPair> SortMaps(IEnumerable<DynamicPlaylistMapPair> maps, DynamicPlaylistConfiguration configuration)
-        {
-            var firstSortOperation = configuration.SortOperations.FirstOrDefault();
-
-            if (firstSortOperation != null)
-            {
-                IOrderedEnumerable<DynamicPlaylistMapPair> orderedMaps;
-
-                if (firstSortOperation.Direction == SortDirection.Ascending)
-                {
-                    orderedMaps = maps.OrderBy(m => _resolver.ResolveSafe(m.DynamicPlaylistMap, firstSortOperation.Field));
-                }
-                else
-                {
-                    orderedMaps = maps.OrderByDescending(m => _resolver.ResolveSafe(m.DynamicPlaylistMap, firstSortOperation.Field));
-                }
-
-                foreach (var otherSortOperation in configuration.SortOperations.Skip(1))
-                {
-                    if (otherSortOperation.Direction == SortDirection.Ascending)
-                    {
-                        orderedMaps = orderedMaps.ThenBy(m => _resolver.ResolveSafe(m.DynamicPlaylistMap, otherSortOperation.Field));
-                    }
-                    else
-                    {
-                        orderedMaps = orderedMaps.ThenByDescending(m => _resolver.ResolveSafe(m.DynamicPlaylistMap, otherSortOperation.Field));
-                    }
-                }
-
-                maps = orderedMaps;
             }
 
             return maps;

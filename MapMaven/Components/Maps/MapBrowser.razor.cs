@@ -70,6 +70,7 @@ namespace MapMaven.Components.Maps
 
         private Playlist SelectedPlaylist = null;
         private IEnumerable<MapFilter> MapFilters = Enumerable.Empty<MapFilter>();
+        private MapSort MapSort = null;
 
         private List<string> MapHashFilter = null;
 
@@ -105,10 +106,15 @@ namespace MapMaven.Components.Maps
             {
                 SelectedPlaylist = selectedPlaylist;
                 MapHashFilter = selectedPlaylist?.Maps.Select(m => m.Hash).ToList();
-                SortMapsWithDefaultSort();
+                SortMaps();
                 InvokeAsync(() => TableWrapperRef.FocusAsync());
             });
             SubscribeAndBind(MapService.MapFilters, mapFilters => MapFilters = mapFilters);
+            SubscribeAndBind(MapService.MapSort, mapSort =>
+            {
+                MapSort = mapSort;
+                SortMaps();
+            });
             SubscribeAndBind(MapService.SelectedMaps, selectedMaps => SelectedMaps = selectedMaps);
             SubscribeAndBind(MapService.Selectable, selectable =>
             {
@@ -123,13 +129,25 @@ namespace MapMaven.Components.Maps
 
         protected override void OnParametersSet()
         {
-            SortMapsWithDefaultSort();
+            SortMaps();
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (RankedMaps)
                 await TableRef.SetSortAsync("ScoreEstimate", SortDirection.Descending, x => x.ScoreEstimates.Any() ? x.ScoreEstimates.Max(x => x.PPIncrease) : 0);
+        }
+
+        private void SortMaps()
+        {
+            if (MapSort is not null)
+            {
+                Maps = MapSort.Sort(Maps).ToList();
+            }
+            else
+            {
+                SortMapsWithDefaultSort();
+            }
         }
 
         private void SortMapsWithDefaultSort()
@@ -175,6 +193,11 @@ namespace MapMaven.Components.Maps
         protected void RemoveMapFilter(MapFilter mapFilter)
         {
             MapService.RemoveMapFilter(mapFilter);
+        }
+
+        protected void RemoveMapSort()
+        {
+            MapService.SetMapSort(null);
         }
 
         void OnSelectedItemsChanged(HashSet<Map> selectedMaps)

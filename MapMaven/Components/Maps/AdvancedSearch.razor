@@ -65,6 +65,14 @@
         {
             Configuration.FilterOperations.RemoveAll(x => !mapFilters.Contains(x.MapFilter));
         });
+
+        SubscribeAndBind(MapService.MapSort, mapSort =>
+        {
+            if (mapSort is null)
+            {
+                Configuration.SortOperations.Clear();
+            }
+        });
     }
 
     void AddFilterOperation()
@@ -112,6 +120,20 @@
         MapService.RemoveMapFilters(FilterOperationsToRemove.Select(f => f.MapFilter));
         FilterOperationsToRemove.Clear();
 
+        if (Configuration.SortOperations.Any())
+        {
+            var sortOperationNames = Configuration.SortOperations.Select(s => $"{s.Field} {(s.Direction == Core.Models.DynamicPlaylists.SortDirection.Ascending ? "↑" : "↓")}");
+
+            MapService.SetMapSort(new()
+            {
+                Name = string.Join(" -> ", sortOperationNames),
+                Sort = maps => MapSearchService.SortMaps(maps, Configuration.SortOperations, m => new(m))
+            });
+        }
+        else
+        {
+            MapService.SetMapSort(null);
+        }
 
         MudDialog.Close(DialogResult.Ok(Configuration));
     }

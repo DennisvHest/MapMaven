@@ -35,6 +35,10 @@
                             @SelectedPlaylist.Title
                         </MudChip>
                     }
+                    @if (MapSort is not null)
+                    {
+                        <MudChip OnClose="() => RemoveMapSort()">@MapSort?.Name</MudChip>
+                    }
                     @foreach (var mapFilter in MapFilters.Where(f => f.Visible))
                     {
                         <MudChip OnClose="() => RemoveMapFilter(mapFilter)">@mapFilter.Name</MudChip>
