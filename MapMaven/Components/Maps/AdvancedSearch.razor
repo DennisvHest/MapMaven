@@ -7,6 +7,7 @@
 @using MapMaven.Core.Services
 
 <EditForm Model="@Configuration" OnValidSubmit="SetMapFilters">
+    <ObjectGraphDataAnnotationsValidator />
     <MudDialog>
         <DialogContent>
             <MudPaper Class="my-4" Style="background-color: var(--mud-palette-drawer-background);">
@@ -98,10 +99,14 @@
 
     void SetMapFilters()
     {
+        var fieldOptions = DynamicPlaylistFields.FieldOptions(MapPool.Standard);
+
         var mapFiltersToAdd = new List<MapFilter>();
 
         foreach (var filter in Configuration.FilterOperations)
         {
+            var fieldOption = fieldOptions.FirstOrDefault(f => f.Value == filter.FilterOperation.Field);
+
             if (filter.MapFilter is null)
             {
                 filter.MapFilter = new()
@@ -112,7 +117,11 @@
                 mapFiltersToAdd.Add(filter.MapFilter);
             }
 
-            filter.MapFilter.Name = $"{filter.FilterOperation.Field} {filter.FilterOperation.Operator.DisplayName()} {filter.FilterOperation.Value}";
+            filter.MapFilter.Name = fieldOption?.Type switch
+            {
+                Type type when type == typeof(bool) => $"{(bool.Parse(filter.FilterOperation.Value) ? string.Empty : "Not ")}{fieldOption.Name}",
+                _ => $"{fieldOption?.Name} {filter.FilterOperation.Operator.DisplayName()} {filter.FilterOperation.Value}"
+            };
         }
 
         MapService.AddMapFilters(mapFiltersToAdd);
@@ -122,11 +131,16 @@
 
         if (Configuration.SortOperations.Any())
         {
-            var sortOperationNames = Configuration.SortOperations.Select(s => $"{s.Field} {(s.Direction == Core.Models.DynamicPlaylists.SortDirection.Ascending ? "↑" : "↓")}");
+            var sortOperationNames = Configuration.SortOperations.Select(s =>
+            {
+                var fieldOption = fieldOptions.FirstOrDefault(f => f.Value == s.Field);
+
+                return $"{fieldOption?.Name} {(s.Direction == Core.Models.DynamicPlaylists.SortDirection.Ascending ? "↑" : "↓")}";
+            });
 
             MapService.SetMapSort(new()
             {
-                Name = string.Join(" -> ", sortOperationNames),
+                Name = string.Join(", ", sortOperationNames),
                 Sort = maps => MapSearchService.SortMaps(maps, Configuration.SortOperations, m => new(m))
             });
         }
