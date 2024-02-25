@@ -58,9 +58,6 @@ namespace MapMaven.Components.Maps
         public string Width { get; set; } = "100%";
 
         [Parameter]
-        public string Height { get; set; } = "calc(100% - 116px)";
-
-        [Parameter]
         public bool RankedMaps { get; set; } = false;
 
         string Style => $"width: {Width}";
@@ -208,6 +205,7 @@ namespace MapMaven.Components.Maps
         private void LocationChanged(object sender, LocationChangedEventArgs e)
         {
             MapService.ClearMapFilters();
+            RemoveMapSort();
             MapService.CancelSelection();
         }
 
