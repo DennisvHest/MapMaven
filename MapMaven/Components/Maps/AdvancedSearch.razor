@@ -129,6 +129,7 @@
             filter.MapFilter.Name = fieldOption?.Type switch
             {
                 Type type when type == typeof(bool) => $"{(bool.Parse(filter.FilterOperation.Value) ? string.Empty : "Not ")}{fieldOption.Name}",
+                Type type when type == typeof(string) => $"{fieldOption.Name} {filter.FilterOperation.Operator.DisplayName()} \"{filter.FilterOperation.Value}\"",
                 _ => $"{fieldOption?.Name} {filter.FilterOperation.Operator.DisplayName()} {filter.FilterOperation.Value}"
             };
         }
