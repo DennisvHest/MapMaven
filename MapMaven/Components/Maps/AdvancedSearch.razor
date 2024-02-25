@@ -8,7 +8,7 @@
 
 <EditForm Model="@Configuration" OnValidSubmit="SetMapFilters">
     <ObjectGraphDataAnnotationsValidator />
-    <MudDialog>
+    <MudDialog Class="no-title">
         <DialogContent>
             <MudPaper Class="my-4" Style="background-color: var(--mud-palette-drawer-background);">
                 <MudList>
@@ -25,7 +25,7 @@
                 </MudList>
             </MudPaper>
 
-            <MudPaper Class="my-4" Style="background-color: var(--mud-palette-drawer-background);">
+            <MudPaper Style="background-color: var(--mud-palette-drawer-background);">
                 <MudList>
                     <MudListSubheader Class="d-flex align-center justify-space-between">
                         Sorting
@@ -42,9 +42,18 @@
                     }
                 </MudList>
             </MudPaper>
-
-            <MudButton ButtonType="ButtonType.Submit">Search</MudButton>
         </DialogContent>
+        <DialogActions>
+            <div style="padding: 8px 16px;">
+                <MudButton
+                    Variant="Variant.Filled"
+                    StartIcon="@Icons.Material.Filled.Search"
+                    Color="Color.Primary"
+                    ButtonType="ButtonType.Submit">
+                    Search
+                </MudButton>
+            </div>
+        </DialogActions>
     </MudDialog>
 </EditForm>
 
