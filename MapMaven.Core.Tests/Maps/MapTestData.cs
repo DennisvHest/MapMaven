@@ -11,6 +11,7 @@ namespace MapMaven.Core.Tests.Maps
             new Map
             {
                 Id = "1",
+                Hash = "1",
                 Name = "Test Map",
                 SongAuthorName = "Camellia",
                 Difficulty = new RankedMapDifficultyInfo
@@ -28,6 +29,7 @@ namespace MapMaven.Core.Tests.Maps
             new Map
             {
                 Id = "2",
+                Hash = "2",
                 Name = "Other test map",
                 SongAuthorName = "Camellia",
                 Difficulty = new RankedMapDifficultyInfo
@@ -38,6 +40,7 @@ namespace MapMaven.Core.Tests.Maps
             new Map
             {
                 Id = "3",
+                Hash = "3",
                 Name = "sleepparalysis//////////////",
                 SongAuthorName = "Test song author",
                 Difficulty = new RankedMapDifficultyInfo
