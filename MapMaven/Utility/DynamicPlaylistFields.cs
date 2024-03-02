@@ -38,7 +38,7 @@ namespace MapMaven.Utility
                         Name = name,
                         Type = property.PropertyType,
                         HasPredefinedOptions = property.GetCustomAttribute<HasPredefinedOptions>() is not null,
-                        Sortable = !typeof(IEnumerable).IsAssignableFrom(property.PropertyType)
+                        Sortable = !typeof(IEnumerable).IsAssignableFrom(property.PropertyType) || property.PropertyType == typeof(string),
                     }
                 };
             });
