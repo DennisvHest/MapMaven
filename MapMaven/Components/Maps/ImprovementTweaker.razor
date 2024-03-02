@@ -1,4 +1,6 @@
-﻿@inherits ReactiveComponent
+﻿@using MudExtensions.Enums
+
+@inherits ReactiveComponent
 
 <MudDrawer Open="true"
            Fixed="false"
@@ -38,6 +40,19 @@
                 Min="0"
                 Max="100"
                 ValueChanged="OnMaximumPredictedAccuracyFilterChanged" />
+
+            <MudSelectExtended T="string"
+                MultiSelection="true"
+                ItemCollection="MapTags"
+                SearchBox="true"
+                SearchBoxAutoFocus="true"
+                SearchBoxClearable="true"
+                Label="Tags"
+                Variant="Variant.Outlined"
+                ValuePresenter="ValuePresenter.Chip"
+                ChipCloseable="true"
+                Class="mt-5"
+                SelectedValuesChanged="OnTagsFilterChanged" />
 
             <MudExpansionPanels Class="my-3">
                 <MudExpansionPanel Text="Difficulty settings" Style="background-color: var(--mud-palette-drawer-background);">

@@ -1,4 +1,5 @@
 using FastDeepCloner;
+using MapMaven.Core.Models.AdvancedSearch;
 using MapMaven.Core.Models.DynamicPlaylists;
 using MapMaven.Core.Services;
 using MapMaven.Core.Services.Interfaces;

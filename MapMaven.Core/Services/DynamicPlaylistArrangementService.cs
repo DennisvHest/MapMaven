@@ -8,6 +8,7 @@ using System.Globalization;
 using Microsoft.Extensions.Logging;
 using System.Reactive.Subjects;
 using MapMaven.Core.Services.Leaderboards;
+using MapMaven.Core.Models.AdvancedSearch;
 
 namespace MapMaven.Core.Services
 {
@@ -28,10 +29,11 @@ namespace MapMaven.Core.Services
 
         public static readonly Dictionary<Type, IEnumerable<FilterOperator>> FilterOperatorsForType = new()
         {
-            { typeof(string), new[] { FilterOperator.Equals, FilterOperator.NotEquals, FilterOperator.Contains } },
+            { typeof(string), new[] { FilterOperator.Equals, FilterOperator.NotEquals, FilterOperator.Contains, FilterOperator.NotContains } },
             { typeof(bool), new[] { FilterOperator.Equals, FilterOperator.NotEquals } },
             { typeof(double), new[] { FilterOperator.Equals, FilterOperator.NotEquals, FilterOperator.GreaterThan, FilterOperator.LessThan, FilterOperator.GreaterThanOrEqual, FilterOperator.LessThanOrEqual } },
             { typeof(DateTime), new[] { FilterOperator.Equals, FilterOperator.NotEquals, FilterOperator.GreaterThan, FilterOperator.LessThan, FilterOperator.GreaterThanOrEqual, FilterOperator.LessThanOrEqual } },
+            { typeof(IEnumerable<string>), new[] { FilterOperator.Contains, FilterOperator.NotContains } },
         };
 
         public DynamicPlaylistArrangementService(
@@ -89,7 +91,7 @@ namespace MapMaven.Core.Services
                             var rankedMapsData = await _mapService.GetCompleteRankedMapDataForLeaderboardProvider(leaderboard.Key.Value);
                             rankedMaps = rankedMapsData.Select(m => new DynamicPlaylistMapPair
                             {
-                                DynamicPlaylistMap = new DynamicPlaylistMap(m),
+                                DynamicPlaylistMap = new AdvancedSearchMap(m),
                                 Map = m
                             });
                         }
@@ -110,7 +112,7 @@ namespace MapMaven.Core.Services
 
                 var maps = mapData.Select(m => new DynamicPlaylistMapPair
                 {
-                    DynamicPlaylistMap = new DynamicPlaylistMap(m),
+                    DynamicPlaylistMap = new AdvancedSearchMap(m),
                     Map = m
                 });
 
@@ -133,12 +135,12 @@ namespace MapMaven.Core.Services
                         };
 
                         playlistMaps = FilterMaps(playlistMaps, configuration);
-                        playlistMaps = SortMaps(playlistMaps, configuration);
-
-                        playlistMaps = playlistMaps.Take(configuration.MapCount);
+                        playlistMaps = MapSearchService.SortMaps(playlistMaps, configuration.SortOperations, x => x.DynamicPlaylistMap);
 
                         var resultPlaylistMaps = playlistMaps
                             .Select(m => m.Map)
+                            .DistinctBy(m => m.Hash)
+                            .Take(configuration.MapCount)
                             .ToList();
 
                         await _playlistService.DownloadPlaylistMapsIfNotExist(resultPlaylistMaps, loadMapInfo: false);
@@ -171,106 +173,7 @@ namespace MapMaven.Core.Services
         {
             foreach (var filterOperation in configuration.FilterOperations)
             {
-                maps = maps.Where(map => FilterOperationMatches(map, filterOperation));
-            }
-
-            return maps;
-        }
-
-        private bool FilterOperationMatches(DynamicPlaylistMapPair mapPair, FilterOperation filterOperation)
-        {
-            var map = mapPair.DynamicPlaylistMap;
-
-            var value = _resolver.ResolveSafe(map, filterOperation.Field);
-
-            if (value is string stringValue)
-            {
-                return filterOperation.Operator switch
-                {
-                    FilterOperator.Equals => stringValue.Equals(filterOperation.Value, StringComparison.OrdinalIgnoreCase),
-                    FilterOperator.NotEquals => !stringValue.Equals(filterOperation.Value, StringComparison.OrdinalIgnoreCase),
-                    FilterOperator.Contains => stringValue.Contains(filterOperation.Value, StringComparison.OrdinalIgnoreCase),
-                    _ => false
-                };
-            }
-
-            if (value is double doubleValue)
-            {
-                var compareValue = double.Parse(filterOperation.Value, CultureInfo.InvariantCulture);
-
-                return filterOperation.Operator switch
-                {
-                    FilterOperator.Equals => doubleValue == compareValue,
-                    FilterOperator.NotEquals => doubleValue != compareValue,
-                    FilterOperator.GreaterThan => doubleValue > compareValue,
-                    FilterOperator.LessThan => doubleValue < compareValue,
-                    FilterOperator.LessThanOrEqual => doubleValue <= compareValue,
-                    FilterOperator.GreaterThanOrEqual => doubleValue >= compareValue,
-                    _ => false
-                };
-            }
-
-            if (value is DateTime dateTimeValue)
-            {
-                var compareValue = DateTime.Parse(filterOperation.Value, CultureInfo.InvariantCulture);
-
-                return filterOperation.Operator switch
-                {
-                    FilterOperator.Equals => dateTimeValue == compareValue,
-                    FilterOperator.NotEquals => dateTimeValue != compareValue,
-                    FilterOperator.GreaterThan => dateTimeValue > compareValue,
-                    FilterOperator.LessThan => dateTimeValue < compareValue,
-                    FilterOperator.LessThanOrEqual => dateTimeValue <= compareValue,
-                    FilterOperator.GreaterThanOrEqual => dateTimeValue >= compareValue,
-                    _ => false
-                };
-            }
-
-            if (value is bool boolValue)
-            {
-                var compareValue = bool.Parse(filterOperation.Value);
-
-                return filterOperation.Operator switch
-                {
-                    FilterOperator.Equals => boolValue == compareValue,
-                    FilterOperator.NotEquals => boolValue != compareValue,
-                    _ => false
-                };
-            }
-
-            return false;
-        }
-
-        private IEnumerable<DynamicPlaylistMapPair> SortMaps(IEnumerable<DynamicPlaylistMapPair> maps, DynamicPlaylistConfiguration configuration)
-        {
-            var firstSortOperation = configuration.SortOperations.FirstOrDefault();
-
-            if (firstSortOperation != null)
-            {
-                IOrderedEnumerable<DynamicPlaylistMapPair> orderedMaps;
-
-                if (firstSortOperation.Direction == SortDirection.Ascending)
-                {
-                    orderedMaps = maps.OrderBy(m => _resolver.ResolveSafe(m.DynamicPlaylistMap, firstSortOperation.Field));
-                }
-                else
-                {
-                    orderedMaps = maps.OrderByDescending(m => _resolver.ResolveSafe(m.DynamicPlaylistMap, firstSortOperation.Field));
-                }
-
-                foreach (var otherSortOperation in configuration.SortOperations.Skip(1))
-                {
-                    if (otherSortOperation.Direction == SortDirection.Ascending)
-                    {
-                        orderedMaps = orderedMaps.ThenBy(m => _resolver.ResolveSafe(m.DynamicPlaylistMap, otherSortOperation.Field));
-                    }
-                    else
-                    {
-                        orderedMaps = orderedMaps.ThenByDescending(m => _resolver.ResolveSafe(m.DynamicPlaylistMap, otherSortOperation.Field));
-                    }
-                }
-
-                maps = orderedMaps;
+                maps = maps.Where(map => MapSearchService.FilterOperationMatches(map.DynamicPlaylistMap, filterOperation));
             }
 
             return maps;
@@ -279,7 +182,7 @@ namespace MapMaven.Core.Services
         private class DynamicPlaylistMapPair
         {
             public Map Map { get; set; }
-            public DynamicPlaylistMap DynamicPlaylistMap { get; set; }
+            public AdvancedSearchMap DynamicPlaylistMap { get; set; }
         }
     }
 }

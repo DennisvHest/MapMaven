@@ -13,6 +13,8 @@ namespace MapMaven.Core.Services.Interfaces
         IObservable<IEnumerable<Map>> RankedMaps { get; }
         IObservable<HashSet<Map>> SelectedMaps { get; }
         IObservable<bool> Selectable { get; }
+        IEnumerable<string> MapTags { get; }
+        IObservable<MapSort?> MapSort { get; }
 
         void AddMapFilter(MapFilter filter);
         void CancelSelection();
@@ -36,5 +38,9 @@ namespace MapMaven.Core.Services.Interfaces
         void ToggleMapSelected(Map map);
         void SelectMaps(IEnumerable<Map> maps);
         bool MapIsSelected(Map map);
+        void UpdateMapFilters();
+        void AddMapFilters(IEnumerable<MapFilter> filters);
+        void RemoveMapFilters(IEnumerable<MapFilter> filters);
+        void SetMapSort(MapSort? sort);
     }
 }

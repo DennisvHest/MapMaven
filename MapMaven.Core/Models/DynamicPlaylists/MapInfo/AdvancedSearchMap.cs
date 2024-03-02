@@ -1,10 +1,11 @@
-﻿using MapMaven.Models;
+﻿using MapMaven.Core.Utilities.DynamicPlaylists;
+using MapMaven.Models;
 using MapMaven.Utilities.DynamicPlaylists;
 using System.ComponentModel;
 
 namespace MapMaven.Core.Models.DynamicPlaylists.MapInfo
 {
-    public class DynamicPlaylistMap
+    public class AdvancedSearchMap
     {
         [DisplayName("Map name")]
         public string Name { get; set; }
@@ -28,14 +29,19 @@ namespace MapMaven.Core.Models.DynamicPlaylists.MapInfo
         public double Stars { get; set; }
 
         [ApplicableForMapPool(MapPool.Improvement)]
+        [HasPredefinedOptions]
         public string Difficulty { get; set; }
+
+        [ApplicableForMapPool(MapPool.Improvement)]
+        [HasPredefinedOptions]
+        public IEnumerable<string> Tags { get; set; } = [];
 
         public DynamicPlaylistScore? Score { get; set; }
         public DynamicPlaylistScoreEstimate? ScoreEstimate { get; set; }
 
-        public DynamicPlaylistMap() { }
+        public AdvancedSearchMap() { }
 
-        public DynamicPlaylistMap(Map map)
+        public AdvancedSearchMap(Map map)
         {
             Name = map.Name;
             SongAuthorName = map.SongAuthorName;
@@ -45,6 +51,7 @@ namespace MapMaven.Core.Models.DynamicPlaylists.MapInfo
             Played = map.Played;
             Stars = map.Difficulty?.Stars ?? 0;
             Difficulty = map.Difficulty?.Difficulty ?? "";
+            Tags = map.Tags ?? [];
             Score = map.HighestPlayerScore != null
                 ? new DynamicPlaylistScore(map.HighestPlayerScore)
                 : null;

@@ -16,6 +16,8 @@ using MapMaven.Utility;
 using Serilog.Events;
 using MapMaven.Services.Workers;
 using MapMaven.Services.Playlists;
+using MudExtensions.Services;
+using MapMaven.Core.Models.AdvancedSearch;
 
 namespace MapMaven;
 
@@ -54,6 +56,8 @@ public static class MauiProgram
             config.SnackbarConfiguration.PositionClass = Defaults.Classes.Position.BottomCenter;
         });
 
+        builder.Services.AddMudExtensions();
+
         builder.Services.AddMapMaven(useStatefulServices: true);
 
         builder.Services.AddSingleton<UpdateService>();
@@ -62,6 +66,8 @@ public static class MauiProgram
         builder.Services.AddSingleton<IHostedService, MemoryCleaningWorker>();
         builder.Services.AddSingleton<HostedServiceExecutor>();
         builder.Services.AddSingleton<PlaylistCoverService>();
+
+        builder.Services.AddSingleton<AdvancedSearchConfiguration>();
 
         builder.ConfigureLifecycleEvents(lifecycle =>
         {

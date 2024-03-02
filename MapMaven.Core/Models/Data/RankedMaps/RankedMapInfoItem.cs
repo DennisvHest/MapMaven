@@ -12,6 +12,7 @@ namespace MapMaven.Core.Models.Data.RankedMaps
         public string MapAuthorName { get; set; }
         public TimeSpan Duration { get; set; }
         public string CoverImageUrl { get; set; }
+        public IEnumerable<string> Tags { get; set; } = Enumerable.Empty<string>();
 
         public IEnumerable<RankedMapDifficultyInfo> Difficulties { get; set; } = Enumerable.Empty<RankedMapDifficultyInfo>();
 
@@ -62,6 +63,8 @@ namespace MapMaven.Core.Models.Data.RankedMaps
 
             CoverImageUrl = mapVersion.CoverURL;
 
+            Tags = fullRankedMapInfoItem.MapDetail.Tags;
+
             return mapVersion;
         }
 
@@ -75,7 +78,8 @@ namespace MapMaven.Core.Models.Data.RankedMaps
                 SongAuthorName = SongAuthorName,
                 MapAuthorName = MapAuthorName,
                 SongDuration = Duration,
-                CoverImageUrl = CoverImageUrl
+                CoverImageUrl = CoverImageUrl,
+                Tags = Tags ?? Enumerable.Empty<string>(),
             };
         }
     }

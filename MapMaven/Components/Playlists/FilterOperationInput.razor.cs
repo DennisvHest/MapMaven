@@ -2,11 +2,21 @@ using Microsoft.AspNetCore.Components;
 using MapMaven.Core.Models.DynamicPlaylists;
 using MapMaven.Utility;
 using System.Globalization;
+using MapMaven.Core.Models.DynamicPlaylists.MapInfo;
+using MapMaven.Core.Services.Interfaces;
+using MapMaven.Core.Services;
+using System.Reflection;
+using MapMaven.Core.Utilities.DynamicPlaylists;
+using MapMaven.Core.Utilities;
+using MapMaven.Core.Models.AdvancedSearch;
 
 namespace MapMaven.Components.Playlists
 {
     public partial class FilterOperationInput
     {
+        [Inject]
+        IMapService MapService { get; set; }
+
         [Parameter]
         public MapPool MapPool { get; set; }
 
@@ -34,11 +44,12 @@ namespace MapMaven.Components.Playlists
             FilterOperation.Operator = default;
             FilterOperation.Value = null;
 
+            FilterOperation.Operator = DynamicPlaylistArrangementService.FilterOperatorsForType[SelectedFieldOption.Type].First();
+
             if (SelectedFieldOption.Type == typeof(bool))
-            {
-                FilterOperation.Operator = FilterOperator.Equals;
                 BooleanValueChanged(false);
-            }
+
+            StateHasChanged();
         }
 
         void BooleanValueChanged(bool value)
@@ -54,6 +65,26 @@ namespace MapMaven.Components.Playlists
         void DoubleValueChanged(string value)
         {
             FilterOperation.Value = value?.Replace(',', '.');
+        }
+
+        ICollection<string> GetFieldOptions()
+        {
+            var options = FilterOperation.Field switch
+            {
+                nameof(AdvancedSearchMap.Difficulty) => DifficultyUtils.Difficulties,
+                nameof(AdvancedSearchMap.Tags) => MapService.MapTags,
+                _ => []
+            };
+
+            if (FilterOperation.Value is not null)
+                options = options.Concat([FilterOperation.Value]);
+
+            options = options.Distinct();
+
+            if (FilterOperation.Field != nameof(AdvancedSearchMap.Difficulty))
+                options = options.OrderBy(x => x);
+
+            return options.ToList();
         }
     }
 }

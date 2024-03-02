@@ -21,6 +21,7 @@ using MapMaven.Core.Services.Leaderboards;
 using MapMaven.Core.Models;
 using MapMaven.Core.Models.Data.Leaderboards;
 using MapMaven.Core.Services.Leaderboards.ScoreEstimation;
+using MapMaven.Core.Models.AdvancedSearch;
 
 namespace MapMaven.Core.Tests.Playlists.DynamicPlaylists;
 
@@ -342,7 +343,7 @@ public class DynamicPlaylistArrangementIntegrationTests
                         {
                             new JObject
                             {
-                                { nameof(FilterOperation.Field), nameof(DynamicPlaylistMap.SongAuthorName) },
+                                { nameof(FilterOperation.Field), nameof(AdvancedSearchMap.SongAuthorName) },
                                 { nameof(FilterOperation.Value), "Camellia" },
                                 { nameof(FilterOperation.Operator), nameof(FilterOperator.Equals) }
                             }
@@ -353,7 +354,7 @@ public class DynamicPlaylistArrangementIntegrationTests
                         {
                             new JObject
                             {
-                                { nameof(SortOperation.Field), nameof(DynamicPlaylistMap.Name) },
+                                { nameof(SortOperation.Field), nameof(AdvancedSearchMap.Name) },
                                 { nameof(SortOperation.Direction), nameof(SortDirection.Descending) }
                             }
                         }
@@ -394,7 +395,7 @@ public class DynamicPlaylistArrangementIntegrationTests
                         {
                             new JObject
                             {
-                                { nameof(FilterOperation.Field), nameof(DynamicPlaylistMap.Name) },
+                                { nameof(FilterOperation.Field), nameof(AdvancedSearchMap.Name) },
                                 { nameof(FilterOperation.Value), "Come Alive" },
                                 { nameof(FilterOperation.Operator), nameof(FilterOperator.Equals) }
                             }
@@ -435,7 +436,7 @@ public class DynamicPlaylistArrangementIntegrationTests
                         {
                             new JObject
                             {
-                                { nameof(FilterOperation.Field), nameof(DynamicPlaylistMap.Name) },
+                                { nameof(FilterOperation.Field), nameof(AdvancedSearchMap.Name) },
                                 { nameof(FilterOperation.Value), "Halcyon" },
                                 { nameof(FilterOperation.Operator), nameof(FilterOperator.Equals) }
                             }
@@ -484,7 +485,7 @@ public class DynamicPlaylistArrangementIntegrationTests
                         {
                             new JObject
                             {
-                                { nameof(FilterOperation.Field), nameof(DynamicPlaylistMap.Name) },
+                                { nameof(FilterOperation.Field), nameof(AdvancedSearchMap.Name) },
                                 { nameof(FilterOperation.Value), "Duplicate ID" },
                                 { nameof(FilterOperation.Operator), nameof(FilterOperator.Equals) }
                             }
@@ -524,7 +525,7 @@ public class DynamicPlaylistArrangementIntegrationTests
                         {
                             new JObject
                             {
-                                { nameof(SortOperation.Field), $"{nameof(DynamicPlaylistMap.ScoreEstimate)}.{nameof(DynamicPlaylistScoreEstimate.PPIncrease)}" },
+                                { nameof(SortOperation.Field), $"{nameof(AdvancedSearchMap.ScoreEstimate)}.{nameof(DynamicPlaylistScoreEstimate.PPIncrease)}" },
                                 { nameof(SortOperation.Direction), nameof(SortDirection.Descending) },
                             }
                         }
