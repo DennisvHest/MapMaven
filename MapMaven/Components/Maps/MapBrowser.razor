@@ -7,13 +7,12 @@
     <MudDataGrid @ref="TableRef"
                  T="Map"
                  Items="Maps"
-                 Height="@Height"
-                 Class="map-browser full-height full-width background-transparent"
+                 Class="map-browser full-height full-width background-transparent d-flex flex-column"
                  Loading="LoadingMapInfo"
                  QuickFilter="Filter"
                  FixedHeader="true"
                  MultiSelection="true"
-                 SortMode="SortMode.Single"
+                 SortMode="MapSort is null ? SortMode.Single : SortMode.None"
                  SelectedItems="SelectedMaps"
                  SelectOnRowClick="false"
                  SelectedItemsChanged="OnSelectedItemsChanged"
@@ -35,10 +34,6 @@
                             @SelectedPlaylist.Title
                         </MudChip>
                     }
-                    @foreach (var mapFilter in MapFilters.Where(f => f.Visible))
-                    {
-                        <MudChip OnClose="() => RemoveMapFilter(mapFilter)">@mapFilter.Name</MudChip>
-                    }
                     <MudTextField @bind-Value="SearchString"
                                   DebounceInterval="300"
                                   Immediate="true"
@@ -52,9 +47,22 @@
                     </MudTextField>
                     @if (!RankedMaps)
                     {
-                        <MudTooltip Text="Bulk&nbsp;edit">
-                            <MudIconButton Icon="@(Selectable ? Icons.Material.Filled.LibraryAddCheck : Icons.Material.Outlined.LibraryAddCheck)" Class="mx-5" OnClick="ToggleSelectable" />
+                        <MudTooltip Text="Advanced&nbsp;search">
+                            <MudIconButton Icon="@Icons.Material.Filled.ManageSearch" Class="ml-5 mr-2" OnClick="OpenAdvancedSearch" />
                         </MudTooltip>
+                        <MudTooltip Text="Bulk&nbsp;edit">
+                            <MudIconButton Icon="@(Selectable ? Icons.Material.Filled.LibraryAddCheck : Icons.Material.Outlined.LibraryAddCheck)" Class="mx-2" OnClick="ToggleSelectable" />
+                        </MudTooltip>
+                    }
+                </MudItem>
+                <MudItem xs="12" Class="py-0">
+                    @if (MapSort is not null)
+                    {
+                        <MudChip OnClose="() => RemoveMapSort()" Class="mb-3">@MapSort?.Name</MudChip>
+                    }
+                    @foreach (var mapFilter in MapFilters.Where(f => f.Visible))
+                    {
+                        <MudChip OnClose="() => RemoveMapFilter(mapFilter)" Class="mb-3">@mapFilter.Name</MudChip>
                     }
                 </MudItem>
             </MudGrid>

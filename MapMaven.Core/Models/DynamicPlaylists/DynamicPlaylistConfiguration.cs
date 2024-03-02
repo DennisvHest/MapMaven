@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using MapMaven.Core.Models.AdvancedSearch;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System.ComponentModel.DataAnnotations;
 

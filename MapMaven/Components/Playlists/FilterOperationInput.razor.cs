@@ -8,6 +8,7 @@ using MapMaven.Core.Services;
 using System.Reflection;
 using MapMaven.Core.Utilities.DynamicPlaylists;
 using MapMaven.Core.Utilities;
+using MapMaven.Core.Models.AdvancedSearch;
 
 namespace MapMaven.Components.Playlists
 {
@@ -70,8 +71,8 @@ namespace MapMaven.Components.Playlists
         {
             var options = FilterOperation.Field switch
             {
-                nameof(DynamicPlaylistMap.Difficulty) => DifficultyUtils.Difficulties,
-                nameof(DynamicPlaylistMap.Tags) => MapService.MapTags,
+                nameof(AdvancedSearchMap.Difficulty) => DifficultyUtils.Difficulties,
+                nameof(AdvancedSearchMap.Tags) => MapService.MapTags,
                 _ => []
             };
 
@@ -80,7 +81,7 @@ namespace MapMaven.Components.Playlists
 
             options = options.Distinct();
 
-            if (FilterOperation.Field != nameof(DynamicPlaylistMap.Difficulty))
+            if (FilterOperation.Field != nameof(AdvancedSearchMap.Difficulty))
                 options = options.OrderBy(x => x);
 
             return options.ToList();

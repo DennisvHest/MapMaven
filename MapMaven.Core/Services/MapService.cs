@@ -30,6 +30,7 @@ namespace MapMaven.Services
         private readonly IServiceProvider _serviceProvider;
 
         private readonly BehaviorSubject<List<MapFilter>> _mapFilters = new(new List<MapFilter>());
+        private readonly BehaviorSubject<MapSort?> _mapSort = new(null);
 
         private readonly BehaviorSubject<HashSet<Map>> _selectedMaps = new(Enumerable.Empty<Map>().ToHashSet());
         private readonly BehaviorSubject<bool> _selectable = new(false);
@@ -47,6 +48,7 @@ namespace MapMaven.Services
         public IObservable<bool> Selectable => _selectable;
 
         public IObservable<IEnumerable<MapFilter>> MapFilters => _mapFilters;
+        public IObservable<MapSort?> MapSort => _mapSort;
 
         public IEnumerable<string> MapTags { get; private set; } = [];
 
@@ -192,9 +194,28 @@ namespace MapMaven.Services
             _mapFilters.OnNext(_mapFilters.Value);
         }
 
+        public void AddMapFilters(IEnumerable<MapFilter> filters)
+        {
+            _mapFilters.Value.AddRange(filters);
+
+            _mapFilters.OnNext(_mapFilters.Value);
+        }
+
+        public void UpdateMapFilters() => _mapFilters.OnNext(_mapFilters.Value.ToList());
+
         public void RemoveMapFilter(MapFilter filter)
         {
             _mapFilters.Value.Remove(filter);
+
+            _mapFilters.OnNext(_mapFilters.Value);
+        }
+
+        public void RemoveMapFilters(IEnumerable<MapFilter> filters)
+        {
+            foreach (var filter in filters)
+            {
+                _mapFilters.Value.Remove(filter);
+            }
 
             _mapFilters.OnNext(_mapFilters.Value);
         }
@@ -204,6 +225,11 @@ namespace MapMaven.Services
             _mapFilters.Value.Clear();
 
             _mapFilters.OnNext(_mapFilters.Value);
+        }
+
+        public void SetMapSort(MapSort? sort)
+        {
+            _mapSort.OnNext(sort);
         }
 
         public void SetSelectedMaps(HashSet<Map> selectedMaps) => _selectedMaps.OnNext(selectedMaps);

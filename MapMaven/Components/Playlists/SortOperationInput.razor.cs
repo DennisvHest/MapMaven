@@ -1,3 +1,4 @@
+using MapMaven.Core.Models.AdvancedSearch;
 using MapMaven.Core.Models.DynamicPlaylists;
 using MapMaven.Utility;
 using Microsoft.AspNetCore.Components;

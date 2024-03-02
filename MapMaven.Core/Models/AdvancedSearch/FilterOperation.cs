@@ -1,8 +1,9 @@
-﻿using Newtonsoft.Json;
+﻿using MapMaven.Core.Models.DynamicPlaylists;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System.ComponentModel.DataAnnotations;
 
-namespace MapMaven.Core.Models.DynamicPlaylists
+namespace MapMaven.Core.Models.AdvancedSearch
 {
     public class FilterOperation
     {

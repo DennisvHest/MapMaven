@@ -1,4 +1,5 @@
-﻿using MapMaven.Core.Models.DynamicPlaylists;
+﻿using MapMaven.Core.Models.AdvancedSearch;
+using MapMaven.Core.Models.DynamicPlaylists;
 using MapMaven.Core.Models.DynamicPlaylists.MapInfo;
 
 namespace MapMaven.Components.Playlists
@@ -20,7 +21,7 @@ namespace MapMaven.Components.Playlists
                     {
                         new SortOperation
                         {
-                            Field = nameof(DynamicPlaylistMap.AddedDateTime),
+                            Field = nameof(AdvancedSearchMap.AddedDateTime),
                             Direction = SortDirection.Descending
                         }
                     },
@@ -40,13 +41,13 @@ namespace MapMaven.Components.Playlists
                     {
                         new FilterOperation
                         {
-                            Field = nameof(DynamicPlaylistMap.Hidden),
+                            Field = nameof(AdvancedSearchMap.Hidden),
                             Operator = FilterOperator.Equals,
                             Value = false.ToString()
                         },
                         new FilterOperation
                         {
-                            Field = $"{nameof(DynamicPlaylistMap.ScoreEstimate)}.{nameof(DynamicPlaylistScoreEstimate.Accuracy)}",
+                            Field = $"{nameof(AdvancedSearchMap.ScoreEstimate)}.{nameof(DynamicPlaylistScoreEstimate.Accuracy)}",
                             Operator = FilterOperator.GreaterThanOrEqual,
                             Value = 80.ToString()
                         }
@@ -55,7 +56,7 @@ namespace MapMaven.Components.Playlists
                     {
                         new SortOperation
                         {
-                            Field = $"{nameof(DynamicPlaylistMap.ScoreEstimate)}.{nameof(DynamicPlaylistScoreEstimate.PPIncrease)}",
+                            Field = $"{nameof(AdvancedSearchMap.ScoreEstimate)}.{nameof(DynamicPlaylistScoreEstimate.PPIncrease)}",
                             Direction = SortDirection.Descending
                         }
                     },
@@ -75,19 +76,19 @@ namespace MapMaven.Components.Playlists
                     {
                         new FilterOperation
                         {
-                            Field = nameof(DynamicPlaylistMap.Hidden),
+                            Field = nameof(AdvancedSearchMap.Hidden),
                             Operator = FilterOperator.Equals,
                             Value = false.ToString()
                         },
                         new FilterOperation
                         {
-                            Field = $"{nameof(DynamicPlaylistMap.ScoreEstimate)}.{nameof(DynamicPlaylistScoreEstimate.PPIncrease)}",
+                            Field = $"{nameof(AdvancedSearchMap.ScoreEstimate)}.{nameof(DynamicPlaylistScoreEstimate.PPIncrease)}",
                             Operator = FilterOperator.GreaterThanOrEqual,
                             Value = "0.01"
                         },
                         new FilterOperation
                         {
-                            Field = nameof(DynamicPlaylistMap.Played),
+                            Field = nameof(AdvancedSearchMap.Played),
                             Operator = FilterOperator.Equals,
                             Value = true.ToString()
                         },
@@ -96,7 +97,7 @@ namespace MapMaven.Components.Playlists
                     {
                         new SortOperation
                         {
-                            Field = $"{nameof(DynamicPlaylistMap.Score)}.{nameof(DynamicPlaylistScore.TimeSet)}",
+                            Field = $"{nameof(AdvancedSearchMap.Score)}.{nameof(DynamicPlaylistScore.TimeSet)}",
                             Direction = SortDirection.Ascending
                         }
                     },
@@ -116,7 +117,7 @@ namespace MapMaven.Components.Playlists
                     {
                         new FilterOperation
                         {
-                            Field = $"{nameof(DynamicPlaylistMap.Score)}.{nameof(DynamicPlaylistScore.HasReplay)}",
+                            Field = $"{nameof(AdvancedSearchMap.Score)}.{nameof(DynamicPlaylistScore.HasReplay)}",
                             Operator = FilterOperator.Equals,
                             Value = true.ToString()
                         }
@@ -125,7 +126,7 @@ namespace MapMaven.Components.Playlists
                     {
                         new SortOperation
                         {
-                            Field = $"{nameof(DynamicPlaylistMap.Score)}.{nameof(DynamicPlaylistScore.TimeSet)}",
+                            Field = $"{nameof(AdvancedSearchMap.Score)}.{nameof(DynamicPlaylistScore.TimeSet)}",
                             Direction = SortDirection.Descending
                         }
                     },

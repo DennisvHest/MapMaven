@@ -10,7 +10,7 @@ namespace MapMaven.Utility
 {
     public static class DynamicPlaylistFields
     {
-        public static IEnumerable<DynamicPlaylistFieldOption> FieldOptions(MapPool mapPool) => GetFieldOptionsForType(typeof(DynamicPlaylistMap), mapPool);
+        public static IEnumerable<DynamicPlaylistFieldOption> FieldOptions(MapPool mapPool) => GetFieldOptionsForType(typeof(AdvancedSearchMap), mapPool);
 
         private static IEnumerable<DynamicPlaylistFieldOption> GetFieldOptionsForType(Type type, MapPool mapPool, string? parentObjectName = null)
         {
@@ -38,7 +38,7 @@ namespace MapMaven.Utility
                         Name = name,
                         Type = property.PropertyType,
                         HasPredefinedOptions = property.GetCustomAttribute<HasPredefinedOptions>() is not null,
-                        Sortable = !typeof(IEnumerable).IsAssignableFrom(property.PropertyType)
+                        Sortable = !typeof(IEnumerable).IsAssignableFrom(property.PropertyType) || property.PropertyType == typeof(string),
                     }
                 };
             });
