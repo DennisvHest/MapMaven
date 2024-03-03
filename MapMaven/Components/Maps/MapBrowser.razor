@@ -3,7 +3,7 @@
 @using MapMaven.Core.Utilities.Scoresaber
 @using MapMaven.Core.Models.DynamicPlaylists
 
-<div @ref="TableWrapperRef" @onkeydown="OnKeyDown" class="d-inline full-width" tabindex="-1">
+<div @ref="TableWrapperRef" @onkeydown="OnKeyDown" class="d-inline full-width" tabindex="-1" style="@(RankedMaps ? "width: calc(100% - var(--mud-drawer-width, var(--mud-drawer-width-left))); !important" : "")">
     <MudDataGrid @ref="TableRef"
                  T="Map"
                  Items="Maps"
