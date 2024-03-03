@@ -38,6 +38,7 @@ public static class MauiProgram
         Log.Logger = new LoggerConfiguration()
             .MinimumLevel.Information()
             .MinimumLevel.Override("System.Net.Http.HttpClient", LogEventLevel.Warning)
+            .MinimumLevel.Override("Microsoft.EntityFrameworkCore", LogEventLevel.Warning)
             .WriteTo.File(
                 path: Path.Join(BeatSaberFileService.AppDataLocation, "logs", "app-logs", "app-log-.txt"),
                 rollingInterval: RollingInterval.Day
