@@ -44,12 +44,34 @@ namespace MapMaven.Components.Playlists
             if (NewPlaylist)
             {
                 playlist = await PlaylistService.AddPlaylist(EditPlaylistModel);
-                Snackbar.Add($"Added playlist \"{EditPlaylistModel.Name}\"", Severity.Normal, config => config.Icon = Icons.Filled.Check);
+                Snackbar.Add($"Added playlist \"{EditPlaylistModel.Name}\"", Severity.Normal, config =>
+                {
+                    config.Icon = Icons.Filled.Check;
+
+                    config.Action = "Open";
+                    config.ActionColor = MudBlazor.Color.Primary;
+                    config.Onclick = snackbar =>
+                    {
+                        PlaylistService.SetSelectedPlaylist(playlist);
+                        return Task.CompletedTask;
+                    };
+                });
             }
             else
             {
                 playlist = await PlaylistService.EditPlaylist(EditPlaylistModel);
-                Snackbar.Add($"Saved playlist \"{EditPlaylistModel.Name}\"", Severity.Normal, config => config.Icon = Icons.Filled.Check);
+                Snackbar.Add($"Saved playlist \"{EditPlaylistModel.Name}\"", Severity.Normal, config =>
+                {
+                    config.Icon = Icons.Filled.Check;
+
+                    config.Action = "Open";
+                    config.ActionColor = MudBlazor.Color.Primary;
+                    config.Onclick = snackbar =>
+                    {
+                        PlaylistService.SetSelectedPlaylist(playlist);
+                        return Task.CompletedTask;
+                    };
+                });
             }
 
             MudDialog.Close(DialogResult.Ok(playlist));

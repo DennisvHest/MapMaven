@@ -60,7 +60,22 @@ namespace MapMaven.Components.Maps
 
                 await PlaylistService.AddMapToPlaylist(map, playlist);
 
-                Snackbar.Add($"Added map \"{map.Name}\" to \"{playlist.Title}\"", Severity.Normal, config => config.Icon = Icons.Filled.Check);
+                Snackbar.Add(
+                    message: $"Added map \"{map.Name}\" to \"{playlist.Title}\"",
+                    severity: Severity.Normal,
+                    config =>
+                    {
+                        config.Icon = Icons.Filled.Check;
+
+                        config.Action = "Open";
+                        config.ActionColor = MudBlazor.Color.Primary;
+                        config.Onclick = snackbar =>
+                        {
+                            PlaylistService.SetSelectedPlaylist(playlist);
+                            return Task.CompletedTask;
+                        };
+                    }
+                );
             }
         }
 
