@@ -18,9 +18,9 @@ jobs:
       PUBLISH_PATH: "${{ github.workspace }}/MapMaven/bin/Release/net8.0-windows10.0.19041.0/win10-x64/publish"
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Setup .NET
-      uses: actions/setup-dotnet@v3
+      uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 8.0.x
     - name: Restore workloads
@@ -41,7 +41,7 @@ jobs:
       run: dotnet publish -f net8.0-windows10.0.19041.0 -c Release --self-contained
       working-directory: "${{ github.workspace }}/MapMaven"
     - name: Zip build
-      uses: TheDoctor0/zip-release@0.7.1
+      uses: TheDoctor0/zip-release@0.7.6
       with:
         filename: "${{ runner.temp }}/package/MapMaven-${{ inputs.version }}.zip"
         path: "${{ env.PUBLISH_PATH }}/**"
@@ -58,7 +58,7 @@ jobs:
         --packAuthors "DennisvHest"
         --packTitle "Map Maven" 
     - name: Upload build artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: mapmaven-package
         path: "${{ runner.temp }}/package"
