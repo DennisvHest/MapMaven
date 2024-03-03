@@ -26,6 +26,9 @@ namespace MapMaven.Components.Maps
         [Inject]
         protected IDialogService DialogService { get; set; }
 
+        [Inject]
+        public NavigationManager NavigationManager { get; set; }
+
         [Parameter]
         public EventCallback<MapSelectionConfig> OnMapSelectionChanged { get; set; }
 
@@ -223,7 +226,7 @@ namespace MapMaven.Components.Maps
 
             var progress = new Progress<ItemProgress<Map>>(subject.OnNext);
 
-            await PlaylistService.AddPlaylistAndDownloadMaps(playlistModel, SelectedMaps, progress: progress, cancellationToken: cancellationToken.Token);
+            var playlist = await PlaylistService.AddPlaylistAndDownloadMaps(playlistModel, SelectedMaps, progress: progress, cancellationToken: cancellationToken.Token);
 
             MapService.ClearSelectedMaps();
 
@@ -231,7 +234,19 @@ namespace MapMaven.Components.Maps
 
             if (!cancellationToken.IsCancellationRequested)
             {
-                Snackbar.Add($"Created playlist: {playlistModel.Name}", Severity.Normal, config => config.Icon = Icons.Material.Filled.Check);
+                Snackbar.Add($"Created playlist: {playlistModel.Name}", Severity.Normal, config =>
+                {
+                    config.Icon = Icons.Filled.Check;
+
+                    config.Action = "Open";
+                    config.ActionColor = MudBlazor.Color.Primary;
+                    config.Onclick = snackbar =>
+                    {
+                        PlaylistService.SetSelectedPlaylist(playlist);
+                        NavigationManager.NavigateTo("/");
+                        return Task.CompletedTask;
+                    };
+                });
             }
             else
             {

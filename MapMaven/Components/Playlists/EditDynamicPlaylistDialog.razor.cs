@@ -114,12 +114,34 @@ namespace MapMaven.Components.Playlists
             if (NewPlaylist)
             {
                 playlist = await PlaylistService.AddDynamicPlaylist(SelectedPlaylist);
-                Snackbar.Add($"Added playlist \"{SelectedPlaylist.Name}\"", Severity.Normal, config => config.Icon = Icons.Filled.Check);
+                Snackbar.Add($"Added playlist \"{SelectedPlaylist.Name}\"", Severity.Normal, config =>
+                {
+                    config.Icon = Icons.Filled.Check;
+
+                    config.Action = "Open";
+                    config.ActionColor = MudBlazor.Color.Primary;
+                    config.Onclick = snackbar =>
+                    {
+                        PlaylistService.SetSelectedPlaylist(playlist);
+                        return Task.CompletedTask;
+                    };
+                });
             }
             else
             {
                 playlist = await PlaylistService.EditDynamicPlaylist(SelectedPlaylist);
-                Snackbar.Add($"Saved playlist \"{SelectedPlaylist.Name}\"", Severity.Normal, config => config.Icon = Icons.Filled.Check);
+                Snackbar.Add($"Saved playlist \"{SelectedPlaylist.Name}\"", Severity.Normal, config =>
+                {
+                    config.Icon = Icons.Filled.Check;
+
+                    config.Action = "Open";
+                    config.ActionColor = MudBlazor.Color.Primary;
+                    config.Onclick = snackbar =>
+                    {
+                        PlaylistService.SetSelectedPlaylist(playlist);
+                        return Task.CompletedTask;
+                    };
+                });
             }
             
             Task.Run(DynamicPlaylistArrangementService.ArrangeDynamicPlaylists);
