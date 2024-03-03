@@ -30,7 +30,7 @@ namespace MapMaven.Core.Models
             ModifiedScore = playerScore.Score.ModifiedScore;
             Accuracy = playerScore.Accuracy();
             AccuracyWithMods = playerScore.AccuracyWithMods();
-            Modifiers = playerScore.Score.Modifiers?.Split(',') ?? Enumerable.Empty<string>();
+            Modifiers = playerScore.Score.Modifiers?.Split(',', StringSplitOptions.RemoveEmptyEntries) ?? Enumerable.Empty<string>();
             Pp = playerScore.Score.Pp;
             Weight = playerScore.Score.Weight;
             BadCuts = playerScore.Score.BadCuts;
@@ -49,7 +49,7 @@ namespace MapMaven.Core.Models
             ModifiedScore = score.ModifiedScore;
             Accuracy = score.Accuracy();
             AccuracyWithMods = score.AccuracyWithMods();
-            Modifiers = score.Modifiers?.Split(',') ?? Enumerable.Empty<string>();
+            Modifiers = score.Modifiers?.Split(',', StringSplitOptions.RemoveEmptyEntries) ?? Enumerable.Empty<string>();
             Pp = score.Pp;
             Weight = score.Weight;
             BadCuts = score.BadCuts;
