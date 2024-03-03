@@ -64,6 +64,14 @@
                     {
                         <MudChip OnClose="() => RemoveMapFilter(mapFilter)" Class="mb-3">@mapFilter.Name</MudChip>
                     }
+                    @if (MapSort is not null || MapFilters.Any(f => f.Visible))
+                    {
+                        <MudTooltip Text="Remove all filters and sorts">
+                            <MudChip Variant="Variant.Outlined" OnClick="ClearFiltersAndSort" Class="mb-3">
+                                <MudIcon Icon="@Icons.Material.Filled.FilterAltOff" Size="Size.Small"></MudIcon>
+                            </MudChip>
+                        </MudTooltip>
+                    }
                 </MudItem>
             </MudGrid>
         </ToolBarContent>

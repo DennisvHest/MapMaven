@@ -197,6 +197,12 @@ namespace MapMaven.Components.Maps
             MapService.SetMapSort(null);
         }
 
+        void ClearFiltersAndSort()
+        {
+            MapService.ClearMapFilters();
+            RemoveMapSort();
+        }
+
         void OnSelectedItemsChanged(HashSet<Map> selectedMaps)
         {
             MapService.SetSelectedMaps(selectedMaps);
