@@ -3,6 +3,7 @@ using MapMaven.Core.Services;
 using MapMaven.Core.Services.Interfaces;
 using MapMaven.Core.Services.Leaderboards;
 using MapMaven.Services;
+using MapMaven.Utility;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using System.Text.RegularExpressions;
@@ -31,6 +32,9 @@ namespace MapMaven.Components
 
         [Inject]
         protected BeatLeaderService BeatLeaderService { get; set; }
+
+        [Inject]
+        protected ApplicationFilesService ApplicationFilesService { get; set; }
 
         [CascadingParameter]
         MudDialogInstance MudDialog { get; set; }
@@ -120,6 +124,13 @@ namespace MapMaven.Components
                 if (ActiveLeaderboardProvider.HasValue)
                     await LeaderboardService.SetActiveLeaderboardProviderAsync(ActiveLeaderboardProvider.Value);
             });
+        }
+
+        public void ResetApplication()
+        {
+            ApplicationFilesService.DeleteApplicationFiles();
+
+            ApplicationUtils.RestartApplication();
         }
 
         public void Close()
