@@ -1,3 +1,4 @@
+using MapMaven.Components.Shared;
 using MapMaven.Core.Models;
 using MapMaven.Core.Services;
 using MapMaven.Core.Services.Interfaces;
@@ -35,6 +36,9 @@ namespace MapMaven.Components
 
         [Inject]
         protected ApplicationFilesService ApplicationFilesService { get; set; }
+
+        [Inject]
+        protected IDialogService DialogService { get; set; }
 
         [CascadingParameter]
         MudDialogInstance MudDialog { get; set; }
@@ -126,8 +130,19 @@ namespace MapMaven.Components
             });
         }
 
-        public void ResetApplication()
+        public async Task ResetApplicationAsync()
         {
+            var dialog = DialogService.Show<ConfirmationDialog>(null, new DialogParameters
+            {
+                { nameof(ConfirmationDialog.DialogText), "This will reset all settings and remove all cache. Map Maven will restart with the initial setup. Are you sure?" },
+                { nameof(ConfirmationDialog.ConfirmText), "Reset Map Maven" }
+            });
+
+            var result = await dialog.Result;
+
+            if (result.Cancelled)
+                return;
+
             ApplicationFilesService.DeleteApplicationFiles();
 
             ApplicationUtils.RestartApplication();

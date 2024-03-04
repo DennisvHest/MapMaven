@@ -81,14 +81,25 @@
         }
     </DialogContent>
     <DialogActions>
-        @if (!InitialSetup)
-        {
-            <MudButton Color="Color.Error" Variant="Variant.Filled" Class="ma-3" OnClick="ResetApplication">
+        <div class="d-flex justify-space-between full-width">
+            <MudButton
+                Variant="Variant.Filled"
+                Size="Size.Small"
+                StartIcon="@Icons.Material.Filled.Cached"
+                Class="ma-3 align-self-center"
+                Style="@(InitialSetup ? "visibility: hidden;" : string.Empty)"
+                OnClick="ResetApplicationAsync">
                 Reset Map Maven
             </MudButton>
-        }
-        <MudButton Color="Color.Primary" Variant="Variant.Filled" Class="ma-3" Disabled="string.IsNullOrEmpty(BeatSaberInstallLocation)" OnClick="SaveSettings">
-            @(InitialSetup ? "Start" : "Save")
-        </MudButton>
+
+            <MudButton
+                Color="Color.Primary"
+                Variant="Variant.Filled"
+                Class="ma-3"
+                Disabled="string.IsNullOrEmpty(BeatSaberInstallLocation)"
+                OnClick="SaveSettings">
+                @(InitialSetup ? "Start" : "Save")
+            </MudButton>
+        </div>
     </DialogActions>
 </MudDialog>
