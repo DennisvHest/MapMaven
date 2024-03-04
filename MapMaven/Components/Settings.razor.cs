@@ -1,8 +1,10 @@
+using MapMaven.Components.Shared;
 using MapMaven.Core.Models;
 using MapMaven.Core.Services;
 using MapMaven.Core.Services.Interfaces;
 using MapMaven.Core.Services.Leaderboards;
 using MapMaven.Services;
+using MapMaven.Utility;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using System.Text.RegularExpressions;
@@ -31,6 +33,12 @@ namespace MapMaven.Components
 
         [Inject]
         protected BeatLeaderService BeatLeaderService { get; set; }
+
+        [Inject]
+        protected ApplicationFilesService ApplicationFilesService { get; set; }
+
+        [Inject]
+        protected IDialogService DialogService { get; set; }
 
         [CascadingParameter]
         MudDialogInstance MudDialog { get; set; }
@@ -120,6 +128,24 @@ namespace MapMaven.Components
                 if (ActiveLeaderboardProvider.HasValue)
                     await LeaderboardService.SetActiveLeaderboardProviderAsync(ActiveLeaderboardProvider.Value);
             });
+        }
+
+        public async Task ResetApplicationAsync()
+        {
+            var dialog = DialogService.Show<ConfirmationDialog>(null, new DialogParameters
+            {
+                { nameof(ConfirmationDialog.DialogText), "This will reset all settings and remove all cache. Map Maven will restart with the initial setup. Are you sure?" },
+                { nameof(ConfirmationDialog.ConfirmText), "Reset Map Maven" }
+            });
+
+            var result = await dialog.Result;
+
+            if (result.Cancelled)
+                return;
+
+            ApplicationFilesService.DeleteApplicationFiles();
+
+            ApplicationUtils.RestartApplication();
         }
 
         public void Close()

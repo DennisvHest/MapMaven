@@ -71,6 +71,7 @@ namespace MapMaven.Infrastructure
             services.Add(new ServiceDescriptor(typeof(IScoreEstimationService), typeof(ScoreSaberScoreEstimationService), serviceScope));
             services.Add(new ServiceDescriptor(typeof(IScoreEstimationService), typeof(BeatLeaderScoreEstimationService), serviceScope));
             services.Add(new ServiceDescriptor(typeof(ScoreEstimationSettings), typeof(ScoreEstimationSettings), serviceScope));
+            services.Add(new ServiceDescriptor(typeof(ApplicationFilesService), typeof(ApplicationFilesService), serviceScope));
         }
 
         public static void Initialize(IServiceProvider serviceProvider)
