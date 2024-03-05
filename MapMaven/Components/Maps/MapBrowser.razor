@@ -87,6 +87,18 @@
                 <MudIcon Icon="@Icons.Material.Filled.ManageSearch" Style="vertical-align: middle; margin-bottom: 4px;"></MudIcon> @:Nothing yet. Dynamic playlist is still being generated. Maps will appear once all the maps have been downloaded.
             }
         </LoadingContent>
+        <NoRecordsContent>
+            <MudIcon Icon="@Icons.Material.Filled.SearchOff" Style="vertical-align: middle; margin-bottom: 4px;"></MudIcon>
+
+            @if (RankedMaps)
+            {
+                @: No recommended ranked maps found with the current criteria. Try lowering the minimum predicted accuracy.
+            }
+            else
+            {
+                @: No maps found with the current criteria.
+            }
+        </NoRecordsContent>
         <Columns>
             @if (RowContent is not null)
             {
