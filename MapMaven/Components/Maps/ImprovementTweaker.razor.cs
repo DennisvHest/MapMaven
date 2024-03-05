@@ -3,6 +3,7 @@ using MapMaven.Components.Shared;
 using MapMaven.Core.Models;
 using MapMaven.Core.Models.Data;
 using MapMaven.Core.Services.Interfaces;
+using MapMaven.Core.Services.Leaderboards;
 using MapMaven.Models;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
@@ -19,6 +20,9 @@ namespace MapMaven.Components.Maps
 
         [Inject]
         IPlaylistService PlaylistService { get; set; }
+
+        [Inject]
+        ILeaderboardService LeaderboardService { get; set; }
 
         [Inject]
         ISnackbar Snackbar { get; set; }
@@ -58,6 +62,27 @@ namespace MapMaven.Components.Maps
         {
             SubscribeAndBind(MapService.SelectedMaps, selectedMaps => SelectedMaps = selectedMaps);
             SubscribeAndBind(PlaylistService.CreatingPlaylist, creatingPlaylist => CreatingPlaylist = creatingPlaylist);
+
+            LeaderboardService.PlayerScores
+                .Where(playerScores => playerScores is not null)
+                .Take(1)
+                .Subscribe(playerScores =>
+                {
+                    var rankedScoresCount = playerScores.Count(x => x.Leaderboard.Ranked);
+
+                    // Not enough ranked scores to make a good prediction, so lower the minimum predicted accuracy
+                    if (rankedScoresCount < 10)
+                    {
+                        MinimumPredictedAccuracy = 65;
+                    }
+                    else if (rankedScoresCount < 20)
+                    {
+                        MinimumPredictedAccuracy = 75;
+                    }
+
+                    StateHasChanged();
+                });
+
             SubscribeAndBind(MapService.RankedMaps, rankedMaps =>
                 MapTags = rankedMaps
                     .SelectMany(map => map.Tags)
