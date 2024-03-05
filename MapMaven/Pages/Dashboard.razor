@@ -1,0 +1,18 @@
+﻿@inherits ReactiveComponent
+
+@page "/dashboard"
+
+<MudCard>
+    <MudCardContent>
+        @if (ScoresSeries is not null)
+        {
+            <MudChart
+                ChartType="ChartType.Line"
+                ChartSeries="@ScoresSeries"
+                XAxisLabels="ScoresXAxisLabels"
+                Width="100%"
+                Height="350px"
+                ChartOptions="@ScoresChartOptions" />
+        }
+    </MudCardContent>
+</MudCard>

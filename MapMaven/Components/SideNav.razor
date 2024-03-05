@@ -13,6 +13,12 @@
         </div>
         @if (!string.IsNullOrEmpty(PlayerId))
         {
+            <MudNavLink Icon="@Icons.Material.Filled.Dashboard"
+                        DisableRipple="true"
+                        Match="NavLinkMatch.All"
+                        Href="/dashboard">
+                Dashboard
+            </MudNavLink>
             <div @onclick="OnMapsNavigation">
                 <MudNavLink Icon="@Icons.Filled.KeyboardDoubleArrowUp"
                         DisableRipple="true"
