@@ -1,6 +1,9 @@
+using ApexCharts;
+using MapMaven.Core.Models;
 using MapMaven.Core.Services.Leaderboards;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
+using MudBlazor.Utilities;
 
 namespace MapMaven.Pages
 {
@@ -9,31 +12,40 @@ namespace MapMaven.Pages
         [Inject]
         ILeaderboardService LeaderboardService { get; set; }
 
-        ChartOptions ScoresChartOptions = new();
+        IEnumerable<RankHistoryRecord> RankHistory { get; set; }
 
-        List<ChartSeries> ScoresSeries { get; set; }
-        string[] ScoresXAxisLabels { get; set; }
+        ApexChartOptions<RankHistoryRecord> RankHistoryChartOptions = new()
+        {
+            Chart = new()
+            {
+                Background = "transparent",
+                ForeColor = MapMavenTheme.Theme.Palette.TextPrimary.SetAlpha(0.3).ToString(MudColorOutputFormats.RGBA),
+                Toolbar = new()
+                {
+                    Show = false
+                },
+                Zoom = new()
+                {
+                    Enabled = false
+                }
+            },
+            Yaxis = [
+                new() { Reversed = true }
+            ],
+            Grid = new()
+            {
+                BorderColor = MapMavenTheme.Theme.Palette.TextPrimary.SetAlpha(0.3).ToString(MudColorOutputFormats.RGBA),
+            },
+            Theme = new()
+            {
+                Mode = Mode.Dark,
+            }
+        };
 
 
         protected override void OnInitialized()
         {
-            ScoresXAxisLabels = Enumerable.Range(1, 30)
-                .Select(offset => DateTime.Now.Date.AddDays(-offset).ToShortDateString())
-                .ToArray();
-
-            SubscribeAndBind(LeaderboardService.PlayerProfile, player =>
-            {
-                ScoresSeries = [
-                    new()
-                    {
-                        Name = "Scores",
-                        Data = player.RankHistory
-                            .Select(h => Convert.ToDouble(h.Rank))
-                            .Reverse()
-                            .ToArray()
-                    }
-                ];
-            });
+            SubscribeAndBind(LeaderboardService.PlayerProfile, player => RankHistory = player.RankHistory);
         }
     }
 }

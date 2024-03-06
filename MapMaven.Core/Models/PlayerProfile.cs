@@ -12,7 +12,7 @@ namespace MapMaven.Core.Models
         public int CountryRank { get; set; }
         public double Pp { get; set; }
         public LeaderboardProvider LeaderboardProvider { get; set; }
-        public IEnumerable<RankHistoryRecord> RankHistory { get; set; }
+        public IEnumerable<RankHistoryRecord> RankHistory { get; set; } = [];
 
         public PlayerProfile() {}
 
@@ -32,7 +32,7 @@ namespace MapMaven.Core.Models
                 .Select(int.Parse)
                 .ToArray() ?? [];
 
-            RankHistory = Enumerable.Range(1, 30).Select(dateOffset => new RankHistoryRecord
+            RankHistory = Enumerable.Range(1, 49).Select(dateOffset => new RankHistoryRecord
             {
                 Rank = playerRankHistory.ElementAtOrDefault(playerRankHistory.Length - dateOffset),
                 Date = DateOnly.FromDateTime(DateTime.Today.AddDays(-dateOffset))

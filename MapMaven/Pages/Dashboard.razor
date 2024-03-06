@@ -1,18 +1,35 @@
-﻿@inherits ReactiveComponent
+﻿@using ApexCharts
+@using MapMaven.Core.Models
+@using MudBlazor.Utilities
+
+@inherits ReactiveComponent
 
 @page "/dashboard"
 
-<MudCard>
-    <MudCardContent>
-        @if (ScoresSeries is not null)
-        {
-            <MudChart
-                ChartType="ChartType.Line"
-                ChartSeries="@ScoresSeries"
-                XAxisLabels="ScoresXAxisLabels"
-                Width="100%"
-                Height="350px"
-                ChartOptions="@ScoresChartOptions" />
-        }
-    </MudCardContent>
-</MudCard>
+<MudContainer MaxWidth="MaxWidth.ExtraLarge" Style="padding-top: 24px; padding-bottom: 24px;">
+    <MudCard>
+        <MudCardHeader Class="card-header-highlight">
+            <CardHeaderContent>
+                <MudText Typo="Typo.h6">Global rank</MudText>
+            </CardHeaderContent>
+        </MudCardHeader>
+        <MudCardContent Class="py-0">
+            @if (RankHistory is not null && RankHistory.Any())
+            {
+                <ApexChart TItem="RankHistoryRecord"
+                           Options="RankHistoryChartOptions"
+                           Height="300">
+
+                    <ApexPointSeries TItem="RankHistoryRecord"
+                                     Items="RankHistory"
+                                     Name="Rank"
+                                     SeriesType="SeriesType.Line"
+                                     XValue="x => x.Date"
+                                     YValue="x => x.Rank"
+                                     OrderBy="x => x.X"
+                                     Color="@MapMavenTheme.Theme.Palette.Primary.ColorLighten(0.2).ToString(MudColorOutputFormats.Hex)"/>
+                </ApexChart>
+            }
+        </MudCardContent>
+    </MudCard>
+</MudContainer>
