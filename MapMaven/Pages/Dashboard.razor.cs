@@ -2,7 +2,6 @@ using ApexCharts;
 using MapMaven.Core.Models;
 using MapMaven.Core.Services.Leaderboards;
 using Microsoft.AspNetCore.Components;
-using MudBlazor;
 using MudBlazor.Utilities;
 
 namespace MapMaven.Pages
@@ -25,6 +24,10 @@ namespace MapMaven.Pages
                     Show = false
                 },
                 Zoom = new()
+                {
+                    Enabled = false
+                },
+                Animations = new()
                 {
                     Enabled = false
                 }
