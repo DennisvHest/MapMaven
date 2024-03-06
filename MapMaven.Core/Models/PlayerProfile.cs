@@ -27,16 +27,19 @@ namespace MapMaven.Core.Models
             Pp = player.Pp;
             LeaderboardProvider = LeaderboardProvider.ScoreSaber;
 
-            int[] playerRankHistory = player.Histories
+            var playerRankHistory = player.Histories
                 ?.Split(',')
                 .Select(int.Parse)
+                .Cast<int?>()
                 .ToArray() ?? [];
 
-            RankHistory = Enumerable.Range(1, 49).Select(dateOffset => new RankHistoryRecord
+            RankHistory = [new RankHistoryRecord() { Date = DateOnly.FromDateTime(DateTime.Today), Rank = Rank }];
+
+            RankHistory = RankHistory.Concat(Enumerable.Range(1, 49).Select(dateOffset => new RankHistoryRecord
             {
                 Rank = playerRankHistory.ElementAtOrDefault(playerRankHistory.Length - dateOffset),
                 Date = DateOnly.FromDateTime(DateTime.Today.AddDays(-dateOffset))
-            });
+            }));
         }
 
         public PlayerProfile(ApiClients.BeatLeader.PlayerResponseFull playerProfile)
