@@ -47,6 +47,9 @@ namespace MapMaven.Pages
             }
         };
 
+        double? AverageStarDifficulty { get; set; }
+        double? AverageRankedAccuracy { get; set; }
+
         protected override void OnInitialized()
         {
             SubscribeAndBind(LeaderboardService.PlayerProfile, player =>
@@ -61,6 +64,20 @@ namespace MapMaven.Pages
                     await RankHistoryChart.UpdateSeriesAsync();
                     StateHasChanged();
                 });
+            });
+
+            SubscribeAndBind(LeaderboardService.PlayerScores, scores =>
+            {
+                var rankedScores = scores.Where(s => s.Leaderboard.Stars > 0);
+
+                AverageStarDifficulty = rankedScores
+                    .OrderByDescending(s => s.Score.Pp)
+                    .Take(30)
+                    .Average(s => s.Leaderboard.Stars);
+
+                AverageRankedAccuracy = rankedScores
+                    .OrderByDescending(s => s.Score.Pp)
+                    .Average(s => s.Score.Accuracy);
             });
         }
     }
