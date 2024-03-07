@@ -40,34 +40,14 @@
             </MudCard>
         </MudItem>
         <MudItem xs="2">
-            <MudCard>
-                <MudCardHeader Class="card-header-highlight pa-3">
-                    <CardHeaderContent>
-                        <div class="d-flex align-center">
-                            <MudIcon Icon="@Icons.Material.Filled.Adjust" Size="MudBlazor.Size.Small" Class="mr-2"></MudIcon>
-                            <b>Average ranked accuracy</b>
-                        </div>
-                    </CardHeaderContent>
-                </MudCardHeader>
-                <MudCardContent Class="d-flex justify-center">
-                    <MudText Typo="Typo.h4">@AverageRankedAccuracy?.ToString("#0.##")</MudText>
-                </MudCardContent>
-            </MudCard>
+            <MudChip Icon="@Icons.Material.Filled.Adjust" Label="true" Class="full-width">
+                <span>Average ranked accuracy | <b>@AverageRankedAccuracy?.ToString("#0.##")</b></span>
+            </MudChip>
         </MudItem>
         <MudItem xs="2">
-            <MudCard>
-                <MudCardHeader Class="card-header-highlight pa-3">
-                    <CardHeaderContent>
-                        <div class="d-flex align-center">
-                            <MudIcon Icon="@Icons.Material.Filled.Star" Size="MudBlazor.Size.Small" Class="mr-2"></MudIcon>
-                            <b>Average star difficulty</b>
-                        </div>
-                    </CardHeaderContent>
-                </MudCardHeader>
-                <MudCardContent Class="d-flex justify-center">
-                    <MudText Typo="Typo.h4">@AverageStarDifficulty?.ToString("#0.##")</MudText>
-                </MudCardContent>
-            </MudCard>
+            <MudChip Icon="@Icons.Material.Filled.Star" Label="true" Class="full-width">
+                <span>Average star difficulty | <b>@AverageStarDifficulty?.ToString("#0.##")</b></span>
+            </MudChip>
         </MudItem>
     </MudGrid>
 </MudContainer>
