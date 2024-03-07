@@ -13,6 +13,8 @@ namespace MapMaven.Pages
 
         IEnumerable<RankHistoryRecord> RankHistory { get; set; }
 
+        ApexChart<RankHistoryRecord> RankHistoryChart;
+
         ApexChartOptions<RankHistoryRecord> RankHistoryChartOptions = new()
         {
             Chart = new()
@@ -45,10 +47,21 @@ namespace MapMaven.Pages
             }
         };
 
-
         protected override void OnInitialized()
         {
-            SubscribeAndBind(LeaderboardService.PlayerProfile, player => RankHistory = player.RankHistory);
+            SubscribeAndBind(LeaderboardService.PlayerProfile, player =>
+            {
+                RankHistory = player.RankHistory;
+
+                InvokeAsync(async () =>
+                {
+                    if (RankHistoryChart is null)
+                        return;
+
+                    await RankHistoryChart.UpdateSeriesAsync();
+                    StateHasChanged();
+                });
+            });
         }
     }
 }

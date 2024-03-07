@@ -19,7 +19,8 @@
         <MudCardContent Class="py-0">
             @if (RankHistory is not null && RankHistory.Any())
             {
-                <ApexChart TItem="RankHistoryRecord"
+                <ApexChart @ref="RankHistoryChart"
+                           TItem="RankHistoryRecord"
                            Options="RankHistoryChartOptions"
                            Height="300">
 
