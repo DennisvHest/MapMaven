@@ -1,8 +1,10 @@
 using ApexCharts;
 using MapMaven.Core.Models;
+using MapMaven.Core.Services.Interfaces;
 using MapMaven.Core.Services.Leaderboards;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
+using Map = MapMaven.Models.Map;
 
 namespace MapMaven.Pages
 {
@@ -11,7 +13,10 @@ namespace MapMaven.Pages
         [Inject]
         ILeaderboardService LeaderboardService { get; set; }
 
-        IEnumerable<RankHistoryRecord> RankHistory { get; set; }
+        [Inject]
+        IMapService MapService { get; set; }
+
+        PlayerProfile Player { get; set; }
 
         ApexChart<RankHistoryRecord> RankHistoryChart;
 
@@ -50,11 +55,15 @@ namespace MapMaven.Pages
         double? AverageStarDifficulty { get; set; }
         double? AverageRankedAccuracy { get; set; }
 
+        IEnumerable<string> BestScoredMapTags { get; set; } = Enumerable.Empty<string>();
+
+        IEnumerable<Map> PlayedRankedMaps { get; set; } = Enumerable.Empty<Map>();
+
         protected override void OnInitialized()
         {
             SubscribeAndBind(LeaderboardService.PlayerProfile, player =>
             {
-                RankHistory = player.RankHistory;
+                Player = player;
 
                 InvokeAsync(async () =>
                 {
@@ -78,6 +87,19 @@ namespace MapMaven.Pages
                 AverageRankedAccuracy = rankedScores
                     .OrderByDescending(s => s.Score.Pp)
                     .Average(s => s.Score.Accuracy);
+            });
+
+            SubscribeAndBind(MapService.RankedMaps, rankedMaps =>
+            {
+                PlayedRankedMaps = rankedMaps.Where(m => m.Played);
+
+                BestScoredMapTags = PlayedRankedMaps
+                    .OrderByDescending(m => m.HighestPlayerScore?.Score.Pp ?? 0)
+                    .SelectMany(m => m.Tags)
+                    .GroupBy(t => t)
+                    .OrderByDescending(g => g.Count())
+                    .Take(5)
+                    .Select(g => g.Key);
             });
         }
     }

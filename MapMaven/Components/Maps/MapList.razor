@@ -1,0 +1,23 @@
+﻿<MudDataGrid T="Map"
+             Items="Maps"
+             Dense="true"
+             SortMode="SortMode.None"
+             Class="full-height full-width">
+    <ColGroup>
+        <col style="width: 30px" />
+        <col />
+    </ColGroup>
+    <Columns>
+        <TemplateColumn T="Map" CellClass="py-2 pl-4 pr-0">
+            <CellTemplate>
+                <MapCover Map="context.Item" Size="30"></MapCover>
+            </CellTemplate>
+        </TemplateColumn>
+        <PropertyColumn T="Map" TProperty="string" Property="m => m.Name" Title="Name"></PropertyColumn>
+    </Columns>
+</MudDataGrid>
+
+@code {
+    [Parameter]
+    public IEnumerable<Map> Maps { get; set; }
+}
