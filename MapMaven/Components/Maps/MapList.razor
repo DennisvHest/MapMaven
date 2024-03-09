@@ -15,6 +15,9 @@
         </TemplateColumn>
         <PropertyColumn T="Map" TProperty="string" Property="m => m.Name" Title="Name"></PropertyColumn>
     </Columns>
+    <PagerContent>
+        <MudDataGridPager T="Map" PageSizeOptions="[8]" DisableRowsPerPage="true" />
+    </PagerContent>
 </MudDataGrid>
 
 @code {

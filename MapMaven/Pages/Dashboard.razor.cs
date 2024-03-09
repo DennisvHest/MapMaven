@@ -57,7 +57,7 @@ namespace MapMaven.Pages
 
         IEnumerable<string> BestScoredMapTags { get; set; } = Enumerable.Empty<string>();
 
-        IEnumerable<Map> PlayedRankedMaps { get; set; } = Enumerable.Empty<Map>();
+        IEnumerable<Map> LatestHighPpGainMaps { get; set; } = Enumerable.Empty<Map>();
 
         protected override void OnInitialized()
         {
@@ -91,15 +91,19 @@ namespace MapMaven.Pages
 
             SubscribeAndBind(MapService.RankedMaps, rankedMaps =>
             {
-                PlayedRankedMaps = rankedMaps.Where(m => m.Played);
+                var playedRankedMaps = rankedMaps.Where(m => m.Played);
 
-                BestScoredMapTags = PlayedRankedMaps
+                BestScoredMapTags = playedRankedMaps
                     .OrderByDescending(m => m.HighestPlayerScore?.Score.Pp ?? 0)
                     .SelectMany(m => m.Tags)
                     .GroupBy(t => t)
                     .OrderByDescending(g => g.Count())
                     .Take(5)
                     .Select(g => g.Key);
+
+                LatestHighPpGainMaps = playedRankedMaps
+                    .Where(m => m.HighestPlayerScore is not null && m.HighestPlayerScore.Score.TimeSet > DateTimeOffset.Now.AddDays(-30))
+                    .OrderByDescending(m => m.HighestPlayerScore.Score.WeightedPp);
             });
         }
     }
