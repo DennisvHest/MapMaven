@@ -169,7 +169,9 @@ namespace MapMaven.Core.Services.Leaderboards
                             count: 50
                         );
 
-                        return history?.Select(h => new RankHistoryRecord(h)) ?? Enumerable.Empty<RankHistoryRecord>();
+                        return history
+                            ?.Select(h => new RankHistoryRecord(h))
+                            .OrderBy(h => h.Date) ?? Enumerable.Empty<RankHistoryRecord>();
                     })
                     .Catch((Exception exception) =>
                     {

@@ -4,6 +4,7 @@ using MapMaven.Core.Services.Interfaces;
 using MapMaven.Core.Services.Leaderboards;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
+using System.Reactive.Linq;
 using Map = MapMaven.Models.Map;
 
 namespace MapMaven.Pages
@@ -22,6 +23,7 @@ namespace MapMaven.Pages
 
         ApexChartOptions<RankHistoryRecord> RankHistoryChartOptions = new()
         {
+            Annotations = new(),
             Chart = new()
             {
                 Background = "transparent",
@@ -86,12 +88,14 @@ namespace MapMaven.Pages
 
                 AverageRankedAccuracy = rankedScores
                     .OrderByDescending(s => s.Score.Pp)
-                    .Average(s => s.Score.Accuracy);
+                .Average(s => s.Score.Accuracy);
             });
 
-            SubscribeAndBind(MapService.RankedMaps, rankedMaps =>
+            var mapsAndHistory = Observable.CombineLatest(MapService.RankedMaps, LeaderboardService.PlayerProfile, (rankedMaps, playerProfile) => (rankedMaps, playerProfile));
+
+            SubscribeAndBind(mapsAndHistory, x =>
             {
-                var playedRankedMaps = rankedMaps.Where(m => m.Played);
+                var playedRankedMaps = x.rankedMaps.Where(m => m.Played);
 
                 BestScoredMapTags = playedRankedMaps
                     .OrderByDescending(m => m.HighestPlayerScore?.Score.Pp ?? 0)
@@ -101,8 +105,52 @@ namespace MapMaven.Pages
                     .Take(5)
                     .Select(g => g.Key);
 
-                LatestHighPpGainMaps = playedRankedMaps
-                    .Where(m => m.HighestPlayerScore is not null && m.HighestPlayerScore.Score.TimeSet > DateTimeOffset.Now.AddDays(-30))
+                var recentPlayedRankedMaps = playedRankedMaps
+                    .Where(m => m.HighestPlayerScore is not null && m.HighestPlayerScore.Score.TimeSet > DateTimeOffset.Now.AddDays(-50))
+                    .OrderBy(m => m.HighestPlayerScore.Score.TimeSet);
+
+                var rankIncreaseHistoryRecords = x.playerProfile.RankHistory
+                    .Zip(x.playerProfile.RankHistory.Skip(1), (previousHistoryRecord, historyRecord) => (previousHistoryRecord, historyRecord))
+                    .Where(x => x.historyRecord.Rank < x.previousHistoryRecord.Rank)
+                    .Select(x => x.historyRecord);
+
+                RankHistoryChartOptions.Annotations.Xaxis = rankIncreaseHistoryRecords
+                    .Select(r => new AnnotationsXAxis()
+                    {
+                        X = r.Date.ToString("yyyy-MM-dd"),
+                        StrokeDashArray = 0,
+                        BorderColor = "#fff",
+                        Label = new()
+                        {
+                            Orientation = Orientation.Horizontal,
+                            BorderWidth = 0,
+                            Style = new()
+                            {
+                                Background = "#fff",
+                                Color = "#000"
+                            },
+                            Text = "Rank Increase"
+                        }
+                    }).ToList();
+
+                InvokeAsync(async () =>
+                {
+                    if (RankHistoryChart is null)
+                        return;
+
+                    await RankHistoryChart.UpdateOptionsAsync(true, false, false);
+                    StateHasChanged();
+                });
+
+                LatestHighPpGainMaps = rankIncreaseHistoryRecords
+                    .SelectMany(historyRecord => recentPlayedRankedMaps
+                        .Where(map =>
+                        {
+                            var scoreDate = DateOnly.FromDateTime(map.HighestPlayerScore.Score.TimeSet.DateTime);
+
+                            return scoreDate >= historyRecord.Date.AddDays(-1) && scoreDate <= historyRecord.Date.AddDays(1);
+                        })
+                    ).Distinct()
                     .OrderByDescending(m => m.HighestPlayerScore.Score.WeightedPp);
             });
         }
