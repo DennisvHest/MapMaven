@@ -34,6 +34,9 @@
                         }
                     </MudCardContent>
                 </MudCard>
+                <MudChip Label="true" Class="full-width">
+                    <span><b>pp</b> Top PP | <b>@TopPp?.ToString("#0.##")</b></span>
+                </MudChip>
                 <MudChip Icon="@Icons.Material.Filled.Adjust" Label="true" Class="full-width">
                     <span>Average ranked accuracy | <b>@AverageRankedAccuracy?.ToString("#0.##")</b></span>
                 </MudChip>
@@ -72,9 +75,21 @@
                     </MudCardContent>
                 </MudCard>
             </MudItem>
-            <MudItem xs="4">
-                <MapList Maps="LatestHighPpGainMaps"></MapList>
+            <MudItem xs="10">
+                <MudGrid>
+                    <MudItem xs="6">
+                        <MudCard>
+                            <MudCardHeader Class="card-header-highlight">
+                                <CardHeaderContent>
+                                    <b>Recent high PP gain maps</b>
+                                </CardHeaderContent>
+                            </MudCardHeader>
+                            <MapList Maps="RecentHighPpGainMaps" ShowHeader="false"></MapList>
+                        </MudCard>
+                    </MudItem>
+                </MudGrid>
             </MudItem>
+            
         </MudGrid>
     }
 </MudContainer>

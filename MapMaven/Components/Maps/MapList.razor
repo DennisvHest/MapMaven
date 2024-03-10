@@ -1,10 +1,19 @@
-﻿<MudDataGrid T="Map"
+﻿@{
+    var headerCssClass = ShowHeader ? string.Empty : "d-none";
+}
+
+<MudDataGrid T="Map"
              Items="Maps"
              Dense="true"
              SortMode="SortMode.None"
+             HeaderClass="@headerCssClass"
              Class="full-height full-width">
     <ColGroup>
         <col style="width: 30px" />
+        <col style="width: 30px" />
+        <col />
+        <col />
+        <col />
         <col />
     </ColGroup>
     <Columns>
@@ -13,7 +22,37 @@
                 <MapCover Map="context.Item" Size="30"></MapCover>
             </CellTemplate>
         </TemplateColumn>
-        <PropertyColumn T="Map" TProperty="string" Property="m => m.Name" Title="Name"></PropertyColumn>
+        <TemplateColumn T="Map" CellClass="pa-2">
+            <CellTemplate>
+                <MudTooltip Text="Open map details" ShowOnFocus="false">
+                    <MudIconButton Icon="@Icons.Material.Filled.Info" Variant="Variant.Text" Size="Size.Small" OnClick="() => OpenDetails(context.Item)" />
+                </MudTooltip>
+            </CellTemplate>
+        </TemplateColumn>
+        <PropertyColumn T="Map" TProperty="string" Property="m => m.Name" Title="Name" CellStyle="word-break: break-word;"></PropertyColumn>
+        <TemplateColumn T="Map" CellClass="pa-1">
+            <CellTemplate>
+                @context.Item.HighestPlayerScore?.Score?.TimeSet.DateTime.ToShortDateString()
+            </CellTemplate>
+        </TemplateColumn>
+        <TemplateColumn T="Map" CellClass="pa-1">
+            <CellTemplate>
+                @{
+                    var playerScore = context.Item.HighestPlayerScore;
+                    var chipStyle = $"border: 1px solid {DifficultyDisplayUtils.GetColor(playerScore.Leaderboard?.Difficulty)}";
+                }
+                <MudChip Size="Size.Small" Variant="Variant.Outlined" Style="@chipStyle">
+                    @DifficultyDisplayUtils.GetShortName(playerScore.Leaderboard?.Difficulty)
+                </MudChip>
+            </CellTemplate>
+        </TemplateColumn>
+        <TemplateColumn T="Map" CellClass="pa-1">
+            <CellTemplate>
+                <MudChip Size="Size.Small">
+                    <span>@context.Item.HighestPlayerScore.Score.Pp.ToString("#0.##") <b>pp</b></span>
+                </MudChip>
+            </CellTemplate>
+        </TemplateColumn>
     </Columns>
     <PagerContent>
         <MudDataGridPager T="Map" PageSizeOptions="[8]" DisableRowsPerPage="true" />
@@ -21,6 +60,31 @@
 </MudDataGrid>
 
 @code {
+    [Inject]
+    IMapService MapService { get; set; }
+
+    [Inject]
+    IDialogService DialogService { get; set; }
+
     [Parameter]
     public IEnumerable<Map> Maps { get; set; }
+
+    [Parameter]
+    public bool ShowHeader { get; set; } = true;
+
+    void OpenDetails(Map map)
+    {
+        var fullMap = MapService.GetMapById(map.Id);
+
+        DialogService.Show<MapDetail>(
+            title: null,
+            parameters: new() { { nameof(MapDetail.Map), fullMap } },
+            options: new()
+            {
+                MaxWidth = MaxWidth.Small,
+                FullWidth = true,
+                CloseButton = true
+            }
+        );
+    }
 }

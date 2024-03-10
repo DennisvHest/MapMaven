@@ -54,12 +54,13 @@ namespace MapMaven.Pages
             }
         };
 
+        double? TopPp { get; set; }
         double? AverageStarDifficulty { get; set; }
         double? AverageRankedAccuracy { get; set; }
 
         IEnumerable<string> BestScoredMapTags { get; set; } = Enumerable.Empty<string>();
 
-        IEnumerable<Map> LatestHighPpGainMaps { get; set; } = Enumerable.Empty<Map>();
+        IEnumerable<Map> RecentHighPpGainMaps { get; set; } = Enumerable.Empty<Map>();
 
         protected override void OnInitialized()
         {
@@ -79,7 +80,12 @@ namespace MapMaven.Pages
 
             SubscribeAndBind(LeaderboardService.PlayerScores, scores =>
             {
+                if (scores is null || !scores.Any())
+                    return;
+
                 var rankedScores = scores.Where(s => s.Leaderboard.Stars > 0);
+
+                TopPp = rankedScores.Max(s => s.Score.Pp);
 
                 AverageStarDifficulty = rankedScores
                     .OrderByDescending(s => s.Score.Pp)
@@ -142,7 +148,7 @@ namespace MapMaven.Pages
                     StateHasChanged();
                 });
 
-                LatestHighPpGainMaps = rankIncreaseHistoryRecords
+                RecentHighPpGainMaps = rankIncreaseHistoryRecords
                     .SelectMany(historyRecord => recentPlayedRankedMaps
                         .Where(map =>
                         {
