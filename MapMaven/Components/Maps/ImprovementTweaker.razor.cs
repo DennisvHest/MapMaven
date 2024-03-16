@@ -3,6 +3,7 @@ using MapMaven.Components.Shared;
 using MapMaven.Core.Models;
 using MapMaven.Core.Models.Data;
 using MapMaven.Core.Services.Interfaces;
+using MapMaven.Core.Services.Leaderboards;
 using MapMaven.Models;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
@@ -21,10 +22,16 @@ namespace MapMaven.Components.Maps
         IPlaylistService PlaylistService { get; set; }
 
         [Inject]
+        ILeaderboardService LeaderboardService { get; set; }
+
+        [Inject]
         ISnackbar Snackbar { get; set; }
 
         [Inject]
         protected IDialogService DialogService { get; set; }
+
+        [Inject]
+        public NavigationManager NavigationManager { get; set; }
 
         [Parameter]
         public EventCallback<MapSelectionConfig> OnMapSelectionChanged { get; set; }
@@ -55,6 +62,27 @@ namespace MapMaven.Components.Maps
         {
             SubscribeAndBind(MapService.SelectedMaps, selectedMaps => SelectedMaps = selectedMaps);
             SubscribeAndBind(PlaylistService.CreatingPlaylist, creatingPlaylist => CreatingPlaylist = creatingPlaylist);
+
+            LeaderboardService.PlayerScores
+                .Where(playerScores => playerScores is not null)
+                .Take(1)
+                .Subscribe(playerScores =>
+                {
+                    var rankedScoresCount = playerScores.Count(x => x.Leaderboard.Ranked);
+
+                    // Not enough ranked scores to make a good prediction, so lower the minimum predicted accuracy
+                    if (rankedScoresCount < 10)
+                    {
+                        MinimumPredictedAccuracy = 65;
+                    }
+                    else if (rankedScoresCount < 20)
+                    {
+                        MinimumPredictedAccuracy = 75;
+                    }
+
+                    StateHasChanged();
+                });
+
             SubscribeAndBind(MapService.RankedMaps, rankedMaps =>
                 MapTags = rankedMaps
                     .SelectMany(map => map.Tags)
@@ -223,7 +251,7 @@ namespace MapMaven.Components.Maps
 
             var progress = new Progress<ItemProgress<Map>>(subject.OnNext);
 
-            await PlaylistService.AddPlaylistAndDownloadMaps(playlistModel, SelectedMaps, progress: progress, cancellationToken: cancellationToken.Token);
+            var playlist = await PlaylistService.AddPlaylistAndDownloadMaps(playlistModel, SelectedMaps, progress: progress, cancellationToken: cancellationToken.Token);
 
             MapService.ClearSelectedMaps();
 
@@ -231,7 +259,19 @@ namespace MapMaven.Components.Maps
 
             if (!cancellationToken.IsCancellationRequested)
             {
-                Snackbar.Add($"Created playlist: {playlistModel.Name}", Severity.Normal, config => config.Icon = Icons.Material.Filled.Check);
+                Snackbar.Add($"Created playlist: {playlistModel.Name}", Severity.Normal, config =>
+                {
+                    config.Icon = Icons.Filled.Check;
+
+                    config.Action = "Open";
+                    config.ActionColor = MudBlazor.Color.Primary;
+                    config.Onclick = snackbar =>
+                    {
+                        PlaylistService.SetSelectedPlaylist(playlist);
+                        NavigationManager.NavigateTo("/");
+                        return Task.CompletedTask;
+                    };
+                });
             }
             else
             {

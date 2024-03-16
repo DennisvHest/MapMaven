@@ -162,7 +162,7 @@ namespace MapMaven.Services
             return addedPlaylist;
         }
 
-        public async Task AddPlaylistAndDownloadMaps(EditPlaylistModel editPlaylistModel, IEnumerable<Map> playlistMaps, bool loadPlaylists = true, IProgress<ItemProgress<Map>>? progress = null, CancellationToken cancellationToken = default)
+        public async Task<Playlist?> AddPlaylistAndDownloadMaps(EditPlaylistModel editPlaylistModel, IEnumerable<Map> playlistMaps, bool loadPlaylists = true, IProgress<ItemProgress<Map>>? progress = null, CancellationToken cancellationToken = default)
         {
             _creatingPlaylist.OnNext(true);
 
@@ -171,12 +171,14 @@ namespace MapMaven.Services
                 playlistMaps = await DownloadPlaylistMapsIfNotExist(playlistMaps, progress, cancellationToken: cancellationToken);
 
                 if (!cancellationToken.IsCancellationRequested)
-                    await AddPlaylist(editPlaylistModel, playlistMaps, loadPlaylists);
+                    return await AddPlaylist(editPlaylistModel, playlistMaps, loadPlaylists);
             }
             finally
             {
                 _creatingPlaylist.OnNext(false);
             }
+
+            return null;
         }
 
         public async Task<IEnumerable<Map>> DownloadPlaylistMapsIfNotExist(IEnumerable<Map> playlistMaps, IProgress<ItemProgress<Map>>? progress = null, bool loadMapInfo = true, CancellationToken cancellationToken = default)

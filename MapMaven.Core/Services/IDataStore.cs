@@ -2,7 +2,7 @@
 
 namespace MapMaven.Core.Services
 {
-    public interface IDataStore
+    public interface IDataStore : IDisposable
     {
         DbSet<TEntity> Set<TEntity>() where TEntity : class;
 

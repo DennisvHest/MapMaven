@@ -9,6 +9,8 @@
         public string Difficulty { get; set; }
         public double? Stars { get; set; }
 
+        public bool Ranked => Stars > 0;
+
         public Leaderboard() { }
 
         public Leaderboard(ApiClients.ScoreSaber.LeaderboardInfo leaderboard)

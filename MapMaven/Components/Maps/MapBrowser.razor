@@ -3,7 +3,7 @@
 @using MapMaven.Core.Utilities.Scoresaber
 @using MapMaven.Core.Models.DynamicPlaylists
 
-<div @ref="TableWrapperRef" @onkeydown="OnKeyDown" class="d-inline full-width" tabindex="-1">
+<div @ref="TableWrapperRef" @onkeydown="OnKeyDown" class="d-inline full-width" tabindex="-1" style="@(RankedMaps ? "width: calc(100% - var(--mud-drawer-width, var(--mud-drawer-width-left))); !important" : "")">
     <MudDataGrid @ref="TableRef"
                  T="Map"
                  Items="Maps"
@@ -64,6 +64,14 @@
                     {
                         <MudChip OnClose="() => RemoveMapFilter(mapFilter)" Class="mb-3">@mapFilter.Name</MudChip>
                     }
+                    @if (MapSort is not null || MapFilters.Any(f => f.Visible))
+                    {
+                        <MudTooltip Text="Remove all filters and sorts">
+                            <MudChip Variant="Variant.Outlined" OnClick="ClearFiltersAndSort" Class="mb-3">
+                                <MudIcon Icon="@Icons.Material.Filled.FilterAltOff" Size="Size.Small"></MudIcon>
+                            </MudChip>
+                        </MudTooltip>
+                    }
                 </MudItem>
             </MudGrid>
         </ToolBarContent>
@@ -71,7 +79,7 @@
             @if (InitialMapLoad)
             {
                 <MudProgressLinear Color="Color.Primary" Indeterminate="true" Style="position: absolute; top: 0;" />
-                <MudIcon Icon="@Icons.Material.Filled.ManageSearch" Style="vertical-align: middle; margin-bottom: 4px;"></MudIcon> @:Loading maps for first use. Depdending on the number of maps, this might take a minute.
+                <MudIcon Icon="@Icons.Material.Filled.ManageSearch" Style="vertical-align: middle; margin-bottom: 4px;"></MudIcon> @:Loading maps for first use. Depending on the number of maps, this might take a minute.
             }
             else if (TableRef.GetFilteredItemsCount() == 0 && SelectedPlaylist?.IsDynamicPlaylist == true && string.IsNullOrEmpty(SearchString))
             {
@@ -79,6 +87,18 @@
                 <MudIcon Icon="@Icons.Material.Filled.ManageSearch" Style="vertical-align: middle; margin-bottom: 4px;"></MudIcon> @:Nothing yet. Dynamic playlist is still being generated. Maps will appear once all the maps have been downloaded.
             }
         </LoadingContent>
+        <NoRecordsContent>
+            <MudIcon Icon="@Icons.Material.Filled.SearchOff" Style="vertical-align: middle; margin-bottom: 4px;"></MudIcon>
+
+            @if (RankedMaps)
+            {
+                @: No recommended ranked maps found with the current criteria. Try lowering the minimum predicted accuracy.
+            }
+            else
+            {
+                @: No maps found with the current criteria.
+            }
+        </NoRecordsContent>
         <Columns>
             @if (RowContent is not null)
             {

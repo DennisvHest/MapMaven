@@ -197,6 +197,12 @@ namespace MapMaven.Components.Maps
             MapService.SetMapSort(null);
         }
 
+        void ClearFiltersAndSort()
+        {
+            MapService.ClearMapFilters();
+            RemoveMapSort();
+        }
+
         void OnSelectedItemsChanged(HashSet<Map> selectedMaps)
         {
             MapService.SetSelectedMaps(selectedMaps);
@@ -254,7 +260,18 @@ namespace MapMaven.Components.Maps
 
                 await PlaylistService.AddMapsToPlaylist(SelectedMaps, playlist);
 
-                Snackbar.Add($"Added selected maps to \"{playlist.Title}\"", Severity.Normal, config => config.Icon = Icons.Filled.Check);
+                Snackbar.Add($"Added selected maps to \"{playlist.Title}\"", Severity.Normal, config =>
+                {
+                    config.Icon = Icons.Filled.Check;
+
+                    config.Action = "Open";
+                    config.ActionColor = MudBlazor.Color.Primary;
+                    config.Onclick = snackbar =>
+                    {
+                        PlaylistService.SetSelectedPlaylist(playlist);
+                        return Task.CompletedTask;
+                    };
+                });
             }
         }
 
