@@ -62,14 +62,17 @@
                                        Options="RankHistoryChartOptions"
                                        Height="300">
 
-                                <ApexPointSeries TItem="RankHistoryRecord"
-                                                 Items="Player.RankHistory"
-                                                 Name="Rank"
-                                                 SeriesType="SeriesType.Line"
-                                                 XValue="x => x.Date"
-                                                 YValue="x => x.Rank"
-                                                 OrderBy="x => x.X"
-                                                 Color="@MapMavenTheme.Theme.Palette.Primary.ColorLighten(0.2).ToString(MudColorOutputFormats.Hex)" />
+                                <ChildContent>
+                                    <ApexPointSeries TItem="RankHistoryRecord"
+                                                     Items="Player.RankHistory"
+                                                     Name="Rank"
+                                                     SeriesType="SeriesType.Line"
+                                                     XValue="x => x.Date"
+                                                     YValue="x => x.Rank"
+                                                     DataPointMutator="SetCustomData"
+                                                     OrderBy="x => x.X"
+                                                     Color="@MapMavenTheme.Theme.Palette.Primary.ColorLighten(0.2).ToString(MudColorOutputFormats.Hex)" />
+                                </ChildContent>
                             </ApexChart>
                         }
                     </MudCardContent>
@@ -93,3 +96,7 @@
         </MudGrid>
     }
 </MudContainer>
+
+<HeadContent>
+    <script src="./Pages/Dashboard.razor.js"></script>
+</HeadContent>

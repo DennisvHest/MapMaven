@@ -3,6 +3,7 @@ using MapMaven.Core.Models;
 using MapMaven.Core.Services.Interfaces;
 using MapMaven.Core.Services.Leaderboards;
 using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 using MudBlazor.Utilities;
 using System.Reactive.Linq;
 using Map = MapMaven.Models.Map;
@@ -16,6 +17,11 @@ namespace MapMaven.Pages
 
         [Inject]
         IMapService MapService { get; set; }
+
+        [Inject]
+        IJSRuntime Js { get; set; }
+
+        IJSObjectReference? dashboardJsModule;
 
         PlayerProfile Player { get; set; }
 
@@ -44,6 +50,10 @@ namespace MapMaven.Pages
             Yaxis = [
                 new() { Reversed = true }
             ],
+            Tooltip = new()
+            {
+                Custom = "rankHistoryTooltip"
+            },
             Grid = new()
             {
                 BorderColor = MapMavenTheme.Theme.Palette.TextPrimary.SetAlpha(0.3).ToString(MudColorOutputFormats.RGBA),
@@ -120,34 +130,6 @@ namespace MapMaven.Pages
                     .Where(x => x.historyRecord.Rank < x.previousHistoryRecord.Rank)
                     .Select(x => x.historyRecord);
 
-                RankHistoryChartOptions.Annotations.Xaxis = rankIncreaseHistoryRecords
-                    .Select(r => new AnnotationsXAxis()
-                    {
-                        X = r.Date.ToString("yyyy-MM-dd"),
-                        StrokeDashArray = 0,
-                        BorderColor = "#fff",
-                        Label = new()
-                        {
-                            Orientation = Orientation.Horizontal,
-                            BorderWidth = 0,
-                            Style = new()
-                            {
-                                Background = "#fff",
-                                Color = "#000"
-                            },
-                            Text = "Rank Increase"
-                        }
-                    }).ToList();
-
-                InvokeAsync(async () =>
-                {
-                    if (RankHistoryChart is null)
-                        return;
-
-                    await RankHistoryChart.UpdateOptionsAsync(true, false, false);
-                    StateHasChanged();
-                });
-
                 RecentHighPpGainMaps = rankIncreaseHistoryRecords
                     .SelectMany(historyRecord => recentPlayedRankedMaps
                         .Where(map =>
@@ -158,7 +140,31 @@ namespace MapMaven.Pages
                         })
                     ).Distinct()
                     .OrderByDescending(m => m.HighestPlayerScore.Score.WeightedPp);
+
+                InvokeAsync(async () =>
+                {
+                    if (RankHistoryChart is null)
+                        return;
+
+                    await RankHistoryChart.UpdateOptionsAsync(true, false, false);
+                    StateHasChanged();
+                });
             });
+        }
+
+        void SetCustomData(DataPoint<RankHistoryRecord> dataPoint)
+        {
+            dataPoint.Extra = RecentHighPpGainMaps
+                .Where(map =>
+                {
+                    var scoreDate = DateOnly.FromDateTime(map.HighestPlayerScore.Score.TimeSet.DateTime);
+
+                    return scoreDate == (DateOnly)dataPoint.X;
+                })
+                .Select(map => new
+                {
+                    name = map.Name,
+                });
         }
     }
 }
