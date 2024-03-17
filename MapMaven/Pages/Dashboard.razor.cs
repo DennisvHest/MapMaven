@@ -18,11 +18,6 @@ namespace MapMaven.Pages
         [Inject]
         IMapService MapService { get; set; }
 
-        [Inject]
-        IJSRuntime Js { get; set; }
-
-        IJSObjectReference? dashboardJsModule;
-
         PlayerProfile Player { get; set; }
 
         ApexChart<RankHistoryRecord> RankHistoryChart;
@@ -52,7 +47,7 @@ namespace MapMaven.Pages
             ],
             Tooltip = new()
             {
-                Custom = "rankHistoryTooltip"
+                Custom = "dashboard.rankHistoryTooltip"
             },
             Grid = new()
             {
