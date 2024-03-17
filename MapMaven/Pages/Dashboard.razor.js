@@ -41,7 +41,21 @@ function rankHistoryTooltip(chartData) {
 
     for (let map of data) {
         const li = document.createElement('li');
-        li.textContent = map.name;
+        li.style.display = 'flex';
+        li.style.gap = '5px';
+        li.style.alignItems = 'center';
+
+        const coverImage = document.createElement('img');
+        coverImage.src = map.coverImageUrl;
+        coverImage.style.width = '16px';
+        coverImage.style.height = '16px';
+        li.appendChild(coverImage);
+
+        const mapName = document.createElement('span');
+        mapName.textContent = map.name;
+
+        li.appendChild(mapName);
+
         mapList.appendChild(li);
     }
 

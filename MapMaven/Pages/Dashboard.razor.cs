@@ -164,6 +164,7 @@ namespace MapMaven.Pages
                 .Select(map => new
                 {
                     name = map.Name,
+                    coverImageUrl = map.CoverImageUrl
                 });
         }
     }
