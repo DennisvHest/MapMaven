@@ -185,3 +185,10 @@ a:hover {
 .no-title .mud-dialog-title {
     display: none;
 }
+
+.mud-chip.mud-schip-size-extra-small {
+    border-radius: 10px;
+    font-size: 10px;
+    height: 20px;
+    padding: 0 6px;
+}

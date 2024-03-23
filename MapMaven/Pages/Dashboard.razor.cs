@@ -2,6 +2,7 @@ using ApexCharts;
 using MapMaven.Core.Models;
 using MapMaven.Core.Services.Interfaces;
 using MapMaven.Core.Services.Leaderboards;
+using MapMaven.Utility;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using MudBlazor.Utilities;
@@ -159,7 +160,10 @@ namespace MapMaven.Pages
                 .Select(map => new
                 {
                     name = map.Name,
-                    coverImageUrl = map.CoverImageUrl
+                    coverImageUrl = map.CoverImageUrl,
+                    difficulty = DifficultyDisplayUtils.GetShortName(map.Difficulty.Difficulty),
+                    difficultyColor = DifficultyDisplayUtils.GetColor(map.Difficulty.Difficulty),
+                    pp = map.HighestPlayerScore.Score.Pp.ToString("0.##"),
                 });
         }
     }

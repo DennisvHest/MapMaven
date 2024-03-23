@@ -71,6 +71,30 @@ const dashboard = (function () {
 
             li.appendChild(mapName);
 
+            const difficultyTag = document.createElement('div');
+            difficultyTag.className = 'mud-chip mud-chip-outlined mud-schip-size-extra-small mud-chip-color-default';
+            difficultyTag.style.border = `1px solid ${map.difficultyColor}`;
+            difficultyTag.style.margin = '5px 0';
+
+            const difficulty = document.createElement('span');
+            difficulty.className = 'mud-chip-content';
+            difficulty.textContent = map.difficulty;
+
+            difficultyTag.appendChild(difficulty);
+
+            const ppTag = document.createElement('div');
+            ppTag.className = 'mud-chip mud-chip-filled mud-schip-size-extra-small mud-chip-color-default';
+            ppTag.style.margin = '5px 0';
+
+            const pp = document.createElement('span');
+            pp.className = 'mud-chip-content';
+            pp.textContent = map.pp;
+
+            ppTag.appendChild(pp);
+
+            li.appendChild(difficultyTag);
+            li.appendChild(ppTag);
+
             mapList.appendChild(li);
         }
 
