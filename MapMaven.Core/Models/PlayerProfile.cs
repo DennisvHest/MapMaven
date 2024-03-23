@@ -40,6 +40,8 @@ namespace MapMaven.Core.Models
                 Rank = playerRankHistory.ElementAtOrDefault(playerRankHistory.Length - dateOffset),
                 Date = DateOnly.FromDateTime(DateTime.Today.AddDays(-dateOffset))
             }));
+
+            RankHistory = RankHistory.OrderBy(x => x.Date);
         }
 
         public PlayerProfile(ApiClients.BeatLeader.PlayerResponseFull playerProfile)
