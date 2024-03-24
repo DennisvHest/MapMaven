@@ -6,10 +6,10 @@
 
 @page "/dashboard"
 
-<MudContainer MaxWidth="MaxWidth.ExtraLarge" Style="padding-top: 24px; padding-bottom: 24px;">
+<MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="full-height" Style="padding-top: 24px; padding-bottom: 24px;">
     @if (Player is not null)
     {
-        <MudGrid Justify="Justify.FlexEnd">
+        <MudGrid Justify="Justify.FlexEnd" Class="full-height">
             <MudItem xs="2">
                 <MudCard>
                     <MudCardHeader Class="card-header-highlight justify-space-between">
@@ -74,42 +74,42 @@
                     <span>Average star difficulty | <b>@AverageStarDifficulty?.ToString("#0.##")</b></span>
                 </MudChip>
             </MudItem>
-            <MudItem xs="10">
-                <MudCard>
-                    <MudCardHeader Class="card-header-highlight">
-                        <CardHeaderContent>
-                            <div class="d-flex align-center">
-                                <MudIcon Icon="@Icons.Material.Filled.Language" Class="mr-2"></MudIcon>
-                                <MudText Typo="Typo.h6">Global rank</MudText>
-                            </div>
-                        </CardHeaderContent>
-                    </MudCardHeader>
-                    <MudCardContent Class="py-0">
-                        @if (Player?.RankHistory is not null && Player.RankHistory.Any())
-                        {
-                            <ApexChart @ref="RankHistoryChart"
-                                       TItem="RankHistoryRecord"
-                                       Options="RankHistoryChartOptions"
-                                       Height="300">
-
-                                <ChildContent>
-                                    <ApexPointSeries TItem="RankHistoryRecord"
-                                                     Items="Player.RankHistory"
-                                                     Name="Rank"
-                                                     SeriesType="SeriesType.Line"
-                                                     XValue="x => x.Date"
-                                                     YValue="x => x.Rank"
-                                                     DataPointMutator="SetCustomData"
-                                                     OrderBy="x => x.X"
-                                                     Color="@MapMavenTheme.Theme.Palette.Primary.ColorLighten(0.2).ToString(MudColorOutputFormats.Hex)" />
-                                </ChildContent>
-                            </ApexChart>
-                        }
-                    </MudCardContent>
-                </MudCard>
-            </MudItem>
-            <MudItem xs="10">
+            <MudItem xs="10" Class="full-height" Style="overflow-y: auto;">
                 <MudGrid>
+                    <MudItem xs="12">
+                        <MudCard>
+                            <MudCardHeader Class="card-header-highlight">
+                                <CardHeaderContent>
+                                    <div class="d-flex align-center">
+                                        <MudIcon Icon="@Icons.Material.Filled.Language" Class="mr-2"></MudIcon>
+                                        <MudText Typo="Typo.h6">Global rank</MudText>
+                                    </div>
+                                </CardHeaderContent>
+                            </MudCardHeader>
+                            <MudCardContent Class="py-0">
+                                @if (Player?.RankHistory is not null && Player.RankHistory.Any())
+                                {
+                                    <ApexChart @ref="RankHistoryChart"
+                                               TItem="RankHistoryRecord"
+                                               Options="RankHistoryChartOptions"
+                                               Height="300">
+
+                                        <ChildContent>
+                                            <ApexPointSeries TItem="RankHistoryRecord"
+                                                             Items="Player.RankHistory"
+                                                             Name="Rank"
+                                                             SeriesType="SeriesType.Line"
+                                                             XValue="x => x.Date"
+                                                             YValue="x => x.Rank"
+                                                             DataPointMutator="SetCustomData"
+                                                             OrderBy="x => x.X"
+                                                             Color="@MapMavenTheme.Theme.Palette.Primary.ColorLighten(0.2).ToString(MudColorOutputFormats.Hex)" />
+                                        </ChildContent>
+                                    </ApexChart>
+                                }
+                            </MudCardContent>
+                        </MudCard>
+                    </MudItem>
                     <MudItem xs="6">
                         <MudCard>
                             <MudCardHeader Class="card-header-highlight">
@@ -122,7 +122,6 @@
                     </MudItem>
                 </MudGrid>
             </MudItem>
-            
         </MudGrid>
     }
 </MudContainer>
