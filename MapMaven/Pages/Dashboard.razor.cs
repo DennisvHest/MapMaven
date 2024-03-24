@@ -60,6 +60,10 @@ namespace MapMaven.Pages
             }
         };
 
+        double? RankChange { get; set; }
+        double? CountryRankChange { get; set; }
+        double? PpChange { get; set; }
+
         double? TopPp { get; set; }
         double? AverageStarDifficulty { get; set; }
         double? AverageRankedAccuracy { get; set; }
@@ -73,6 +77,18 @@ namespace MapMaven.Pages
             SubscribeAndBind(LeaderboardService.PlayerProfile, player =>
             {
                 Player = player;
+
+                var earliestRankHistoryRecord = player.RankHistory.FirstOrDefault();
+                var latestRankHistoryRecord = player.RankHistory.LastOrDefault();
+
+                if (earliestRankHistoryRecord is not null && latestRankHistoryRecord is not null)
+                    RankChange = earliestRankHistoryRecord.Rank - latestRankHistoryRecord.Rank;
+
+                if (earliestRankHistoryRecord is not null && latestRankHistoryRecord is not null)
+                    CountryRankChange = earliestRankHistoryRecord.CountryRank - latestRankHistoryRecord.CountryRank;
+
+                if (earliestRankHistoryRecord is not null && latestRankHistoryRecord is not null)
+                    PpChange = latestRankHistoryRecord.Pp - earliestRankHistoryRecord.Pp;
 
                 InvokeAsync(async () =>
                 {

@@ -12,19 +12,49 @@
         <MudGrid Justify="Justify.FlexEnd">
             <MudItem xs="2">
                 <MudCard>
-                    <MudCardHeader Class="d-flex justify-space-between card-header-highlight">
-                        <span>
-                            <MudIcon Icon="@Icons.Material.Filled.Language" Style="font-size: 1rem; transform: translateY(2px);"></MudIcon>
-                            @Player.Rank
-                        </span>
-                        <span>
-                            <span class="fi fi-@Player.CountryCode.ToLower() mr-1"></span>
-                            @Player.CountryRank
-                        </span>
-                        <span>
-                            <b>pp</b>
-                            @Player.Pp.ToString("#0.##")
-                        </span>
+                    <MudCardHeader Class="card-header-highlight justify-space-between">
+                        <div class="d-flex flex-column align-center">
+                            <span>
+                                <MudIcon Icon="@Icons.Material.Filled.Language" Style="font-size: 1rem; transform: translateY(2px);"></MudIcon>
+                                @Player.Rank
+                            </span>
+                            @if (RankChange is not null)
+                            {
+                                <ValueChange Value="@RankChange.Value" Style="font-size: 12px;"></ValueChange>
+                            }
+                            else
+                            {
+                                <span style="height: 15px"></span>
+                            }
+                        </div>
+                        <div class="d-flex flex-column align-center">
+                            <span>
+                                <span class="fi fi-@Player.CountryCode.ToLower() mr-1"></span>
+                                @Player.CountryRank
+                            </span>
+                            @if (CountryRankChange is not null)
+                            {
+                                <ValueChange Value="@CountryRankChange.Value" Style="font-size: 12px;"></ValueChange>
+                            }
+                            else
+                            {
+                                <span style="height: 15px"></span>
+                            }
+                        </div>
+                        <div class="d-flex flex-column align-center">
+                            <span>
+                                <b>pp</b>
+                                @Player.Pp.ToString("#0.##")
+                            </span>
+                            @if (PpChange is not null)
+                            {
+                                <ValueChange Value="@PpChange.Value" Style="font-size: 12px;"></ValueChange>
+                            }
+                            else
+                            {
+                                <span style="height: 15px"></span>
+                            }
+                        </div>
                     </MudCardHeader>
                     <MudCardContent>
                         <h4>Best scored map tags:</h4>

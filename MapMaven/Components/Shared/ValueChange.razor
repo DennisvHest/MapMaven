@@ -1,0 +1,32 @@
+﻿@inherits MudComponentBase
+
+<b @attributes="UserAttributes" class="@Class" style="color: @Color; @Style">
+    @Suffix@Value.ToString(Format)
+</b>
+
+@code {
+    [Parameter]
+    public double Value { get; set; }
+
+    [Parameter]
+    public string Format { get; set; } = "0.##";
+
+    string Suffix = string.Empty;
+    string Color = "inherit";
+
+    protected override void OnParametersSet()
+    {
+        Suffix = Value switch
+        {
+            >= 0 => "+",
+            _ => ""
+        };
+
+        Color = Value switch
+        {
+            0 => "inherit",
+            > 0 => "green",
+            _ => "red"
+        };
+    }
+}
