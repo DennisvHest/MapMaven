@@ -88,7 +88,7 @@ const dashboard = (function () {
 
             const pp = document.createElement('span');
             pp.className = 'mud-chip-content';
-            pp.textContent = map.pp;
+            pp.innerHTML = `${map.pp} <b class='ml-1'>pp<b/>`;
 
             ppTag.appendChild(pp);
 
