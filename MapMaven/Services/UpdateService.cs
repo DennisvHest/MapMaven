@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using Squirrel;
 using Squirrel.Sources;
+using System.Net.Http.Json;
 using System.Reactive.Subjects;
 
 namespace MapMaven.Services
@@ -8,6 +9,7 @@ namespace MapMaven.Services
     public class UpdateService
     {
         private readonly UpdateManager _updateManager;
+        private readonly IHttpClientFactory _httpClientFactory;
 
         private readonly ILogger<App> _logger;
 
@@ -17,11 +19,12 @@ namespace MapMaven.Services
         public bool IsInstalled => _updateManager.IsInstalledApp;
         public string CurrentVersion => _updateManager.CurrentlyInstalledVersion()?.ToString() ?? "0.0.0";
 
-        public UpdateService(ILogger<App> logger)
+        public UpdateService(ILogger<App> logger, IHttpClientFactory httpClientFactory)
         {
             _logger = logger;
 
             _updateManager = GetUpdateManager();
+            _httpClientFactory = httpClientFactory;
         }
 
 #if DEBUG
@@ -38,6 +41,8 @@ namespace MapMaven.Services
 
         public async Task CheckForUpdates()
         {
+            _availableUpdate.OnNext(null);
+
             try
             {
                 _logger?.LogInformation("Checking for updates...");
@@ -66,5 +71,17 @@ namespace MapMaven.Services
                 _logger?.LogError(ex, "Error during update.");
             }
         }
+
+        public async Task<ReleaseInfo> GetLatestReleaseInfo()
+        {
+            var httpClient = _httpClientFactory.CreateClient("GithubApi");
+
+            return await httpClient.GetFromJsonAsync<ReleaseInfo>("releases/latest");
+        }
+    }
+
+    public class ReleaseInfo
+    {
+        public string Body { get; set; }
     }
 }

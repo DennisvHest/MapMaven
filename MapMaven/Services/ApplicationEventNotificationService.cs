@@ -1,6 +1,7 @@
 ﻿using MapMaven.Core.Services.Interfaces;
 using MapMaven.Utility;
 using MudBlazor;
+using MapMaven.Components.Updates;
 
 namespace MapMaven.Services
 {
@@ -18,7 +19,7 @@ namespace MapMaven.Services
 
             updateService.AvailableUpdate.Subscribe(update =>
             {
-                snackbar.Add($"Update ({update?.FutureReleaseEntry?.Version}) has been downloaded. Restart to apply the update.", Severity.Normal, config =>
+                snackbar.Add<UpdateNotification>(new() { { nameof(UpdateNotification.Update), update } }, Severity.Normal, config =>
                 {
                     config.VisibleStateDuration = int.MaxValue;
                     config.Action = "Restart";

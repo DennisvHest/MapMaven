@@ -43,6 +43,11 @@ namespace MapMaven.Infrastructure
             services.AddHttpClient<ScoreSaberApiClient>(client => client.BaseAddress = new Uri("https://scoresaber.com"));
             services.AddHttpClient<BeatLeaderApiClient>(client => client.BaseAddress = new Uri("https://api.beatleader.xyz"));
             services.AddHttpClient<BeatSaverApiClient>(client => client.BaseAddress = new Uri("https://api.beatsaver.com"));
+            services.AddHttpClient("GithubApi", client =>
+            {
+                client.BaseAddress = new Uri("https://api.github.com/repos/DennisvHest/MapMaven/");
+                client.DefaultRequestHeaders.Add("User-Agent", "MapMaven");
+            });
             services.AddHttpClient("MapMavenFiles", client =>
             {
 #if DEBUG

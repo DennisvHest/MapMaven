@@ -1,0 +1,29 @@
+﻿@using Markdig
+
+<MudDialog>
+    <DialogContent>
+        <div class="default-html">
+            @if (ReleaseNotesHtml is not null)
+            {
+                @((MarkupString)ReleaseNotesHtml)
+            }
+        </div>
+    </DialogContent>
+    <DialogActions>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [Inject]
+    UpdateService UpdateService { get; set; }
+
+    ReleaseInfo ReleaseInfo { get; set; }
+
+    string ReleaseNotesHtml { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        ReleaseInfo = await UpdateService.GetLatestReleaseInfo();
+        ReleaseNotesHtml = Markdown.ToHtml(ReleaseInfo.Body);
+    }
+}

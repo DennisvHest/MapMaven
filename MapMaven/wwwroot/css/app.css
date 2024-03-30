@@ -116,7 +116,7 @@ a:hover {
     height: initial;
 }
 
-.mud-primary-text {
+.mud-primary-text:not(.no-override) {
     color: white !important;
 }
 
@@ -180,4 +180,33 @@ a:hover {
 
 .no-title .mud-dialog-title {
     display: none;
+}
+
+.default-html > ul {
+    margin: 1em 0;
+    padding-left: 40px;
+    list-style-type: disc;
+}
+
+.default-html > ol {
+    margin: 1em 0;
+    padding-left: 40px;
+    list-style-type: decimal;
+}
+
+.default-html > li {
+    display: list-item;
+}
+
+.default-html > :matches(ol, ul) :matches(ol, ul) {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.default-html > :matches(ol, ul) ul {
+    list-style-type: circle;
+}
+
+.default-html > :matches(ol, ul) :matches(ol, ul) ul {
+    list-style-type: square;
 }
