@@ -42,6 +42,9 @@
     protected IApplicationEventService ApplicationEventService { get; set; }
 
     [Inject]
+    protected UpdateService UpdateService { get; set; }
+
+    [Inject]
     protected ISnackbar Snackbar { get; set; }
 
     protected ApplicationEventNotificationService ApplicationEventNotificationService { get; private set; }
@@ -50,7 +53,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        ApplicationEventNotificationService = new ApplicationEventNotificationService(ApplicationEventService, Snackbar);
+        ApplicationEventNotificationService = new ApplicationEventNotificationService(ApplicationEventService, UpdateService, Snackbar);
 
         await ApplicationSettingService.LoadAsync();
 

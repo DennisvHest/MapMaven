@@ -40,6 +40,9 @@ namespace MapMaven.Components
         [Inject]
         protected IDialogService DialogService { get; set; }
 
+        [Inject]
+        protected UpdateService UpdateService { get; set; }
+
         [CascadingParameter]
         MudDialogInstance MudDialog { get; set; }
 
