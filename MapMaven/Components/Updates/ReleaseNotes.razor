@@ -1,4 +1,6 @@
 ﻿@using Markdig
+@using Markdig.Extensions.MediaLinks
+@using System.Text.RegularExpressions
 
 <MudDialog>
     <DialogContent>
@@ -21,9 +23,28 @@
 
     string ReleaseNotesHtml { get; set; }
 
+    // Regex to match Github media links
+    Regex GithubMediaRegex = new Regex(@"\(?https:\/\/github\.com\/DennisvHest\/MapMaven\/assets\S*\)?");
+
     protected override async Task OnInitializedAsync()
     {
         ReleaseInfo = await UpdateService.GetLatestReleaseInfo();
-        ReleaseNotesHtml = Markdown.ToHtml(ReleaseInfo.Body);
+
+        string releaseNotes = ReleaseInfo.Body;
+
+        // Convert Github media links to markdown video links
+        releaseNotes = GithubMediaRegex.Replace(releaseNotes, match =>
+        {
+            if (match.Value.StartsWith('(') || match.Value.EndsWith(')'))
+                return match.Value; // Ignore markdown image links
+
+            return $"<iframe src='{match.Value}' allowfullscreen='true' style='aspect-ratio: 16 / 9'></iframe>";
+        });
+
+        var pipeline = new MarkdownPipelineBuilder()
+            .UseAutoLinks()
+            .Build();
+
+        ReleaseNotesHtml = Markdown.ToHtml(releaseNotes, pipeline);
     }
 }
