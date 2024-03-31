@@ -12,19 +12,25 @@
         </div>
     </DialogContent>
     <DialogActions>
-        <div class="pa-2 full-width d-flex justify-center">
-            <MudButton OnClick="ApplyUpdatesAndRestart"
-                       Variant="Variant.Filled"
-                       Color="Color.Primary">
-                Apply updates and restart
-            </MudButton>
-        </div>
+        @if (UpdateAvailable)
+        {
+            <div class="pa-2 full-width d-flex justify-center">
+                <MudButton OnClick="ApplyUpdatesAndRestart"
+                           Variant="Variant.Filled"
+                           Color="Color.Primary">
+                    Apply updates and restart
+                </MudButton>
+            </div>
+        }
     </DialogActions>
 </MudDialog>
 
 @code {
     [Inject]
     UpdateService UpdateService { get; set; }
+
+    [Parameter]
+    public bool UpdateAvailable { get; set; } = false;
 
     ReleaseInfo ReleaseInfo { get; set; }
 

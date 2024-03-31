@@ -1,6 +1,6 @@
 ﻿@using Squirrel
 
-Update (@Update?.FutureReleaseEntry?.Version) has been downloaded. Restart to apply the update. <MudLink OnClick="UpdateReleaseNotes" Color="Color.Info" Underline="Underline.Always">What has changed</MudLink>
+Update (@Update?.FutureReleaseEntry?.Version) has been downloaded. Restart to apply the update. <MudLink OnClick="OpenReleaseNotes" Color="Color.Info" Underline="Underline.Always">What has changed</MudLink>
 
 @code {
     [Inject]
@@ -9,11 +9,14 @@ Update (@Update?.FutureReleaseEntry?.Version) has been downloaded. Restart to ap
     [Parameter]
     public UpdateInfo Update { get; set; }
 
-    void UpdateReleaseNotes()
+    void OpenReleaseNotes()
     {
         DialogService.Show<ReleaseNotes>(
             title: $"Map Maven {Update?.FutureReleaseEntry?.Version}",
-            parameters: new(),
+            parameters: new()
+            {
+                { nameof(ReleaseNotes.UpdateAvailable), true }
+            },
             options: new DialogOptions
             {
                 CloseButton = true

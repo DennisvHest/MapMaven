@@ -1,4 +1,5 @@
 using MapMaven.Components.Shared;
+using MapMaven.Components.Updates;
 using MapMaven.Core.Models;
 using MapMaven.Core.Services;
 using MapMaven.Core.Services.Interfaces;
@@ -149,6 +150,18 @@ namespace MapMaven.Components
             ApplicationFilesService.DeleteApplicationFiles();
 
             ApplicationUtils.RestartApplication();
+        }
+
+        void OpenReleaseNotes()
+        {
+            DialogService.Show<ReleaseNotes>(
+                title: $"Map Maven {UpdateService.CurrentVersion}",
+                parameters: new(),
+                options: new DialogOptions
+                {
+                    CloseButton = true
+                }
+            );
         }
 
         public void Close()
