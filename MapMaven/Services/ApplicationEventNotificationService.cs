@@ -23,6 +23,7 @@ namespace MapMaven.Services
                 {
                     config.VisibleStateDuration = int.MaxValue;
                     config.Action = "Restart";
+                    config.Icon = Icons.Material.Filled.Update;
                     config.Onclick = async snackbarItem => ApplicationUtils.RestartApplication();
                 });
             });

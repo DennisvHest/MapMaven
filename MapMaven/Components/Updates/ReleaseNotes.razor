@@ -4,7 +4,7 @@
 
 <MudDialog>
     <DialogContent>
-        <div class="default-html">
+        <div class="markdown default-html" style="max-height: 60vh; overflow-y: auto;">
             @if (ReleaseNotesHtml is not null)
             {
                 @((MarkupString)ReleaseNotesHtml)
@@ -12,6 +12,13 @@
         </div>
     </DialogContent>
     <DialogActions>
+        <div class="pa-2 full-width d-flex justify-center">
+            <MudButton OnClick="ApplyUpdatesAndRestart"
+                       Variant="Variant.Filled"
+                       Color="Color.Primary">
+                Apply updates and restart
+            </MudButton>
+        </div>
     </DialogActions>
 </MudDialog>
 
@@ -38,7 +45,7 @@
             if (match.Value.StartsWith('(') || match.Value.EndsWith(')'))
                 return match.Value; // Ignore markdown image links
 
-            return $"<iframe src='{match.Value}' allowfullscreen='true' style='aspect-ratio: 16 / 9'></iframe>";
+            return $"<iframe src='{match.Value}' allowfullscreen='true' style='aspect-ratio: 16 / 9; margin: 10px 0;'></iframe>";
         });
 
         var pipeline = new MarkdownPipelineBuilder()
@@ -47,4 +54,6 @@
 
         ReleaseNotesHtml = Markdown.ToHtml(releaseNotes, pipeline);
     }
+
+    void ApplyUpdatesAndRestart() => ApplicationUtils.RestartApplication();
 }

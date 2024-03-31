@@ -76,7 +76,7 @@ namespace MapMaven.Services
         {
             var httpClient = _httpClientFactory.CreateClient("GithubApi");
 
-            return await httpClient.GetFromJsonAsync<ReleaseInfo>("releases/134974460");
+            return await httpClient.GetFromJsonAsync<ReleaseInfo>("releases/latest");
         }
     }
 

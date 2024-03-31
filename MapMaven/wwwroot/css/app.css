@@ -81,6 +81,10 @@
     flex: 1;
 }
 
+.markdown img {
+    width: 100%;
+}
+
 /* MudBlazor overrides */
 .mud-main-content {
     height: 100vh;

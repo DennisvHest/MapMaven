@@ -13,6 +13,11 @@ Update (@Update?.FutureReleaseEntry?.Version) has been downloaded. Restart to ap
     {
         DialogService.Show<ReleaseNotes>(
             title: $"Map Maven {Update?.FutureReleaseEntry?.Version}",
-            parameters: new());
+            parameters: new(),
+            options: new DialogOptions
+            {
+                CloseButton = true
+            }
+        );
     }
 }
