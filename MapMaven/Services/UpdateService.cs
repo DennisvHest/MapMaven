@@ -15,7 +15,7 @@ namespace MapMaven.Services
         private readonly ILogger<App> _logger;
 
         private ReplaySubject<UpdateInfo> _availableUpdate = new(1);
-        public IObservable<UpdateInfo> AvailableUpdate => _availableUpdate.DistinctUntilChanged();
+        public IObservable<UpdateInfo> AvailableUpdate => _availableUpdate.Take(1);
 
         public bool IsInstalled => _updateManager.IsInstalledApp;
         public string CurrentVersion => _updateManager.CurrentlyInstalledVersion()?.ToString() ?? "0.0.0";
