@@ -1,0 +1,26 @@
+﻿@using Squirrel
+
+Update (@Update?.FutureReleaseEntry?.Version) has been downloaded. Restart to apply the update. <MudLink OnClick="OpenReleaseNotes" Color="Color.Info" Underline="Underline.Always">What has changed</MudLink>
+
+@code {
+    [Inject]
+    IDialogService DialogService { get; set; }
+
+    [Parameter]
+    public UpdateInfo Update { get; set; }
+
+    void OpenReleaseNotes()
+    {
+        DialogService.Show<ReleaseNotes>(
+            title: $"Map Maven {Update?.FutureReleaseEntry?.Version}",
+            parameters: new()
+            {
+                { nameof(ReleaseNotes.UpdateAvailable), true }
+            },
+            options: new DialogOptions
+            {
+                CloseButton = true
+            }
+        );
+    }
+}

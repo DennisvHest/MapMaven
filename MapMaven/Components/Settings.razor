@@ -81,25 +81,49 @@
         }
     </DialogContent>
     <DialogActions>
-        <div class="d-flex justify-space-between full-width">
-            <MudButton
-                Variant="Variant.Filled"
-                Size="Size.Small"
-                StartIcon="@Icons.Material.Filled.Cached"
-                Class="ma-3 align-self-center"
-                Style="@(InitialSetup ? "visibility: hidden;" : string.Empty)"
-                OnClick="ResetApplicationAsync">
-                Reset Map Maven
-            </MudButton>
+        <div class="d-flex flex-column full-width">
+            <div class="d-flex justify-space-between full-width">
+                <MudButton Variant="Variant.Filled"
+                           Size="Size.Small"
+                           StartIcon="@Icons.Material.Filled.Cached"
+                           Class="ma-3 align-self-center"
+                           Style="@(InitialSetup ? "visibility: hidden;" : string.Empty)"
+                           OnClick="ResetApplicationAsync">
+                    Reset Map Maven
+                </MudButton>
 
-            <MudButton
-                Color="Color.Primary"
-                Variant="Variant.Filled"
-                Class="ma-3"
-                Disabled="string.IsNullOrEmpty(BeatSaberInstallLocation)"
-                OnClick="SaveSettings">
-                @(InitialSetup ? "Start" : "Save")
-            </MudButton>
+                <MudButton Color="Color.Primary"
+                           Variant="Variant.Filled"
+                           Class="ma-3"
+                           Disabled="string.IsNullOrEmpty(BeatSaberInstallLocation)"
+                           OnClick="SaveSettings">
+                    @(InitialSetup ? "Start" : "Save")
+                </MudButton>
+            </div>
+            @if (!InitialSetup && UpdateService.IsInstalled)
+            {
+                <div class="d-flex align-center full-width py-2" style="border-top: 1px solid grey">
+                    <MudChip
+                        Variant="Variant.Outlined"
+                        Size="Size.Small"
+                        Disabled="Update is not null"
+                        OnClick="() => OpenReleaseNotes(false)">
+                        Version: @UpdateService.CurrentVersion
+                    </MudChip>
+
+                    @if (Update is not null)
+                    {
+                        <MudChip
+                            Variant="Variant.Outlined"
+                            Size="Size.Small"
+                            Color="Color.Info"
+                            Icon="@Icons.Material.Filled.Update"
+                            OnClick="() => OpenReleaseNotes(true)">
+                            Update available
+                        </MudChip>
+                    }
+                </div>
+            }
         </div>
     </DialogActions>
 </MudDialog>

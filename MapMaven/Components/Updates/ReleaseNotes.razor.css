@@ -1,0 +1,8 @@
+ul {
+    list-style-type: initial;
+}
+
+ul, li {
+    margin: initial;
+    padding: initial;
+}
