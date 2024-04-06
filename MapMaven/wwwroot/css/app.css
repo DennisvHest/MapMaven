@@ -214,3 +214,7 @@ a:hover {
 .default-html > :matches(ol, ul) :matches(ol, ul) ul {
     list-style-type: square;
 }
+
+.mud-icon-button.no-hover-background:hover {
+    background-color: initial !important;
+}

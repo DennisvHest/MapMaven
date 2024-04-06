@@ -16,11 +16,11 @@
     <PackageReference Include="MockQueryable.Moq" Version="7.0.1" />
     <PackageReference Include="Moq" Version="4.20.70" />
     <PackageReference Include="RichardSzalay.MockHttp" Version="7.0.0" />
-    <PackageReference Include="System.IO.Abstractions.TestingHelpers" Version="20.0.34" />
-    <PackageReference Include="TestableIO.System.IO.Abstractions" Version="20.0.34" />
-    <PackageReference Include="TestableIO.System.IO.Abstractions.Wrappers" Version="20.0.34" />
+    <PackageReference Include="System.IO.Abstractions.TestingHelpers" Version="21.0.2" />
+    <PackageReference Include="TestableIO.System.IO.Abstractions" Version="21.0.2" />
+    <PackageReference Include="TestableIO.System.IO.Abstractions.Wrappers" Version="21.0.2" />
     <PackageReference Include="xunit" Version="2.7.0" />
-    <PackageReference Include="Xunit.Microsoft.DependencyInjection" Version="8.0.12" />
+    <PackageReference Include="Xunit.Microsoft.DependencyInjection" Version="8.0.13" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.5.7">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>

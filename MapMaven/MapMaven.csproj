@@ -91,7 +91,7 @@
       </PackageReference>
       <PackageReference Include="Microsoft.VisualStudio.Utilities" Version="17.9.37000" />
 	  <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.5.240311000" />
-      <PackageReference Include="MudBlazor" Version="6.17.0" />
+      <PackageReference Include="MudBlazor" Version="6.19.1" />
       <PackageReference Include="NAudio" Version="2.2.1" />
       <PackageReference Include="NAudio.Vorbis" Version="1.5.0" />
       <PackageReference Include="PInvoke.User32" Version="0.7.124" />
@@ -108,9 +108,9 @@
     </ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.Maui.Controls" Version="8.0.10" />
-		<PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="8.0.10" />
-		<PackageReference Include="Microsoft.AspNetCore.Components.WebView.Maui" Version="8.0.10" />
+		<PackageReference Include="Microsoft.Maui.Controls" Version="8.0.14" />
+		<PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="8.0.14" />
+		<PackageReference Include="Microsoft.AspNetCore.Components.WebView.Maui" Version="8.0.14" />
 	</ItemGroup>
 
 </Project>
