@@ -8,6 +8,7 @@ using MapMaven.Services;
 using MapMaven.Utility;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
+using Squirrel;
 using System.Text.RegularExpressions;
 
 namespace MapMaven.Components
@@ -57,7 +58,7 @@ namespace MapMaven.Components
 
         private string? OldBeatSaberInstallLocation { get; set; }
 
-        private bool UpdateIsAvailable;
+        private UpdateInfo? Update { get; set; }
 
         protected override void OnInitialized()
         {
@@ -69,7 +70,7 @@ namespace MapMaven.Components
             SubscribeAndBind(LeaderboardService.ActiveLeaderboardProviderName, provider => ActiveLeaderboardProvider = provider);
             SubscribeAndBind(ScoreSaberService.PlayerIdObservable, playerId => ScoreSaberPlayerId = playerId);
             SubscribeAndBind(BeatLeaderService.PlayerIdObservable, playerId => BeatLeaderPlayerId = playerId);
-            SubscribeAndBind(UpdateService.AvailableUpdate, update => UpdateIsAvailable = true);
+            SubscribeAndBind(UpdateService.AvailableUpdate, update => Update = update);
         }
 
         public void AutoFillPlayerId(string beatSaberInstallLocation)
@@ -157,8 +158,19 @@ namespace MapMaven.Components
 
         void OpenReleaseNotes(bool updateAvailable)
         {
+            string title;
+
+            if (updateAvailable)
+            {
+                title = $"Map Maven {Update?.FutureReleaseEntry?.Version}";
+            }
+            else
+            {
+                title = $"Map Maven {UpdateService.CurrentVersion}";
+            }
+
             DialogService.Show<ReleaseNotes>(
-                title: $"Map Maven {UpdateService.CurrentVersion}",
+                title: title,
                 parameters: new()
                 {
                     { nameof(ReleaseNotes.UpdateAvailable), updateAvailable }

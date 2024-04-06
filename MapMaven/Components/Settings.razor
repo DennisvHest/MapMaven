@@ -106,12 +106,12 @@
                     <MudChip
                         Variant="Variant.Outlined"
                         Size="Size.Small"
-                        Disabled="UpdateIsAvailable"
+                        Disabled="Update is not null"
                         OnClick="() => OpenReleaseNotes(false)">
                         Version: @UpdateService.CurrentVersion
                     </MudChip>
 
-                    @if (UpdateIsAvailable)
+                    @if (Update is not null)
                     {
                         <MudChip
                             Variant="Variant.Outlined"
