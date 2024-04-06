@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using Squirrel;
+using Squirrel.Sources;
 using System.Net.Http.Json;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
