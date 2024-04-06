@@ -57,6 +57,8 @@ namespace MapMaven.Components
 
         private string? OldBeatSaberInstallLocation { get; set; }
 
+        private bool UpdateIsAvailable;
+
         protected override void OnInitialized()
         {
             SubscribeAndBind(BeatSaberToolFileService.BeatSaberInstallLocationObservable, installLocation =>
@@ -67,6 +69,7 @@ namespace MapMaven.Components
             SubscribeAndBind(LeaderboardService.ActiveLeaderboardProviderName, provider => ActiveLeaderboardProvider = provider);
             SubscribeAndBind(ScoreSaberService.PlayerIdObservable, playerId => ScoreSaberPlayerId = playerId);
             SubscribeAndBind(BeatLeaderService.PlayerIdObservable, playerId => BeatLeaderPlayerId = playerId);
+            SubscribeAndBind(UpdateService.AvailableUpdate, update => UpdateIsAvailable = true);
         }
 
         public void AutoFillPlayerId(string beatSaberInstallLocation)
@@ -152,11 +155,14 @@ namespace MapMaven.Components
             ApplicationUtils.RestartApplication();
         }
 
-        void OpenReleaseNotes()
+        void OpenReleaseNotes(bool updateAvailable)
         {
             DialogService.Show<ReleaseNotes>(
                 title: $"Map Maven {UpdateService.CurrentVersion}",
-                parameters: new(),
+                parameters: new()
+                {
+                    { nameof(ReleaseNotes.UpdateAvailable), updateAvailable }
+                },
                 options: new DialogOptions
                 {
                     CloseButton = true

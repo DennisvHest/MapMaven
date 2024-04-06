@@ -106,9 +106,22 @@
                     <MudChip
                         Variant="Variant.Outlined"
                         Size="Size.Small"
-                        OnClick="OpenReleaseNotes">
+                        Disabled="UpdateIsAvailable"
+                        OnClick="() => OpenReleaseNotes(false)">
                         Version: @UpdateService.CurrentVersion
                     </MudChip>
+
+                    @if (UpdateIsAvailable)
+                    {
+                        <MudChip
+                            Variant="Variant.Outlined"
+                            Size="Size.Small"
+                            Color="Color.Info"
+                            Icon="@Icons.Material.Filled.Update"
+                            OnClick="() => OpenReleaseNotes(true)">
+                            Update available
+                        </MudChip>
+                    }
                 </div>
             }
         </div>

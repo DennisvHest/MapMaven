@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
 using Squirrel;
-using Squirrel.Sources;
 using System.Net.Http.Json;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
@@ -42,8 +41,6 @@ namespace MapMaven.Services
 
         public async Task CheckForUpdates()
         {
-            _availableUpdate.OnNext(null);
-
             try
             {
                 _logger?.LogInformation("Checking for updates...");
