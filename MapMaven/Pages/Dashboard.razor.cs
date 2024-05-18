@@ -2,6 +2,7 @@ using ApexCharts;
 using MapMaven.Core.Models;
 using MapMaven.Core.Services.Interfaces;
 using MapMaven.Core.Services.Leaderboards;
+using MapMaven.Core.Utilities.BeatSaver;
 using MapMaven.Utility;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
@@ -68,9 +69,14 @@ namespace MapMaven.Pages
         double? AverageStarDifficulty { get; set; }
         double? AverageRankedAccuracy { get; set; }
 
-        IEnumerable<string> BestScoredMapTags { get; set; } = Enumerable.Empty<string>();
+        double? RecentAverageStarDifficulty { get; set; }
+        string? RecentBestScoredMapTag { get; set; }
 
-        IEnumerable<Map> RecentHighPpGainMaps { get; set; } = Enumerable.Empty<Map>();
+
+        IEnumerable<string> BestScoredMapTags { get; set; } = [];
+
+        IEnumerable<Map> RecentHighPpGainMaps { get; set; } = [];
+        IEnumerable<Map> RecommendedMaps { get; set; } = [];
 
         protected override void OnInitialized()
         {
@@ -152,6 +158,26 @@ namespace MapMaven.Pages
                         })
                     ).Distinct()
                     .OrderByDescending(m => m.HighestPlayerScore.Score.WeightedPp);
+
+                RecentAverageStarDifficulty = recentPlayedRankedMaps
+                    .Where(m => m.Difficulty is not null)
+                    .Average(m => m.Difficulty.Stars);
+
+                RecentBestScoredMapTag = recentPlayedRankedMaps
+                    .OrderByDescending(m => m.HighestPlayerScore?.Score.Pp ?? 0)
+                    .SelectMany(m => m.Tags)
+                    .GroupBy(t => t)
+                    .Where(g => MapTag.IsDisciplineTag(g.Key))
+                    .OrderByDescending(g => g.Count())
+                    .FirstOrDefault()?.Key;
+
+                RecommendedMaps = x.rankedMaps
+                    .Where(m =>
+                        m.Difficulty is not null
+                        && m.Difficulty.Stars >= RecentAverageStarDifficulty
+                        && m.Tags.Contains(RecentBestScoredMapTag)
+                    )
+                    .OrderByDescending(m => m.ScoreEstimate?.PPIncrease);
 
                 InvokeAsync(async () =>
                 {

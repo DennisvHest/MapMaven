@@ -38,19 +38,43 @@
         <TemplateColumn T="Map" CellClass="pa-1">
             <CellTemplate>
                 @{
-                    var playerScore = context.Item.HighestPlayerScore;
-                    var chipStyle = $"border: 1px solid {DifficultyDisplayUtils.GetColor(playerScore.Leaderboard?.Difficulty)}";
+                    var difficulty = context.Item.Difficulty;
+                    var chipStyle = $"border: 1px solid {DifficultyDisplayUtils.GetColor(difficulty?.Difficulty)}";
                 }
                 <MudChip Size="Size.Small" Variant="Variant.Outlined" Style="@chipStyle">
-                    @DifficultyDisplayUtils.GetShortName(playerScore.Leaderboard?.Difficulty)
+                    @DifficultyDisplayUtils.GetShortName(difficulty?.Difficulty)
                 </MudChip>
             </CellTemplate>
         </TemplateColumn>
         <TemplateColumn T="Map" CellClass="pa-1">
             <CellTemplate>
                 <MudChip Size="Size.Small">
-                    <span>@context.Item.HighestPlayerScore.Score.Pp.ToString("#0.##") <b>pp</b></span>
+                    <span>@context.Item.HighestPlayerScore?.Score.Pp.ToString("#0.##") <b>pp</b></span>
                 </MudChip>
+            </CellTemplate>
+        </TemplateColumn>
+        <TemplateColumn T="Map" CellClass="pa-1">
+            <CellTemplate>
+                @if (context.Item.ScoreEstimates != null)
+                {
+                    @foreach (var scoreEstimate in context.Item.ScoreEstimates)
+                    {
+                        <MudTooltip RootClass="d-flex">
+                            <ChildContent>
+                                <MudChip Color="Color.Primary" Size="Size.Small">
+                                    @scoreEstimate.Accuracy.ToString("#0.##")% |
+                                    +@scoreEstimate.PPIncrease.ToString("#0.##") pp
+                                </MudChip>
+                            </ChildContent>
+                            <TooltipContent>
+                                <p style="text-align: left; max-width: 300px;">
+                                    <b>Estimated accuracy:</b> @scoreEstimate.Accuracy.ToString("#0.##")%<br />
+                                    <b>Estimated PP increase:</b> +@scoreEstimate.PPIncrease.ToString("#0.##") pp
+                                </p>
+                            </TooltipContent>
+                        </MudTooltip>
+                    }
+                }
             </CellTemplate>
         </TemplateColumn>
     </Columns>

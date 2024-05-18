@@ -120,6 +120,28 @@
                             <MapList Maps="RecentHighPpGainMaps" ShowHeader="false"></MapList>
                         </MudCard>
                     </MudItem>
+                    <MudItem xs="6">
+                        <MudCard>
+                            <MudCardHeader Class="card-header-highlight">
+                                <CardHeaderContent>
+                                    <div class="d-flex justify-space-between">
+                                        <b>Recommended maps based on recent scores</b>
+                                        <div>
+                                            @if (RecentAverageStarDifficulty.HasValue)
+                                            {
+                                                <MudChip Size="MudBlazor.Size.Small"><MudIcon Icon="@Icons.Material.Filled.Star" /> >= @RecentAverageStarDifficulty.Value.ToString("0.##")</MudChip>
+                                            }
+                                            @if (!string.IsNullOrEmpty(RecentBestScoredMapTag))
+                                            {
+                                                <MudChip Size="MudBlazor.Size.Small"><MudIcon Icon="@Icons.Material.Filled.Label" /> @RecentBestScoredMapTag</MudChip>
+                                            }
+                                        </div>
+                                    </div>
+                                </CardHeaderContent>
+                            </MudCardHeader>
+                            <MapList Maps="RecommendedMaps" ShowHeader="false"></MapList>
+                        </MudCard>
+                    </MudItem>
                 </MudGrid>
             </MudItem>
         </MudGrid>
