@@ -1,13 +1,20 @@
 using ApexCharts;
 using MapMaven.Core.Models;
+using MapMaven.Core.Models.AdvancedSearch;
+using MapMaven.Core.Models.DynamicPlaylists;
+using MapMaven.Core.Models.DynamicPlaylists.MapInfo;
+using MapMaven.Core.Services;
 using MapMaven.Core.Services.Interfaces;
 using MapMaven.Core.Services.Leaderboards;
 using MapMaven.Core.Utilities.BeatSaver;
+using MapMaven.Models;
 using MapMaven.Utility;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using MudBlazor.Utilities;
+using System.Globalization;
 using System.Reactive.Linq;
+using static Microsoft.Maui.ApplicationModel.Permissions;
 using Map = MapMaven.Models.Map;
 
 namespace MapMaven.Pages
@@ -159,9 +166,11 @@ namespace MapMaven.Pages
                     ).Distinct()
                     .OrderByDescending(m => m.HighestPlayerScore.Score.WeightedPp);
 
-                RecentAverageStarDifficulty = recentPlayedRankedMaps
-                    .Where(m => m.Difficulty is not null)
-                    .Average(m => m.Difficulty.Stars);
+                var recentPlayedMapsWithDifficulty = recentPlayedRankedMaps
+                    .Where(m => m.Difficulty is not null);
+
+                if (recentPlayedMapsWithDifficulty.Any())
+                    RecentAverageStarDifficulty = recentPlayedMapsWithDifficulty.Average(m => m.Difficulty.Stars);
 
                 RecentBestScoredMapTag = recentPlayedRankedMaps
                     .OrderByDescending(m => m.HighestPlayerScore?.Score.Pp ?? 0)
@@ -171,13 +180,65 @@ namespace MapMaven.Pages
                     .OrderByDescending(g => g.Count())
                     .FirstOrDefault()?.Key;
 
-                RecommendedMaps = x.rankedMaps
-                    .Where(m =>
-                        m.Difficulty is not null
-                        && m.Difficulty.Stars >= RecentAverageStarDifficulty
-                        && m.Tags.Contains(RecentBestScoredMapTag)
-                    )
-                    .OrderByDescending(m => m.ScoreEstimate?.PPIncrease);
+                var recommendedMapsDynamicPlaylistConfiguration = new DynamicPlaylistConfiguration
+                {
+                    FilterOperations = new()
+                    {
+                        new FilterOperation
+                        {
+                            Field = nameof(AdvancedSearchMap.Stars),
+                            Operator = FilterOperator.GreaterThanOrEqual,
+                            Value = RecentAverageStarDifficulty?.ToString(CultureInfo.InvariantCulture) ?? "0"
+                        },
+                        new FilterOperation
+                        {
+                            Field = nameof(AdvancedSearchMap.Tags),
+                            Operator = FilterOperator.Contains,
+                            Value = RecentBestScoredMapTag
+                        },
+                        new FilterOperation
+                        {
+                            Field = nameof(AdvancedSearchMap.Hidden),
+                            Operator = FilterOperator.Equals,
+                            Value = "false"
+                        },
+                        new FilterOperation
+                        {
+                            Field = nameof(AdvancedSearchMap.Played),
+                            Operator = FilterOperator.Equals,
+                            Value = "false"
+                        },
+                        new FilterOperation
+                        {
+                            Field = $"{nameof(AdvancedSearchMap.ScoreEstimate)}.{nameof(AdvancedSearchMap.ScoreEstimate.PPIncrease)}",
+                            Operator = FilterOperator.GreaterThanOrEqual,
+                            Value = "0"
+                        },
+                        new FilterOperation
+                        {
+                            Field = $"{nameof(AdvancedSearchMap.ScoreEstimate)}.{nameof(AdvancedSearchMap.ScoreEstimate.Accuracy)}",
+                            Operator = FilterOperator.GreaterThanOrEqual,
+                            Value = 80.ToString()
+                        }
+                    },
+                    SortOperations = new()
+                    {
+                        new SortOperation
+                        {
+                            Field = $"{nameof(AdvancedSearchMap.ScoreEstimate)}.{nameof(AdvancedSearchMap.ScoreEstimate.PPIncrease)}",
+                            Direction = SortDirection.Descending
+                        }
+                    }
+                };
+
+                RecommendedMaps = x.rankedMaps;
+
+                foreach (var filterOperation in recommendedMapsDynamicPlaylistConfiguration.FilterOperations)
+                {
+                    RecommendedMaps = RecommendedMaps.Where(map => MapSearchService.FilterOperationMatches(new AdvancedSearchMap(map), filterOperation));
+                }
+
+                RecommendedMaps = MapSearchService.SortMaps(RecommendedMaps, recommendedMapsDynamicPlaylistConfiguration.SortOperations, x => new AdvancedSearchMap(x));
 
                 InvokeAsync(async () =>
                 {
