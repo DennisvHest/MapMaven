@@ -29,13 +29,13 @@
                 </MudTooltip>
             </CellTemplate>
         </TemplateColumn>
-        <PropertyColumn T="Map" TProperty="string" Property="m => m.Name" Title="Name" CellStyle="word-break: break-word;"></PropertyColumn>
+        <PropertyColumn T="Map" Hidden="@HiddenColumns.Contains(MapListColumn.Name)" TProperty="string" Property="m => m.Name" Title="Name" CellStyle="word-break: break-word;"></PropertyColumn>
         <TemplateColumn T="Map" CellClass="pa-1">
             <CellTemplate>
                 @context.Item.HighestPlayerScore?.Score?.TimeSet.DateTime.ToShortDateString()
             </CellTemplate>
         </TemplateColumn>
-        <TemplateColumn T="Map" CellClass="pa-1">
+        <TemplateColumn T="Map" Hidden="@HiddenColumns.Contains(MapListColumn.Difficulty)" CellClass="pa-1">
             <CellTemplate>
                 @{
                     var difficulty = context.Item.Difficulty;
@@ -46,14 +46,14 @@
                 </MudChip>
             </CellTemplate>
         </TemplateColumn>
-        <TemplateColumn T="Map" CellClass="pa-1">
+        <TemplateColumn T="Map" Hidden="@HiddenColumns.Contains(MapListColumn.Pp)" CellClass="pa-1">
             <CellTemplate>
                 <MudChip Size="Size.Small">
                     <span>@context.Item.HighestPlayerScore?.Score.Pp.ToString("#0.##") <b>pp</b></span>
                 </MudChip>
             </CellTemplate>
         </TemplateColumn>
-        <TemplateColumn T="Map" CellClass="pa-1">
+        <TemplateColumn T="Map" Hidden="@HiddenColumns.Contains(MapListColumn.ScoreEstimates)" CellClass="pa-1">
             <CellTemplate>
                 @if (context.Item.ScoreEstimates != null)
                 {
@@ -95,6 +95,9 @@
 
     [Parameter]
     public bool ShowHeader { get; set; } = true;
+
+    [Parameter]
+    public IEnumerable<MapListColumn> HiddenColumns { get; set; } = [];
 
     void OpenDetails(Map map)
     {
