@@ -12,6 +12,9 @@ namespace MapMaven.Components.Playlists
         [CascadingParameter]
         MudDialogInstance MudDialog { get; set; }
 
+        [Parameter]
+        public bool SaveNewPlaylistOnSubmit { get; set; } = true;
+
         [Inject]
         protected IPlaylistService PlaylistService { get; set; }
 
@@ -50,7 +53,11 @@ namespace MapMaven.Components.Playlists
 
         protected async Task CreateNewPlaylist()
         {
-            var editPlaylistDialog = DialogService.Show<EditPlaylistDialog>("Add playlist", new DialogOptions
+            var editPlaylistDialog = DialogService.Show<EditPlaylistDialog>("Add playlist", new DialogParameters
+            {
+                { nameof(EditPlaylistDialog.SavePlaylistOnSubmit), SaveNewPlaylistOnSubmit }
+            },
+            new DialogOptions
             {
                 MaxWidth = MaxWidth.Small,
                 FullWidth = true
@@ -59,7 +66,7 @@ namespace MapMaven.Components.Playlists
             var result = await editPlaylistDialog.Result;
 
             if (!result.Canceled)
-                MudDialog.Close(DialogResult.Ok((Playlist)result.Data));
+                MudDialog.Close(DialogResult.Ok(result.Data));
         }
     }
 }

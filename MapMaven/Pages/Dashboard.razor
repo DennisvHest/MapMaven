@@ -124,9 +124,9 @@
                         <MudCard>
                             <MudCardHeader Class="card-header-highlight">
                                 <CardHeaderContent>
-                                    <div class="d-flex justify-space-between">
+                                    <div class="d-flex justify-space-between align-center">
                                         <b>Recommended maps based on recent scores</b>
-                                        <div>
+                                        <div class="d-flex align-center">
                                             @if (RecentAverageStarDifficulty.HasValue)
                                             {
                                                 <MudChip Size="MudBlazor.Size.Small"><MudIcon Icon="@Icons.Material.Filled.Star" /> >= @RecentAverageStarDifficulty.Value.ToString("0.##")</MudChip>
@@ -135,6 +135,10 @@
                                             {
                                                 <MudChip Size="MudBlazor.Size.Small"><MudIcon Icon="@Icons.Material.Filled.Label" /> @RecentBestScoredMapTag</MudChip>
                                             }
+                                            <MudMenu Icon="@Icons.Material.Filled.PlaylistAdd">
+                                                <MudMenuItem OnClick="AddRecommendedMapsToPlaylist">Add playlist</MudMenuItem>
+                                                <MudMenuItem>Add dynamic playlist</MudMenuItem>
+                                            </MudMenu>
                                         </div>
                                     </div>
                                 </CardHeaderContent>

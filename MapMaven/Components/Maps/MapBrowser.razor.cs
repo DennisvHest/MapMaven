@@ -254,7 +254,7 @@ namespace MapMaven.Components.Maps
 
             var result = await dialog.Result;
 
-            if (!result.Cancelled)
+            if (!result.Canceled)
             {
                 var playlist = (Playlist)result.Data;
 

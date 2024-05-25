@@ -1,6 +1,9 @@
 using ApexCharts;
+using MapMaven.Components.Playlists;
+using MapMaven.Components.Shared;
 using MapMaven.Core.Models;
 using MapMaven.Core.Models.AdvancedSearch;
+using MapMaven.Core.Models.Data;
 using MapMaven.Core.Models.DynamicPlaylists;
 using MapMaven.Core.Models.DynamicPlaylists.MapInfo;
 using MapMaven.Core.Services;
@@ -11,9 +14,13 @@ using MapMaven.Models;
 using MapMaven.Utility;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
+using MudBlazor;
 using MudBlazor.Utilities;
+using System;
 using System.Globalization;
 using System.Reactive.Linq;
+using System.Reactive.Subjects;
+using System.Threading;
 using static Microsoft.Maui.ApplicationModel.Permissions;
 using Map = MapMaven.Models.Map;
 
@@ -26,6 +33,18 @@ namespace MapMaven.Pages
 
         [Inject]
         IMapService MapService { get; set; }
+
+        [Inject]
+        IPlaylistService PlaylistService { get; set; }
+
+        [Inject]
+        IDialogService DialogService { get; set; }
+
+        [Inject]
+        ISnackbar Snackbar { get; set; }
+
+        [Inject]
+        public NavigationManager NavigationManager { get; set; }
 
         PlayerProfile Player { get; set; }
 
@@ -84,6 +103,8 @@ namespace MapMaven.Pages
 
         IEnumerable<Map> RecentHighPpGainMaps { get; set; } = [];
         IEnumerable<Map> RecommendedMaps { get; set; } = [];
+
+        DynamicPlaylistConfiguration? RecommendedMapsDynamicPlaylistConfiguration { get; set; }
 
         protected override void OnInitialized()
         {
@@ -180,44 +201,44 @@ namespace MapMaven.Pages
                     .OrderByDescending(g => g.Count())
                     .FirstOrDefault()?.Key;
 
-                var recommendedMapsDynamicPlaylistConfiguration = new DynamicPlaylistConfiguration
+                RecommendedMapsDynamicPlaylistConfiguration = new DynamicPlaylistConfiguration
                 {
                     FilterOperations = new()
                     {
                         new FilterOperation
                         {
                             Field = nameof(AdvancedSearchMap.Stars),
-                            Operator = FilterOperator.GreaterThanOrEqual,
+                            Operator = Core.Models.DynamicPlaylists.FilterOperator.GreaterThanOrEqual,
                             Value = RecentAverageStarDifficulty?.ToString(CultureInfo.InvariantCulture) ?? "0"
                         },
                         new FilterOperation
                         {
                             Field = nameof(AdvancedSearchMap.Tags),
-                            Operator = FilterOperator.Contains,
+                            Operator = Core.Models.DynamicPlaylists.FilterOperator.Contains,
                             Value = RecentBestScoredMapTag
                         },
                         new FilterOperation
                         {
                             Field = nameof(AdvancedSearchMap.Hidden),
-                            Operator = FilterOperator.Equals,
+                            Operator = Core.Models.DynamicPlaylists.FilterOperator.Equals,
                             Value = "false"
                         },
                         new FilterOperation
                         {
                             Field = nameof(AdvancedSearchMap.Played),
-                            Operator = FilterOperator.Equals,
+                            Operator = Core.Models.DynamicPlaylists.FilterOperator.Equals,
                             Value = "false"
                         },
                         new FilterOperation
                         {
                             Field = $"{nameof(AdvancedSearchMap.ScoreEstimate)}.{nameof(AdvancedSearchMap.ScoreEstimate.PPIncrease)}",
-                            Operator = FilterOperator.GreaterThanOrEqual,
+                            Operator = Core.Models.DynamicPlaylists.FilterOperator.GreaterThanOrEqual,
                             Value = "0"
                         },
                         new FilterOperation
                         {
                             Field = $"{nameof(AdvancedSearchMap.ScoreEstimate)}.{nameof(AdvancedSearchMap.ScoreEstimate.Accuracy)}",
-                            Operator = FilterOperator.GreaterThanOrEqual,
+                            Operator = Core.Models.DynamicPlaylists.FilterOperator.GreaterThanOrEqual,
                             Value = 80.ToString()
                         }
                     },
@@ -226,19 +247,19 @@ namespace MapMaven.Pages
                         new SortOperation
                         {
                             Field = $"{nameof(AdvancedSearchMap.ScoreEstimate)}.{nameof(AdvancedSearchMap.ScoreEstimate.PPIncrease)}",
-                            Direction = SortDirection.Descending
+                            Direction = Core.Models.DynamicPlaylists.SortDirection.Descending
                         }
                     }
                 };
 
                 RecommendedMaps = x.rankedMaps;
 
-                foreach (var filterOperation in recommendedMapsDynamicPlaylistConfiguration.FilterOperations)
+                foreach (var filterOperation in RecommendedMapsDynamicPlaylistConfiguration.FilterOperations)
                 {
                     RecommendedMaps = RecommendedMaps.Where(map => MapSearchService.FilterOperationMatches(new AdvancedSearchMap(map), filterOperation));
                 }
 
-                RecommendedMaps = MapSearchService.SortMaps(RecommendedMaps, recommendedMapsDynamicPlaylistConfiguration.SortOperations, x => new AdvancedSearchMap(x));
+                RecommendedMaps = MapSearchService.SortMaps(RecommendedMaps, RecommendedMapsDynamicPlaylistConfiguration.SortOperations, x => new AdvancedSearchMap(x));
 
                 InvokeAsync(async () =>
                 {
@@ -268,6 +289,72 @@ namespace MapMaven.Pages
                     difficultyColor = DifficultyDisplayUtils.GetColor(map.Difficulty.Difficulty),
                     pp = map.HighestPlayerScore.Score.Pp.ToString("0.##"),
                 });
+        }
+
+        async Task AddRecommendedMapsToPlaylist()
+        {
+            var dialog = await DialogService.ShowAsync<PlaylistSelector>($"Add recommended maps to playlist", new DialogParameters
+            {
+                { nameof(PlaylistSelector.SaveNewPlaylistOnSubmit), false }
+            },
+            new DialogOptions
+            {
+                MaxWidth = MaxWidth.ExtraSmall,
+                FullWidth = true,
+                CloseButton = true
+            });
+
+            var result = await dialog.Result;
+
+            if (result.Canceled)
+                return;
+
+            var subject = new BehaviorSubject<ItemProgress<Map>>(null);
+
+            var cancellationToken = new CancellationTokenSource();
+
+            var snackbar = Snackbar.Add<MapDownloadProgressMessage>(new Dictionary<string, object>
+            {
+                { nameof(MapDownloadProgressMessage.ProgressReport), subject.Sample(TimeSpan.FromSeconds(0.2)).AsObservable() },
+                { nameof(MapDownloadProgressMessage.CreatingPlaylist), true },
+                { nameof(MapDownloadProgressMessage.CancellationToken), cancellationToken },
+            }, configure: config =>
+            {
+                config.RequireInteraction = true;
+                config.ShowCloseIcon = false;
+            });
+
+            var progress = new Progress<ItemProgress<Map>>(subject.OnNext);
+
+            var playlist = result.Data switch
+            {
+                Playlist resultPlaylist => await PlaylistService.AddPlaylistAndDownloadMaps(resultPlaylist, RecommendedMaps, progress: progress, cancellationToken: cancellationToken.Token),
+                EditPlaylistModel resultEditPlaylist => await PlaylistService.AddPlaylistAndDownloadMaps(resultEditPlaylist, RecommendedMaps, progress: progress, cancellationToken: cancellationToken.Token),
+                _ => throw new InvalidOperationException("Result data is not a playlist")
+            };
+
+            Snackbar.Remove(snackbar);
+
+            if (!cancellationToken.IsCancellationRequested)
+            {
+                Snackbar.Add($"Created playlist: {playlist.Title}", Severity.Normal, config =>
+                {
+                    config.Icon = Icons.Material.Filled.Check;
+
+                    config.Action = "Open";
+                    config.ActionColor = MudBlazor.Color.Primary;
+                    config.Onclick = snackbar =>
+                    {
+                        PlaylistService.SetSelectedPlaylist(playlist);
+                        NavigationManager.NavigateTo("/");
+                        return Task.CompletedTask;
+                    };
+                });
+            }
+            else
+            {
+                Snackbar.Add($"Cancelled creating playlist.", Severity.Normal, config => config.Icon = Icons.Material.Filled.Cancel);
+            }
         }
     }
 }
