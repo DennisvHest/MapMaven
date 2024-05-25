@@ -105,7 +105,7 @@
 
         DialogService.Show<MapDetail>(
             title: null,
-            parameters: new() { { nameof(MapDetail.Map), fullMap } },
+            parameters: new() { { nameof(MapDetail.Map), fullMap }, { nameof(MapDetail.MapHash), map.Hash } },
             options: new()
             {
                 MaxWidth = MaxWidth.Small,

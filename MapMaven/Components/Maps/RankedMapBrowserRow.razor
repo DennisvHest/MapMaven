@@ -2,12 +2,19 @@
 @using MapMaven.Core.Utilities.Scoresaber
 
 <SelectColumn T="Map" />
-<TemplateColumn T="Map" Sortable="false">
+<TemplateColumn T="Map" Sortable="false" CellClass="pa-0" CellStyle="text-align: center">
     <CellTemplate>
         @(FilteredMaps.TakeWhile(m => m != context.Item).Count() + 1)
     </CellTemplate>
 </TemplateColumn>
-<TemplateColumn T="Map" Class="pa-1" Style="width: 50px" Sortable="false">
+<TemplateColumn T="Map" Sortable="false" CellClass="pa-0" CellStyle="width: 50px; position: relative;">
+    <CellTemplate>
+        <MudTooltip Text="Open map details" ShowOnFocus="false">
+            <MudIconButton Icon="@Icons.Material.Filled.Info" Class="no-hover-background" Variant="Variant.Text" Size="Size.Medium" OnClick="() => OpenDetails(context.Item)" />
+        </MudTooltip>
+    </CellTemplate>
+</TemplateColumn>
+<TemplateColumn T="Map" CellClass="pl-0" Style="width: 50px" Sortable="false">
     <CellTemplate>
         <MapCover Map="context.Item" Size="50"></MapCover>
     </CellTemplate>

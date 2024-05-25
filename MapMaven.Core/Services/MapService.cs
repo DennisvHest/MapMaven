@@ -290,6 +290,16 @@ namespace MapMaven.Services
             return map;
         }
 
+        public async Task<Map?> GetMapDetails(string mapHash)
+        {
+            var beatMap = await _beatSaver.BeatmapByHash(mapHash);
+
+            if (beatMap is null)
+                return null;
+
+            return new Map(beatMap);
+        }
+
         public Map? GetMapById(string mapId) => _maps.FirstOrDefault(m => m.Id == mapId);
 
         public async Task DownloadMap(Map map, bool force = false, IProgress<double>? progress = null, bool loadMapInfo = true, CancellationToken cancellationToken = default)

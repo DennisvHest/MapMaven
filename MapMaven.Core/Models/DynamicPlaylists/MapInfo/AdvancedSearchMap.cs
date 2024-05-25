@@ -17,7 +17,7 @@ namespace MapMaven.Core.Models.DynamicPlaylists.MapInfo
         public string MapAuthorName { get; set; }
 
         [DisplayName("Date added")]
-        public DateTime AddedDateTime { get; set; }
+        public DateTime? AddedDateTime { get; set; }
 
         [ApplicableForMapPool(MapPool.Improvement)]
         public bool Hidden { get; set; }
