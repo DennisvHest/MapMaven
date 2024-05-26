@@ -135,10 +135,12 @@
                                             {
                                                 <MudChip Size="MudBlazor.Size.Small"><MudIcon Icon="@Icons.Material.Filled.Label" /> @RecentBestScoredMapTag</MudChip>
                                             }
-                                            <MudMenu Icon="@Icons.Material.Filled.PlaylistAdd">
-                                                <MudMenuItem OnClick="AddRecommendedMapsToPlaylist">Add playlist</MudMenuItem>
-                                                <MudMenuItem OnClick="AddRecommendedMapsDynamicPlaylist">Add dynamic playlist</MudMenuItem>
-                                            </MudMenu>
+                                            <MudTooltip Text="Create playlist from recommended maps">
+                                                <MudMenu Icon="@Icons.Material.Filled.PlaylistAdd">
+                                                    <MudMenuItem OnClick="AddRecommendedMapsToPlaylist" Icon="@Icons.Material.Filled.PlaylistAdd">Create recommended maps playlist</MudMenuItem>
+                                                    <MudMenuItem OnClick="AddRecommendedMapsDynamicPlaylist" Icon="@Icons.Material.Filled.PlaylistAdd">Create recommended maps dynamic playlist</MudMenuItem>
+                                                </MudMenu>
+                                            </MudTooltip>
                                         </div>
                                     </div>
                                 </CardHeaderContent>
