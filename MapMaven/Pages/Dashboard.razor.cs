@@ -1,4 +1,5 @@
 using ApexCharts;
+using FastDeepCloner;
 using MapMaven.Components.Playlists;
 using MapMaven.Components.Shared;
 using MapMaven.Core.Models;
@@ -203,6 +204,8 @@ namespace MapMaven.Pages
 
                 RecommendedMapsDynamicPlaylistConfiguration = new DynamicPlaylistConfiguration
                 {
+                    MapCount = 20,
+                    MapPool = MapPool.Improvement,
                     FilterOperations = new()
                     {
                         new FilterOperation
@@ -355,6 +358,20 @@ namespace MapMaven.Pages
             {
                 Snackbar.Add($"Cancelled creating playlist.", Severity.Normal, config => config.Icon = Icons.Material.Filled.Cancel);
             }
+        }
+
+        async Task AddRecommendedMapsDynamicPlaylist()
+        {
+            var parameters = new DialogParameters
+            {
+                { "SelectedPlaylist", new EditDynamicPlaylistModel { DynamicPlaylistConfiguration = DeepCloner.Clone(RecommendedMapsDynamicPlaylistConfiguration)} }
+            };
+
+            DialogService.Show<EditDynamicPlaylistDialog>("Add playlist", parameters, new DialogOptions
+            {
+                MaxWidth = MaxWidth.Small,
+                FullWidth = true
+            });
         }
     }
 }

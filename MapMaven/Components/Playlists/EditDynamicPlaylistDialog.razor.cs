@@ -25,6 +25,9 @@ namespace MapMaven.Components.Playlists
         [Inject]
         IDialogService DialogService { get; set; }
 
+        [Inject]
+        public NavigationManager NavigationManager { get; set; }
+
         [CascadingParameter]
         MudDialogInstance MudDialog { get; set; }
 
@@ -123,6 +126,7 @@ namespace MapMaven.Components.Playlists
                     config.Onclick = snackbar =>
                     {
                         PlaylistService.SetSelectedPlaylist(playlist);
+                        NavigationManager.NavigateTo("/");
                         return Task.CompletedTask;
                     };
                 });
@@ -139,6 +143,7 @@ namespace MapMaven.Components.Playlists
                     config.Onclick = snackbar =>
                     {
                         PlaylistService.SetSelectedPlaylist(playlist);
+                        NavigationManager.NavigateTo("/");
                         return Task.CompletedTask;
                     };
                 });
