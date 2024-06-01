@@ -101,6 +101,8 @@ namespace MapMaven.Pages
 
         DynamicPlaylistConfiguration? RecommendedMapsDynamicPlaylistConfiguration { get; set; }
 
+        bool ShowHighPpGainAnnotations { get; set; } = false;
+
         protected override void OnInitialized()
         {
             SubscribeAndBind(LeaderboardService.PlayerProfile, player =>
@@ -182,25 +184,7 @@ namespace MapMaven.Pages
                     ).Distinct()
                     .OrderByDescending(m => m.HighestPlayerScore.Score.WeightedPp);
 
-                RankHistoryChartOptions.Annotations.Xaxis = RecentHighPpGainMaps
-                    .GroupBy(m => DateOnly.FromDateTime(m.HighestPlayerScore.Score.TimeSet.DateTime))
-                    .Select(r => new AnnotationsXAxis()
-                    {
-                        X = r.Key.ToString("yyyy-MM-dd"),
-                        StrokeDashArray = 0,
-                        BorderColor = MapMavenTheme.Theme.Palette.TextPrimary.SetAlpha(0.3).ToString(MudColorOutputFormats.RGBA),
-                        Label = new()
-                        {
-                            Orientation = ApexCharts.Orientation.Horizontal,
-                            BorderWidth = 0,
-                            Style = new()
-                            {
-                                Background = MapMavenTheme.Theme.Palette.Primary.ColorLighten(0.2).ToString(MudColorOutputFormats.Hex),
-                                Color = "#FFF"
-                            },
-                            Text = "+pp"
-                        }
-                    }).ToList();
+                SetHighPpGainAnnotations();
 
                 var recentPlayedMapsWithDifficulty = recentPlayedRankedMaps
                     .Where(m => m.Difficulty is not null);
@@ -280,15 +264,52 @@ namespace MapMaven.Pages
 
                 RecommendedMaps = RecommendedMaps.Take(20);
 
-                InvokeAsync(async () =>
-                {
-                    if (RankHistoryChart is null)
-                        return;
-
-                    await RankHistoryChart.UpdateOptionsAsync(true, false, false);
-                    StateHasChanged();
-                });
+                UpdateChartOptions();
             });
+        }
+
+        private void UpdateChartOptions()
+        {
+            InvokeAsync(async () =>
+            {
+                if (RankHistoryChart is null)
+                    return;
+
+                await RankHistoryChart.UpdateOptionsAsync(true, false, false);
+                StateHasChanged();
+            });
+        }
+
+        private void SetHighPpGainAnnotations()
+        {
+            if (ShowHighPpGainAnnotations)
+            {
+                RankHistoryChartOptions.Annotations.Xaxis = RecentHighPpGainMaps
+                .GroupBy(m => DateOnly.FromDateTime(m.HighestPlayerScore.Score.TimeSet.DateTime))
+                .Select(r => new AnnotationsXAxis()
+                {
+                    X = r.Key.ToString("yyyy-MM-dd"),
+                    StrokeDashArray = 0,
+                    BorderColor = MapMavenTheme.Theme.Palette.TextPrimary.SetAlpha(0.3).ToString(MudColorOutputFormats.RGBA),
+                    Label = new()
+                    {
+                        Orientation = ApexCharts.Orientation.Horizontal,
+                        BorderWidth = 0,
+                        Style = new()
+                        {
+                            Background = MapMavenTheme.Theme.Palette.Primary.ColorLighten(0.2).ToString(MudColorOutputFormats.Hex),
+                            Color = "#FFF"
+                        },
+                        Text = "+pp"
+                    }
+                }).ToList();
+            }
+            else
+            {
+                RankHistoryChartOptions.Annotations.Xaxis = [];
+            }
+
+            UpdateChartOptions();
         }
 
         void SetCustomData(DataPoint<RankHistoryRecord> dataPoint)
