@@ -1,10 +1,8 @@
 using ApexCharts;
 using FastDeepCloner;
 using MapMaven.Components.Playlists;
-using MapMaven.Components.Shared;
 using MapMaven.Core.Models;
 using MapMaven.Core.Models.AdvancedSearch;
-using MapMaven.Core.Models.Data;
 using MapMaven.Core.Models.DynamicPlaylists;
 using MapMaven.Core.Models.DynamicPlaylists.MapInfo;
 using MapMaven.Core.Services;
@@ -15,15 +13,10 @@ using MapMaven.Extensions;
 using MapMaven.Models;
 using MapMaven.Utility;
 using Microsoft.AspNetCore.Components;
-using Microsoft.JSInterop;
 using MudBlazor;
 using MudBlazor.Utilities;
-using System;
 using System.Globalization;
 using System.Reactive.Linq;
-using System.Reactive.Subjects;
-using System.Threading;
-using static Microsoft.Maui.ApplicationModel.Permissions;
 using Map = MapMaven.Models.Map;
 
 namespace MapMaven.Pages
@@ -188,6 +181,26 @@ namespace MapMaven.Pages
                         })
                     ).Distinct()
                     .OrderByDescending(m => m.HighestPlayerScore.Score.WeightedPp);
+
+                RankHistoryChartOptions.Annotations.Xaxis = RecentHighPpGainMaps
+                    .GroupBy(m => DateOnly.FromDateTime(m.HighestPlayerScore.Score.TimeSet.DateTime))
+                    .Select(r => new AnnotationsXAxis()
+                    {
+                        X = r.Key.ToString("yyyy-MM-dd"),
+                        StrokeDashArray = 0,
+                        BorderColor = MapMavenTheme.Theme.Palette.TextPrimary.SetAlpha(0.3).ToString(MudColorOutputFormats.RGBA),
+                        Label = new()
+                        {
+                            Orientation = ApexCharts.Orientation.Horizontal,
+                            BorderWidth = 0,
+                            Style = new()
+                            {
+                                Background = MapMavenTheme.Theme.Palette.Primary.ColorLighten(0.2).ToString(MudColorOutputFormats.Hex),
+                                Color = "#FFF"
+                            },
+                            Text = "+pp"
+                        }
+                    }).ToList();
 
                 var recentPlayedMapsWithDifficulty = recentPlayedRankedMaps
                     .Where(m => m.Difficulty is not null);
