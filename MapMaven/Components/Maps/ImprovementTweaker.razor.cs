@@ -4,6 +4,7 @@ using MapMaven.Core.Models;
 using MapMaven.Core.Models.Data;
 using MapMaven.Core.Services.Interfaces;
 using MapMaven.Core.Services.Leaderboards;
+using MapMaven.Extensions;
 using MapMaven.Models;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
@@ -234,30 +235,15 @@ namespace MapMaven.Components.Maps
 
             var playlistModel = (EditPlaylistModel)result.Data;
 
-            var subject = new BehaviorSubject<ItemProgress<Map>>(null);
+            var snackbar = Snackbar.AddMapDownloadProgressSnackbar();
 
-            var cancellationToken = new CancellationTokenSource();
-
-            var snackbar = Snackbar.Add<MapDownloadProgressMessage>(new Dictionary<string, object>
-            {
-                { nameof(MapDownloadProgressMessage.ProgressReport), subject.Sample(TimeSpan.FromSeconds(0.2)).AsObservable() },
-                { nameof(MapDownloadProgressMessage.CreatingPlaylist), true },
-                { nameof(MapDownloadProgressMessage.CancellationToken), cancellationToken },
-            }, configure: config =>
-            {
-                config.RequireInteraction = true;
-                config.ShowCloseIcon = false;
-            });
-
-            var progress = new Progress<ItemProgress<Map>>(subject.OnNext);
-
-            var playlist = await PlaylistService.AddPlaylistAndDownloadMaps(playlistModel, SelectedMaps, progress: progress, cancellationToken: cancellationToken.Token);
+            var playlist = await PlaylistService.AddPlaylistAndDownloadMaps(playlistModel, SelectedMaps, progress: snackbar.Progress, cancellationToken: snackbar.CancellationToken);
 
             MapService.ClearSelectedMaps();
 
-            Snackbar.Remove(snackbar);
+            Snackbar.Remove(snackbar.Snackbar);
 
-            if (!cancellationToken.IsCancellationRequested)
+            if (!snackbar.CancellationToken.IsCancellationRequested)
             {
                 Snackbar.Add($"Created playlist: {playlistModel.Name}", Severity.Normal, config =>
                 {

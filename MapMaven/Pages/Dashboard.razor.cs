@@ -11,6 +11,7 @@ using MapMaven.Core.Services;
 using MapMaven.Core.Services.Interfaces;
 using MapMaven.Core.Services.Leaderboards;
 using MapMaven.Core.Utilities.BeatSaver;
+using MapMaven.Extensions;
 using MapMaven.Models;
 using MapMaven.Utility;
 using Microsoft.AspNetCore.Components;
@@ -151,7 +152,7 @@ namespace MapMaven.Pages
 
                 AverageRankedAccuracy = rankedScores
                     .OrderByDescending(s => s.Score.Pp)
-                .Average(s => s.Score.Accuracy);
+                    .Average(s => s.Score.Accuracy);
             });
 
             var mapsAndHistory = Observable.CombineLatest(MapService.RankedMaps, LeaderboardService.PlayerProfile, (rankedMaps, playerProfile) => (rankedMaps, playerProfile));
@@ -264,6 +265,8 @@ namespace MapMaven.Pages
 
                 RecommendedMaps = MapSearchService.SortMaps(RecommendedMaps, RecommendedMapsDynamicPlaylistConfiguration.SortOperations, x => new AdvancedSearchMap(x));
 
+                RecommendedMaps = RecommendedMaps.Take(20);
+
                 InvokeAsync(async () =>
                 {
                     if (RankHistoryChart is null)
@@ -312,33 +315,18 @@ namespace MapMaven.Pages
             if (result.Canceled)
                 return;
 
-            var subject = new BehaviorSubject<ItemProgress<Map>>(null);
-
-            var cancellationToken = new CancellationTokenSource();
-
-            var snackbar = Snackbar.Add<MapDownloadProgressMessage>(new Dictionary<string, object>
-            {
-                { nameof(MapDownloadProgressMessage.ProgressReport), subject.Sample(TimeSpan.FromSeconds(0.2)).AsObservable() },
-                { nameof(MapDownloadProgressMessage.CreatingPlaylist), true },
-                { nameof(MapDownloadProgressMessage.CancellationToken), cancellationToken },
-            }, configure: config =>
-            {
-                config.RequireInteraction = true;
-                config.ShowCloseIcon = false;
-            });
-
-            var progress = new Progress<ItemProgress<Map>>(subject.OnNext);
+            var snackbar = Snackbar.AddMapDownloadProgressSnackbar();
 
             var playlist = result.Data switch
             {
-                Playlist resultPlaylist => await PlaylistService.AddPlaylistAndDownloadMaps(resultPlaylist, RecommendedMaps, progress: progress, cancellationToken: cancellationToken.Token),
-                EditPlaylistModel resultEditPlaylist => await PlaylistService.AddPlaylistAndDownloadMaps(resultEditPlaylist, RecommendedMaps, progress: progress, cancellationToken: cancellationToken.Token),
+                Playlist resultPlaylist => await PlaylistService.AddPlaylistAndDownloadMaps(resultPlaylist, RecommendedMaps, progress: snackbar.Progress, cancellationToken: snackbar.CancellationToken),
+                EditPlaylistModel resultEditPlaylist => await PlaylistService.AddPlaylistAndDownloadMaps(resultEditPlaylist, RecommendedMaps, progress: snackbar.Progress, cancellationToken: snackbar.CancellationToken),
                 _ => throw new InvalidOperationException("Result data is not a playlist")
             };
 
-            Snackbar.Remove(snackbar);
+            Snackbar.Remove(snackbar.Snackbar);
 
-            if (!cancellationToken.IsCancellationRequested)
+            if (!snackbar.CancellationToken.IsCancellationRequested)
             {
                 Snackbar.Add($"Created playlist: {playlist.Title}", Severity.Normal, config =>
                 {
