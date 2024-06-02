@@ -114,10 +114,25 @@ namespace MapMaven.Pages
 
         protected override void OnInitialized()
         {
+            if (string.IsNullOrEmpty(LeaderboardService.PlayerId))
+            {
+                NavigationManager.NavigateTo("/maps"); // Start page should be the maps page if no leaderboard provider is set
+                return;
+            }
+
+            SubscribeAndBind(LeaderboardService.PlayerIdObservable.Zip(LeaderboardService.PlayerIdObservable.Skip(1), (previousPlayerId, playerId) => (previousPlayerId, playerId)), x =>
+            {
+                if (string.IsNullOrEmpty(x.playerId) && !string.IsNullOrEmpty(x.previousPlayerId))
+                    NavigationManager.NavigateTo("/maps"); // Go to maps page if leaderboard provider is unset
+            });
+
             SubscribeAndBind(_dashboardDateRange, range => DashboardDateRange = range);
 
             SubscribeAndBind(Observable.CombineLatest(LeaderboardService.PlayerProfile, _dashboardDateRange, (player, dateRange) => (player, dateRange)), x =>
             {
+                if (x.player is null)
+                    return;
+
                 Player = x.player;
 
                 RankHistory = x.player.RankHistory
@@ -168,6 +183,9 @@ namespace MapMaven.Pages
 
             SubscribeAndBind(mapsAndHistory, x =>
             {
+                if (x.playerProfile is null)
+                    return;
+
                 var rangeStartDate = DateOnly.FromDateTime(x.dateRange.Start.Value);
                 var rangeStartEnd = DateOnly.FromDateTime(x.dateRange.End.Value);
 
@@ -392,7 +410,7 @@ namespace MapMaven.Pages
                     config.Onclick = snackbar =>
                     {
                         PlaylistService.SetSelectedPlaylist(playlist);
-                        NavigationManager.NavigateTo("/");
+                        NavigationManager.NavigateTo("/maps");
                         return Task.CompletedTask;
                     };
                 });

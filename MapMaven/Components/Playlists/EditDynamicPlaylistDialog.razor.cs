@@ -126,7 +126,7 @@ namespace MapMaven.Components.Playlists
                     config.Onclick = snackbar =>
                     {
                         PlaylistService.SetSelectedPlaylist(playlist);
-                        NavigationManager.NavigateTo("/");
+                        NavigationManager.NavigateTo("/maps");
                         return Task.CompletedTask;
                     };
                 });
@@ -143,7 +143,7 @@ namespace MapMaven.Components.Playlists
                     config.Onclick = snackbar =>
                     {
                         PlaylistService.SetSelectedPlaylist(playlist);
-                        NavigationManager.NavigateTo("/");
+                        NavigationManager.NavigateTo("/maps");
                         return Task.CompletedTask;
                     };
                 });

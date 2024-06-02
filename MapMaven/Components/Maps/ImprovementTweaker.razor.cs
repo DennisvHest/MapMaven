@@ -254,7 +254,7 @@ namespace MapMaven.Components.Maps
                     config.Onclick = snackbar =>
                     {
                         PlaylistService.SetSelectedPlaylist(playlist);
-                        NavigationManager.NavigateTo("/");
+                        NavigationManager.NavigateTo("/maps");
                         return Task.CompletedTask;
                     };
                 });
