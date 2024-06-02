@@ -17,6 +17,7 @@ using MudBlazor;
 using MudBlazor.Utilities;
 using System.Globalization;
 using System.Reactive.Linq;
+using System.Reactive.Subjects;
 using Map = MapMaven.Models.Map;
 
 namespace MapMaven.Pages
@@ -103,14 +104,27 @@ namespace MapMaven.Pages
 
         bool ShowHighPpGainAnnotations { get; set; } = false;
 
+        static readonly DateTime DashboardDateRangeMin = DateTime.Today.AddDays(-50);
+        static readonly DateTime DashboardDateRangeMax = DateTime.Today;
+        DateRange DashboardDateRange { get; set; }
+
+        BehaviorSubject<DateRange> _dashboardDateRange = new(new(DashboardDateRangeMin, DashboardDateRangeMax));
+
+        IEnumerable<RankHistoryRecord> RankHistory { get; set; } = [];
+
         protected override void OnInitialized()
         {
-            SubscribeAndBind(LeaderboardService.PlayerProfile, player =>
-            {
-                Player = player;
+            SubscribeAndBind(_dashboardDateRange, range => DashboardDateRange = range);
 
-                var earliestRankHistoryRecord = player.RankHistory.FirstOrDefault();
-                var latestRankHistoryRecord = player.RankHistory.LastOrDefault();
+            SubscribeAndBind(Observable.CombineLatest(LeaderboardService.PlayerProfile, _dashboardDateRange, (player, dateRange) => (player, dateRange)), x =>
+            {
+                Player = x.player;
+
+                RankHistory = x.player.RankHistory
+                    .Where(h => h.Date >= DateOnly.FromDateTime(x.dateRange.Start.Value) && h.Date <= DateOnly.FromDateTime(x.dateRange.End.Value));
+
+                var earliestRankHistoryRecord = RankHistory.FirstOrDefault();
+                var latestRankHistoryRecord = RankHistory.LastOrDefault();
 
                 if (earliestRankHistoryRecord is not null && latestRankHistoryRecord is not null)
                     RankChange = earliestRankHistoryRecord.Rank - latestRankHistoryRecord.Rank;
@@ -150,10 +164,13 @@ namespace MapMaven.Pages
                     .Average(s => s.Score.Accuracy);
             });
 
-            var mapsAndHistory = Observable.CombineLatest(MapService.RankedMaps, LeaderboardService.PlayerProfile, (rankedMaps, playerProfile) => (rankedMaps, playerProfile));
+            var mapsAndHistory = Observable.CombineLatest(MapService.RankedMaps, LeaderboardService.PlayerProfile, _dashboardDateRange, (rankedMaps, playerProfile, dateRange) => (rankedMaps, playerProfile, dateRange));
 
             SubscribeAndBind(mapsAndHistory, x =>
             {
+                var rangeStartDate = DateOnly.FromDateTime(x.dateRange.Start.Value);
+                var rangeStartEnd = DateOnly.FromDateTime(x.dateRange.End.Value);
+
                 var playedRankedMaps = x.rankedMaps.Where(m => m.Played);
 
                 BestScoredMapTags = playedRankedMaps
@@ -165,13 +182,17 @@ namespace MapMaven.Pages
                     .Select(g => g.Key);
 
                 var recentPlayedRankedMaps = playedRankedMaps
-                    .Where(m => m.HighestPlayerScore is not null && m.HighestPlayerScore.Score.TimeSet > DateTimeOffset.Now.AddDays(-50))
+                    .Where(m => m.HighestPlayerScore is not null && m.HighestPlayerScore.Score.TimeSet >= x.dateRange.Start && m.HighestPlayerScore.Score.TimeSet <= x.dateRange.End)
                     .OrderBy(m => m.HighestPlayerScore.Score.TimeSet);
 
-                var rankIncreaseHistoryRecords = x.playerProfile.RankHistory
-                    .Zip(x.playerProfile.RankHistory.Skip(1), (previousHistoryRecord, historyRecord) => (previousHistoryRecord, historyRecord))
-                    .Where(x => x.historyRecord.Rank < x.previousHistoryRecord.Rank)
-                    .Select(x => x.historyRecord);
+                var rankHistoryInRange = x.playerProfile.RankHistory
+                    .Where(h => h.Date >= rangeStartDate && h.Date <= rangeStartEnd);
+
+                var rankIncreaseHistoryRecords = rankHistoryInRange
+                    .Where(h => h.Date >= rangeStartDate && h.Date <= rangeStartEnd)
+                    .Zip(rankHistoryInRange.Skip(1), (previousHistoryRecord, historyRecord) => (previousHistoryRecord, historyRecord))
+                    .Where(h => h.historyRecord.Rank < h.previousHistoryRecord.Rank)
+                    .Select(h => h.historyRecord);
 
                 RecentHighPpGainMaps = rankIncreaseHistoryRecords
                     .SelectMany(historyRecord => recentPlayedRankedMaps
@@ -395,5 +416,7 @@ namespace MapMaven.Pages
                 FullWidth = true
             });
         }
+
+        void OnDateRangeChanged() => _dashboardDateRange.OnNext(DashboardDateRange);
     }
 }

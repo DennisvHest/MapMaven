@@ -85,18 +85,26 @@
                                             <MudIcon Icon="@Icons.Material.Filled.Language" Class="mr-2"></MudIcon>
                                             <MudText Typo="Typo.h6">Global rank</MudText>
                                         </div>
-                                        <MudTooltip Text="Show/hide high pp gain moments">
-                                            <div class="d-flex align-center">
-                                                <MudChip Icon="@Icons.Material.Filled.KeyboardDoubleArrowUp">
-                                                    <MudCheckBox @bind-Value="ShowHighPpGainAnnotations" @bind-Value:after="SetHighPpGainAnnotations" Dense="true" />
-                                                </MudChip>
-                                            </div>
-                                        </MudTooltip>
+                                        <div class="d-flex align-center gap-2">
+                                            <MudTooltip Text="Show/hide high pp gain moments">
+                                                <div class="d-flex align-center">
+                                                    <MudChip Icon="@Icons.Material.Filled.KeyboardDoubleArrowUp">
+                                                        <MudCheckBox @bind-Value="ShowHighPpGainAnnotations" @bind-Value:after="SetHighPpGainAnnotations" Dense="true" />
+                                                    </MudChip>
+                                                </div>
+                                            </MudTooltip>
+                                            <MudDateRangePicker @bind-DateRange="DashboardDateRange"
+                                                                @bind-DateRange:after="OnDateRangeChanged"
+                                                                MinDate="DashboardDateRangeMin"
+                                                                MaxDate="DashboardDateRangeMax"
+                                                                Margin="Margin.Dense"
+                                                                Variant="Variant.Outlined" />
+                                        </div>
                                     </div>
                                 </CardHeaderContent>
                             </MudCardHeader>
                             <MudCardContent Class="pa-0">
-                                @if (Player?.RankHistory is not null && Player.RankHistory.Any())
+                                @if (RankHistory.Any())
                                 {
                                     <ApexChart @ref="RankHistoryChart"
                                                TItem="RankHistoryRecord"
@@ -105,7 +113,7 @@
 
                                         <ChildContent>
                                             <ApexPointSeries TItem="RankHistoryRecord"
-                                                             Items="Player.RankHistory"
+                                                             Items="RankHistory"
                                                              Name="Rank"
                                                              SeriesType="SeriesType.Line"
                                                              XValue="x => x.Date"
