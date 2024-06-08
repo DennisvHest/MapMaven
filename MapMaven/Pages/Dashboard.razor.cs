@@ -106,9 +106,14 @@ namespace MapMaven.Pages
 
         static readonly DateTime DashboardDateRangeMin = DateTime.Today.AddDays(-50);
         static readonly DateTime DashboardDateRangeMax = DateTime.Today;
+
+        static readonly DateRange PastFiftyDays = new(DashboardDateRangeMin, DashboardDateRangeMax);
+        static readonly DateRange PastMonth = new(DateTime.Today.AddDays(-30), DashboardDateRangeMax);
+        static readonly DateRange PastWeek = new(DateTime.Today.AddDays(-7), DashboardDateRangeMax);
+
         DateRange DashboardDateRange { get; set; }
 
-        BehaviorSubject<DateRange> _dashboardDateRange = new(new(DashboardDateRangeMin, DashboardDateRangeMax));
+        BehaviorSubject<DateRange> _dashboardDateRange = new(PastFiftyDays);
 
         IEnumerable<RankHistoryRecord> RankHistory { get; set; } = [];
 
@@ -436,5 +441,10 @@ namespace MapMaven.Pages
         }
 
         void OnDateRangeChanged() => _dashboardDateRange.OnNext(DashboardDateRange);
+        void OnDateRangeChanged(DateRange value)
+        {
+            DashboardDateRange = value;
+            _dashboardDateRange.OnNext(DashboardDateRange);
+        }
     }
 }

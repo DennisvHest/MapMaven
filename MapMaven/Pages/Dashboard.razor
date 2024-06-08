@@ -87,18 +87,27 @@
                                         </div>
                                         <div class="d-flex align-center gap-2">
                                             <MudTooltip Text="Show/hide high pp gain moments">
-                                                <div class="d-flex align-center">
+                                                <div class="d-flex align-center pr-4 border-r">
                                                     <MudChip Icon="@Icons.Material.Filled.KeyboardDoubleArrowUp">
                                                         <MudCheckBox @bind-Value="ShowHighPpGainAnnotations" @bind-Value:after="SetHighPpGainAnnotations" Dense="true" />
                                                     </MudChip>
                                                 </div>
                                             </MudTooltip>
+                                            <MudChipSet SelectedValues="[DashboardDateRange]"
+                                                        SelectedValuesChanged="(values) => OnDateRangeChanged(values.FirstOrDefault() as DateRange)"
+                                                        Mandatory="true">
+                                                <MudChip Value="PastFiftyDays" Label="true" Variant="Variant.Filled" Color="MudBlazor.Color.Default" SelectedColor="MudBlazor.Color.Default">50 Days</MudChip>
+                                                <MudChip Value="PastMonth" Label="true" Variant="Variant.Filled" Color="MudBlazor.Color.Default" SelectedColor="MudBlazor.Color.Default">Month</MudChip>
+                                                <MudChip Value="PastWeek" Label="true" Variant="Variant.Filled" Color="MudBlazor.Color.Default" SelectedColor="MudBlazor.Color.Default">Week</MudChip>
+                                            </MudChipSet>
                                             <MudDateRangePicker @bind-DateRange="DashboardDateRange"
                                                                 @bind-DateRange:after="OnDateRangeChanged"
                                                                 MinDate="DashboardDateRangeMin"
                                                                 MaxDate="DashboardDateRangeMax"
                                                                 Margin="Margin.Dense"
-                                                                Variant="Variant.Outlined" />
+                                                                Variant="Variant.Outlined"
+                                                                PickerVariant="PickerVariant.Dialog"
+                                                                Style="max-width: 350px"/>
                                         </div>
                                     </div>
                                 </CardHeaderContent>
