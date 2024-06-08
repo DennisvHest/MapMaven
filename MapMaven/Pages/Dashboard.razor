@@ -73,41 +73,49 @@
                                 <MudText Typo="Typo.caption"><b>@TopPp?.ToString("#0.##")</b></MudText>
                             </div>
                         </MudListItem>
-                        <MudListItem>
-                            <div class="d-flex align-center justify-space-between">
+                        <MudListItem InitiallyExpanded="true">
+                            <ChildContent>
                                 <div class="d-flex align-center gap-2">
                                     <MudIcon Size="MudBlazor.Size.Small" Icon="@Icons.Material.Filled.Adjust" />
-                                    <MudText Typo="Typo.caption">Average ranked accuracy</MudText>
+                                    <b>Accuracy</b>
                                 </div>
-                                <MudText Typo="Typo.caption"><b>@AverageRankedAccuracy?.ToString("#0.##")</b></MudText>
-                            </div>
+                            </ChildContent>
+                            <NestedList>
+                                <MudListItem Class="pl-0">
+                                    <div class="d-flex align-center justify-space-between">
+                                        <MudText Typo="Typo.caption">Average ranked accuracy</MudText>
+                                        <MudText Typo="Typo.caption"><b>@AverageRankedAccuracy?.ToString("#0.##")</b></MudText>
+                                    </div>
+                                </MudListItem>
+                                <MudListItem Class="pl-0">
+                                    <div class="d-flex align-center justify-space-between">
+                                        <MudText Typo="Typo.caption">Top ranked accuracy</MudText>
+                                        <MudText Typo="Typo.caption"><b>@TopRankedAccuracy?.ToString("#0.##")</b></MudText>
+                                    </div>
+                                </MudListItem>
+                            </NestedList>
                         </MudListItem>
-                        <MudListItem>
-                            <div class="d-flex align-center justify-space-between">
-                                <div class="d-flex align-center gap-2">
-                                    <MudIcon Size="MudBlazor.Size.Small" Icon="@Icons.Material.Filled.Adjust" />
-                                    <MudText Typo="Typo.caption">Top ranked accuracy</MudText>
-                                </div>
-                                <MudText Typo="Typo.caption"><b>@TopRankedAccuracy?.ToString("#0.##")</b></MudText>
-                            </div>
-                        </MudListItem>
-                        <MudListItem>
-                            <div class="d-flex align-center justify-space-between">
-                                <div class="d-flex align-center gap-2">
-                                    <MudIcon Size="MudBlazor.Size.Small" Icon="@Icons.Material.Filled.Star" />
-                                    <MudText Typo="Typo.caption">Average star difficulty</MudText>
-                                </div>
-                                <MudText Typo="Typo.caption"><b>@AverageStarDifficulty?.ToString("#0.##")</b></MudText>
-                            </div>
-                        </MudListItem>
-                        <MudListItem>
-                            <div class="d-flex align-center justify-space-between">
+                        <MudListItem InitiallyExpanded="true">
+                            <ChildContent>
                                 <div class="d-flex align-center gap-2">
                                     <MudIcon Size="MudBlazor.Size.Small" Icon="@Icons.Material.Filled.Star" />
-                                    <MudText Typo="Typo.caption">Top star difficulty</MudText>
+                                    <b>Star difficulty</b>
                                 </div>
-                                <MudText Typo="Typo.caption"><b>@TopStarDifficulty?.ToString("#0.##")</b></MudText>
-                            </div>
+                            </ChildContent>
+                            <NestedList>
+                                <MudListItem Class="pl-0">
+                                    <div class="d-flex align-center justify-space-between">
+                                        <MudText Typo="Typo.caption">Average star difficulty</MudText>
+                                        <MudText Typo="Typo.caption"><b>@AverageStarDifficulty?.ToString("#0.##")</b></MudText>
+                                    </div>
+                                </MudListItem>
+                                <MudListItem Class="pl-0">
+                                    <div class="d-flex align-center justify-space-between">
+                                        <MudText Typo="Typo.caption">Top star difficulty</MudText>
+                                        <MudText Typo="Typo.caption"><b>@TopStarDifficulty?.ToString("#0.##")</b></MudText>
+                                    </div>
+                                </MudListItem>
+                            </NestedList>
                         </MudListItem>
                     </MudList>
                 </MudCardContent>
