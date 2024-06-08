@@ -89,7 +89,9 @@ namespace MapMaven.Pages
 
         double? TopPp { get; set; }
         double? AverageStarDifficulty { get; set; }
+        double? TopStarDifficulty { get; set; }
         double? AverageRankedAccuracy { get; set; }
+        double? TopRankedAccuracy { get; set; }
 
         double? RecentAverageStarDifficulty { get; set; }
         string? RecentBestScoredMapTag { get; set; }
@@ -179,9 +181,13 @@ namespace MapMaven.Pages
                     .Take(30)
                     .Average(s => s.Leaderboard.Stars);
 
+                TopStarDifficulty = rankedScores.Max(s => s.Leaderboard.Stars);
+
                 AverageRankedAccuracy = rankedScores
                     .OrderByDescending(s => s.Score.Pp)
                     .Average(s => s.Score.Accuracy);
+
+                TopRankedAccuracy = rankedScores.Max(s => s.Score.Accuracy);
             });
 
             var mapsAndHistory = Observable.CombineLatest(MapService.RankedMaps, LeaderboardService.PlayerProfile, _dashboardDateRange, (rankedMaps, playerProfile, dateRange) => (rankedMaps, playerProfile, dateRange));

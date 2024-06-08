@@ -9,174 +9,214 @@
 <MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="full-height" Style="padding-top: 24px; padding-bottom: 24px;">
     @if (Player is not null)
     {
-        <MudGrid Justify="Justify.FlexEnd" Class="full-height">
-            <MudItem xs="2">
-                <MudCard>
-                    <MudCardHeader Class="card-header-highlight justify-space-between">
-                        <div class="d-flex flex-column align-center">
-                            <span>
-                                <MudIcon Icon="@Icons.Material.Filled.Language" Style="font-size: 1rem; transform: translateY(2px);"></MudIcon>
-                                @Player.Rank
-                            </span>
-                            @if (RankChange is not null)
-                            {
-                                <ValueChange Value="@RankChange.Value" Style="font-size: 12px;"></ValueChange>
-                            }
-                            else
-                            {
-                                <span style="height: 15px"></span>
-                            }
-                        </div>
-                        <div class="d-flex flex-column align-center">
-                            <span>
-                                <span class="fi fi-@Player.CountryCode.ToLower() mr-1"></span>
-                                @Player.CountryRank
-                            </span>
-                            @if (CountryRankChange is not null)
-                            {
-                                <ValueChange Value="@CountryRankChange.Value" Style="font-size: 12px;"></ValueChange>
-                            }
-                            else
-                            {
-                                <span style="height: 15px"></span>
-                            }
-                        </div>
-                        <div class="d-flex flex-column align-center">
-                            <span>
-                                <b>pp</b>
-                                @Player.Pp.ToString("#0.##")
-                            </span>
-                            @if (PpChange is not null)
-                            {
-                                <ValueChange Value="@PpChange.Value" Style="font-size: 12px;"></ValueChange>
-                            }
-                            else
-                            {
-                                <span style="height: 15px"></span>
-                            }
-                        </div>
-                    </MudCardHeader>
-                    <MudCardContent>
+        <div class="d-flex align-start">
+            <MudCard Style="width: 250px; min-width: 250px;">
+                <MudCardHeader Class="card-header-highlight justify-space-between">
+                    <div class="d-flex flex-column align-center">
+                        <span>
+                            <MudIcon Icon="@Icons.Material.Filled.Language" Style="font-size: 1rem; transform: translateY(2px);"></MudIcon>
+                            @Player.Rank
+                        </span>
+                        @if (RankChange is not null)
+                        {
+                            <ValueChange Value="@RankChange.Value" Style="font-size: 12px;"></ValueChange>
+                        }
+                        else
+                        {
+                            <span style="height: 15px"></span>
+                        }
+                    </div>
+                    <div class="d-flex flex-column align-center">
+                        <span>
+                            <span class="fi fi-@Player.CountryCode.ToLower() mr-1"></span>
+                            @Player.CountryRank
+                        </span>
+                        @if (CountryRankChange is not null)
+                        {
+                            <ValueChange Value="@CountryRankChange.Value" Style="font-size: 12px;"></ValueChange>
+                        }
+                        else
+                        {
+                            <span style="height: 15px"></span>
+                        }
+                    </div>
+                    <div class="d-flex flex-column align-center">
+                        <span>
+                            <b>pp</b>
+                            @Player.Pp.ToString("#0.##")
+                        </span>
+                        @if (PpChange is not null)
+                        {
+                            <ValueChange Value="@PpChange.Value" Style="font-size: 12px;"></ValueChange>
+                        }
+                        else
+                        {
+                            <span style="height: 15px"></span>
+                        }
+                    </div>
+                </MudCardHeader>
+                <MudCardContent>
+                    <div>
                         <h4>Best scored map tags:</h4>
                         @foreach (var value in BestScoredMapTags.Select((tag, index) => (tag, number: index + 1)))
                         {
                             <MudChip Color="MudBlazor.Color.Primary" Size="MudBlazor.Size.Small">@value.number. @value.tag</MudChip>
                         }
-                    </MudCardContent>
-                </MudCard>
-                <MudChip Label="true" Class="full-width">
-                    <span><b>pp</b> Top PP | <b>@TopPp?.ToString("#0.##")</b></span>
-                </MudChip>
-                <MudChip Icon="@Icons.Material.Filled.Adjust" Label="true" Class="full-width">
-                    <span>Average ranked accuracy | <b>@AverageRankedAccuracy?.ToString("#0.##")</b></span>
-                </MudChip>
-                <MudChip Icon="@Icons.Material.Filled.Star" Label="true" Class="full-width">
-                    <span>Average star difficulty | <b>@AverageStarDifficulty?.ToString("#0.##")</b></span>
-                </MudChip>
-            </MudItem>
-            <MudItem xs="10" Class="full-height" Style="overflow-y: auto;">
-                <MudGrid>
-                    <MudItem xs="12">
-                        <MudCard>
-                            <MudCardHeader Class="card-header-highlight">
-                                <CardHeaderContent>
-                                    <div class="d-flex align-center justify-space-between">
-                                        <div class="d-flex">
-                                            <MudIcon Icon="@Icons.Material.Filled.Language" Class="mr-2"></MudIcon>
-                                            <MudText Typo="Typo.h6">Global rank</MudText>
+                    </div>
+                    <MudList Dense="true" DisableGutters="true" DisablePadding="true" Class="mt-4">
+                        <MudListItem>
+                            <div class="d-flex align-center justify-space-between">
+                                <div class="d-flex align-center gap-2">
+                                    <b>pp</b>
+                                    <MudText Typo="Typo.caption">Top PP</MudText>
+                                </div>
+                                <MudText Typo="Typo.caption"><b>@TopPp?.ToString("#0.##")</b></MudText>
+                            </div>
+                        </MudListItem>
+                        <MudListItem>
+                            <div class="d-flex align-center justify-space-between">
+                                <div class="d-flex align-center gap-2">
+                                    <MudIcon Size="MudBlazor.Size.Small" Icon="@Icons.Material.Filled.Adjust" />
+                                    <MudText Typo="Typo.caption">Average ranked accuracy</MudText>
+                                </div>
+                                <MudText Typo="Typo.caption"><b>@AverageRankedAccuracy?.ToString("#0.##")</b></MudText>
+                            </div>
+                        </MudListItem>
+                        <MudListItem>
+                            <div class="d-flex align-center justify-space-between">
+                                <div class="d-flex align-center gap-2">
+                                    <MudIcon Size="MudBlazor.Size.Small" Icon="@Icons.Material.Filled.Adjust" />
+                                    <MudText Typo="Typo.caption">Top ranked accuracy</MudText>
+                                </div>
+                                <MudText Typo="Typo.caption"><b>@TopRankedAccuracy?.ToString("#0.##")</b></MudText>
+                            </div>
+                        </MudListItem>
+                        <MudListItem>
+                            <div class="d-flex align-center justify-space-between">
+                                <div class="d-flex align-center gap-2">
+                                    <MudIcon Size="MudBlazor.Size.Small" Icon="@Icons.Material.Filled.Star" />
+                                    <MudText Typo="Typo.caption">Average star difficulty</MudText>
+                                </div>
+                                <MudText Typo="Typo.caption"><b>@AverageStarDifficulty?.ToString("#0.##")</b></MudText>
+                            </div>
+                        </MudListItem>
+                        <MudListItem>
+                            <div class="d-flex align-center justify-space-between">
+                                <div class="d-flex align-center gap-2">
+                                    <MudIcon Size="MudBlazor.Size.Small" Icon="@Icons.Material.Filled.Star" />
+                                    <MudText Typo="Typo.caption">Top star difficulty</MudText>
+                                </div>
+                                <MudText Typo="Typo.caption"><b>@TopStarDifficulty?.ToString("#0.##")</b></MudText>
+                            </div>
+                        </MudListItem>
+                    </MudList>
+                </MudCardContent>
+            </MudCard>
+            <MudGrid Class="full-height mx-0">
+                <MudItem xs="12" Class="full-height" Style="overflow-y: auto;">
+                    <MudGrid>
+                        <MudItem xs="12">
+                            <MudCard>
+                                <MudCardHeader Class="card-header-highlight">
+                                    <CardHeaderContent>
+                                        <div class="d-flex align-center justify-space-between">
+                                            <div class="d-flex">
+                                                <MudIcon Icon="@Icons.Material.Filled.Language" Class="mr-2"></MudIcon>
+                                                <MudText Typo="Typo.h6">Global rank</MudText>
+                                            </div>
+                                            <div class="d-flex align-center gap-2">
+                                                <MudTooltip Text="Show/hide high pp gain moments">
+                                                    <div class="d-flex align-center pr-4 border-r">
+                                                        <MudChip Icon="@Icons.Material.Filled.KeyboardDoubleArrowUp" Label="true">
+                                                            <MudCheckBox @bind-Value="ShowHighPpGainAnnotations" @bind-Value:after="SetHighPpGainAnnotations" Dense="true" />
+                                                        </MudChip>
+                                                    </div>
+                                                </MudTooltip>
+                                                <MudChipSet SelectedValues="[DashboardDateRange]"
+                                                            SelectedValuesChanged="(values) => OnDateRangeChanged(values.FirstOrDefault() as DateRange)"
+                                                            Mandatory="true">
+                                                    <MudChip Value="PastFiftyDays" Label="true" Variant="Variant.Filled" Color="MudBlazor.Color.Default" SelectedColor="MudBlazor.Color.Default">50 Days</MudChip>
+                                                    <MudChip Value="PastMonth" Label="true" Variant="Variant.Filled" Color="MudBlazor.Color.Default" SelectedColor="MudBlazor.Color.Default">Month</MudChip>
+                                                    <MudChip Value="PastWeek" Label="true" Variant="Variant.Filled" Color="MudBlazor.Color.Default" SelectedColor="MudBlazor.Color.Default">Week</MudChip>
+                                                </MudChipSet>
+                                                <MudDateRangePicker @bind-DateRange="DashboardDateRange"
+                                                                    @bind-DateRange:after="OnDateRangeChanged"
+                                                                    MinDate="DashboardDateRangeMin"
+                                                                    MaxDate="DashboardDateRangeMax"
+                                                                    Margin="Margin.Dense"
+                                                                    Variant="Variant.Outlined"
+                                                                    PickerVariant="PickerVariant.Dialog"
+                                                                    Style="max-width: 350px" />
+                                            </div>
                                         </div>
-                                        <div class="d-flex align-center gap-2">
-                                            <MudTooltip Text="Show/hide high pp gain moments">
-                                                <div class="d-flex align-center pr-4 border-r">
-                                                    <MudChip Icon="@Icons.Material.Filled.KeyboardDoubleArrowUp">
-                                                        <MudCheckBox @bind-Value="ShowHighPpGainAnnotations" @bind-Value:after="SetHighPpGainAnnotations" Dense="true" />
-                                                    </MudChip>
-                                                </div>
-                                            </MudTooltip>
-                                            <MudChipSet SelectedValues="[DashboardDateRange]"
-                                                        SelectedValuesChanged="(values) => OnDateRangeChanged(values.FirstOrDefault() as DateRange)"
-                                                        Mandatory="true">
-                                                <MudChip Value="PastFiftyDays" Label="true" Variant="Variant.Filled" Color="MudBlazor.Color.Default" SelectedColor="MudBlazor.Color.Default">50 Days</MudChip>
-                                                <MudChip Value="PastMonth" Label="true" Variant="Variant.Filled" Color="MudBlazor.Color.Default" SelectedColor="MudBlazor.Color.Default">Month</MudChip>
-                                                <MudChip Value="PastWeek" Label="true" Variant="Variant.Filled" Color="MudBlazor.Color.Default" SelectedColor="MudBlazor.Color.Default">Week</MudChip>
-                                            </MudChipSet>
-                                            <MudDateRangePicker @bind-DateRange="DashboardDateRange"
-                                                                @bind-DateRange:after="OnDateRangeChanged"
-                                                                MinDate="DashboardDateRangeMin"
-                                                                MaxDate="DashboardDateRangeMax"
-                                                                Margin="Margin.Dense"
-                                                                Variant="Variant.Outlined"
-                                                                PickerVariant="PickerVariant.Dialog"
-                                                                Style="max-width: 350px"/>
-                                        </div>
-                                    </div>
-                                </CardHeaderContent>
-                            </MudCardHeader>
-                            <MudCardContent Class="pa-0">
-                                @if (RankHistory.Any())
-                                {
-                                    <ApexChart @ref="RankHistoryChart"
-                                               TItem="RankHistoryRecord"
-                                               Options="RankHistoryChartOptions"
-                                               Height="300">
+                                    </CardHeaderContent>
+                                </MudCardHeader>
+                                <MudCardContent Class="pa-0">
+                                    @if (RankHistory.Any())
+                                    {
+                                        <ApexChart @ref="RankHistoryChart"
+                                                   TItem="RankHistoryRecord"
+                                                   Options="RankHistoryChartOptions"
+                                                   Height="300">
 
-                                        <ChildContent>
-                                            <ApexPointSeries TItem="RankHistoryRecord"
-                                                             Items="RankHistory"
-                                                             Name="Rank"
-                                                             SeriesType="SeriesType.Line"
-                                                             XValue="x => x.Date"
-                                                             YValue="x => x.Rank"
-                                                             DataPointMutator="SetCustomData"
-                                                             OrderBy="x => x.X"
-                                                             Color="@MapMavenTheme.Theme.Palette.Primary.ColorLighten(0.2).ToString(MudColorOutputFormats.Hex)" />
-                                        </ChildContent>
-                                    </ApexChart>
-                                }
-                            </MudCardContent>
-                        </MudCard>
-                    </MudItem>
-                    <MudItem xs="6">
-                        <MudCard>
-                            <MudCardHeader Class="card-header-highlight">
-                                <CardHeaderContent>
-                                    <b>Recent high PP gain maps</b>
-                                </CardHeaderContent>
-                            </MudCardHeader>
-                            <MapList Maps="RecentHighPpGainMaps" ShowHeader="false" HiddenColumns="[MapListColumn.ScoreEstimates]"></MapList>
-                        </MudCard>
-                    </MudItem>
-                    <MudItem xs="6">
-                        <MudCard>
-                            <MudCardHeader Class="card-header-highlight">
-                                <CardHeaderContent>
-                                    <div class="d-flex justify-space-between align-center">
-                                        <b>Recommended maps based on recent scores</b>
-                                        <div class="d-flex align-center">
-                                            @if (RecentAverageStarDifficulty.HasValue)
-                                            {
-                                                <MudChip Size="MudBlazor.Size.Small"><MudIcon Icon="@Icons.Material.Filled.Star" /> >= @RecentAverageStarDifficulty.Value.ToString("0.##")</MudChip>
-                                            }
-                                            @if (!string.IsNullOrEmpty(RecentBestScoredMapTag))
-                                            {
-                                                <MudChip Size="MudBlazor.Size.Small"><MudIcon Icon="@Icons.Material.Filled.Label" /> @RecentBestScoredMapTag</MudChip>
-                                            }
-                                            <MudTooltip Text="Create playlist from recommended maps">
-                                                <MudMenu Icon="@Icons.Material.Filled.PlaylistAdd">
-                                                    <MudMenuItem OnClick="AddRecommendedMapsToPlaylist" Icon="@Icons.Material.Filled.PlaylistAdd">Create recommended maps playlist</MudMenuItem>
-                                                    <MudMenuItem OnClick="AddRecommendedMapsDynamicPlaylist" Icon="@Icons.Material.Filled.PlaylistAdd">Create recommended maps dynamic playlist</MudMenuItem>
-                                                </MudMenu>
-                                            </MudTooltip>
+                                            <ChildContent>
+                                                <ApexPointSeries TItem="RankHistoryRecord"
+                                                                 Items="RankHistory"
+                                                                 Name="Rank"
+                                                                 SeriesType="SeriesType.Line"
+                                                                 XValue="x => x.Date"
+                                                                 YValue="x => x.Rank"
+                                                                 DataPointMutator="SetCustomData"
+                                                                 OrderBy="x => x.X"
+                                                                 Color="@MapMavenTheme.Theme.Palette.Primary.ColorLighten(0.2).ToString(MudColorOutputFormats.Hex)" />
+                                            </ChildContent>
+                                        </ApexChart>
+                                    }
+                                </MudCardContent>
+                            </MudCard>
+                        </MudItem>
+                        <MudItem xs="6">
+                            <MudCard>
+                                <MudCardHeader Class="card-header-highlight">
+                                    <CardHeaderContent>
+                                        <b>Recent high PP gain maps</b>
+                                    </CardHeaderContent>
+                                </MudCardHeader>
+                                <MapList Maps="RecentHighPpGainMaps" ShowHeader="false" HiddenColumns="[MapListColumn.ScoreEstimates]"></MapList>
+                            </MudCard>
+                        </MudItem>
+                        <MudItem xs="6">
+                            <MudCard>
+                                <MudCardHeader Class="card-header-highlight">
+                                    <CardHeaderContent>
+                                        <div class="d-flex justify-space-between align-center">
+                                            <b>Recommended maps based on recent scores</b>
+                                            <div class="d-flex align-center">
+                                                @if (RecentAverageStarDifficulty.HasValue)
+                                                {
+                                                    <MudChip Size="MudBlazor.Size.Small"><MudIcon Icon="@Icons.Material.Filled.Star" /> >= @RecentAverageStarDifficulty.Value.ToString("0.##")</MudChip>
+                                                }
+                                                @if (!string.IsNullOrEmpty(RecentBestScoredMapTag))
+                                                {
+                                                    <MudChip Size="MudBlazor.Size.Small"><MudIcon Icon="@Icons.Material.Filled.Label" /> @RecentBestScoredMapTag</MudChip>
+                                                }
+                                                <MudTooltip Text="Create playlist from recommended maps">
+                                                    <MudMenu Icon="@Icons.Material.Filled.PlaylistAdd">
+                                                        <MudMenuItem OnClick="AddRecommendedMapsToPlaylist" Icon="@Icons.Material.Filled.PlaylistAdd">Create recommended maps playlist</MudMenuItem>
+                                                        <MudMenuItem OnClick="AddRecommendedMapsDynamicPlaylist" Icon="@Icons.Material.Filled.PlaylistAdd">Create recommended maps dynamic playlist</MudMenuItem>
+                                                    </MudMenu>
+                                                </MudTooltip>
+                                            </div>
                                         </div>
-                                    </div>
-                                </CardHeaderContent>
-                            </MudCardHeader>
-                            <MapList Maps="RecommendedMaps" ShowHeader="false" HiddenColumns="[MapListColumn.Pp]"></MapList>
-                        </MudCard>
-                    </MudItem>
-                </MudGrid>
-            </MudItem>
-        </MudGrid>
+                                    </CardHeaderContent>
+                                </MudCardHeader>
+                                <MapList Maps="RecommendedMaps" ShowHeader="false" HiddenColumns="[MapListColumn.Pp]"></MapList>
+                            </MudCard>
+                        </MudItem>
+                    </MudGrid>
+                </MudItem>
+            </MudGrid>
+        </div>
     }
 </MudContainer>
 
