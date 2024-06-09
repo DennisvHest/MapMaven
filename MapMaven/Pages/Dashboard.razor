@@ -56,14 +56,7 @@
                     </div>
                 </MudCardHeader>
                 <MudCardContent>
-                    <div>
-                        <h4>Best scored map tags:</h4>
-                        @foreach (var value in BestScoredMapTags.Select((tag, index) => (tag, number: index + 1)))
-                        {
-                            <MudChip Color="MudBlazor.Color.Primary" Size="MudBlazor.Size.Small">@value.number. @value.tag</MudChip>
-                        }
-                    </div>
-                    <MudList Dense="true" DisableGutters="true" DisablePadding="true" Class="mt-4">
+                    <MudList Dense="true" DisableGutters="true" DisablePadding="true">
                         <MudListItem>
                             <div class="d-flex align-center justify-space-between">
                                 <div class="d-flex align-center gap-2">
@@ -118,6 +111,13 @@
                             </NestedList>
                         </MudListItem>
                     </MudList>
+                    <div class="mt-4">
+                        <h4>Best scored map tags:</h4>
+                        @foreach (var value in BestScoredMapTags.Select((tag, index) => (tag, number: index + 1)))
+                        {
+                            <MudChip Color="MudBlazor.Color.Primary" Size="MudBlazor.Size.Small">@value.number. @value.tag</MudChip>
+                        }
+                    </div>
                 </MudCardContent>
             </MudCard>
             <MudGrid Class="full-height mx-0">
