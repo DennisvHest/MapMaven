@@ -1,0 +1,5 @@
+@media screen and (max-width: 1440px) {
+    #rank-history-chart-header {
+        flex-direction: column;
+    }
+}

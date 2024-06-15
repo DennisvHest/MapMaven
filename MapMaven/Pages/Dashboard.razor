@@ -120,14 +120,14 @@
                     </div>
                 </MudCardContent>
             </MudCard>
-            <MudGrid Class="full-height mx-0">
-                <MudItem xs="12" Class="full-height" Style="overflow-y: auto;">
+            <MudGrid Class="full-height mx-0" Style="max-height: calc(100vh - 48px); overflow-y: auto; overflow-x: hidden;">
+                <MudItem xs="12" Class="full-height">
                     <MudGrid>
                         <MudItem xs="12">
                             <MudCard>
                                 <MudCardHeader Class="card-header-highlight">
                                     <CardHeaderContent>
-                                        <div class="d-flex align-center justify-space-between">
+                                        <div id="rank-history-chart-header" class="d-flex align-center justify-space-between">
                                             <div class="d-flex">
                                                 <MudIcon Icon="@Icons.Material.Filled.Language" Class="mr-2"></MudIcon>
                                                 <MudText Typo="Typo.h6">Global rank</MudText>
@@ -183,7 +183,7 @@
                                 </MudCardContent>
                             </MudCard>
                         </MudItem>
-                        <MudItem xs="6">
+                        <MudItem xs="12" lg="6">
                             <MudCard>
                                 <MudCardHeader Class="card-header-highlight">
                                     <CardHeaderContent>
@@ -193,7 +193,7 @@
                                 <MapList Maps="RecentHighPpGainMaps" ShowHeader="false" HiddenColumns="[MapListColumn.ScoreEstimates]"></MapList>
                             </MudCard>
                         </MudItem>
-                        <MudItem xs="6">
+                        <MudItem xs="12" lg="6">
                             <MudCard>
                                 <MudCardHeader Class="card-header-highlight">
                                     <CardHeaderContent>
