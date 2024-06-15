@@ -183,7 +183,9 @@ namespace MapMaven.Core.Services.Leaderboards
 
                         return Observable.Return(Enumerable.Empty<RankHistoryRecord>());
                     });
-                }).Concat();
+                }).Concat().Replay(1);
+
+            playerHistory.Connect();
 
             PlayerProfile = Observable.CombineLatest(playerProfile, playerHistory, (profile, history) =>
             {

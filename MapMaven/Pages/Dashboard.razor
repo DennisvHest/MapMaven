@@ -6,6 +6,11 @@
 
 @page "/"
 
+@if (LoadingDashboardData)
+{
+    <MudProgressLinear Color="MudBlazor.Color.Primary" Class="fixed" Indeterminate="true" />
+}
+
 <MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="full-height" Style="padding-top: 24px; padding-bottom: 24px;">
     @if (Player is not null)
     {
@@ -208,12 +213,15 @@
                                                 {
                                                     <MudChip Size="MudBlazor.Size.Small"><MudIcon Icon="@Icons.Material.Filled.Label" /> @RecentBestScoredMapTag</MudChip>
                                                 }
-                                                <MudTooltip Text="Create playlist from recommended maps">
-                                                    <MudMenu Icon="@Icons.Material.Filled.PlaylistAdd">
-                                                        <MudMenuItem OnClick="AddRecommendedMapsToPlaylist" Icon="@Icons.Material.Filled.PlaylistAdd">Create recommended maps playlist</MudMenuItem>
-                                                        <MudMenuItem OnClick="AddRecommendedMapsDynamicPlaylist" Icon="@Icons.Material.Filled.PlaylistAdd">Create recommended maps dynamic playlist</MudMenuItem>
-                                                    </MudMenu>
-                                                </MudTooltip>
+                                                @if (RecentAverageStarDifficulty.HasValue && !string.IsNullOrEmpty(RecentBestScoredMapTag))
+                                                {
+                                                    <MudTooltip Text="Create playlist from recommended maps">
+                                                        <MudMenu Icon="@Icons.Material.Filled.PlaylistAdd">
+                                                            <MudMenuItem OnClick="AddRecommendedMapsToPlaylist" Icon="@Icons.Material.Filled.PlaylistAdd">Create recommended maps playlist</MudMenuItem>
+                                                            <MudMenuItem OnClick="AddRecommendedMapsDynamicPlaylist" Icon="@Icons.Material.Filled.PlaylistAdd">Create recommended maps dynamic playlist</MudMenuItem>
+                                                        </MudMenu>
+                                                    </MudTooltip>
+                                                }
                                             </div>
                                         </div>
                                     </CardHeaderContent>

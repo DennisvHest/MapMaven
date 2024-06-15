@@ -8,9 +8,11 @@ using MapMaven.Core.Models.DynamicPlaylists.MapInfo;
 using MapMaven.Core.Services;
 using MapMaven.Core.Services.Interfaces;
 using MapMaven.Core.Services.Leaderboards;
+using MapMaven.Core.Services.Leaderboards.ScoreEstimation;
 using MapMaven.Core.Utilities.BeatSaver;
 using MapMaven.Extensions;
 using MapMaven.Models;
+using MapMaven.Services;
 using MapMaven.Utility;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
@@ -28,10 +30,16 @@ namespace MapMaven.Pages
         ILeaderboardService LeaderboardService { get; set; }
 
         [Inject]
+        IBeatSaberDataService BeatSaberDataService { get; set; }
+
+        [Inject]
         IMapService MapService { get; set; }
 
         [Inject]
         IPlaylistService PlaylistService { get; set; }
+
+        [Inject]
+        IEnumerable<IScoreEstimationService> ScoreEstimationServices { get; set; }
 
         [Inject]
         IDialogService DialogService { get; set; }
@@ -41,6 +49,8 @@ namespace MapMaven.Pages
 
         [Inject]
         public NavigationManager NavigationManager { get; set; }
+
+        bool LoadingDashboardData { get; set; } = false;
 
         PlayerProfile Player { get; set; }
 
@@ -126,6 +136,16 @@ namespace MapMaven.Pages
                 NavigationManager.NavigateTo("/maps"); // Start page should be the maps page if no leaderboard provider is set
                 return;
             }
+
+            var estimatingScoresObservable = Observable.CombineLatest(ScoreEstimationServices.Select(s => s.EstimatingScores), x => x.Any(estimatingScores => estimatingScores));
+
+            var loadingObservable = Observable.CombineLatest(
+                BeatSaberDataService.LoadingMapInfo,
+                estimatingScoresObservable,
+                (loadingMapInfo, estimatingScores) => loadingMapInfo || estimatingScores
+            );
+
+            SubscribeAndBind(loadingObservable, loading => LoadingDashboardData = loading);
 
             SubscribeAndBind(LeaderboardService.PlayerIdObservable.Zip(LeaderboardService.PlayerIdObservable.Skip(1), (previousPlayerId, playerId) => (previousPlayerId, playerId)), x =>
             {
