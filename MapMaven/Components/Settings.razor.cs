@@ -130,12 +130,13 @@ namespace MapMaven.Components
             Task.Run(async () =>
             {
                 await BeatSaberToolFileService.SetBeatSaberInstallLocation(BeatSaberInstallLocation);
-                await ScoreSaberService.SetPlayerId(ScoreSaberPlayerId);
-                await BeatLeaderService.SetPlayerId(BeatLeaderPlayerId);
-
+                
                 if (ActiveLeaderboardProvider.HasValue)
                     await LeaderboardService.SetActiveLeaderboardProviderAsync(ActiveLeaderboardProvider.Value);
             });
+
+            await ScoreSaberService.SetPlayerId(ScoreSaberPlayerId);
+            await BeatLeaderService.SetPlayerId(BeatLeaderPlayerId);
         }
 
         public async Task ResetApplicationAsync()
