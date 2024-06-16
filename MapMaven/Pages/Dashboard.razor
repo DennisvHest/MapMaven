@@ -6,7 +6,7 @@
 
 @page "/"
 
-@if (LoadingDashboardData)
+@if (Player is null || LoadingDashboardData)
 {
     <MudProgressLinear Color="MudBlazor.Color.Primary" Class="fixed" Indeterminate="true" />
 }
