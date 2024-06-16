@@ -8,6 +8,9 @@
              SortMode="SortMode.None"
              HeaderClass="@headerCssClass"
              Class="full-height full-width">
+    <NoRecordsContent>
+        @NoMapsContent
+    </NoRecordsContent>
     <ColGroup>
         <col style="width: 30px" />
         <col style="width: 30px" />
@@ -99,6 +102,10 @@
     [Parameter]
     public IEnumerable<MapListColumn> HiddenColumns { get; set; } = [];
 
+    [Parameter]
+    public RenderFragment NoMapsContent { get; set; }
+
+
     void OpenDetails(Map map)
     {
         var fullMap = MapService.GetMapById(map.Id);
@@ -107,11 +114,11 @@
             title: null,
             parameters: new() { { nameof(MapDetail.Map), fullMap }, { nameof(MapDetail.MapHash), map.Hash } },
             options: new()
-            {
-                MaxWidth = MaxWidth.Small,
-                FullWidth = true,
-                CloseButton = true
-            }
+                {
+                    MaxWidth = MaxWidth.Small,
+                    FullWidth = true,
+                    CloseButton = true
+                }
         );
     }
 }

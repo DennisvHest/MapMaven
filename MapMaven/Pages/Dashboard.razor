@@ -68,7 +68,7 @@
                                     <b>pp</b>
                                     <MudText Typo="Typo.caption">Top PP</MudText>
                                 </div>
-                                <MudText Typo="Typo.caption"><b>@TopPp?.ToString("#0.##")</b></MudText>
+                                <MudText Typo="Typo.caption"><b>@(TopPp?.ToString("#0.##") ?? "-")</b></MudText>
                             </div>
                         </MudListItem>
                         <MudListItem InitiallyExpanded="true">
@@ -82,13 +82,13 @@
                                 <MudListItem Class="pl-0">
                                     <div class="d-flex align-center justify-space-between">
                                         <MudText Typo="Typo.caption">Average ranked accuracy</MudText>
-                                        <MudText Typo="Typo.caption"><b>@AverageRankedAccuracy?.ToString("#0.##")</b></MudText>
+                                        <MudText Typo="Typo.caption"><b>@(AverageRankedAccuracy?.ToString("#0.##") ?? "-")</b></MudText>
                                     </div>
                                 </MudListItem>
                                 <MudListItem Class="pl-0">
                                     <div class="d-flex align-center justify-space-between">
                                         <MudText Typo="Typo.caption">Top ranked accuracy</MudText>
-                                        <MudText Typo="Typo.caption"><b>@TopRankedAccuracy?.ToString("#0.##")</b></MudText>
+                                        <MudText Typo="Typo.caption"><b>@(TopRankedAccuracy?.ToString("#0.##") ?? "-")</b></MudText>
                                     </div>
                                 </MudListItem>
                             </NestedList>
@@ -104,13 +104,13 @@
                                 <MudListItem Class="pl-0">
                                     <div class="d-flex align-center justify-space-between">
                                         <MudText Typo="Typo.caption">Average star difficulty</MudText>
-                                        <MudText Typo="Typo.caption"><b>@AverageStarDifficulty?.ToString("#0.##")</b></MudText>
+                                        <MudText Typo="Typo.caption"><b>@(AverageStarDifficulty?.ToString("#0.##") ?? "-")</b></MudText>
                                     </div>
                                 </MudListItem>
                                 <MudListItem Class="pl-0">
                                     <div class="d-flex align-center justify-space-between">
                                         <MudText Typo="Typo.caption">Top star difficulty</MudText>
-                                        <MudText Typo="Typo.caption"><b>@TopStarDifficulty?.ToString("#0.##")</b></MudText>
+                                        <MudText Typo="Typo.caption"><b>@(TopStarDifficulty?.ToString("#0.##") ?? "-")</b></MudText>
                                     </div>
                                 </MudListItem>
                             </NestedList>
@@ -121,6 +121,10 @@
                         @foreach (var value in BestScoredMapTags.Select((tag, index) => (tag, number: index + 1)))
                         {
                             <MudChip Color="MudBlazor.Color.Primary" Size="MudBlazor.Size.Small">@value.number. @value.tag</MudChip>
+                        }
+                        @if (!BestScoredMapTags.Any())
+                        {
+                            @:-
                         }
                     </div>
                 </MudCardContent>
@@ -195,7 +199,13 @@
                                         <b>Recent high PP gain maps</b>
                                     </CardHeaderContent>
                                 </MudCardHeader>
-                                <MapList Maps="RecentHighPpGainMaps" ShowHeader="false" HiddenColumns="[MapListColumn.ScoreEstimates]"></MapList>
+                                <MapList Maps="RecentHighPpGainMaps"
+                                         ShowHeader="false"
+                                         HiddenColumns="[MapListColumn.ScoreEstimates]">
+                                    <NoMapsContent>
+                                        No recent high PP gain maps. <MudButton Variant="Variant.Text" Color="MudBlazor.Color.Info" Href="/improve">Unlock your potential</MudButton>
+                                    </NoMapsContent>
+                                </MapList>
                             </MudCard>
                         </MudItem>
                         <MudItem xs="12" lg="6">
@@ -226,7 +236,13 @@
                                         </div>
                                     </CardHeaderContent>
                                 </MudCardHeader>
-                                <MapList Maps="RecommendedMaps" ShowHeader="false" HiddenColumns="[MapListColumn.Pp]"></MapList>
+                                <MapList Maps="RecommendedMaps"
+                                         ShowHeader="false"
+                                         HiddenColumns="[MapListColumn.Pp]">
+                                    <NoMapsContent>
+                                        No recommendations based on recent scores. <MudButton Variant="Variant.Text" Color="MudBlazor.Color.Info" Href="/improve">Unlock your potential</MudButton>
+                                    </NoMapsContent>
+                                </MapList>
                             </MudCard>
                         </MudItem>
                     </MudGrid>

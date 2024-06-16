@@ -194,6 +194,9 @@ namespace MapMaven.Pages
 
                 var rankedScores = scores.Where(s => s.Leaderboard.Stars > 0);
 
+                if (!rankedScores.Any())
+                    return;
+
                 TopPp = rankedScores.Max(s => s.Score.Pp);
 
                 AverageStarDifficulty = rankedScores
