@@ -1,0 +1,124 @@
+﻿@{
+    var headerCssClass = ShowHeader ? string.Empty : "d-none";
+}
+
+<MudDataGrid T="Map"
+             Items="Maps"
+             Dense="true"
+             SortMode="SortMode.None"
+             HeaderClass="@headerCssClass"
+             Class="full-height full-width">
+    <NoRecordsContent>
+        @NoMapsContent
+    </NoRecordsContent>
+    <ColGroup>
+        <col style="width: 30px" />
+        <col style="width: 30px" />
+        <col />
+        <col />
+        <col />
+        <col />
+    </ColGroup>
+    <Columns>
+        <TemplateColumn T="Map" CellClass="py-2 pl-4 pr-0">
+            <CellTemplate>
+                <MapCover Map="context.Item" Size="30"></MapCover>
+            </CellTemplate>
+        </TemplateColumn>
+        <TemplateColumn T="Map" CellClass="pa-2">
+            <CellTemplate>
+                <MudTooltip Text="Open map details" ShowOnFocus="false">
+                    <MudIconButton Icon="@Icons.Material.Filled.Info" Variant="Variant.Text" Size="Size.Small" OnClick="() => OpenDetails(context.Item)" />
+                </MudTooltip>
+            </CellTemplate>
+        </TemplateColumn>
+        <PropertyColumn T="Map" Hidden="@HiddenColumns.Contains(MapListColumn.Name)" TProperty="string" Property="m => m.Name" Title="Name" CellStyle="word-break: break-word;"></PropertyColumn>
+        <TemplateColumn T="Map" CellClass="pa-1">
+            <CellTemplate>
+                @context.Item.HighestPlayerScore?.Score?.TimeSet.DateTime.ToShortDateString()
+            </CellTemplate>
+        </TemplateColumn>
+        <TemplateColumn T="Map" Hidden="@HiddenColumns.Contains(MapListColumn.Difficulty)" CellClass="pa-1">
+            <CellTemplate>
+                @{
+                    var difficulty = context.Item.Difficulty;
+                    var chipStyle = $"border: 1px solid {DifficultyDisplayUtils.GetColor(difficulty?.Difficulty)}";
+                }
+                <MudChip Size="Size.Small" Variant="Variant.Outlined" Style="@chipStyle">
+                    @DifficultyDisplayUtils.GetShortName(difficulty?.Difficulty)
+                </MudChip>
+            </CellTemplate>
+        </TemplateColumn>
+        <TemplateColumn T="Map" Hidden="@HiddenColumns.Contains(MapListColumn.Pp)" CellClass="pa-1">
+            <CellTemplate>
+                <MudChip Size="Size.Small">
+                    <span>@context.Item.HighestPlayerScore?.Score.Pp.ToString("#0.##") <b>pp</b></span>
+                </MudChip>
+            </CellTemplate>
+        </TemplateColumn>
+        <TemplateColumn T="Map" Hidden="@HiddenColumns.Contains(MapListColumn.ScoreEstimates)" CellClass="pa-1">
+            <CellTemplate>
+                @if (context.Item.ScoreEstimates != null)
+                {
+                    @foreach (var scoreEstimate in context.Item.ScoreEstimates)
+                    {
+                        <MudTooltip RootClass="d-flex">
+                            <ChildContent>
+                                <MudChip Color="Color.Primary" Size="Size.Small">
+                                    @scoreEstimate.Accuracy.ToString("#0.##")% |
+                                    +@scoreEstimate.PPIncrease.ToString("#0.##") pp
+                                </MudChip>
+                            </ChildContent>
+                            <TooltipContent>
+                                <p style="text-align: left; max-width: 300px;">
+                                    <b>Estimated accuracy:</b> @scoreEstimate.Accuracy.ToString("#0.##")%<br />
+                                    <b>Estimated PP increase:</b> +@scoreEstimate.PPIncrease.ToString("#0.##") pp
+                                </p>
+                            </TooltipContent>
+                        </MudTooltip>
+                    }
+                }
+            </CellTemplate>
+        </TemplateColumn>
+    </Columns>
+    <PagerContent>
+        <MudDataGridPager T="Map" PageSizeOptions="[8]" DisableRowsPerPage="true" />
+    </PagerContent>
+</MudDataGrid>
+
+@code {
+    [Inject]
+    IMapService MapService { get; set; }
+
+    [Inject]
+    IDialogService DialogService { get; set; }
+
+    [Parameter]
+    public IEnumerable<Map> Maps { get; set; }
+
+    [Parameter]
+    public bool ShowHeader { get; set; } = true;
+
+    [Parameter]
+    public IEnumerable<MapListColumn> HiddenColumns { get; set; } = [];
+
+    [Parameter]
+    public RenderFragment NoMapsContent { get; set; }
+
+
+    void OpenDetails(Map map)
+    {
+        var fullMap = MapService.GetMapById(map.Id);
+
+        DialogService.Show<MapDetail>(
+            title: null,
+            parameters: new() { { nameof(MapDetail.Map), fullMap }, { nameof(MapDetail.MapHash), map.Hash } },
+            options: new()
+                {
+                    MaxWidth = MaxWidth.Small,
+                    FullWidth = true,
+                    CloseButton = true
+                }
+        );
+    }
+}

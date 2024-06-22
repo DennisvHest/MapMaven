@@ -81,6 +81,7 @@
     <ItemGroup>
       <PackageReference Include="BeatSaber.SongHashing" Version="1.2.0" />
       <PackageReference Include="BeatSaberPlaylistsLib" Version="1.6.6" />
+      <PackageReference Include="Blazor-ApexCharts" Version="3.1.0" />
       <PackageReference Include="Clowd.Squirrel" Version="2.11.1" />
       <PackageReference Include="CodeBeam.MudBlazor.Extensions" Version="6.9.2" />
       <PackageReference Include="Markdig" Version="0.37.0" />

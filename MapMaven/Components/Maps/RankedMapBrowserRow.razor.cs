@@ -20,12 +20,31 @@ namespace MapMaven.Components.Maps
         [Inject]
         ISnackbar Snackbar { get; set; }
 
+        [Inject]
+        IDialogService DialogService { get; set; }
+
         [Parameter]
         public IEnumerable<Map> FilteredMaps { get; set; }
 
         bool MapIsInstalled(Map map)
         {
             return MapService.MapIsInstalled(map);
+        }
+
+        void OpenDetails(Map map)
+        {
+            var fullMap = MapService.GetMapById(map.Id);
+
+            DialogService.Show<MapDetail>(
+                title: null,
+                parameters: new() { { nameof(MapDetail.Map), fullMap }, { nameof(MapDetail.MapHash), map.Hash } },
+                options: new()
+                {
+                    MaxWidth = MaxWidth.Small,
+                    FullWidth = true,
+                    CloseButton = true
+                }
+            );
         }
 
         async Task DownloadMap(Map map)

@@ -96,7 +96,7 @@ namespace MapMaven.Components.Playlists
 
         protected void OnPlaylistSelect(Playlist playlist)
         {
-            NavigationManager.NavigateTo("/");
+            NavigationManager.NavigateTo("/maps");
 
             SelectedPlaylist = playlist;
 

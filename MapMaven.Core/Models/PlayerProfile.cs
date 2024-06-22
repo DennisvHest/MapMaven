@@ -1,4 +1,6 @@
-﻿namespace MapMaven.Core.Models
+﻿using System.Linq;
+
+namespace MapMaven.Core.Models
 {
     public class PlayerProfile
     {
@@ -10,6 +12,7 @@
         public int CountryRank { get; set; }
         public double Pp { get; set; }
         public LeaderboardProvider LeaderboardProvider { get; set; }
+        public IEnumerable<RankHistoryRecord> RankHistory { get; set; } = [];
 
         public PlayerProfile() {}
 
@@ -23,6 +26,22 @@
             CountryRank = Convert.ToInt32(player.CountryRank);
             Pp = player.Pp;
             LeaderboardProvider = LeaderboardProvider.ScoreSaber;
+
+            var playerRankHistory = player.Histories
+                ?.Split(',')
+                .Select(int.Parse)
+                .Cast<int?>()
+                .ToArray() ?? [];
+
+            RankHistory = [new RankHistoryRecord() { Date = DateOnly.FromDateTime(DateTime.Today), Rank = Rank }];
+
+            RankHistory = RankHistory.Concat(Enumerable.Range(1, 49).Select(dateOffset => new RankHistoryRecord
+            {
+                Rank = playerRankHistory.ElementAtOrDefault(playerRankHistory.Length - dateOffset),
+                Date = DateOnly.FromDateTime(DateTime.Today.AddDays(-dateOffset))
+            }));
+
+            RankHistory = RankHistory.OrderBy(x => x.Date);
         }
 
         public PlayerProfile(ApiClients.BeatLeader.PlayerResponseFull playerProfile)
@@ -35,6 +54,7 @@
             CountryRank = Convert.ToInt32(playerProfile.CountryRank);
             Pp = playerProfile.Pp;
             LeaderboardProvider = LeaderboardProvider.BeatLeader;
+            RankHistory = [];
         }
     }
 }

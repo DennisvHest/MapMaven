@@ -42,5 +42,7 @@ namespace MapMaven.Core.Services.Interfaces
         void AddMapFilters(IEnumerable<MapFilter> filters);
         void RemoveMapFilters(IEnumerable<MapFilter> filters);
         void SetMapSort(MapSort? sort);
+        Map? GetMapById(string mapId);
+        Task<Map?> GetMapDetails(string mapHash);
     }
 }

@@ -81,6 +81,10 @@
     flex: 1;
 }
 
+.card-header-highlight {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
 .markdown img {
     width: 100%;
 }
@@ -184,6 +188,14 @@ a:hover {
 
 .no-title .mud-dialog-title {
     display: none;
+}
+
+.mud-chip.mud-schip-size-extra-small {
+    border-radius: 10px;
+    font-size: 10px;
+    height: 20px;
+    padding: 0 6px;
+}
 }
 
 .default-html > ul {

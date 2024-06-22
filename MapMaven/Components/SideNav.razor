@@ -3,11 +3,20 @@
 <MudDrawer Open="true" Elevation="1" Class="sidenav">
     <PlayerProfile></PlayerProfile>
     <MudNavMenu Color="Color.Primary" Bordered="true" Class="full-height d-flex flex-column fill-remaining-space">
+        @if (!string.IsNullOrEmpty(PlayerId))
+        {
+            <MudNavLink Icon="@Icons.Material.Filled.Home"
+                        DisableRipple="true"
+                        Match="NavLinkMatch.All"
+                        Href="/">
+                Home
+            </MudNavLink>
+        }
         <div @onclick="OnMapsNavigation">
             <MudNavLink Icon="@Icons.Filled.LibraryMusic"
                         DisableRipple="true"
                         Match="NavLinkMatch.All"
-                        Href="/">
+                        Href="/maps">
                 Maps
             </MudNavLink>
         </div>
@@ -15,9 +24,9 @@
         {
             <div @onclick="OnMapsNavigation">
                 <MudNavLink Icon="@Icons.Filled.KeyboardDoubleArrowUp"
-                        DisableRipple="true"
-                        Match="NavLinkMatch.All"
-                        Href="/improve">
+                            DisableRipple="true"
+                            Match="NavLinkMatch.All"
+                            Href="/improve">
                     Improve
                 </MudNavLink>
             </div>

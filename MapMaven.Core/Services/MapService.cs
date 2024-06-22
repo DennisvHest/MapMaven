@@ -38,6 +38,7 @@ namespace MapMaven.Services
         private readonly BehaviorSubject<IEnumerable<HiddenMap>> _hiddenMaps = new(Enumerable.Empty<HiddenMap>());
 
         public IObservable<IEnumerable<Map>> Maps { get; private set; }
+        private IEnumerable<Map> _maps { get; set; } = Enumerable.Empty<Map>();
         public IObservable<IEnumerable<Map>> RankedMaps { get; private set; }
         public IObservable<IEnumerable<Map>> CompleteMapData { get; private set; }
         public IObservable<IEnumerable<Map>> CompleteRankedMapData { get; private set; }
@@ -82,6 +83,8 @@ namespace MapMaven.Services
                 _leaderBoardService.PlayerScores.StartWith(Enumerable.Empty<PlayerScore>()),
                 _leaderBoardService.RankedMapScoreEstimates.StartWith(Enumerable.Empty<ScoreEstimate>()),
                 CombineMapData);
+
+            Maps.Subscribe(maps => _maps = maps);
 
             HiddenMaps = Observable.CombineLatest(_hiddenMaps, _leaderBoardService.PlayerProfile, (hiddenMaps, player) =>
             {
@@ -286,6 +289,18 @@ namespace MapMaven.Services
 
             return map;
         }
+
+        public async Task<Map?> GetMapDetails(string mapHash)
+        {
+            var beatMap = await _beatSaver.BeatmapByHash(mapHash);
+
+            if (beatMap is null)
+                return null;
+
+            return new Map(beatMap);
+        }
+
+        public Map? GetMapById(string mapId) => _maps.FirstOrDefault(m => m.Id == mapId);
 
         public async Task DownloadMap(Map map, bool force = false, IProgress<double>? progress = null, bool loadMapInfo = true, CancellationToken cancellationToken = default)
         {

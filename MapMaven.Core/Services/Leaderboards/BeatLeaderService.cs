@@ -121,7 +121,7 @@ namespace MapMaven.Core.Services.Leaderboards
 
             PlayerScores = playerScores;
 
-            PlayerProfile = _playerId
+            var playerProfile = _playerId
                 .Select(playerId =>
                 {
                     if (string.IsNullOrEmpty(playerId))
@@ -137,6 +137,7 @@ namespace MapMaven.Core.Services.Leaderboards
                             keepOriginalId: false,
                             leaderboardContext: (ApiClients.BeatLeader.LeaderboardContexts)Models.Data.Leaderboards.BeatLeader.LeaderboardContexts.General
                         );
+
                         return new PlayerProfile(playerProfile);
                     })
                     .Catch((Exception exception) =>
@@ -151,6 +152,50 @@ namespace MapMaven.Core.Services.Leaderboards
                     });
                 })
                 .Concat();
+
+            var playerHistory = _playerId
+                .Select(playerId =>
+                {
+                    if (string.IsNullOrEmpty(playerId))
+                        return Observable.Return(Enumerable.Empty<RankHistoryRecord>());
+
+                    return Observable.FromAsync(async () =>
+                    {
+                        await _beatLeaderApiLimit;
+
+                        var history = await _beatLeader.HistoryAsync(
+                            id: playerId,
+                            leaderboardContext: (ApiClients.BeatLeader.LeaderboardContexts)Models.Data.Leaderboards.BeatLeader.LeaderboardContexts.General,
+                            count: 50
+                        );
+
+                        return history
+                            ?.Select(h => new RankHistoryRecord(h))
+                            .OrderBy(h => h.Date) ?? Enumerable.Empty<RankHistoryRecord>();
+                    })
+                    .Catch((Exception exception) =>
+                    {
+                        _applicationEventService.RaiseError(new ErrorEvent
+                        {
+                            Exception = exception,
+                            Message = "Failed to load player history from BeatLeader."
+                        });
+
+                        return Observable.Return(Enumerable.Empty<RankHistoryRecord>());
+                    });
+                }).Concat().Replay(1);
+
+            playerHistory.Connect();
+
+            PlayerProfile = Observable.CombineLatest(playerProfile, playerHistory, (profile, history) =>
+            {
+                if (profile is null)
+                    return null;
+
+                profile.RankHistory = history ?? Enumerable.Empty<RankHistoryRecord>();
+
+                return profile;
+            });
 
             _rankedMaps = new(GetRankedMaps, TimeSpan.FromHours(6), []);
 

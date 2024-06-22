@@ -28,7 +28,7 @@ namespace MapMaven.Core.Services.Leaderboards
         public IObservable<LeaderboardProvider?> ActiveLeaderboardProviderName => _activeLeaderboardProviderName;
         public IObservable<IEnumerable<ILeaderboardProviderService>> AvailableLeaderboardProviderServices { get; private set; }
 
-        public string? PlayerId => LeaderboardProviders[_activeLeaderboardProviderName.Value].PlayerId;
+        public string? PlayerId => _activeLeaderboardProviderName.Value is not null ? LeaderboardProviders[_activeLeaderboardProviderName.Value].PlayerId : null;
         public LeaderboardProvider? ActiveLeaderboardProviderNameValue => _activeLeaderboardProviderName.Value;
 
         public const string ReplayBaseUrl = "https://replay.beatleader.xyz";
