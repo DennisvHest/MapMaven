@@ -29,19 +29,5 @@ namespace MapMaven.Core.Models.Data.Leaderboards.ScoreSaber
         [JsonPropertyName("njs")]
         public double NoteJumpSpeed { get; set; }
         public int RecentScores { get; set; }
-
-        public Map ToMap()
-        {
-            return new Map
-            {
-                Id = Key,
-                Hash = Id,
-                Name = Name,
-                SongAuthorName = Artist,
-                MapAuthorName = Mapper,
-                SongDuration = TimeSpan.FromSeconds((double)(DurationSeconds ?? Duration / Bpm)),
-                CoverImageUrl = $"https://cdn.scoresaber.com/covers/{Id}.png"
-            };
-        }
     }
 }

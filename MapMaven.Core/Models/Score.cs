@@ -13,6 +13,7 @@ namespace MapMaven.Core.Models
         public IEnumerable<string> Modifiers { get; set; } = Enumerable.Empty<string>();
         public double Pp { get; set; }
         public double Weight { get; set; }
+        public double WeightedPp => Pp * Weight;
         public double BadCuts { get; set; }
         public double MissedNotes { get; set; }
         public double MaxCombo { get; set; }

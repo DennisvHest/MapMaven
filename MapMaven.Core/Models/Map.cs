@@ -13,7 +13,7 @@ namespace MapMaven.Models
         public string? Description { get; set; }
         public string SongAuthorName { get; set; }
         public string MapAuthorName { get; set; }
-        public DateTime AddedDateTime { get; set; }
+        public DateTime? AddedDateTime { get; set; }
         public TimeSpan SongDuration { get; set; }
         public TimeSpan PreviewStartTime { get; set; }
         public TimeSpan PreviewDuration { get; set; }
@@ -33,6 +33,21 @@ namespace MapMaven.Models
         public RankedMapDifficultyInfo? Difficulty { get; set; }
         public IEnumerable<ScoreEstimate> ScoreEstimates { get; set; } = Enumerable.Empty<ScoreEstimate>();
         public ScoreEstimate? ScoreEstimate => ScoreEstimates.FirstOrDefault();
+
+        public Map() { }
+
+        public Map(Beatmap beatmap)
+        {
+            Id = beatmap.ID;
+            Hash = beatmap.LatestVersion.Hash;
+            Name = beatmap.Name;
+            SongAuthorName = beatmap.Metadata.SongAuthorName;
+            MapAuthorName = beatmap.Metadata.LevelAuthorName;
+            SongDuration = TimeSpan.FromSeconds(beatmap.Metadata.Duration);
+            CoverImageUrl = beatmap.LatestVersion.CoverURL;
+
+            SetMapDetails(beatmap);
+        }
 
         public void SetRankedMapDetails(RankedMapInfoItem rankedMap)
         {

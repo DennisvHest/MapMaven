@@ -81,6 +81,10 @@
     flex: 1;
 }
 
+.card-header-highlight {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
 .markdown img {
     width: 100%;
 }
@@ -186,6 +190,14 @@ a:hover {
     display: none;
 }
 
+.mud-chip.mud-schip-size-extra-small {
+    border-radius: 10px;
+    font-size: 10px;
+    height: 20px;
+    padding: 0 6px;
+}
+}
+
 .default-html > ul {
     margin: 1em 0;
     padding-left: 40px;
@@ -213,4 +225,8 @@ a:hover {
 
 .default-html > :matches(ol, ul) :matches(ol, ul) ul {
     list-style-type: square;
+}
+
+.mud-icon-button.no-hover-background:hover {
+    background-color: initial !important;
 }
