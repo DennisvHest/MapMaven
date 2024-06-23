@@ -28,7 +28,7 @@ namespace MapMaven.Core.Models
             LeaderboardProvider = LeaderboardProvider.ScoreSaber;
 
             var playerRankHistory = player.Histories
-                ?.Split(',')
+                ?.Split(',', StringSplitOptions.RemoveEmptyEntries)
                 .Select(int.Parse)
                 .Cast<int?>()
                 .ToArray() ?? [];
