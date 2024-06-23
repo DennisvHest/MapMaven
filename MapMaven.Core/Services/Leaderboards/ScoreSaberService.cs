@@ -67,13 +67,30 @@ namespace MapMaven.Core.Services.Leaderboards
 
                     do
                     {
-                        var scoreCollection = await _scoreSaber.ScoresAsync(
-                            playerId: playerId,
-                            limit: 100,
-                            sort: Sort.Top,
-                            page: page,
-                            withMetadata: true
-                        );
+                        PlayerScoreCollection scoreCollection;
+
+                        try
+                        {
+                            scoreCollection = await _scoreSaber.ScoresAsync(
+                                playerId: playerId,
+                                limit: 100,
+                                sort: Sort.Top,
+                                page: page,
+                                withMetadata: true
+                            );
+                        }
+                        catch (ScoreSaberApiClient.ApiException exception)
+                        {
+                            // The ScoreSaber API returns 404 when player has no scores, so just return an empty list of PlayerScores.
+                            if (exception.StatusCode == 404)
+                            {
+                                break;
+                            }
+                            else
+                            {
+                                throw;
+                            }
+                        }
 
                         totalScores = scoreCollection.Metadata.Total;
 

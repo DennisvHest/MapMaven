@@ -12,6 +12,8 @@ Map Maven is an application for managing Beat Saber playlists, discovering new m
 
 You can link Map Maven to ScoreSaber and/or BeatLeader to get recommended ranked maps and see your scores and replays.
 
+![image](https://github.com/DennisvHest/MapMaven/assets/18610083/3205e259-35a5-4448-9d4a-f7dfa7e13bb7)
+
 # Features
 ## Playlist Management
 Easily create and manage your Beat Saber playlists. You can add, edit, and delete maps from your playlists with just a few clicks.
@@ -36,6 +38,12 @@ https://github.com/DennisvHest/MapMaven/assets/18610083/c500c09b-a1bc-48f1-812f-
 The "improve" page shows maps that are recommended for you to improve your skills. It recommends maps based on a machine learning model trained on almost every score on ScoreSaber and BeatLeader, predicting what accuracy you can get and how much pp you can gain. You can create a playlist with the recommended maps. Maps that you don't have on your PC will be downloaded.
 
 https://github.com/DennisvHest/MapMaven/assets/18610083/49b2a941-c779-447d-aa00-2daf42c17e5f
+
+## Statistics
+See statistics about your Beat Saber skills, see your rank progression, see recent high scores and get new recommended maps.
+
+![image](https://github.com/DennisvHest/MapMaven/assets/18610083/3205e259-35a5-4448-9d4a-f7dfa7e13bb7)
+
 
 ## Map browsing
 Browse and search through your maps and add maps to a playlist or watch one of your replays.
