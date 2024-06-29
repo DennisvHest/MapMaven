@@ -148,6 +148,16 @@
                                                     <td colspan="2" style="border-bottom: 1px solid gray;">
                                                         <MudIcon Icon="@Icons.Material.Filled.Leaderboard" Size="Size.Small"></MudIcon>
                                                         <MudText Typo="Typo.overline">Score</MudText>
+                                                        @if (playerScore.Score.HasReplay)
+                                                        {
+                                                            <MudTooltip Text="Open replay">
+                                                                <MudButton Class="replay-button pa-0 ml-2" OnClick="() => OpenReplay(playerScore)" Style="min-width: 0; border-radius: 100%;">
+                                                                    <MudChip Size="Size.Small" Variant="Variant.Text" Style="@($"{chipStyle}; cursor: pointer;")">
+                                                                        <img src="images/replay-icon.png" style="width: 18px" />
+                                                                    </MudChip>
+                                                                </MudButton>
+                                                            </MudTooltip>
+                                                        }
                                                     </td>
                                                 </tr>
                                                 <tr>
@@ -232,6 +242,9 @@
     [Inject]
     private IApplicationEventService ApplicationEventService { get; set; }
 
+    [Inject]
+    protected IDialogService DialogService { get; set; }
+
     [Parameter]
     public Map? Map { get; set; }
 
@@ -260,5 +273,21 @@
                     Message = "Failed to load map details from BeatSaver."
                 });
         }
+    }
+
+    void OpenReplay(PlayerScore playerScore)
+    {
+        var parameters = new DialogParameters
+        {
+            { nameof(Replay.MapId), Map.Id },
+            { nameof(Replay.PlayerScore), playerScore },
+        };
+
+        DialogService.Show<Replay>(null, parameters, new DialogOptions
+        {
+            MaxWidth = MaxWidth.ExtraExtraLarge,
+            FullWidth = true,
+            CloseButton = true
+        });
     }
 }
