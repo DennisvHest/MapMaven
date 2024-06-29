@@ -13,7 +13,7 @@ namespace MapMaven.Services
             {
                 snackbar.Add($"{error.Message} Error: {error.Exception.Message}", Severity.Error, config =>
                 {
-                    config.VisibleStateDuration = int.MaxValue;
+                    config.VisibleStateDuration = (int)TimeSpan.FromMinutes(5).TotalMilliseconds;
                 });
             });
 
