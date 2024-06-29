@@ -194,6 +194,15 @@ namespace MapMaven.Core.Services.Leaderboards
 
                 profile.RankHistory = history ?? Enumerable.Empty<RankHistoryRecord>();
 
+                profile.RankHistory = profile.RankHistory.Concat([
+                    new RankHistoryRecord() {
+                        Date = DateOnly.FromDateTime(DateTime.Today.AddDays(1)),
+                        Rank = profile.Rank,
+                        CountryRank = profile.CountryRank,
+                        Pp = profile.Pp
+                    }
+                ]);
+
                 return profile;
             });
 

@@ -116,8 +116,8 @@ namespace MapMaven.Pages
 
         bool ShowHighPpGainAnnotations { get; set; } = false;
 
+        static readonly DateTime DashboardDateRangeMax = DateTime.Today.AddDays(1);
         static readonly DateTime DashboardDateRangeMin = DateTime.Today.AddDays(-50);
-        static readonly DateTime DashboardDateRangeMax = DateTime.Today;
 
         static readonly DateRange PastFiftyDays = new(DashboardDateRangeMin, DashboardDateRangeMax);
         static readonly DateRange PastMonth = new(DateTime.Today.AddDays(-30), DashboardDateRangeMax);
