@@ -11,11 +11,11 @@
     <MudProgressLinear Color="MudBlazor.Color.Primary" Class="fixed" Indeterminate="true" />
 }
 
-<MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="full-height" Style="padding-top: 24px; padding-bottom: 24px;">
+<MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="full-height" Style="padding-top: 24px; padding-bottom: 24px; height: 100vh;">
     @if (Player is not null)
     {
-        <div class="d-flex align-start">
-            <MudCard Style="width: 250px; min-width: 250px;">
+        <div class="d-flex align-start full-height">
+            <MudCard Style="width: 250px; min-width: 250px; max-height: 100%; overflow-y: auto;">
                 <MudCardHeader Class="card-header-highlight justify-space-between">
                     <div class="d-flex flex-column align-center">
                         <span>
@@ -62,14 +62,54 @@
                 </MudCardHeader>
                 <MudCardContent>
                     <MudList Dense="true" DisableGutters="true" DisablePadding="true">
-                        <MudListItem>
-                            <div class="d-flex align-center justify-space-between">
+                        <MudListItem InitiallyExpanded="true">
+                            <ChildContent>
+                                <div class="d-flex align-center gap-2">
+                                    <MudIcon Size="MudBlazor.Size.Small" Icon="@Icons.Material.Filled.PlayCircle" />
+                                    <b>Plays</b>
+                                </div>
+                            </ChildContent>
+                            <NestedList>
+                                <MudListItem Class="pl-0">
+                                    <div class="d-flex align-center justify-space-between">
+                                        <MudText Typo="Typo.caption">Ranked play count</MudText>
+                                        <MudText Typo="Typo.caption"><b>@(TotalRankedPlays?.ToString("#0.##") ?? "-")</b></MudText>
+                                    </div>
+                                </MudListItem>
+                                <MudListItem Class="pl-0">
+                                    <div class="d-flex align-center justify-space-between">
+                                        <MudText Typo="Typo.caption">Unranked play count</MudText>
+                                        <MudText Typo="Typo.caption"><b>@(TotalUnrankedPlays?.ToString("#0.##") ?? "-")</b></MudText>
+                                    </div>
+                                </MudListItem>
+                                <MudListItem Class="pl-0">
+                                    <div class="d-flex align-center justify-space-between">
+                                        <MudText Typo="Typo.caption">Total play count</MudText>
+                                        <MudText Typo="Typo.caption"><b>@((TotalUnrankedPlays + TotalRankedPlays)?.ToString("#0.##") ?? "-")</b></MudText>
+                                    </div>
+                                </MudListItem>
+                            </NestedList>
+                        </MudListItem>
+                        <MudListItem InitiallyExpanded="true">
+                            <ChildContent>
                                 <div class="d-flex align-center gap-2">
                                     <b>pp</b>
-                                    <MudText Typo="Typo.caption">Top PP</MudText>
                                 </div>
-                                <MudText Typo="Typo.caption"><b>@(TopPp?.ToString("#0.##") ?? "-")</b></MudText>
-                            </div>
+                            </ChildContent>
+                            <NestedList>
+                                <MudListItem Class="pl-0">
+                                    <div class="d-flex align-center justify-space-between">
+                                        <MudText Typo="Typo.caption">Average pp (top 30)</MudText>
+                                        <MudText Typo="Typo.caption"><b>@(AveragePp?.ToString("#0.##") ?? "-")</b></MudText>
+                                    </div>
+                                </MudListItem>
+                                <MudListItem Class="pl-0">
+                                    <div class="d-flex align-center justify-space-between">
+                                        <MudText Typo="Typo.caption">Top pp</MudText>
+                                        <MudText Typo="Typo.caption"><b>@(TopPp?.ToString("#0.##") ?? "-")</b></MudText>
+                                    </div>
+                                </MudListItem>
+                            </NestedList>
                         </MudListItem>
                         <MudListItem InitiallyExpanded="true">
                             <ChildContent>
@@ -103,7 +143,7 @@
                             <NestedList>
                                 <MudListItem Class="pl-0">
                                     <div class="d-flex align-center justify-space-between">
-                                        <MudText Typo="Typo.caption">Average star difficulty</MudText>
+                                        <MudText Typo="Typo.caption">Average star difficulty (top 30)</MudText>
                                         <MudText Typo="Typo.caption"><b>@(AverageStarDifficulty?.ToString("#0.##") ?? "-")</b></MudText>
                                     </div>
                                 </MudListItem>
