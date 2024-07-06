@@ -97,7 +97,10 @@ namespace MapMaven.Pages
         double? CountryRankChange { get; set; }
         double? PpChange { get; set; }
 
+        double? TotalUnrankedPlays { get; set; }
+        double? TotalRankedPlays { get; set; }
         double? TopPp { get; set; }
+        double? AveragePp { get; set; }
         double? AverageStarDifficulty { get; set; }
         double? TopStarDifficulty { get; set; }
         double? AverageRankedAccuracy { get; set; }
@@ -116,8 +119,8 @@ namespace MapMaven.Pages
 
         bool ShowHighPpGainAnnotations { get; set; } = false;
 
+        static readonly DateTime DashboardDateRangeMax = DateTime.Today.AddDays(1);
         static readonly DateTime DashboardDateRangeMin = DateTime.Today.AddDays(-50);
-        static readonly DateTime DashboardDateRangeMax = DateTime.Today;
 
         static readonly DateRange PastFiftyDays = new(DashboardDateRangeMin, DashboardDateRangeMax);
         static readonly DateRange PastMonth = new(DateTime.Today.AddDays(-30), DashboardDateRangeMax);
@@ -194,23 +197,34 @@ namespace MapMaven.Pages
 
                 var rankedScores = scores.Where(s => s.Leaderboard.Stars > 0);
 
-                if (!rankedScores.Any())
-                    return;
+                if (rankedScores.Any())
+                {
+                    TotalRankedPlays = rankedScores.Count();
 
-                TopPp = rankedScores.Max(s => s.Score.Pp);
+                    TopPp = rankedScores.Max(s => s.Score.Pp);
 
-                AverageStarDifficulty = rankedScores
-                    .OrderByDescending(s => s.Score.Pp)
-                    .Take(30)
-                    .Average(s => s.Leaderboard.Stars);
+                    AveragePp = rankedScores
+                        .OrderByDescending(s => s.Score.Pp)
+                        .Take(30)
+                        .Average(s => s.Score.Pp);
 
-                TopStarDifficulty = rankedScores.Max(s => s.Leaderboard.Stars);
+                    AverageStarDifficulty = rankedScores
+                        .OrderByDescending(s => s.Score.Pp)
+                        .Take(30)
+                        .Average(s => s.Leaderboard.Stars);
 
-                AverageRankedAccuracy = rankedScores
-                    .OrderByDescending(s => s.Score.Pp)
-                    .Average(s => s.Score.Accuracy);
+                    TopStarDifficulty = rankedScores.Max(s => s.Leaderboard.Stars);
 
-                TopRankedAccuracy = rankedScores.Max(s => s.Score.Accuracy);
+                    AverageRankedAccuracy = rankedScores
+                        .OrderByDescending(s => s.Score.Pp)
+                        .Average(s => s.Score.Accuracy);
+
+                    TopRankedAccuracy = rankedScores.Max(s => s.Score.Accuracy);
+                }
+
+                var unrankedScores = scores.Where(x => x.Leaderboard.Stars == 0);
+
+                TotalUnrankedPlays = unrankedScores.Count();
             });
 
             var mapsAndHistory = Observable.CombineLatest(MapService.RankedMaps, LeaderboardService.PlayerProfile, _dashboardDateRange, (rankedMaps, playerProfile, dateRange) => (rankedMaps, playerProfile, dateRange));

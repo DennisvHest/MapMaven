@@ -156,12 +156,14 @@
         @foreach (var playerScore in context.Item.AllPlayerScores.Where(s => s.Score.HasReplay))
         {
             var chipStyle = $"cursor: pointer; border: 1px solid {DifficultyDisplayUtils.GetColor(playerScore.Leaderboard?.Difficulty)}";
-            <MudButton Class="replay-button pa-0" OnClick="() => OpenReplay(context.Item, playerScore)" Style="min-width: 0; border-radius: 100%;">
-                <MudChip Size="Size.Small" Variant="Variant.Text" Style="@chipStyle">
-                    @DifficultyDisplayUtils.GetShortName(playerScore.Leaderboard?.Difficulty)
-                    <img src="images/replay-icon.png" class="ml-1" style="width: 18px" />
-                </MudChip>
-            </MudButton>
+            <MudTooltip Text="Open replay">
+                <MudButton Class="replay-button pa-0" OnClick="() => OpenReplay(context.Item, playerScore)" Style="min-width: 0; border-radius: 100%;">
+                    <MudChip Size="Size.Small" Variant="Variant.Text" Style="@chipStyle">
+                        @DifficultyDisplayUtils.GetShortName(playerScore.Leaderboard?.Difficulty)
+                        <img src="images/replay-icon.png" class="ml-1" style="width: 18px" />
+                    </MudChip>
+                </MudButton>
+            </MudTooltip>
         }
     </CellTemplate>
 </SortableTemplateColumn>
