@@ -44,14 +44,14 @@
                     var difficulty = context.Item.Difficulty;
                     var chipStyle = $"border: 1px solid {DifficultyDisplayUtils.GetColor(difficulty?.Difficulty)}";
                 }
-                <MudChip Size="Size.Small" Variant="Variant.Outlined" Class="ma-0" Style="@chipStyle">
+                <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Class="ma-0" Style="@chipStyle">
                     @DifficultyDisplayUtils.GetShortName(difficulty?.Difficulty) | @difficulty?.Stars.ToString("#0.##") <MudIcon Icon="@Icons.Material.Filled.Star" />
                 </MudChip>
             </CellTemplate>
         </TemplateColumn>
         <TemplateColumn T="Map" Hidden="@HiddenColumns.Contains(MapListColumn.Pp)" CellClass="pa-1">
             <CellTemplate>
-                <MudChip Size="Size.Small" Class="ma-0">
+                <MudChip T="string" Size="Size.Small" Class="ma-0">
                     <span>@context.Item.HighestPlayerScore?.Score.Pp.ToString("#0.##") <b>pp</b></span>
                 </MudChip>
             </CellTemplate>
@@ -64,7 +64,7 @@
                     {
                         <MudTooltip RootClass="d-flex">
                             <ChildContent>
-                                <MudChip Color="Color.Primary" Size="Size.Small">
+                                <MudChip T="string" Color="Color.Primary" Size="Size.Small">
                                     @scoreEstimate.Accuracy.ToString("#0.##")% |
                                     +@scoreEstimate.PPIncrease.ToString("#0.##") pp
                                 </MudChip>

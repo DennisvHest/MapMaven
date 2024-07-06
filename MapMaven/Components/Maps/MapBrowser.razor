@@ -26,7 +26,7 @@
                 <MudItem xs="12" Class="d-flex align-center">
                     @if (SelectedPlaylist != null)
                     {
-                        <MudChip Variant="Variant.Outlined">
+                        <MudChip T="string" Variant="Variant.Outlined">
                             @if (SelectedPlaylist.DynamicPlaylistConfiguration?.MapPool == MapPool.Improvement && SelectedPlaylist.DynamicPlaylistConfiguration?.LeaderboardProvider is not null)
                             {
                                 <img src="@LeaderboardUtility.GetLogoPath(SelectedPlaylist.DynamicPlaylistConfiguration.LeaderboardProvider.Value)" class="mr-1" style="width: 24px;" />
@@ -58,16 +58,16 @@
                 <MudItem xs="12" Class="py-0">
                     @if (MapSort is not null)
                     {
-                        <MudChip OnClose="() => RemoveMapSort()" Class="mb-3">@MapSort?.Name</MudChip>
+                        <MudChip T="string" OnClose="() => RemoveMapSort()" Class="mb-3">@MapSort?.Name</MudChip>
                     }
                     @foreach (var mapFilter in MapFilters.Where(f => f.Visible))
                     {
-                        <MudChip OnClose="() => RemoveMapFilter(mapFilter)" Class="mb-3">@mapFilter.Name</MudChip>
+                        <MudChip T="string" OnClose="() => RemoveMapFilter(mapFilter)" Class="mb-3">@mapFilter.Name</MudChip>
                     }
                     @if (MapSort is not null || MapFilters.Any(f => f.Visible))
                     {
                         <MudTooltip Text="Remove all filters and sorts">
-                            <MudChip Variant="Variant.Outlined" OnClick="ClearFiltersAndSort" Class="mb-3">
+                            <MudChip T="string" Variant="Variant.Outlined" OnClick="ClearFiltersAndSort" Class="mb-3">
                                 <MudIcon Icon="@Icons.Material.Filled.FilterAltOff" Size="Size.Small"></MudIcon>
                             </MudChip>
                         </MudTooltip>
@@ -114,7 +114,7 @@
             {
                 <MudPaper Elevation="25" Class="bulk-actions-toolbar">
                     <MudToolBar Class="pr-0 border-l-2">
-                        <MudChip Variant="Variant.Outlined">@SelectedMaps.Count maps</MudChip>
+                        <MudChip T="string" Variant="Variant.Outlined">@SelectedMaps.Count maps</MudChip>
                         <MudButton Variant="Variant.Text" Class="px-5 full-height" StartIcon="@Icons.Material.Filled.Close" OnClick="CancelSelectionAsync">
                             Cancel selection
                         </MudButton>
@@ -144,7 +144,7 @@
                     var chipStyle = $"border: 1px solid {chipColor}";
 
                     <MudTooltip Text="Difficulty modifier">
-                        <MudChip Variant="Variant.Outlined" Style="@chipStyle">
+                        <MudChip T="string" Variant="Variant.Outlined" Style="@chipStyle">
                             <MudIcon Icon="@Icons.Filled.Speed" Class="mr-2"></MudIcon>
                             @(DifficultyModifier >= 0 ? "+" : string.Empty)@DifficultyModifier%
                         </MudChip>

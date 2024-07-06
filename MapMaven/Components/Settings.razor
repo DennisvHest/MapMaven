@@ -103,7 +103,7 @@
             @if (!InitialSetup && UpdateService.IsInstalled)
             {
                 <div class="d-flex align-center full-width py-2" style="border-top: 1px solid grey">
-                    <MudChip
+                    <MudChip T="string"
                         Variant="Variant.Outlined"
                         Size="Size.Small"
                         Disabled="Update is not null"
@@ -113,7 +113,7 @@
 
                     @if (Update is not null)
                     {
-                        <MudChip
+                        <MudChip T="string"
                             Variant="Variant.Outlined"
                             Size="Size.Small"
                             Color="Color.Info"

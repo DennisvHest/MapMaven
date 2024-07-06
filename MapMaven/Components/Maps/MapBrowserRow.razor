@@ -72,7 +72,7 @@
                     @{
                         var chipStyle = $"border: 1px solid {DifficultyDisplayUtils.GetColor(playerScore.Leaderboard?.Difficulty)}";
                     }
-                    <MudChip Size="Size.Small" Variant="Variant.Outlined" Style="@chipStyle">
+                    <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Style="@chipStyle">
                         @DifficultyDisplayUtils.GetShortName(playerScore.Leaderboard?.Difficulty) | @playerScore.Score.AccuracyWithMods.ToString("#0.##")%
                     </MudChip>
                 </ChildContent>
@@ -99,7 +99,7 @@
         @foreach (var playerScore in context.Item.AllPlayerScores)
         {
             var chipStyle = $"border: 1px solid {DifficultyDisplayUtils.GetColor(playerScore.Leaderboard?.Difficulty)}";
-            <MudChip Size="Size.Small" Variant="Variant.Outlined" Style="@chipStyle">
+            <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Style="@chipStyle">
                 @DifficultyDisplayUtils.GetShortName(playerScore.Leaderboard?.Difficulty) | @playerScore.Score.Pp.ToString("#0.##") pp
             </MudChip>
         }
@@ -128,7 +128,7 @@
                         @{
                             var chipStyle = $"border: 1px solid {DifficultyDisplayUtils.GetColor(scoreEstimate.Difficulty)}";
                         }
-                        <MudChip Size="Size.Small" Variant="Variant.Outlined" Style="@chipStyle">
+                        <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Style="@chipStyle">
                             @DifficultyDisplayUtils.GetShortName(scoreEstimate.Difficulty) |
                             @scoreEstimate.Stars.ToString("#0.##") <MudIcon Icon="@Icons.Filled.Star" Size="Size.Small"></MudIcon> |
                             @scoreEstimate.Accuracy.ToString("#0.##") % |
@@ -158,7 +158,7 @@
             var chipStyle = $"cursor: pointer; border: 1px solid {DifficultyDisplayUtils.GetColor(playerScore.Leaderboard?.Difficulty)}";
             <MudTooltip Text="Open replay">
                 <MudButton Class="replay-button pa-0" OnClick="() => OpenReplay(context.Item, playerScore)" Style="min-width: 0; border-radius: 100%;">
-                    <MudChip Size="Size.Small" Variant="Variant.Text" Style="@chipStyle">
+                    <MudChip T="string" Size="Size.Small" Variant="Variant.Text" Style="@chipStyle">
                         @DifficultyDisplayUtils.GetShortName(playerScore.Leaderboard?.Difficulty)
                         <img src="images/replay-icon.png" class="ml-1" style="width: 18px" />
                     </MudChip>

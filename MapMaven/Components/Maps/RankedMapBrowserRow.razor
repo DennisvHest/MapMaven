@@ -31,7 +31,7 @@
             var difficulty = context.Item.Difficulty?.Difficulty;
             var chipStyle = $"border: 1px solid {DifficultyDisplayUtils.GetColor(difficulty)}";
         }
-        <MudChip Size="Size.Small" Variant="Variant.Outlined" Style="@chipStyle">@DifficultyDisplayUtils.GetDisplayName(difficulty)</MudChip>
+        <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Style="@chipStyle">@DifficultyDisplayUtils.GetDisplayName(difficulty)</MudChip>
     </CellTemplate>
 </TemplateColumn>
 <TemplateColumn T="Map" Sortable="false">
@@ -39,7 +39,7 @@
         <MudIcon Icon="@Icons.Filled.Star"></MudIcon>
     </HeaderTemplate>
     <CellTemplate>
-        <MudChip Size="Size.Small">
+        <MudChip T="string" Size="Size.Small">
             @context.Item.Difficulty?.Stars.ToString("0.##") <MudIcon Icon="@Icons.Filled.Star" Size="Size.Small"></MudIcon>
         </MudChip>
     </CellTemplate>
@@ -50,7 +50,7 @@
         {
             <MudTooltip RootClass="d-flex">
                 <ChildContent>
-                    <MudChip Size="Size.Small">@context.Item.HighestPlayerScore.Score.AccuracyWithMods.ToString("#0.##") %</MudChip>
+                    <MudChip T="string" Size="Size.Small">@context.Item.HighestPlayerScore.Score.AccuracyWithMods.ToString("#0.##") %</MudChip>
                 </ChildContent>
                 <TooltipContent>
                     <p style="text-align: left; max-width: 300px;">
@@ -60,7 +60,7 @@
                     </p>
                 </TooltipContent>
             </MudTooltip>
-            <MudChip Size="Size.Small">@context.Item.HighestPlayerScore.Score.Pp.ToString("#0.##") pp</MudChip>
+            <MudChip T="string" Size="Size.Small">@context.Item.HighestPlayerScore.Score.Pp.ToString("#0.##") pp</MudChip>
         }
     </CellTemplate>
 </TemplateColumn>
@@ -75,7 +75,7 @@
             {
                 <MudTooltip RootClass="d-flex">
                     <ChildContent>
-                        <MudChip Color="Color.Primary" Size="Size.Small">
+                        <MudChip T="string" Color="Color.Primary" Size="Size.Small">
                             @scoreEstimate.Accuracy.ToString("#0.##")% |
                             +@scoreEstimate.PPIncrease.ToString("#0.##") pp
                         </MudChip>

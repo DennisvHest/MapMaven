@@ -61,7 +61,7 @@
                     </div>
                 </MudCardHeader>
                 <MudCardContent>
-                    <MudList Dense="true" DisableGutters="true" DisablePadding="true">
+                    <MudList T="string" Dense="true" DisableGutters="true" DisablePadding="true">
                         <MudListItem InitiallyExpanded="true">
                             <ChildContent>
                                 <div class="d-flex align-center gap-2">
@@ -160,7 +160,7 @@
                         <h4>Best scored map tags:</h4>
                         @foreach (var value in BestScoredMapTags.Select((tag, index) => (tag, number: index + 1)))
                         {
-                            <MudChip Color="MudBlazor.Color.Primary" Size="MudBlazor.Size.Small">@value.number. @value.tag</MudChip>
+                            <MudChip T="string" Color="MudBlazor.Color.Primary" Size="MudBlazor.Size.Small">@value.number. @value.tag</MudChip>
                         }
                         @if (!BestScoredMapTags.Any())
                         {
@@ -184,12 +184,12 @@
                                             <div class="d-flex align-center gap-2">
                                                 <MudTooltip Text="Show/hide high pp gain moments">
                                                     <div class="d-flex align-center pr-4 border-r">
-                                                        <MudChip Icon="@Icons.Material.Filled.KeyboardDoubleArrowUp" Label="true">
+                                                        <MudChip T="string" Icon="@Icons.Material.Filled.KeyboardDoubleArrowUp" Label="true">
                                                             <MudCheckBox @bind-Value="ShowHighPpGainAnnotations" @bind-Value:after="SetHighPpGainAnnotations" Dense="true" />
                                                         </MudChip>
                                                     </div>
                                                 </MudTooltip>
-                                                <MudChipSet SelectedValues="[DashboardDateRange]"
+                                                <MudChipSet T="string" SelectedValues="[DashboardDateRange]"
                                                             SelectedValuesChanged="(values) => OnDateRangeChanged(values.FirstOrDefault() as DateRange)"
                                                             Mandatory="true">
                                                     <MudChip Value="PastFiftyDays" Label="true" Variant="Variant.Filled" Color="MudBlazor.Color.Default" SelectedColor="MudBlazor.Color.Default">50 Days</MudChip>
@@ -258,11 +258,11 @@
                                             <div class="d-flex align-center">
                                                 @if (RecentAverageStarDifficulty.HasValue)
                                                 {
-                                                    <MudChip Size="MudBlazor.Size.Small"><MudIcon Icon="@Icons.Material.Filled.Star" /> >= @RecentAverageStarDifficulty.Value.ToString("0.##")</MudChip>
+                                                    <MudChip T="string" Size="MudBlazor.Size.Small"><MudIcon Icon="@Icons.Material.Filled.Star" /> >= @RecentAverageStarDifficulty.Value.ToString("0.##")</MudChip>
                                                 }
                                                 @if (!string.IsNullOrEmpty(RecentBestScoredMapTag))
                                                 {
-                                                    <MudChip Size="MudBlazor.Size.Small"><MudIcon Icon="@Icons.Material.Filled.Label" /> @RecentBestScoredMapTag</MudChip>
+                                                    <MudChip T="string" Size="MudBlazor.Size.Small"><MudIcon Icon="@Icons.Material.Filled.Label" /> @RecentBestScoredMapTag</MudChip>
                                                 }
                                                 @if (RecentAverageStarDifficulty.HasValue && !string.IsNullOrEmpty(RecentBestScoredMapTag))
                                                 {

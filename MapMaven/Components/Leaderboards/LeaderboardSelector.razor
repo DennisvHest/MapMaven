@@ -5,7 +5,7 @@
 
 @if (AvailableLeaderboardProviders.Contains(LeaderboardProvider.ScoreSaber))
 {
-    <MudChip OnClick="() => SetLeaderboardProvider(LeaderboardProvider.ScoreSaber)"
+    <MudChip T="string" OnClick="() => SetLeaderboardProvider(LeaderboardProvider.ScoreSaber)"
              Variant="Variant.Outlined"
              Disabled="SelectedLeaderboardProvider != LeaderboardProvider.ScoreSaber"
              Style="border: 1px solid #ffde18; pointer-events: all;">
@@ -16,7 +16,7 @@
 
 @if (AvailableLeaderboardProviders.Contains(LeaderboardProvider.BeatLeader))
 {
-    <MudChip OnClick="() => SetLeaderboardProvider(LeaderboardProvider.BeatLeader)"
+    <MudChip T="string" OnClick="() => SetLeaderboardProvider(LeaderboardProvider.BeatLeader)"
              Variant="Variant.Outlined"
              Disabled="SelectedLeaderboardProvider != LeaderboardProvider.BeatLeader"
              Style="border: 1px solid #a437b0; pointer-events: all;">

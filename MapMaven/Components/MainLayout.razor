@@ -9,6 +9,7 @@
 @inject IServiceProvider ServiceProvider
 
 <MudThemeProvider Theme="MapMavenTheme.Theme" />
+<MudPopoverProvider />
 <MudDialogProvider />
 <MudSnackbarProvider />
 
@@ -82,7 +83,7 @@
                 },
                 options: new()
                 {
-                    DisableBackdropClick = true,
+                    BackdropClick = false
                 }
             ).Result.ContinueWith(_ =>
             {
