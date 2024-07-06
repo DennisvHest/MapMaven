@@ -36,11 +36,11 @@
 </TemplateColumn>
 <TemplateColumn T="Map" Sortable="false">
     <HeaderTemplate>
-        <MudIcon Icon="@Icons.Filled.Star"></MudIcon>
+        <MudIcon Icon="@Icons.Material.Filled.Star"></MudIcon>
     </HeaderTemplate>
     <CellTemplate>
         <MudChip T="string" Size="Size.Small">
-            @context.Item.Difficulty?.Stars.ToString("0.##") <MudIcon Icon="@Icons.Filled.Star" Size="Size.Small"></MudIcon>
+            @context.Item.Difficulty?.Stars.ToString("0.##") <MudIcon Icon="@Icons.Material.Filled.Star" Size="Size.Small"></MudIcon>
         </MudChip>
     </CellTemplate>
 </TemplateColumn>
@@ -66,7 +66,7 @@
 </TemplateColumn>
 <TemplateColumn T="Map" Sortable="false" Style="width: 130px" HeaderStyle="justify-content: flex-start">
     <HeaderTemplate>
-        <MudIcon Icon="@Icons.Filled.KeyboardDoubleArrowUp"></MudIcon>pp
+        <MudIcon Icon="@Icons.Material.Filled.KeyboardDoubleArrowUp"></MudIcon>pp
     </HeaderTemplate>
     <CellTemplate>
         @if (context.Item.ScoreEstimates != null)
@@ -97,7 +97,7 @@
         {
             <MudTooltip Text="Download">
                 <MudIconButton
-                    Icon="@Icons.Filled.Download"
+                    Icon="@Icons.Material.Filled.Download"
                     Style="pointer-events: all;"
                     OnClick="() => DownloadMap(context.Item)">
                 </MudIconButton>
@@ -109,7 +109,7 @@
     <CellTemplate>
         <MudTooltip Text="@(context.Item.Hidden ? "Un-hide map" : "Hide map")">
             <MudIconButton
-                Icon="@(context.Item.Hidden ? Icons.Filled.RemoveRedEye : Icons.Filled.DisabledVisible)"
+                Icon="@(context.Item.Hidden ? Icons.Material.Filled.RemoveRedEye : Icons.Material.Filled.DisabledVisible)"
                 Style="pointer-events: all;"
                 OnClick="() => HideUnhideMap(context.Item)">
             </MudIconButton>

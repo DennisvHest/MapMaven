@@ -6,9 +6,9 @@
     <MudList T="string" Class="d-flex flex-column" Clickable="true" Color="Color.Primary" Style="height: 50%;">
         <MudListSubheader Class="d-flex align-center justify-space-between py-2" Style="border-top: 1px solid var(--mud-palette-table-lines)">
             <div class="d-flex align-center">
-                <MudIcon Icon="@Icons.Filled.PlaylistPlay"></MudIcon> Playlists
+                <MudIcon Icon="@Icons.Material.Filled.PlaylistPlay"></MudIcon> Playlists
             </div>
-            <MudIconButton Icon="@Icons.Filled.Add" Variant="Variant.Outlined" Size="Size.Small" OnClick="OpenAddPlaylistDialog" />
+            <MudIconButton Icon="@Icons.Material.Filled.Add" Variant="Variant.Outlined" Size="Size.Small" OnClick="OpenAddPlaylistDialog" />
         </MudListSubheader>
         <MudTextField @bind-Value="PlaylistSearchText"
                       DebounceInterval="300"
@@ -52,9 +52,9 @@
     <MudList T="string" Class="d-flex flex-column" Clickable="true" Color="Color.Primary" Style="height: 50%;">
         <MudListSubheader Class="d-flex align-center justify-space-between py-2" Style="border-top: 1px solid var(--mud-palette-table-lines)">
             <div class="d-flex align-center">
-                <MudIcon Icon="@Icons.Filled.PlaylistPlay"></MudIcon> Dynamic Playlists
+                <MudIcon Icon="@Icons.Material.Filled.PlaylistPlay"></MudIcon> Dynamic Playlists
             </div>
-            <MudIconButton Icon="@Icons.Filled.Add" Variant="Variant.Outlined" Size="Size.Small" OnClick="OpenAddDynamicPlaylistDialog" />
+            <MudIconButton Icon="@Icons.Material.Filled.Add" Variant="Variant.Outlined" Size="Size.Small" OnClick="OpenAddDynamicPlaylistDialog" />
         </MudListSubheader>
         <MudTextField @bind-Value="DynamicPlaylistSearchText"
                       DebounceInterval="300"
@@ -92,7 +92,7 @@
     </MudList>
 </div>
 
-<MudDialog @bind-IsVisible="DeleteDialogVisible" Options="new() { DisableBackdropClick = true }">
+<MudDialog @bind-IsVisible="DeleteDialogVisible" Options="new() { BackdropClick = false }">
     <DialogContent>
         <MudText Typo="Typo.body1" Class="mb-3">Are you sure you want to delete the "@PlaylistToDelete.Title" playlist?</MudText>
     </DialogContent>
@@ -100,7 +100,7 @@
         @{
             var deleteMapsLabel = $"Also delete all {GetLoadedMapsCount(PlaylistToDelete)} maps from the game";
         }
-        <MudCheckBox @bind-Checked="DeleteMaps" Label="@deleteMapsLabel" Class="mr-10" Style="opacity: 0.8;"></MudCheckBox>
+        <MudCheckBox @bind-Value="DeleteMaps" Label="@deleteMapsLabel" Class="mr-10" Style="opacity: 0.8;"></MudCheckBox>
         <MudButton OnClick="ClosePlaylistDelete">Cancel</MudButton>
         <MudButton Color="@Color.Error" Variant="Variant.Filled" OnClick="DeletePlaylist">
             @if (DeletingPlaylist)

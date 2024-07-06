@@ -178,7 +178,7 @@ namespace MapMaven.Components.Playlists
             {
                 await PlaylistService.DeletePlaylist(PlaylistToDelete, DeleteMaps);
 
-                Snackbar.Add($"Removed playlist \"{PlaylistToDelete.Title}\"", Severity.Normal, config => config.Icon = Icons.Filled.Check);
+                Snackbar.Add($"Removed playlist \"{PlaylistToDelete.Title}\"", Severity.Normal, config => config.Icon = Icons.Material.Filled.Check);
 
                 ClosePlaylistDelete();
             }

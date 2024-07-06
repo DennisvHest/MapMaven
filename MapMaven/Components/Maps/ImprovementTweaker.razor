@@ -59,7 +59,7 @@
                     <DifficultyModifierSlider></DifficultyModifierSlider>
                     <MudAlert Severity="Severity.Normal" Square="true" Dense="true" NoIcon="true" Style="margin: 16px -24px -16px -24px">
                         <div class="d-flex flex-row align-center gap-3">
-                            <MudIcon Icon="@Icons.Outlined.Info" Size="Size.Small"></MudIcon>
+                            <MudIcon Icon="@Icons.Material.Outlined.Info" Size="Size.Small"></MudIcon>
                             <MudText Typo="Typo.caption" Style="font-size: 11px">
                                 Increase or decrease the difficulty of recommended maps. This difficulty is applied globally and stays saved.
                             </MudText>
@@ -84,7 +84,7 @@
             @if (SelectedMaps.Any())
             {
                 <MudButton Variant="Variant.Text"
-                           StartIcon="@Icons.Filled.Clear"
+                           StartIcon="@Icons.Material.Filled.Clear"
                            Class="full-width mx-0 mt-3 mb-0"
                            OnClick="ClearSelection">
                     Clear selection
@@ -99,7 +99,7 @@
             }
             <MudButton Color="Color.Primary"
                        Variant="Variant.Filled"
-                       StartIcon="@Icons.Filled.PlaylistAdd"
+                       StartIcon="@Icons.Material.Filled.PlaylistAdd"
                        Class="full-width"
                        Disabled="!SelectedMaps.Any() || CreatingPlaylist"
                        OnClick="CreatePlaylistFromSelectedMaps">

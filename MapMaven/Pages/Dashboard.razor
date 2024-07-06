@@ -189,7 +189,7 @@
                                                         </MudChip>
                                                     </div>
                                                 </MudTooltip>
-                                                <MudChipSet T="string" SelectedValues="[DashboardDateRange]"
+                                                <MudChipSet T="DateRange" SelectedValues="[DashboardDateRange]"
                                                             SelectedValuesChanged="(values) => OnDateRangeChanged(values.FirstOrDefault() as DateRange)"
                                                             Mandatory="true">
                                                     <MudChip Value="PastFiftyDays" Label="true" Variant="Variant.Filled" Color="MudBlazor.Color.Default" SelectedColor="MudBlazor.Color.Default">50 Days</MudChip>
@@ -225,7 +225,7 @@
                                                                  YValue="x => x.Rank"
                                                                  DataPointMutator="SetCustomData"
                                                                  OrderBy="x => x.X"
-                                                                 Color="@MapMavenTheme.Theme.Palette.Primary.ColorLighten(0.2).ToString(MudColorOutputFormats.Hex)" />
+                                                                 Color="@MapMavenTheme.Theme.PaletteDark.Primary.ColorLighten(0.2).ToString(MudColorOutputFormats.Hex)" />
                                             </ChildContent>
                                         </ApexChart>
                                     }
@@ -244,7 +244,7 @@
                                          HiddenColumns="[MapListColumn.ScoreEstimates]">
                                     <NoMapsContent>
                                         No recent high PP gain maps.<br />
-                                        <MudButton Variant="Variant.Text" Color="MudBlazor.Color.Info" Href="/improve" StartIcon="@Icons.Filled.KeyboardDoubleArrowUp">Unlock your potential</MudButton>
+                                        <MudButton Variant="Variant.Text" Color="MudBlazor.Color.Info" Href="/improve" StartIcon="@Icons.Material.Filled.KeyboardDoubleArrowUp">Unlock your potential</MudButton>
                                     </NoMapsContent>
                                 </MapList>
                             </MudCard>
@@ -282,7 +282,7 @@
                                          HiddenColumns="[MapListColumn.Pp]">
                                     <NoMapsContent>
                                         No recommendations based on recent scores.<br />
-                                        <MudButton Variant="Variant.Text" Color="MudBlazor.Color.Info" Href="/improve" StartIcon="@Icons.Filled.KeyboardDoubleArrowUp">Unlock your potential</MudButton>
+                                        <MudButton Variant="Variant.Text" Color="MudBlazor.Color.Info" Href="/improve" StartIcon="@Icons.Material.Filled.KeyboardDoubleArrowUp">Unlock your potential</MudButton>
                                     </NoMapsContent>
                                 </MapList>
                             </MudCard>

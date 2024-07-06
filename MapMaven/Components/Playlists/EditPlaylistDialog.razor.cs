@@ -46,7 +46,7 @@ namespace MapMaven.Components.Playlists
                 playlist = await PlaylistService.AddPlaylist(EditPlaylistModel);
                 Snackbar.Add($"Added playlist \"{EditPlaylistModel.Name}\"", Severity.Normal, config =>
                 {
-                    config.Icon = Icons.Filled.Check;
+                    config.Icon = Icons.Material.Filled.Check;
 
                     config.Action = "Open";
                     config.ActionColor = MudBlazor.Color.Primary;
@@ -62,7 +62,7 @@ namespace MapMaven.Components.Playlists
                 playlist = await PlaylistService.EditPlaylist(EditPlaylistModel);
                 Snackbar.Add($"Saved playlist \"{EditPlaylistModel.Name}\"", Severity.Normal, config =>
                 {
-                    config.Icon = Icons.Filled.Check;
+                    config.Icon = Icons.Material.Filled.Check;
 
                     config.Action = "Open";
                     config.ActionColor = MudBlazor.Color.Primary;

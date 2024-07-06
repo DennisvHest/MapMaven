@@ -114,4 +114,14 @@
 		<PackageReference Include="Microsoft.AspNetCore.Components.WebView.Maui" Version="8.0.61" />
 	</ItemGroup>
 
+	<PropertyGroup>
+		<MudAllowedAttributePattern>LowerCase</MudAllowedAttributePattern>
+		<MudIllegalParameters>V7CaseSensitive</MudIllegalParameters>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<CompilerVisibleProperty Include="MudAllowedAttributePattern" />
+		<CompilerVisibleProperty Include="MudIllegalParameters" />
+	</ItemGroup>
+
 </Project>

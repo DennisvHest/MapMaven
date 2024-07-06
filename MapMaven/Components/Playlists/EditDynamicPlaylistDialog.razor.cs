@@ -119,7 +119,7 @@ namespace MapMaven.Components.Playlists
                 playlist = await PlaylistService.AddDynamicPlaylist(SelectedPlaylist);
                 Snackbar.Add($"Added playlist \"{SelectedPlaylist.Name}\"", Severity.Normal, config =>
                 {
-                    config.Icon = Icons.Filled.Check;
+                    config.Icon = Icons.Material.Filled.Check;
 
                     config.Action = "Open";
                     config.ActionColor = MudBlazor.Color.Primary;
@@ -136,7 +136,7 @@ namespace MapMaven.Components.Playlists
                 playlist = await PlaylistService.EditDynamicPlaylist(SelectedPlaylist);
                 Snackbar.Add($"Saved playlist \"{SelectedPlaylist.Name}\"", Severity.Normal, config =>
                 {
-                    config.Icon = Icons.Filled.Check;
+                    config.Icon = Icons.Material.Filled.Check;
 
                     config.Action = "Open";
                     config.ActionColor = MudBlazor.Color.Primary;
