@@ -11,7 +11,7 @@
     <MudDialog Class="no-title">
         <DialogContent>
             <MudPaper Class="my-4" Style="background-color: var(--mud-palette-drawer-background);">
-                <MudList T="string">
+                <MudList ReadOnly="true" T="string">
                     <MudListSubheader Class="d-flex align-center justify-space-between">
                         Filters
                         <MudIconButton Icon="@Icons.Material.Filled.Add" Variant="Variant.Outlined" Size="Size.Small" OnClick="AddFilterOperation" />
@@ -26,7 +26,7 @@
             </MudPaper>
 
             <MudPaper Style="background-color: var(--mud-palette-drawer-background);">
-                <MudList T="string">
+                <MudList ReadOnly="true" T="string">
                     <MudListSubheader Class="d-flex align-center justify-space-between">
                         Sorting
                         <MudIconButton Icon="@Icons.Material.Filled.Add" Variant="Variant.Outlined" Size="Size.Small" OnClick="AddSortOperation" />
