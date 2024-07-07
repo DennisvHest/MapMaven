@@ -189,8 +189,8 @@
                                                         </MudChip>
                                                     </div>
                                                 </MudTooltip>
-                                                <MudChipSet T="DateRange" SelectedValues="[DashboardDateRange]"
-                                                            SelectedValuesChanged="(values) => OnDateRangeChanged(values.FirstOrDefault() as DateRange)"
+                                                <MudChipSet T="DateRange" SelectedValue="DashboardDateRange"
+                                                            SelectedValueChanged="(value) => OnDateRangeChanged(value as DateRange)"
                                                             SelectionMode="SelectionMode.SingleSelection">
                                                     <MudChip Value="PastFiftyDays" Label="true" Variant="Variant.Filled" Color="MudBlazor.Color.Default" SelectedColor="MudBlazor.Color.Default">50 Days</MudChip>
                                                     <MudChip Value="PastMonth" Label="true" Variant="Variant.Filled" Color="MudBlazor.Color.Default" SelectedColor="MudBlazor.Color.Default">Month</MudChip>
