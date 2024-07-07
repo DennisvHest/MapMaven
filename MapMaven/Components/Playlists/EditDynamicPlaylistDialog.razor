@@ -22,7 +22,7 @@
             <div id="custom-dynamic-playlist" class="pt-4 mt-4 d-flex flex-column flex-center">
                 <MudButton OnClick="ConfigureCustomDynamicPlaylist" Variant="Variant.Outlined">
                     <div class="d-flex flex-column align-center justify-center dynamic-playlist-add">
-                        <MudIcon Icon="@Icons.Filled.Settings" Size="Size.Large" Class="mb-2"></MudIcon> Custom
+                        <MudIcon Icon="@Icons.Material.Filled.Settings" Size="Size.Large" Class="mb-2"></MudIcon> Custom
                     </div>
                 </MudButton>
             </div>
@@ -42,7 +42,7 @@ else
             <DialogContent>
                 <PlaylistEditor EditPlaylistModel="SelectedPlaylist"></PlaylistEditor>
                 <MudPaper Class="my-4" Style="background-color: var(--mud-palette-drawer-background);">
-                    <MudList>
+                    <MudList ReadOnly="true" T="string">
                         <MudListItem Class="py-0">
                             <div class="d-flex flex-row align-center">
                                 <b class="mud-list-subheader pa-0 mr-1">Map pool</b>
@@ -82,7 +82,7 @@ else
                 @if (configuration.MapPool == MapPool.Improvement)
                 {
                     <MudPaper Class="my-4" Style="background-color: var(--mud-palette-drawer-background);">
-                        <MudList>
+                        <MudList ReadOnly="true" T="string">
                             <MudListItem Class="py-0">
                                 <div class="d-flex flex-row align-center">
                                     <b class="mud-list-subheader pa-0 mr-1">Leaderboard</b>
@@ -95,10 +95,10 @@ else
                     </MudPaper>
                 }
                 <MudPaper Class="my-4" Style="background-color: var(--mud-palette-drawer-background);">
-                    <MudList>
+                    <MudList ReadOnly="true" T="string">
                         <MudListSubheader Class="d-flex align-center justify-space-between">
                             Filters
-                            <MudIconButton Icon="@Icons.Filled.Add" Variant="Variant.Outlined" Size="Size.Small" OnClick="AddFilterOperation" />
+                            <MudIconButton Icon="@Icons.Material.Filled.Add" Variant="Variant.Outlined" Size="Size.Small" OnClick="AddFilterOperation" />
                         </MudListSubheader>
                         @foreach (var filterOperation in configuration.FilterOperations)
                         {
@@ -110,10 +110,10 @@ else
                 </MudPaper>
 
                 <MudPaper Class="my-4" Style="background-color: var(--mud-palette-drawer-background);">
-                    <MudList>
+                    <MudList ReadOnly="true" T="string">
                         <MudListSubheader Class="d-flex align-center justify-space-between">
                             Sorting
-                            <MudIconButton Icon="@Icons.Filled.Add" Variant="Variant.Outlined" Size="Size.Small" OnClick="AddSortOperation" />
+                            <MudIconButton Icon="@Icons.Material.Filled.Add" Variant="Variant.Outlined" Size="Size.Small" OnClick="AddSortOperation" />
                         </MudListSubheader>
                         @for (var i = 0; i < configuration.SortOperations.Count; i++)
                         {

@@ -11,10 +11,10 @@
     <MudDialog Class="no-title">
         <DialogContent>
             <MudPaper Class="my-4" Style="background-color: var(--mud-palette-drawer-background);">
-                <MudList>
+                <MudList ReadOnly="true" T="string">
                     <MudListSubheader Class="d-flex align-center justify-space-between">
                         Filters
-                        <MudIconButton Icon="@Icons.Filled.Add" Variant="Variant.Outlined" Size="Size.Small" OnClick="AddFilterOperation" />
+                        <MudIconButton Icon="@Icons.Material.Filled.Add" Variant="Variant.Outlined" Size="Size.Small" OnClick="AddFilterOperation" />
                     </MudListSubheader>
                     @foreach (var filterOperation in Configuration.FilterOperations)
                     {
@@ -26,10 +26,10 @@
             </MudPaper>
 
             <MudPaper Style="background-color: var(--mud-palette-drawer-background);">
-                <MudList>
+                <MudList ReadOnly="true" T="string">
                     <MudListSubheader Class="d-flex align-center justify-space-between">
                         Sorting
-                        <MudIconButton Icon="@Icons.Filled.Add" Variant="Variant.Outlined" Size="Size.Small" OnClick="AddSortOperation" />
+                        <MudIconButton Icon="@Icons.Material.Filled.Add" Variant="Variant.Outlined" Size="Size.Small" OnClick="AddSortOperation" />
                     </MudListSubheader>
                     @for (var i = 0; i < Configuration.SortOperations.Count; i++)
                     {

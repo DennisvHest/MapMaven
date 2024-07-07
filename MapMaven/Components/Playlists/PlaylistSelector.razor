@@ -14,7 +14,7 @@
                           Class="mx-4 mb-4 small-input">
             </MudTextField>
         </div>
-        <MudList Class="d-flex flex-column fill-remaining-space" Style="overflow-y: auto;" Clickable="true">
+        <MudList T="string" Class="d-flex flex-column fill-remaining-space" Style="overflow-y: auto;" ReadOnly="false">
             @foreach (var playlist in Playlists)
             {
                 <MudListItem title="@playlist.Title" OnClick="() => OnPlaylistSelect(playlist)" Value="playlist" Class="py-1 px-2" Style="min-height: 46px;">

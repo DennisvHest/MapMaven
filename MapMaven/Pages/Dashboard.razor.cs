@@ -62,7 +62,7 @@ namespace MapMaven.Pages
             Chart = new()
             {
                 Background = "transparent",
-                ForeColor = MapMavenTheme.Theme.Palette.TextPrimary.SetAlpha(0.3).ToString(MudColorOutputFormats.RGBA),
+                ForeColor = MapMavenTheme.Theme.PaletteDark.TextPrimary.SetAlpha(0.3).ToString(MudColorOutputFormats.RGBA),
                 Toolbar = new()
                 {
                     Show = false
@@ -85,7 +85,7 @@ namespace MapMaven.Pages
             },
             Grid = new()
             {
-                BorderColor = MapMavenTheme.Theme.Palette.TextPrimary.SetAlpha(0.3).ToString(MudColorOutputFormats.RGBA),
+                BorderColor = MapMavenTheme.Theme.PaletteDark.TextPrimary.SetAlpha(0.3).ToString(MudColorOutputFormats.RGBA),
             },
             Theme = new()
             {
@@ -377,14 +377,14 @@ namespace MapMaven.Pages
                 {
                     X = r.Key.ToString("yyyy-MM-dd"),
                     StrokeDashArray = 0,
-                    BorderColor = MapMavenTheme.Theme.Palette.TextPrimary.SetAlpha(0.3).ToString(MudColorOutputFormats.RGBA),
+                    BorderColor = MapMavenTheme.Theme.PaletteDark.TextPrimary.SetAlpha(0.3).ToString(MudColorOutputFormats.RGBA),
                     Label = new()
                     {
                         Orientation = ApexCharts.Orientation.Horizontal,
                         BorderWidth = 0,
                         Style = new()
                         {
-                            Background = MapMavenTheme.Theme.Palette.Primary.ColorLighten(0.2).ToString(MudColorOutputFormats.Hex),
+                            Background = MapMavenTheme.Theme.PaletteDark.Primary.ColorLighten(0.2).ToString(MudColorOutputFormats.Hex),
                             Color = "#FFF"
                         },
                         Text = "+pp"
@@ -465,7 +465,7 @@ namespace MapMaven.Pages
             }
             else
             {
-                Snackbar.Add($"Cancelled creating playlist.", Severity.Normal, config => config.Icon = Icons.Material.Filled.Cancel);
+                Snackbar.Add($"Canceled creating playlist.", Severity.Normal, config => config.Icon = Icons.Material.Filled.Cancel);
             }
         }
 

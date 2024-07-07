@@ -18,11 +18,11 @@
                     <div class="mt-2">
                         @if (Map.Played)
                         {
-                            <MudChip Color="Color.Primary" Size="Size.Small" Class="ml-0">Played</MudChip>
+                            <MudChip T="string" Color="Color.Primary" Size="Size.Small" Class="ml-0">Played</MudChip>
                         }
                         @if (Map.Ranked)
                         {
-                            <MudChip Color="Color.Primary" Size="Size.Small" Class="ml-0">Ranked</MudChip>
+                            <MudChip T="string" Color="Color.Primary" Size="Size.Small" Class="ml-0">Ranked</MudChip>
                         }
                     </div>
                 </MudItem>
@@ -64,7 +64,7 @@
                                     <b>Tags:</b>
                                     @foreach (var tag in Map.Tags)
                                     {
-                                        <MudChip Color="Color.Default" Size="Size.Small">@tag</MudChip>
+                                        <MudChip T="string" Color="Color.Default" Size="Size.Small">@tag</MudChip>
                                     }
                                 </MudText>
                             </MudItem>
@@ -83,7 +83,7 @@
                                         <td colspan="2" style="border-bottom: 1px solid gray;">
                                             @{
                                                 var chipStyle = $"border: 1px solid {DifficultyDisplayUtils.GetColor(difficulty.Difficulty)}";
-                                                <MudChip Size="Size.Small" Variant="Variant.Outlined" Style="@chipStyle">
+                                                <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Style="@chipStyle">
                                                     @DifficultyDisplayUtils.GetDisplayName(difficulty.Difficulty)
                                                     @if (!string.IsNullOrEmpty(difficulty.Label))
                                                     {
@@ -94,7 +94,7 @@
 
                                             @if (!string.IsNullOrEmpty(difficulty.GameMode) && difficulty.GameMode != "Standard")
                                             {
-                                                <MudChip Size="Size.Small" Variant="Variant.Outlined" Class="ml-2">
+                                                <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Class="ml-2">
                                                     @difficulty.GameMode
                                                 </MudChip>
                                             }
@@ -152,7 +152,7 @@
                                                         {
                                                             <MudTooltip Text="Open replay">
                                                                 <MudButton Class="replay-button pa-0 ml-2" OnClick="() => OpenReplay(playerScore)" Style="min-width: 0; border-radius: 100%;">
-                                                                    <MudChip Size="Size.Small" Variant="Variant.Text" Style="@($"{chipStyle}; cursor: pointer;")">
+                                                                    <MudChip T="string" Size="Size.Small" Variant="Variant.Text" Style="@($"{chipStyle}; cursor: pointer;")">
                                                                         <img src="images/replay-icon.png" style="width: 18px" />
                                                                     </MudChip>
                                                                 </MudButton>
@@ -185,7 +185,7 @@
                                                     <td>
                                                             @foreach (var modifier in playerScore.Score.Modifiers)
                                                             {
-                                                            <MudChip Size="Size.Small">@modifier</MudChip>
+                                                            <MudChip T="string" Size="Size.Small">@modifier</MudChip>
                                                             }
                                                     </td>
                                                 </tr>
@@ -207,7 +207,7 @@
                                                             @playerScore.Score.MaxCombo
                                                             @if (playerScore.Score.FullCombo)
                                                             {
-                                                            <MudChip Color="Color.Primary" Size="Size.Small" Class="ml-2">FC <MudIcon Icon="@Icons.Material.Filled.Check" Size="Size.Small" Class="ml-1"></MudIcon></MudChip>
+                                                            <MudChip T="string" Color="Color.Primary" Size="Size.Small" Class="ml-2">FC <MudIcon Icon="@Icons.Material.Filled.Check" Size="Size.Small" Class="ml-1"></MudIcon></MudChip>
                                                             }
                                                     </td>
                                                 </tr>

@@ -5,17 +5,17 @@
 
 
 <TemplateColumn T="Map" Sortable="false" Resizable="false" ShowColumnOptions="false" HeaderStyle="width:0%; padding: 0;" CellStyle="padding: 0;"
-                Filterable="false" IsEditable="false">
+                Filterable="false" Editable="false">
     <HeaderTemplate>
         @if (Selectable)
         {
-            <MudCheckBox T="bool" Checked="@context.IsAllSelected" CheckedChanged="@context.Actions.SetSelectAllAsync" Class="ma-3" />
+            <MudCheckBox T="bool?" Value="@context.IsAllSelected" ValueChanged="@context.Actions.SetSelectAllAsync" Class="ma-3" />
         }
     </HeaderTemplate>
     <CellTemplate>
         @if (Selectable)
         {
-            <MudCheckBox T="bool" Checked="@context.IsSelected" CheckedChanged="@context.Actions.SetSelectedItemAsync" Class="ma-3" />
+            <MudCheckBox T="bool" Value="@context.Selected" ValueChanged="@context.Actions.SetSelectedItemAsync" Class="ma-3" />
         }
     </CellTemplate>
 </TemplateColumn>
@@ -72,7 +72,7 @@
                     @{
                         var chipStyle = $"border: 1px solid {DifficultyDisplayUtils.GetColor(playerScore.Leaderboard?.Difficulty)}";
                     }
-                    <MudChip Size="Size.Small" Variant="Variant.Outlined" Style="@chipStyle">
+                    <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Style="@chipStyle">
                         @DifficultyDisplayUtils.GetShortName(playerScore.Leaderboard?.Difficulty) | @playerScore.Score.AccuracyWithMods.ToString("#0.##")%
                     </MudChip>
                 </ChildContent>
@@ -99,7 +99,7 @@
         @foreach (var playerScore in context.Item.AllPlayerScores)
         {
             var chipStyle = $"border: 1px solid {DifficultyDisplayUtils.GetColor(playerScore.Leaderboard?.Difficulty)}";
-            <MudChip Size="Size.Small" Variant="Variant.Outlined" Style="@chipStyle">
+            <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Style="@chipStyle">
                 @DifficultyDisplayUtils.GetShortName(playerScore.Leaderboard?.Difficulty) | @playerScore.Score.Pp.ToString("#0.##") pp
             </MudChip>
         }
@@ -115,7 +115,7 @@
     Visible="!string.IsNullOrEmpty(PlayerId)">
     <HeaderTemplate>
         <div class="d-flex">
-            <MudIcon Icon="@Icons.Filled.KeyboardDoubleArrowUp"></MudIcon>pp
+            <MudIcon Icon="@Icons.Material.Filled.KeyboardDoubleArrowUp"></MudIcon>pp
         </div>
     </HeaderTemplate>
     <CellTemplate>
@@ -128,9 +128,9 @@
                         @{
                             var chipStyle = $"border: 1px solid {DifficultyDisplayUtils.GetColor(scoreEstimate.Difficulty)}";
                         }
-                        <MudChip Size="Size.Small" Variant="Variant.Outlined" Style="@chipStyle">
+                        <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Style="@chipStyle">
                             @DifficultyDisplayUtils.GetShortName(scoreEstimate.Difficulty) |
-                            @scoreEstimate.Stars.ToString("#0.##") <MudIcon Icon="@Icons.Filled.Star" Size="Size.Small"></MudIcon> |
+                            @scoreEstimate.Stars.ToString("#0.##") <MudIcon Icon="@Icons.Material.Filled.Star" Size="Size.Small"></MudIcon> |
                             @scoreEstimate.Accuracy.ToString("#0.##") % |
                             +@scoreEstimate.PPIncrease.ToString("#0.##") pp
                         </MudChip>
@@ -158,7 +158,7 @@
             var chipStyle = $"cursor: pointer; border: 1px solid {DifficultyDisplayUtils.GetColor(playerScore.Leaderboard?.Difficulty)}";
             <MudTooltip Text="Open replay">
                 <MudButton Class="replay-button pa-0" OnClick="() => OpenReplay(context.Item, playerScore)" Style="min-width: 0; border-radius: 100%;">
-                    <MudChip Size="Size.Small" Variant="Variant.Text" Style="@chipStyle">
+                    <MudChip T="string" Size="Size.Small" Variant="Variant.Text" Style="@chipStyle">
                         @DifficultyDisplayUtils.GetShortName(playerScore.Leaderboard?.Difficulty)
                         <img src="images/replay-icon.png" class="ml-1" style="width: 18px" />
                     </MudChip>
@@ -171,12 +171,12 @@
     <CellTemplate>
         <div class="d-flex" style="min-width: 100px">
             <MudTooltip Text="Add map to playlist" ShowOnFocus="false">
-                <MudIconButton Icon="@Icons.Filled.PlaylistAdd" Variant="Variant.Text" Size="Size.Medium" OnClick="() => OpenAddMapToPlaylistDialog(context.Item)" />
+                <MudIconButton Icon="@Icons.Material.Filled.PlaylistAdd" Variant="Variant.Text" Size="Size.Medium" OnClick="() => OpenAddMapToPlaylistDialog(context.Item)" />
             </MudTooltip>
             @if (SelectedPlaylist != null && !SelectedPlaylist.IsDynamicPlaylist)
             {
                 <MudTooltip Text="Remove map from playlist" ShowOnFocus="false">
-                    <MudIconButton Icon="@Icons.Filled.PlaylistRemove" Variant="Variant.Text" Size="Size.Medium" OnClick="() => OpenDeleteFromPlaylistDialog(context.Item)" />
+                    <MudIconButton Icon="@Icons.Material.Filled.PlaylistRemove" Variant="Variant.Text" Size="Size.Medium" OnClick="() => OpenDeleteFromPlaylistDialog(context.Item)" />
                 </MudTooltip>
             }
             @if (SelectedPlaylist == null || !SelectedPlaylist.IsDynamicPlaylist)

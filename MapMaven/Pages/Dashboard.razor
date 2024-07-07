@@ -60,9 +60,9 @@
                         }
                     </div>
                 </MudCardHeader>
-                <MudCardContent>
-                    <MudList Dense="true" DisableGutters="true" DisablePadding="true">
-                        <MudListItem InitiallyExpanded="true">
+                <MudCardContent Class="pa-0">
+                    <MudList ReadOnly="true" T="string" Dense="true" Gutters="false" Padding="false">
+                        <MudListItem Expanded="true" Class="px-3">
                             <ChildContent>
                                 <div class="d-flex align-center gap-2">
                                     <MudIcon Size="MudBlazor.Size.Small" Icon="@Icons.Material.Filled.PlayCircle" />
@@ -70,19 +70,19 @@
                                 </div>
                             </ChildContent>
                             <NestedList>
-                                <MudListItem Class="pl-0">
+                                <MudListItem Class="px-4">
                                     <div class="d-flex align-center justify-space-between">
                                         <MudText Typo="Typo.caption">Ranked play count</MudText>
                                         <MudText Typo="Typo.caption"><b>@(TotalRankedPlays?.ToString("#0.##") ?? "-")</b></MudText>
                                     </div>
                                 </MudListItem>
-                                <MudListItem Class="pl-0">
+                                <MudListItem Class="px-4">
                                     <div class="d-flex align-center justify-space-between">
                                         <MudText Typo="Typo.caption">Unranked play count</MudText>
                                         <MudText Typo="Typo.caption"><b>@(TotalUnrankedPlays?.ToString("#0.##") ?? "-")</b></MudText>
                                     </div>
                                 </MudListItem>
-                                <MudListItem Class="pl-0">
+                                <MudListItem Class="px-4">
                                     <div class="d-flex align-center justify-space-between">
                                         <MudText Typo="Typo.caption">Total play count</MudText>
                                         <MudText Typo="Typo.caption"><b>@((TotalUnrankedPlays + TotalRankedPlays)?.ToString("#0.##") ?? "-")</b></MudText>
@@ -90,20 +90,20 @@
                                 </MudListItem>
                             </NestedList>
                         </MudListItem>
-                        <MudListItem InitiallyExpanded="true">
+                        <MudListItem Expanded="true" Class="px-3">
                             <ChildContent>
                                 <div class="d-flex align-center gap-2">
                                     <b>pp</b>
                                 </div>
                             </ChildContent>
                             <NestedList>
-                                <MudListItem Class="pl-0">
+                                <MudListItem Class="px-4">
                                     <div class="d-flex align-center justify-space-between">
                                         <MudText Typo="Typo.caption">Average pp (top 30)</MudText>
                                         <MudText Typo="Typo.caption"><b>@(AveragePp?.ToString("#0.##") ?? "-")</b></MudText>
                                     </div>
                                 </MudListItem>
-                                <MudListItem Class="pl-0">
+                                <MudListItem Class="px-4">
                                     <div class="d-flex align-center justify-space-between">
                                         <MudText Typo="Typo.caption">Top pp</MudText>
                                         <MudText Typo="Typo.caption"><b>@(TopPp?.ToString("#0.##") ?? "-")</b></MudText>
@@ -111,7 +111,7 @@
                                 </MudListItem>
                             </NestedList>
                         </MudListItem>
-                        <MudListItem InitiallyExpanded="true">
+                        <MudListItem Expanded="true" Class="px-3">
                             <ChildContent>
                                 <div class="d-flex align-center gap-2">
                                     <MudIcon Size="MudBlazor.Size.Small" Icon="@Icons.Material.Filled.Adjust" />
@@ -119,13 +119,13 @@
                                 </div>
                             </ChildContent>
                             <NestedList>
-                                <MudListItem Class="pl-0">
+                                <MudListItem Class="px-4">
                                     <div class="d-flex align-center justify-space-between">
                                         <MudText Typo="Typo.caption">Average ranked accuracy</MudText>
                                         <MudText Typo="Typo.caption"><b>@(AverageRankedAccuracy?.ToString("#0.##") ?? "-")</b></MudText>
                                     </div>
                                 </MudListItem>
-                                <MudListItem Class="pl-0">
+                                <MudListItem Class="px-4">
                                     <div class="d-flex align-center justify-space-between">
                                         <MudText Typo="Typo.caption">Top ranked accuracy</MudText>
                                         <MudText Typo="Typo.caption"><b>@(TopRankedAccuracy?.ToString("#0.##") ?? "-")</b></MudText>
@@ -133,7 +133,7 @@
                                 </MudListItem>
                             </NestedList>
                         </MudListItem>
-                        <MudListItem InitiallyExpanded="true">
+                        <MudListItem Expanded="true" Class="px-3">
                             <ChildContent>
                                 <div class="d-flex align-center gap-2">
                                     <MudIcon Size="MudBlazor.Size.Small" Icon="@Icons.Material.Filled.Star" />
@@ -141,13 +141,13 @@
                                 </div>
                             </ChildContent>
                             <NestedList>
-                                <MudListItem Class="pl-0">
+                                <MudListItem Class="px-4">
                                     <div class="d-flex align-center justify-space-between">
                                         <MudText Typo="Typo.caption">Average star difficulty (top 30)</MudText>
                                         <MudText Typo="Typo.caption"><b>@(AverageStarDifficulty?.ToString("#0.##") ?? "-")</b></MudText>
                                     </div>
                                 </MudListItem>
-                                <MudListItem Class="pl-0">
+                                <MudListItem Class="px-4">
                                     <div class="d-flex align-center justify-space-between">
                                         <MudText Typo="Typo.caption">Top star difficulty</MudText>
                                         <MudText Typo="Typo.caption"><b>@(TopStarDifficulty?.ToString("#0.##") ?? "-")</b></MudText>
@@ -156,11 +156,11 @@
                             </NestedList>
                         </MudListItem>
                     </MudList>
-                    <div class="mt-4">
+                    <div class="mt-4 px-4">
                         <h4>Best scored map tags:</h4>
                         @foreach (var value in BestScoredMapTags.Select((tag, index) => (tag, number: index + 1)))
                         {
-                            <MudChip Color="MudBlazor.Color.Primary" Size="MudBlazor.Size.Small">@value.number. @value.tag</MudChip>
+                            <MudChip T="string" Color="MudBlazor.Color.Primary" Size="MudBlazor.Size.Small">@value.number. @value.tag</MudChip>
                         }
                         @if (!BestScoredMapTags.Any())
                         {
@@ -184,14 +184,14 @@
                                             <div class="d-flex align-center gap-2">
                                                 <MudTooltip Text="Show/hide high pp gain moments">
                                                     <div class="d-flex align-center pr-4 border-r">
-                                                        <MudChip Icon="@Icons.Material.Filled.KeyboardDoubleArrowUp" Label="true">
+                                                        <MudChip T="string" Icon="@Icons.Material.Filled.KeyboardDoubleArrowUp" Label="true">
                                                             <MudCheckBox @bind-Value="ShowHighPpGainAnnotations" @bind-Value:after="SetHighPpGainAnnotations" Dense="true" />
                                                         </MudChip>
                                                     </div>
                                                 </MudTooltip>
-                                                <MudChipSet SelectedValues="[DashboardDateRange]"
-                                                            SelectedValuesChanged="(values) => OnDateRangeChanged(values.FirstOrDefault() as DateRange)"
-                                                            Mandatory="true">
+                                                <MudChipSet T="DateRange" SelectedValue="DashboardDateRange"
+                                                            SelectedValueChanged="(value) => OnDateRangeChanged(value as DateRange)"
+                                                            SelectionMode="SelectionMode.SingleSelection">
                                                     <MudChip Value="PastFiftyDays" Label="true" Variant="Variant.Filled" Color="MudBlazor.Color.Default" SelectedColor="MudBlazor.Color.Default">50 Days</MudChip>
                                                     <MudChip Value="PastMonth" Label="true" Variant="Variant.Filled" Color="MudBlazor.Color.Default" SelectedColor="MudBlazor.Color.Default">Month</MudChip>
                                                     <MudChip Value="PastWeek" Label="true" Variant="Variant.Filled" Color="MudBlazor.Color.Default" SelectedColor="MudBlazor.Color.Default">Week</MudChip>
@@ -225,7 +225,7 @@
                                                                  YValue="x => x.Rank"
                                                                  DataPointMutator="SetCustomData"
                                                                  OrderBy="x => x.X"
-                                                                 Color="@MapMavenTheme.Theme.Palette.Primary.ColorLighten(0.2).ToString(MudColorOutputFormats.Hex)" />
+                                                                 Color="@MapMavenTheme.Theme.PaletteDark.Primary.ColorLighten(0.2).ToString(MudColorOutputFormats.Hex)" />
                                             </ChildContent>
                                         </ApexChart>
                                     }
@@ -244,7 +244,7 @@
                                          HiddenColumns="[MapListColumn.ScoreEstimates]">
                                     <NoMapsContent>
                                         No recent high PP gain maps.<br />
-                                        <MudButton Variant="Variant.Text" Color="MudBlazor.Color.Info" Href="/improve" StartIcon="@Icons.Filled.KeyboardDoubleArrowUp">Unlock your potential</MudButton>
+                                        <MudButton Variant="Variant.Text" Color="MudBlazor.Color.Info" Href="/improve" StartIcon="@Icons.Material.Filled.KeyboardDoubleArrowUp">Unlock your potential</MudButton>
                                     </NoMapsContent>
                                 </MapList>
                             </MudCard>
@@ -258,11 +258,11 @@
                                             <div class="d-flex align-center">
                                                 @if (RecentAverageStarDifficulty.HasValue)
                                                 {
-                                                    <MudChip Size="MudBlazor.Size.Small"><MudIcon Icon="@Icons.Material.Filled.Star" /> >= @RecentAverageStarDifficulty.Value.ToString("0.##")</MudChip>
+                                                    <MudChip T="string" Size="MudBlazor.Size.Small"><MudIcon Icon="@Icons.Material.Filled.Star" /> >= @RecentAverageStarDifficulty.Value.ToString("0.##")</MudChip>
                                                 }
                                                 @if (!string.IsNullOrEmpty(RecentBestScoredMapTag))
                                                 {
-                                                    <MudChip Size="MudBlazor.Size.Small"><MudIcon Icon="@Icons.Material.Filled.Label" /> @RecentBestScoredMapTag</MudChip>
+                                                    <MudChip T="string" Size="MudBlazor.Size.Small"><MudIcon Icon="@Icons.Material.Filled.Label" /> @RecentBestScoredMapTag</MudChip>
                                                 }
                                                 @if (RecentAverageStarDifficulty.HasValue && !string.IsNullOrEmpty(RecentBestScoredMapTag))
                                                 {
@@ -282,7 +282,7 @@
                                          HiddenColumns="[MapListColumn.Pp]">
                                     <NoMapsContent>
                                         No recommendations based on recent scores.<br />
-                                        <MudButton Variant="Variant.Text" Color="MudBlazor.Color.Info" Href="/improve" StartIcon="@Icons.Filled.KeyboardDoubleArrowUp">Unlock your potential</MudButton>
+                                        <MudButton Variant="Variant.Text" Color="MudBlazor.Color.Info" Href="/improve" StartIcon="@Icons.Material.Filled.KeyboardDoubleArrowUp">Unlock your potential</MudButton>
                                     </NoMapsContent>
                                 </MapList>
                             </MudCard>

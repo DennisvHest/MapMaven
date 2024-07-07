@@ -40,7 +40,7 @@
 
 .blurred-background-image {
     opacity: 0.1;
-    position: absolute;
+    position: fixed;
     left: 0;
     top: 0;
     width: 100%;
@@ -228,4 +228,8 @@ a:hover {
 
 .mud-icon-button.no-hover-background:hover {
     background-color: initial !important;
+}
+
+.mud-picker-paper {
+    max-width: initial !important;
 }
