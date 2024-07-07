@@ -66,7 +66,7 @@
             <MudNumericField Value="FilterOperation.Value" TextChanged="DoubleValueChanged" Label="Value" Variant="Variant.Outlined" Margin="Margin.Dense" Class="pl-2 d-block" Style="max-width: 168px;" />
             break;
         case Type type when type == typeof(bool):
-            <MudSwitch T="bool" Checked="@(bool.TryParse(FilterOperation.Value, out var boolValue) ? boolValue : false)" CheckedChanged="BooleanValueChanged" Color="Color.Primary" Class="pl-2 d-block" Style="padding-left: 56px !important; width: calc(168px + 90px);" />
+            <MudSwitch T="bool" Value="@(bool.TryParse(FilterOperation.Value, out var boolValue) ? boolValue : false)" ValueChanged="BooleanValueChanged" Color="Color.Primary" Class="pl-2 d-block" Style="padding-left: 56px !important; width: calc(168px + 90px);" />
             break;
         case Type type when type == typeof(DateTime):
             <MudDatePicker Date="@(DateTime.TryParse(FilterOperation.Value, CultureInfo.InvariantCulture, out var dateValue) ? dateValue : null)" DateChanged="DateValueChanged" Label="Value" Variant="Variant.Outlined" Margin="Margin.Dense" Class="pl-2 d-block" Style="max-width: 168px;" />
