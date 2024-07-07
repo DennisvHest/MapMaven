@@ -6,7 +6,7 @@
         @if (!string.IsNullOrEmpty(PlayerId))
         {
             <MudNavLink Icon="@Icons.Material.Filled.Home"
-                        DisableRipple="true"
+                        Ripple="false"
                         Match="NavLinkMatch.All"
                         Href="/">
                 Home
@@ -14,7 +14,7 @@
         }
         <div @onclick="OnMapsNavigation">
             <MudNavLink Icon="@Icons.Material.Filled.LibraryMusic"
-                        DisableRipple="true"
+                        Ripple="false"
                         Match="NavLinkMatch.All"
                         Href="/maps">
                 Maps
@@ -24,7 +24,7 @@
         {
             <div @onclick="OnMapsNavigation">
                 <MudNavLink Icon="@Icons.Material.Filled.KeyboardDoubleArrowUp"
-                            DisableRipple="true"
+                            Ripple="false"
                             Match="NavLinkMatch.All"
                             Href="/improve">
                     Improve
@@ -35,7 +35,7 @@
         <div @onclick="OpenSettings" @onclick:preventDefault="true">
             <MudNavLink Icon="@Icons.Material.Filled.Settings"
                         Href="#"
-                        DisableRipple="true">
+                        Ripple="false">
                 Settings
             </MudNavLink>
         </div>

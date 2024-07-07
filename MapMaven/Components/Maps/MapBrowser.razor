@@ -119,18 +119,18 @@
                             Cancel selection
                         </MudButton>
                         <MudDivider Vertical="true" FlexItem="true" />
-                        <MudButton Variant="Variant.Text" DisableElevation="true" Class="px-5 full-height" StartIcon="@Icons.Material.Filled.PlaylistAdd" Disabled="!SelectedMaps.Any()" OnClick="AddSelectedMapsToPlaylist">
+                        <MudButton Variant="Variant.Text" DropShadow="false" Class="px-5 full-height" StartIcon="@Icons.Material.Filled.PlaylistAdd" Disabled="!SelectedMaps.Any()" OnClick="AddSelectedMapsToPlaylist">
                             Add to playlist
                         </MudButton>
                         @if (SelectedPlaylist is not null && !SelectedPlaylist.IsDynamicPlaylist)
                         {
-                            <MudButton Variant="Variant.Text" DisableElevation="true" Class="px-5 full-height" StartIcon="@Icons.Material.Filled.PlaylistRemove" Disabled="!SelectedMaps.Any()" OnClick="RemoveSelectedMapsFromSelectedPlaylist">
+                            <MudButton Variant="Variant.Text" DropShadow="false" Class="px-5 full-height" StartIcon="@Icons.Material.Filled.PlaylistRemove" Disabled="!SelectedMaps.Any()" OnClick="RemoveSelectedMapsFromSelectedPlaylist">
                                 Remove from playlist
                             </MudButton>
                         }
                         @if (SelectedPlaylist is null || !SelectedPlaylist.IsDynamicPlaylist)
                         {
-                            <MudButton Variant="Variant.Text" Color="Color.Secondary" Class="px-5 full-height" DisableElevation="true" StartIcon="@Icons.Material.Filled.Delete" Disabled="!SelectedMaps.Any()" OnClick="DeleteSelectedMaps">
+                            <MudButton Variant="Variant.Text" Color="Color.Secondary" Class="px-5 full-height" DropShadow="false" StartIcon="@Icons.Material.Filled.Delete" Disabled="!SelectedMaps.Any()" OnClick="DeleteSelectedMaps">
                                 Delete
                             </MudButton>
                         }

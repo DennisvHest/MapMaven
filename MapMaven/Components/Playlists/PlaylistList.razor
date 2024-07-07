@@ -3,7 +3,7 @@
 @inherits ReactiveComponent
 
 <div class="fill-remaining-space">
-    <MudList T="string" Class="d-flex flex-column" Clickable="true" Color="Color.Primary" Style="height: 50%;">
+    <MudList T="string" Class="d-flex flex-column" ReadOnly="false" Color="Color.Primary" Style="height: 50%;">
         <MudListSubheader Class="d-flex align-center justify-space-between py-2" Style="border-top: 1px solid var(--mud-palette-table-lines)">
             <div class="d-flex align-center">
                 <MudIcon Icon="@Icons.Material.Filled.PlaylistPlay"></MudIcon> Playlists
@@ -49,7 +49,7 @@
         </div>
     </MudList>
 
-    <MudList T="string" Class="d-flex flex-column" Clickable="true" Color="Color.Primary" Style="height: 50%;">
+    <MudList T="string" Class="d-flex flex-column" ReadOnly="false" Color="Color.Primary" Style="height: 50%;">
         <MudListSubheader Class="d-flex align-center justify-space-between py-2" Style="border-top: 1px solid var(--mud-palette-table-lines)">
             <div class="d-flex align-center">
                 <MudIcon Icon="@Icons.Material.Filled.PlaylistPlay"></MudIcon> Dynamic Playlists
@@ -92,7 +92,7 @@
     </MudList>
 </div>
 
-<MudDialog @bind-IsVisible="DeleteDialogVisible" Options="new() { BackdropClick = false }">
+<MudDialog @bind-Visible="DeleteDialogVisible" Options="new() { BackdropClick = false }">
     <DialogContent>
         <MudText Typo="Typo.body1" Class="mb-3">Are you sure you want to delete the "@PlaylistToDelete.Title" playlist?</MudText>
     </DialogContent>

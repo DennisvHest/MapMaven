@@ -61,8 +61,8 @@
                     </div>
                 </MudCardHeader>
                 <MudCardContent>
-                    <MudList T="string" Dense="true" DisableGutters="true" DisablePadding="true">
-                        <MudListItem InitiallyExpanded="true">
+                    <MudList T="string" Dense="true" Gutters="false" Padding="false">
+                        <MudListItem Expanded="true">
                             <ChildContent>
                                 <div class="d-flex align-center gap-2">
                                     <MudIcon Size="MudBlazor.Size.Small" Icon="@Icons.Material.Filled.PlayCircle" />
@@ -90,7 +90,7 @@
                                 </MudListItem>
                             </NestedList>
                         </MudListItem>
-                        <MudListItem InitiallyExpanded="true">
+                        <MudListItem Expanded="true">
                             <ChildContent>
                                 <div class="d-flex align-center gap-2">
                                     <b>pp</b>
@@ -111,7 +111,7 @@
                                 </MudListItem>
                             </NestedList>
                         </MudListItem>
-                        <MudListItem InitiallyExpanded="true">
+                        <MudListItem Expanded="true">
                             <ChildContent>
                                 <div class="d-flex align-center gap-2">
                                     <MudIcon Size="MudBlazor.Size.Small" Icon="@Icons.Material.Filled.Adjust" />
@@ -133,7 +133,7 @@
                                 </MudListItem>
                             </NestedList>
                         </MudListItem>
-                        <MudListItem InitiallyExpanded="true">
+                        <MudListItem Expanded="true">
                             <ChildContent>
                                 <div class="d-flex align-center gap-2">
                                     <MudIcon Size="MudBlazor.Size.Small" Icon="@Icons.Material.Filled.Star" />
@@ -191,7 +191,7 @@
                                                 </MudTooltip>
                                                 <MudChipSet T="DateRange" SelectedValues="[DashboardDateRange]"
                                                             SelectedValuesChanged="(values) => OnDateRangeChanged(values.FirstOrDefault() as DateRange)"
-                                                            Mandatory="true">
+                                                            SelectionMode="SelectionMode.SingleSelection">
                                                     <MudChip Value="PastFiftyDays" Label="true" Variant="Variant.Filled" Color="MudBlazor.Color.Default" SelectedColor="MudBlazor.Color.Default">50 Days</MudChip>
                                                     <MudChip Value="PastMonth" Label="true" Variant="Variant.Filled" Color="MudBlazor.Color.Default" SelectedColor="MudBlazor.Color.Default">Month</MudChip>
                                                     <MudChip Value="PastWeek" Label="true" Variant="Variant.Filled" Color="MudBlazor.Color.Default" SelectedColor="MudBlazor.Color.Default">Week</MudChip>
