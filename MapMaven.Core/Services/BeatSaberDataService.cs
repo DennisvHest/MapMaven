@@ -19,6 +19,7 @@ using MapMaven.Core.Models.Data;
 using System.Runtime;
 using MapMaven.Core.Services.Interfaces;
 using System.IO.Abstractions;
+using MapMaven.Core.Models.Data.Playlists;
 
 namespace MapMaven.Services
 {
@@ -41,7 +42,7 @@ namespace MapMaven.Services
         private readonly BehaviorSubject<bool> _loadingMapInfo = new(false);
         private readonly BehaviorSubject<bool> _initialMapLoad = new(false);
 
-        private readonly BehaviorSubject<IEnumerable<IPlaylist>> _playlistInfo = new(Array.Empty<IPlaylist>());
+        private readonly BehaviorSubject<PlaylistTree<IPlaylist>> _playlistTree = new(new());
         private readonly BehaviorSubject<bool> _loadingPlaylistInfo = new(false);
 
         public IObservable<Dictionary<string, MapInfo>> MapInfoByHash => _mapInfo;
@@ -49,7 +50,7 @@ namespace MapMaven.Services
         public IObservable<bool> LoadingMapInfo => _loadingMapInfo;
         public IObservable<bool> InitialMapLoad => _initialMapLoad;
 
-        public IObservable<IEnumerable<IPlaylist>> PlaylistInfo => _playlistInfo;
+        public IObservable<IEnumerable<IPlaylist>> PlaylistInfo { get; private set; }
         public IObservable<bool> LoadingPlaylistInfo => _loadingPlaylistInfo;
 
         public BeatSaberDataService(IBeatmapHasher beatmapHasher, BeatSaberFileService fileService, IServiceProvider serviceProvider, ILogger<BeatSaberDataService> logger, IFileSystem fileSystem)
@@ -70,6 +71,8 @@ namespace MapMaven.Services
                 .Select(_ => Observable.FromAsync(LoadAllMapInfo))
                 .Concat()
                 .Subscribe();
+
+            PlaylistInfo = _playlistTree.Select(tree => tree.AllPlaylists());
         }
 
         public async Task LoadAllMapInfo()
@@ -153,9 +156,9 @@ namespace MapMaven.Services
 
             try
             {
-                var playlists = await GetAllPlaylists();
+                var playlistTree = await GetPlaylistTree();
 
-                _playlistInfo.OnNext(playlists);
+                _playlistTree.OnNext(playlistTree);
             }
             finally
             {
@@ -165,13 +168,51 @@ namespace MapMaven.Services
 
         public async Task<IEnumerable<IPlaylist>> GetAllPlaylists()
         {
+            var playlistTree = await GetPlaylistTree();
+
+            return playlistTree.AllPlaylists();
+        }
+
+        public async Task<PlaylistTree<IPlaylist>> GetPlaylistTree()
+        {
             PlaylistManager.RefreshPlaylists(true);
 
-            var playlists = PlaylistManager.GetAllPlaylists(true);
+            var tree = new PlaylistTree<IPlaylist>();
+
+            foreach (var childPlaylistManager in PlaylistManager.GetChildManagers())
+            {
+                var folder = new PlaylistFolder<IPlaylist>(childPlaylistManager);
+                tree.Items.Add(folder);
+
+                AddPlaylistManagerPlaylistsToFolder(folder, childPlaylistManager);
+            }
+
+            var playlists = PlaylistManager.GetAllPlaylists();
+
+            foreach (var playlist in playlists)
+            {
+                tree.Items.Add(new PlaylistTreeNode<IPlaylist>(playlist, PlaylistManager));
+            }
 
             CleanLargeObjectHeap();
 
-            return playlists;
+            return tree;
+        }
+
+        private void AddPlaylistManagerPlaylistsToFolder(PlaylistFolder<IPlaylist> folder, PlaylistManager playlistManager)
+        {
+            foreach (var childPlaylistManager in playlistManager.GetChildManagers())
+            {
+                folder.ChildItems.Add(new PlaylistFolder<IPlaylist>(childPlaylistManager));
+                AddPlaylistManagerPlaylistsToFolder(folder, childPlaylistManager);
+            }
+
+            var playlists = playlistManager.GetAllPlaylists();
+
+            foreach (var playlist in playlists)
+            {
+                folder.ChildItems.Add(new PlaylistTreeNode<IPlaylist>(playlist, playlistManager));
+            }
         }
 
         /// <summary>
