@@ -1,7 +1,6 @@
 using MapMaven.Core.Models.Data.Playlists;
 using MapMaven.Core.Models.DynamicPlaylists;
 using MapMaven.Core.Services.Interfaces;
-using MapMaven.Models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Routing;
 using MudBlazor;
@@ -29,7 +28,6 @@ namespace MapMaven.Components.Playlists
         public NavigationManager NavigationManager { get; set; }
 
         private PlaylistTree<Playlist> PlaylistTree = new();
-        private IEnumerable<Playlist> DynamicPlaylists = Array.Empty<Playlist>();
         private bool LoadingPlaylists = false;
 
         private Playlist SelectedPlaylist;
@@ -56,21 +54,7 @@ namespace MapMaven.Components.Playlists
 
         protected override void OnInitialized()
         {
-            var allPlaylists = PlaylistService.Playlists;
-
-            var dynamicPlaylists = allPlaylists
-                .Select(playlists => playlists.Where(p => p.IsDynamicPlaylist));
-
             SubscribeAndBind(PlaylistService.PlaylistTree, playlistTree => PlaylistTree = playlistTree);
-
-            SubscribeAndBind(Observable.CombineLatest(dynamicPlaylists, _dynamicPlaylistSearchText, (dynamicPlaylists, searchText) =>
-            {
-                if (string.IsNullOrWhiteSpace(searchText))
-                    return dynamicPlaylists;
-
-                return dynamicPlaylists
-                    .Where(p => p.Title.Contains(searchText, StringComparison.OrdinalIgnoreCase));
-            }), dynamicPlaylists => DynamicPlaylists = dynamicPlaylists);
 
             BeatSaberDataService.LoadingPlaylistInfo.Subscribe(loading =>
             {
@@ -85,15 +69,15 @@ namespace MapMaven.Components.Playlists
             });
         }
 
-        protected void OnPlaylistSelect(Playlist playlist)
-        {
-            NavigationManager.NavigateTo("/maps");
+        //protected void OnPlaylistSelect(Playlist playlist)
+        //{
+        //    NavigationManager.NavigateTo("/maps");
 
-            SelectedPlaylist = playlist;
+        //    SelectedPlaylist = playlist;
 
-            // Set the selected playlist once the navigation to maps page completes (one time event callback) (prevents costly filter execution on current page)
-            NavigationManager.LocationChanged += SetSelectedPlaylistAfterNavigation;
-        }
+        //    // Set the selected playlist once the navigation to maps page completes (one time event callback) (prevents costly filter execution on current page)
+        //    NavigationManager.LocationChanged += SetSelectedPlaylistAfterNavigation;
+        //}
 
         private void SetSelectedPlaylistAfterNavigation(object sender, LocationChangedEventArgs e)
         {
@@ -108,68 +92,6 @@ namespace MapMaven.Components.Playlists
                 MaxWidth = MaxWidth.Small,
                 FullWidth = true
             });
-        }
-
-        protected void OpenAddDynamicPlaylistDialog()
-        {
-            DialogService.Show<EditDynamicPlaylistDialog>("Add playlist", new DialogOptions
-            {
-                MaxWidth = MaxWidth.Small,
-                FullWidth = true
-            });
-        }
-
-        protected void OpenEditDynamicPlaylistDialog(Playlist playlist)
-        {
-            var parameters = new DialogParameters
-            {
-                { "SelectedPlaylist", new EditDynamicPlaylistModel(playlist) },
-                { "NewPlaylist", false }
-            };
-
-            DialogService.Show<EditDynamicPlaylistDialog>("Edit playlist", parameters, new DialogOptions
-            {
-                MaxWidth = MaxWidth.Small,
-                FullWidth = true
-            });
-        }
-
-        protected void OpenDeletePlaylistDialog(Playlist playlistToDelete)
-        {
-            PlaylistToDelete = playlistToDelete;
-            DeleteDialogVisible = true;
-        }
-
-        protected void ClosePlaylistDelete()
-        {
-            PlaylistToDelete = null;
-            DeleteDialogVisible = false;
-            DeleteMaps = false;
-        }
-
-        protected async Task DeletePlaylist()
-        {
-            DeletingPlaylist = true;
-
-            try
-            {
-                await PlaylistService.DeletePlaylist(PlaylistToDelete, DeleteMaps);
-
-                Snackbar.Add($"Removed playlist \"{PlaylistToDelete.Title}\"", Severity.Normal, config => config.Icon = Icons.Material.Filled.Check);
-
-                ClosePlaylistDelete();
-            }
-            finally
-            {
-                DeletingPlaylist = false;
-            }
-        }
-
-        protected int GetLoadedMapsCount(Playlist playlist)
-        {
-            return playlist.Maps
-                .Where(m => BeatSaberDataService.MapIsLoaded(m.Hash))
-                .Count();
         }
     }
 }

@@ -4,7 +4,7 @@
 @inherits ReactiveComponent
 
 <div class="fill-remaining-space">
-    <MudList T="string" Class="d-flex flex-column" ReadOnly="false" Color="Color.Primary" Style="height: 50%;">
+    <MudList T="string" Class="d-flex flex-column full-height" ReadOnly="false" Color="Color.Primary">
         <MudListSubheader Class="d-flex align-center justify-space-between py-2" Style="border-top: 1px solid var(--mud-palette-table-lines)">
             <div class="d-flex align-center">
                 <MudIcon Icon="@Icons.Material.Filled.PlaylistPlay"></MudIcon> Playlists
@@ -31,69 +31,4 @@
             </MudTreeView>
         </div>
     </MudList>
-
-    <MudList T="string" Class="d-flex flex-column" ReadOnly="false" Color="Color.Primary" Style="height: 50%;">
-        <MudListSubheader Class="d-flex align-center justify-space-between py-2" Style="border-top: 1px solid var(--mud-palette-table-lines)">
-            <div class="d-flex align-center">
-                <MudIcon Icon="@Icons.Material.Filled.PlaylistPlay"></MudIcon> Dynamic Playlists
-            </div>
-            <MudIconButton Icon="@Icons.Material.Filled.Add" Variant="Variant.Outlined" Size="Size.Small" OnClick="OpenAddDynamicPlaylistDialog" />
-        </MudListSubheader>
-        <MudTextField @bind-Value="DynamicPlaylistSearchText"
-                      DebounceInterval="300"
-                      Immediate="true"
-                      Clearable="true"
-                      Variant="Variant.Outlined"
-                      Adornment="Adornment.Start"
-                      AdornmentIcon="@Icons.Material.Filled.Search"
-                      IconSize="Size.Small"
-                      Class="mx-4 mb-4 small-input">
-        </MudTextField>
-        @if (LoadingPlaylists)
-        {
-            <MudProgressCircular Color="Color.Info" Size="Size.Small" Indeterminate="true" Class="align-self-center" />
-        }
-        <div class="full-height" style="overflow-y: auto;">
-            @foreach (var playlist in DynamicPlaylists)
-            {
-                <MudListItem title="@playlist.Title" OnClick="() => OnPlaylistSelect(playlist)" Class="@(playlist == SelectedPlaylist ? "mud-selected-item mud-primary-text py-0 px-1" : "py-0 px-1")" Style="height: 46px;">
-                    <div class="playlist-list-item">
-                        <PlaylistCover Playlist="playlist" Small="true" Class="ml-3 mr-3" Style="width: 30px"></PlaylistCover>
-                        <span>@playlist.Title</span>
-                        <MudMenu Icon="@Icons.Material.Filled.MoreVert" Class="ml-auto">
-                            <MudMenuItem OnClick="() => OpenEditDynamicPlaylistDialog(playlist)">
-                                <MudIcon Icon="@Icons.Material.Filled.Edit" Size="Size.Small" Class="mr-1" /> Edit
-                            </MudMenuItem>
-                            <MudMenuItem OnClick="() => OpenDeletePlaylistDialog(playlist)">
-                                <MudIcon Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Class="mr-1" /> Delete
-                            </MudMenuItem>
-                        </MudMenu>
-                    </div>
-                </MudListItem>
-            }
-        </div>
-    </MudList>
 </div>
-
-<MudDialog @bind-Visible="DeleteDialogVisible" Options="new() { BackdropClick = false }">
-    <DialogContent>
-        <MudText Typo="Typo.body1" Class="mb-3">Are you sure you want to delete the "@PlaylistToDelete.Title" playlist?</MudText>
-    </DialogContent>
-    <DialogActions>
-        @{
-            var deleteMapsLabel = $"Also delete all {GetLoadedMapsCount(PlaylistToDelete)} maps from the game";
-        }
-        <MudCheckBox @bind-Value="DeleteMaps" Label="@deleteMapsLabel" Class="mr-10" Style="opacity: 0.8;"></MudCheckBox>
-        <MudButton OnClick="ClosePlaylistDelete">Cancel</MudButton>
-        <MudButton Color="@Color.Error" Variant="Variant.Filled" OnClick="DeletePlaylist">
-            @if (DeletingPlaylist)
-            {
-                <MudProgressCircular Size="Size.Small" Indeterminate="true" Style="color: white;" />
-            }
-            else
-            {
-                @:Delete
-            }
-        </MudButton>
-    </DialogActions>
-</MudDialog>
