@@ -66,10 +66,7 @@ namespace MapMaven.Services
 
             foreach (var childFolder in folder.ChildItems.OfType<PlaylistFolder<IPlaylist>>())
             {
-                var childPlaylistFolder = new PlaylistFolder<Playlist>(childFolder.PlaylistManager);
-                playlistFolder.ChildItems.Add(childPlaylistFolder);
-
-                MapIPlaylistsToPlaylistsInFolder(childFolder);
+                playlistFolder.ChildItems.Add(MapIPlaylistsToPlaylistsInFolder(childFolder));
             }
 
             var playlistNodes = folder.ChildItems.OfType<PlaylistTreeNode<IPlaylist>>();

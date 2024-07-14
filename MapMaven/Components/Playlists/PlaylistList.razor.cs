@@ -119,20 +119,6 @@ namespace MapMaven.Components.Playlists
             });
         }
 
-        protected void OpenEditPlaylistDialog(Playlist playlist)
-        {
-            var parameters = new DialogParameters
-            {
-                { "EditPlaylistModel", new EditPlaylistModel(playlist) }
-            };
-
-            DialogService.Show<EditPlaylistDialog>("Edit playlist", parameters, new DialogOptions
-            {
-                MaxWidth = MaxWidth.Small,
-                FullWidth = true
-            });
-        }
-
         protected void OpenEditDynamicPlaylistDialog(Playlist playlist)
         {
             var parameters = new DialogParameters
