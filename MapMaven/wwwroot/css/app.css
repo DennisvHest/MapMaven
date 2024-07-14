@@ -233,3 +233,7 @@ a:hover {
 .mud-picker-paper {
     max-width: initial !important;
 }
+
+.not-expandable .mud-treeview-item-arrow {
+    display: none;
+}

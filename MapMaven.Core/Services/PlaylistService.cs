@@ -45,6 +45,8 @@ namespace MapMaven.Services
 
             playlistTree.Connect();
 
+            PlaylistTree = playlistTree;
+
             Playlists = playlistTree.Select(tree => tree.AllPlaylists().ToList());
 
             Observable.CombineLatest(Playlists, _selectedPlaylistFileName, (playlists, selectedPlaylistFileName) => (playlists, selectedPlaylistFileName))

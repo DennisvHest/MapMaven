@@ -1,4 +1,5 @@
 ﻿using MapMaven.Core.Models.Data;
+using MapMaven.Core.Models.Data.Playlists;
 using MapMaven.Core.Models.DynamicPlaylists;
 using MapMaven.Models;
 using System.Reactive.Subjects;
@@ -10,6 +11,7 @@ namespace MapMaven.Core.Services.Interfaces
         IObservable<bool> CreatingPlaylist { get; }
         IObservable<IEnumerable<Playlist>> Playlists { get; }
         BehaviorSubject<Playlist> SelectedPlaylist { get; }
+        IObservable<PlaylistTree<Playlist>> PlaylistTree { get; }
 
         Task<Playlist> AddDynamicPlaylist(EditDynamicPlaylistModel editPlaylistModel);
         Task AddMapsToPlaylist(IEnumerable<Map> maps, Playlist playlist, bool loadPlaylists = true);

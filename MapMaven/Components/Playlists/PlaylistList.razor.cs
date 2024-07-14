@@ -1,3 +1,4 @@
+using MapMaven.Core.Models.Data.Playlists;
 using MapMaven.Core.Models.DynamicPlaylists;
 using MapMaven.Core.Services.Interfaces;
 using MapMaven.Models;
@@ -27,7 +28,7 @@ namespace MapMaven.Components.Playlists
         [Inject]
         public NavigationManager NavigationManager { get; set; }
 
-        private IEnumerable<Playlist> Playlists = Array.Empty<Playlist>();
+        private PlaylistTree<Playlist> PlaylistTree = new();
         private IEnumerable<Playlist> DynamicPlaylists = Array.Empty<Playlist>();
         private bool LoadingPlaylists = false;
 
@@ -57,20 +58,10 @@ namespace MapMaven.Components.Playlists
         {
             var allPlaylists = PlaylistService.Playlists;
 
-            var playlists = allPlaylists
-                .Select(playlists => playlists.Where(p => !p.IsDynamicPlaylist));
-
             var dynamicPlaylists = allPlaylists
                 .Select(playlists => playlists.Where(p => p.IsDynamicPlaylist));
 
-            SubscribeAndBind(Observable.CombineLatest(playlists, _playlistSearchText, (playlists, searchText) =>
-            {
-                if (string.IsNullOrWhiteSpace(searchText))
-                    return playlists;
-
-                return playlists
-                    .Where(p => p.Title.Contains(searchText, StringComparison.OrdinalIgnoreCase));
-            }), playlists => Playlists = playlists);
+            SubscribeAndBind(PlaylistService.PlaylistTree, playlistTree => PlaylistTree = playlistTree);
 
             SubscribeAndBind(Observable.CombineLatest(dynamicPlaylists, _dynamicPlaylistSearchText, (dynamicPlaylists, searchText) =>
             {
