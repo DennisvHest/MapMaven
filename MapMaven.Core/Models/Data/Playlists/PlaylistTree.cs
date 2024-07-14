@@ -4,7 +4,9 @@ namespace MapMaven.Core.Models.Data.Playlists
 {
     public class PlaylistTree<T>
     {
-        public PlaylistFolder<T> RootPlaylistFolder { get; private set; }
+        public PlaylistFolder<T> RootPlaylistFolder { get; set; } = new();
+
+        public PlaylistTree() { }
 
         public PlaylistTree(PlaylistManager playlistManager)
         {

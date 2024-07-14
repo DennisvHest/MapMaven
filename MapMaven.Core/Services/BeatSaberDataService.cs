@@ -42,7 +42,7 @@ namespace MapMaven.Services
         private readonly BehaviorSubject<bool> _loadingMapInfo = new(false);
         private readonly BehaviorSubject<bool> _initialMapLoad = new(false);
 
-        private readonly BehaviorSubject<PlaylistTree<IPlaylist>?> _playlistTree = new(null);
+        private readonly BehaviorSubject<PlaylistTree<IPlaylist>> _playlistTree = new(new());
         private readonly BehaviorSubject<bool> _loadingPlaylistInfo = new(false);
 
         public IObservable<Dictionary<string, MapInfo>> MapInfoByHash => _mapInfo;
@@ -50,6 +50,7 @@ namespace MapMaven.Services
         public IObservable<bool> LoadingMapInfo => _loadingMapInfo;
         public IObservable<bool> InitialMapLoad => _initialMapLoad;
 
+        public IObservable<PlaylistTree<IPlaylist>> PlaylistTree => _playlistTree;
         public IObservable<IEnumerable<IPlaylist>> PlaylistInfo { get; private set; }
         public IObservable<bool> LoadingPlaylistInfo => _loadingPlaylistInfo;
 
@@ -72,7 +73,7 @@ namespace MapMaven.Services
                 .Concat()
                 .Subscribe();
 
-            PlaylistInfo = _playlistTree.Select(tree => tree?.AllPlaylists() ?? []);
+            PlaylistInfo = _playlistTree.Select(tree => tree?.AllPlaylists().ToList() ?? []);
         }
 
         public async Task LoadAllMapInfo()

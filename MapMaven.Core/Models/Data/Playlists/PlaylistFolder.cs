@@ -6,6 +6,8 @@ namespace MapMaven.Core.Models.Data.Playlists
     {
         public List<PlaylistTreeItem<T>> ChildItems { get; set; } = [];
 
+        public PlaylistFolder() : base(null) { }
+
         public PlaylistFolder(PlaylistManager playlistManager) : base(playlistManager) { }
 
         public override IEnumerable<T> GetPlaylists()

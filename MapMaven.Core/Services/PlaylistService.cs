@@ -9,6 +9,7 @@ using MapMaven.Core.Models.DynamicPlaylists;
 using MapMaven.Core.Models.Data;
 using MapMaven.Core.Services.Interfaces;
 using MapMaven.Core.Extensions;
+using MapMaven.Core.Models.Data.Playlists;
 
 namespace MapMaven.Services
 {
@@ -21,6 +22,7 @@ namespace MapMaven.Services
 
         private readonly BehaviorSubject<string> _selectedPlaylistFileName = new(null);
 
+        public IObservable<PlaylistTree<Playlist>> PlaylistTree { get; private set; }
         public IObservable<IEnumerable<Playlist>> Playlists { get; private set; }
         public BehaviorSubject<Playlist> SelectedPlaylist { get; private set; } = new(null);
 
@@ -33,15 +35,17 @@ namespace MapMaven.Services
             _beatSaberDataService = beatSaberDataService;
             _mapService = mapService;
 
-            var playlists = _beatSaberDataService.PlaylistInfo.Select(x =>
-                x.Select(i => new Playlist(i))
-                .OrderBy(p => p.Title)
-                .ToList()
-            ).Replay(1);
+            var playlistTree = _beatSaberDataService.PlaylistTree.Select(tree =>
+            {
+                var playlistTree = new PlaylistTree<Playlist>(tree.RootPlaylistFolder.PlaylistManager);
+                playlistTree.RootPlaylistFolder = MapIPlaylistsToPlaylistsInFolder(tree.RootPlaylistFolder);
 
-            playlists.Connect();
+                return playlistTree;
+            }).Replay(1);
 
-            Playlists = playlists;
+            playlistTree.Connect();
+
+            Playlists = playlistTree.Select(tree => tree.AllPlaylists().ToList());
 
             Observable.CombineLatest(Playlists, _selectedPlaylistFileName, (playlists, selectedPlaylistFileName) => (playlists, selectedPlaylistFileName))
                 .Select(x =>
@@ -52,6 +56,28 @@ namespace MapMaven.Services
                     return x.playlists.FirstOrDefault(p => p.FileName == x.selectedPlaylistFileName);
                 })
                 .Subscribe(SelectedPlaylist.OnNext); // Subscribing here because of weird behavior with multiple subscriptions triggering multiple reruns of this observable.
+        }
+
+        private PlaylistFolder<Playlist> MapIPlaylistsToPlaylistsInFolder(PlaylistFolder<IPlaylist> folder)
+        {
+            var playlistFolder = new PlaylistFolder<Playlist>(folder.PlaylistManager);
+
+            foreach (var childFolder in folder.ChildItems.OfType<PlaylistFolder<IPlaylist>>())
+            {
+                var childPlaylistFolder = new PlaylistFolder<Playlist>(childFolder.PlaylistManager);
+                playlistFolder.ChildItems.Add(childPlaylistFolder);
+
+                MapIPlaylistsToPlaylistsInFolder(childFolder);
+            }
+
+            var playlistNodes = folder.ChildItems.OfType<PlaylistTreeNode<IPlaylist>>();
+
+            foreach (var playlistNode in playlistNodes)
+            {
+                playlistFolder.ChildItems.Add(new PlaylistTreeNode<Playlist>(new Playlist(playlistNode.Playlist), folder.PlaylistManager));
+            }
+
+            return playlistFolder;
         }
 
         public void SetSelectedPlaylist(Playlist playlist)
