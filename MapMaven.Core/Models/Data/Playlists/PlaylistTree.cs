@@ -1,20 +1,19 @@
-﻿using BeatSaberPlaylistsLib.Types;
+﻿using BeatSaberPlaylistsLib;
 
 namespace MapMaven.Core.Models.Data.Playlists
 {
     public class PlaylistTree<T>
     {
-        public List<PlaylistTreeItem<T>> Items { get; set; } = [];
+        public PlaylistFolder<T> RootPlaylistFolder { get; private set; }
+
+        public PlaylistTree(PlaylistManager playlistManager)
+        {
+            RootPlaylistFolder = new PlaylistFolder<T>(playlistManager);
+        }
 
         public IEnumerable<T> AllPlaylists()
         {
-            foreach (var item in Items)
-            {
-                foreach (var playlist in item.GetPlaylists())
-                {
-                    yield return playlist;
-                }
-            }
+            return RootPlaylistFolder.GetPlaylists();
         }
     }
 }

@@ -42,7 +42,7 @@ namespace MapMaven.Services
         private readonly BehaviorSubject<bool> _loadingMapInfo = new(false);
         private readonly BehaviorSubject<bool> _initialMapLoad = new(false);
 
-        private readonly BehaviorSubject<PlaylistTree<IPlaylist>> _playlistTree = new(new());
+        private readonly BehaviorSubject<PlaylistTree<IPlaylist>?> _playlistTree = new(null);
         private readonly BehaviorSubject<bool> _loadingPlaylistInfo = new(false);
 
         public IObservable<Dictionary<string, MapInfo>> MapInfoByHash => _mapInfo;
@@ -72,7 +72,7 @@ namespace MapMaven.Services
                 .Concat()
                 .Subscribe();
 
-            PlaylistInfo = _playlistTree.Select(tree => tree.AllPlaylists());
+            PlaylistInfo = _playlistTree.Select(tree => tree?.AllPlaylists() ?? []);
         }
 
         public async Task LoadAllMapInfo()
@@ -177,41 +177,30 @@ namespace MapMaven.Services
         {
             PlaylistManager.RefreshPlaylists(true);
 
-            var tree = new PlaylistTree<IPlaylist>();
+            var tree = new PlaylistTree<IPlaylist>(PlaylistManager);
 
-            foreach (var childPlaylistManager in PlaylistManager.GetChildManagers())
-            {
-                var folder = new PlaylistFolder<IPlaylist>(childPlaylistManager);
-                tree.Items.Add(folder);
-
-                AddPlaylistManagerPlaylistsToFolder(folder, childPlaylistManager);
-            }
-
-            var playlists = PlaylistManager.GetAllPlaylists();
-
-            foreach (var playlist in playlists)
-            {
-                tree.Items.Add(new PlaylistTreeNode<IPlaylist>(playlist, PlaylistManager));
-            }
+            AddPlaylistManagerPlaylistsToFolder(tree.RootPlaylistFolder);
 
             CleanLargeObjectHeap();
 
             return tree;
         }
 
-        private void AddPlaylistManagerPlaylistsToFolder(PlaylistFolder<IPlaylist> folder, PlaylistManager playlistManager)
+        private void AddPlaylistManagerPlaylistsToFolder(PlaylistFolder<IPlaylist> folder)
         {
-            foreach (var childPlaylistManager in playlistManager.GetChildManagers())
+            foreach (var childPlaylistManager in folder.PlaylistManager.GetChildManagers())
             {
-                folder.ChildItems.Add(new PlaylistFolder<IPlaylist>(childPlaylistManager));
-                AddPlaylistManagerPlaylistsToFolder(folder, childPlaylistManager);
+                var childFolder = new PlaylistFolder<IPlaylist>(childPlaylistManager);
+                folder.ChildItems.Add(childFolder);
+
+                AddPlaylistManagerPlaylistsToFolder(childFolder);
             }
 
-            var playlists = playlistManager.GetAllPlaylists();
+            var playlists = folder.PlaylistManager.GetAllPlaylists();
 
             foreach (var playlist in playlists)
             {
-                folder.ChildItems.Add(new PlaylistTreeNode<IPlaylist>(playlist, playlistManager));
+                folder.ChildItems.Add(new PlaylistTreeNode<IPlaylist>(playlist, folder.PlaylistManager));
             }
         }
 
