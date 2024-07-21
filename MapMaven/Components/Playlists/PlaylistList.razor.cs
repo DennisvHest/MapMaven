@@ -69,15 +69,18 @@ namespace MapMaven.Components.Playlists
             });
         }
 
-        //protected void OnPlaylistSelect(Playlist playlist)
-        //{
-        //    NavigationManager.NavigateTo("/maps");
+        protected void OnPlaylistSelect(Playlist playlist)
+        {
+            if (playlist is null)
+                return;
 
-        //    SelectedPlaylist = playlist;
+            NavigationManager.NavigateTo("/maps");
 
-        //    // Set the selected playlist once the navigation to maps page completes (one time event callback) (prevents costly filter execution on current page)
-        //    NavigationManager.LocationChanged += SetSelectedPlaylistAfterNavigation;
-        //}
+            SelectedPlaylist = playlist;
+
+            // Set the selected playlist once the navigation to maps page completes (one time event callback) (prevents costly filter execution on current page)
+            NavigationManager.LocationChanged += SetSelectedPlaylistAfterNavigation;
+        }
 
         private void SetSelectedPlaylistAfterNavigation(object sender, LocationChangedEventArgs e)
         {
