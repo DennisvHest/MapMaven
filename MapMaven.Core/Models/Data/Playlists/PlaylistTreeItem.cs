@@ -12,5 +12,6 @@ namespace MapMaven.Core.Models.Data.Playlists
         }
 
         public abstract IEnumerable<T> GetPlaylists();
+        public abstract PlaylistTreeItem<T> Copy();
     }
 }

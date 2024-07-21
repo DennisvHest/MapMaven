@@ -16,5 +16,10 @@ namespace MapMaven.Core.Models.Data.Playlists
         {
             yield return Playlist;
         }
+
+        public override PlaylistTreeItem<T> Copy()
+        {
+            return new PlaylistTreeNode<T>(Playlist, PlaylistManager);
+        }
     }
 }

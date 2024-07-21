@@ -34,18 +34,11 @@ namespace MapMaven.Components.Playlists
         private bool DeleteMaps = false;
 
         private BehaviorSubject<string> _playlistSearchText = new(string.Empty);
-        private BehaviorSubject<string> _dynamicPlaylistSearchText = new(string.Empty);
 
         private string PlaylistSearchText
         {
             get => _playlistSearchText.Value;
             set => _playlistSearchText.OnNext(value);
-        }
-
-        private string DynamicPlaylistSearchText
-        {
-            get => _dynamicPlaylistSearchText.Value;
-            set => _dynamicPlaylistSearchText.OnNext(value);
         }
 
         private Playlist? PlaylistToDelete = null;
@@ -54,7 +47,15 @@ namespace MapMaven.Components.Playlists
 
         protected override void OnInitialized()
         {
-            SubscribeAndBind(PlaylistService.PlaylistTree, playlistTree => PlaylistTree = playlistTree);
+            var playlistTree = Observable.CombineLatest(PlaylistService.PlaylistTree, _playlistSearchText, (playlistTree, searchText) => (playlistTree, searchText));
+
+            SubscribeAndBind(playlistTree, x =>
+            {
+                var filteredPlaylistTree = new PlaylistTree<Playlist>();
+                filteredPlaylistTree.RootPlaylistFolder = FilterPlaylistFolder((PlaylistFolder<Playlist>)x.playlistTree.RootPlaylistFolder.Copy(), x.searchText);
+
+                PlaylistTree = filteredPlaylistTree;
+            });
 
             BeatSaberDataService.LoadingPlaylistInfo.Subscribe(loading =>
             {
@@ -68,6 +69,30 @@ namespace MapMaven.Components.Playlists
                 InvokeAsync(StateHasChanged);
             });
         }
+
+        PlaylistFolder<Playlist> FilterPlaylistFolder(PlaylistFolder<Playlist> playlistFolder, string searchText)
+        {
+            playlistFolder.ChildItems = playlistFolder.ChildItems
+                .Where(item => PlaylistTreeItemContainsItem(item, searchText))
+                .ToList();
+
+            foreach (var item in playlistFolder.ChildItems)
+            {
+                if (item is PlaylistFolder<Playlist> childFolder)
+                {
+                    childFolder = FilterPlaylistFolder(childFolder, searchText);
+                }
+            }
+
+            return playlistFolder;
+        }
+
+        bool PlaylistTreeItemContainsItem(PlaylistTreeItem<Playlist> item, string searchText) => item switch
+        {
+            PlaylistFolder<Playlist> childFolder => childFolder.ChildItems.Any(item => PlaylistTreeItemContainsItem(item, searchText)),
+            PlaylistTreeNode<Playlist> playlist => playlist.Playlist.Title.Contains(searchText, StringComparison.OrdinalIgnoreCase),
+            _ => false
+        };
 
         protected void OnPlaylistSelect(Playlist playlist)
         {

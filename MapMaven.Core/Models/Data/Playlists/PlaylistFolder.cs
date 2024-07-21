@@ -26,5 +26,13 @@ namespace MapMaven.Core.Models.Data.Playlists
                 }
             }
         }
+
+        override public PlaylistTreeItem<T> Copy()
+        {
+            var folder = new PlaylistFolder<T>(PlaylistManager);
+            folder.FolderName = FolderName;
+            folder.ChildItems = ChildItems.Select(x => x.Copy()).ToList();
+            return folder;
+        }
     }
 }
