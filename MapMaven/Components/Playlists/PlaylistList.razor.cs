@@ -72,6 +72,9 @@ namespace MapMaven.Components.Playlists
 
         PlaylistFolder<Playlist> FilterPlaylistFolder(PlaylistFolder<Playlist> playlistFolder, string searchText)
         {
+            if (string.IsNullOrEmpty(searchText))
+                return playlistFolder;
+
             playlistFolder.ChildItems = playlistFolder.ChildItems
                 .Where(item => PlaylistTreeItemContainsItem(item, searchText))
                 .ToList();

@@ -26,9 +26,18 @@
             <MudProgressCircular Color="Color.Info" Size="Size.Small" Indeterminate="true" Class="align-self-center" />
         }
         <div class="full-height" style="overflow-y: auto;">
-            <MudTreeView T="Playlist" SelectedValue="SelectedPlaylist" SelectedValueChanged="OnPlaylistSelect" ExpandOnClick="true">
-                <PlaylistTreeViewFolder Folder="PlaylistTree.RootPlaylistFolder"></PlaylistTreeViewFolder>
-            </MudTreeView>
+            @if (string.IsNullOrEmpty(PlaylistSearchText))
+            {
+                <MudTreeView T="Playlist" SelectedValue="SelectedPlaylist" SelectedValueChanged="OnPlaylistSelect" ExpandOnClick="true" AutoExpand="true">
+                    <PlaylistTreeViewFolder Folder="PlaylistTree.RootPlaylistFolder" />
+                </MudTreeView>
+            }
+            else
+            {
+                <MudTreeView T="Playlist" SelectedValue="SelectedPlaylist" SelectedValueChanged="OnPlaylistSelect" ExpandOnClick="true">
+                    <PlaylistTreeViewFolder Folder="PlaylistTree.RootPlaylistFolder" Expanded="true" />
+                </MudTreeView>
+            }
         </div>
     </MudList>
 </div>
