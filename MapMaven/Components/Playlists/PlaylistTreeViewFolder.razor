@@ -5,7 +5,7 @@
 {
     @if (item is PlaylistFolder<Playlist> playlistFolder)
     {
-        <MudTreeViewItem T="Playlist" Icon="@Icons.Material.Filled.Folder" Text="@playlistFolder.FolderName">
+        <MudTreeViewItem T="Playlist" Text="@playlistFolder.FolderName">
             <PlaylistTreeViewFolder Folder="playlistFolder"></PlaylistTreeViewFolder>
         </MudTreeViewItem>
     }
