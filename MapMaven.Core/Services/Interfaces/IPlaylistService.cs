@@ -1,4 +1,5 @@
-﻿using MapMaven.Core.Models.Data;
+﻿using BeatSaberPlaylistsLib;
+using MapMaven.Core.Models.Data;
 using MapMaven.Core.Models.Data.Playlists;
 using MapMaven.Core.Models.DynamicPlaylists;
 using MapMaven.Models;
@@ -19,6 +20,7 @@ namespace MapMaven.Core.Services.Interfaces
         Task<Playlist> AddPlaylist(EditPlaylistModel editPlaylistModel, IEnumerable<Map>? playlistMaps = null, bool loadPlaylists = true);
         Task<Playlist?> AddPlaylistAndDownloadMaps(EditPlaylistModel editPlaylistModel, IEnumerable<Map> playlistMaps, bool loadPlaylists = true, IProgress<ItemProgress<Map>>? progress = null, CancellationToken cancellationToken = default);
         Task<Playlist?> AddPlaylistAndDownloadMaps(Playlist playlist, IEnumerable<Map> playlistMaps, bool loadPlaylists = true, IProgress<ItemProgress<Map>>? progress = null, CancellationToken cancellationToken = default);
+        Task AddPlaylistFolder(string folderName, PlaylistManager? parentPlaylistManager = null);
         Task DeletePlaylist(Playlist playlist, bool deleteMaps = false);
         Task<IEnumerable<Map>> DownloadPlaylistMapsIfNotExist(IEnumerable<Map> playlistMaps, IProgress<ItemProgress<Map>>? progress = null, bool loadMapInfo = true, CancellationToken cancellationToken = default);
         Task<Playlist> EditDynamicPlaylist(EditDynamicPlaylistModel editPlaylistModel);

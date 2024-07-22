@@ -9,7 +9,11 @@
             <div class="d-flex align-center">
                 <MudIcon Icon="@Icons.Material.Filled.PlaylistPlay"></MudIcon> Playlists
             </div>
-            <MudIconButton Icon="@Icons.Material.Filled.Add" Variant="Variant.Outlined" Size="Size.Small" OnClick="OpenAddPlaylistDialog" />
+            <MudMenu Icon="@Icons.Material.Filled.Add" Size="Size.Small">
+                <MudMenuItem Icon="@Icons.Material.Filled.PlaylistAdd" OnClick="OpenAddPlaylistDialog">Add playlist</MudMenuItem>
+                <MudMenuItem Icon="@Icons.Material.Filled.PlaylistAdd" OnClick="OpenAddDynamicPlaylistDialog">Add dynamic playlist</MudMenuItem>
+                <MudMenuItem Icon="@Icons.Material.Filled.CreateNewFolder" OnClick="OpenAddPlaylistFolderDialog">Add playlist folder</MudMenuItem>
+            </MudMenu>
         </MudListSubheader>
         <MudTextField @bind-Value="PlaylistSearchText"
                       DebounceInterval="300"

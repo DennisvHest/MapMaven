@@ -10,6 +10,7 @@ using MapMaven.Core.Models.Data;
 using MapMaven.Core.Services.Interfaces;
 using MapMaven.Core.Extensions;
 using MapMaven.Core.Models.Data.Playlists;
+using BeatSaberPlaylistsLib;
 
 namespace MapMaven.Services
 {
@@ -142,6 +143,15 @@ namespace MapMaven.Services
             await _beatSaberDataService.LoadAllPlaylists();
 
             return new Playlist(playlistToModify);
+        }
+
+        public async Task AddPlaylistFolder(string folderName, PlaylistManager? parentPlaylistManager = null)
+        {
+            var playlistManager = parentPlaylistManager ?? _beatSaberDataService.PlaylistManager;
+
+            playlistManager.CreateChildManager(folderName);
+
+            await _beatSaberDataService.LoadAllPlaylists();
         }
 
         private static void CreateValidConfiguration(EditDynamicPlaylistModel editDynamicPlaylistModel)

@@ -1,5 +1,4 @@
 using MapMaven.Core.Models.Data.Playlists;
-using MapMaven.Core.Models.DynamicPlaylists;
 using MapMaven.Core.Services.Interfaces;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Routing;
@@ -13,37 +12,37 @@ namespace MapMaven.Components.Playlists
     public partial class PlaylistList
     {
         [Inject]
-        protected IPlaylistService PlaylistService { get; set; }
+        IPlaylistService PlaylistService { get; set; }
 
         [Inject]
-        protected IBeatSaberDataService BeatSaberDataService { get; set; }
+        IBeatSaberDataService BeatSaberDataService { get; set; }
 
         [Inject]
-        protected IDialogService DialogService { get; set; }
+        IDialogService DialogService { get; set; }
 
         [Inject]
         ISnackbar Snackbar { get; set; }
 
         [Inject]
-        public NavigationManager NavigationManager { get; set; }
+        NavigationManager NavigationManager { get; set; }
 
-        private PlaylistTree<Playlist> PlaylistTree = new();
-        private bool LoadingPlaylists = false;
+        PlaylistTree<Playlist> PlaylistTree = new();
+        bool LoadingPlaylists = false;
 
-        private Playlist SelectedPlaylist;
-        private bool DeleteMaps = false;
+        Playlist SelectedPlaylist;
+        bool DeleteMaps = false;
 
-        private BehaviorSubject<string> _playlistSearchText = new(string.Empty);
+        BehaviorSubject<string> _playlistSearchText = new(string.Empty);
 
-        private string PlaylistSearchText
+        string PlaylistSearchText
         {
             get => _playlistSearchText.Value;
             set => _playlistSearchText.OnNext(value);
         }
 
-        private Playlist? PlaylistToDelete = null;
-        private bool DeleteDialogVisible = false;
-        private bool DeletingPlaylist = false;
+        Playlist? PlaylistToDelete = null;
+        bool DeleteDialogVisible = false;
+        bool DeletingPlaylist = false;
 
         protected override void OnInitialized()
         {
@@ -97,7 +96,7 @@ namespace MapMaven.Components.Playlists
             _ => false
         };
 
-        protected void OnPlaylistSelect(Playlist playlist)
+        void OnPlaylistSelect(Playlist playlist)
         {
             if (playlist is null)
                 return;
@@ -110,15 +109,33 @@ namespace MapMaven.Components.Playlists
             NavigationManager.LocationChanged += SetSelectedPlaylistAfterNavigation;
         }
 
-        private void SetSelectedPlaylistAfterNavigation(object sender, LocationChangedEventArgs e)
+        void SetSelectedPlaylistAfterNavigation(object sender, LocationChangedEventArgs e)
         {
             PlaylistService.SetSelectedPlaylist(SelectedPlaylist);
             NavigationManager.LocationChanged -= SetSelectedPlaylistAfterNavigation;
         }
 
-        protected void OpenAddPlaylistDialog()
+        void OpenAddPlaylistDialog()
         {
             DialogService.Show<EditPlaylistDialog>("Add playlist", new DialogOptions
+            {
+                MaxWidth = MaxWidth.Small,
+                FullWidth = true
+            });
+        }
+
+        void OpenAddDynamicPlaylistDialog()
+        {
+            DialogService.Show<EditDynamicPlaylistDialog>("Add playlist", new DialogOptions
+            {
+                MaxWidth = MaxWidth.Small,
+                FullWidth = true
+            });
+        }
+
+        void OpenAddPlaylistFolderDialog()
+        {
+            DialogService.Show<EditPlaylistFolderDialog>("Add playlist folder", new DialogOptions
             {
                 MaxWidth = MaxWidth.Small,
                 FullWidth = true

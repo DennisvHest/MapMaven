@@ -5,8 +5,13 @@
 {
     @if (item is PlaylistFolder<Playlist> playlistFolder)
     {
-        <MudTreeViewItem T="Playlist" Text="@playlistFolder.FolderName" Expanded="Expanded">
-            <PlaylistTreeViewFolder Folder="playlistFolder"></PlaylistTreeViewFolder>
+        <MudTreeViewItem T="Playlist" Expanded="Expanded">
+            <BodyContent>
+                @playlistFolder.FolderName
+            </BodyContent>
+            <ChildContent>
+                <PlaylistTreeViewFolder Folder="playlistFolder"></PlaylistTreeViewFolder>
+            </ChildContent>
         </MudTreeViewItem>
     }
 

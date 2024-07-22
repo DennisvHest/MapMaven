@@ -1,0 +1,45 @@
+﻿@using BeatSaberPlaylistsLib
+@using MapMaven.Core.Models
+
+<EditForm Model="Folder" OnValidSubmit="AddFolder">
+    <DataAnnotationsValidator />
+    <MudDialog>
+        <DialogContent>
+            <MudTextField @bind-Value="Folder.Name"
+                          For="() => Folder.Name"
+                          Label="Folder name"
+                          Variant="Variant.Outlined" />
+        </DialogContent>
+        <DialogActions>
+            <MudButton OnClick="Cancel">Cancel</MudButton>
+            <MudButton ButtonType="ButtonType.Submit">@(NewFolder ? "Add" : "Save changes")</MudButton>
+        </DialogActions>
+    </MudDialog>
+</EditForm>
+
+@code {
+    [Inject]
+    IPlaylistService PlaylistService { get; set; }
+
+    [CascadingParameter]
+    MudDialogInstance MudDialog { get; set; }
+
+    [Parameter]
+    public PlaylistManager PlaylistManager { get; set; }
+
+    [Parameter]
+    public PlaylistManager ParentPlaylistManager { get; set; }
+
+    EditPlaylistFolderModel Folder { get; set; } = new();
+
+    bool NewFolder => PlaylistManager is null;
+
+    async Task AddFolder()
+    {
+        await PlaylistService.AddPlaylistFolder(Folder.Name, ParentPlaylistManager);
+
+        MudDialog.Close();
+    }
+
+    void Cancel() => MudDialog.Cancel();
+}
