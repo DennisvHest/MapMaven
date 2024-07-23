@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using System.Reactive.Subjects;
 using MapMaven.Core.Services.Leaderboards;
 using MapMaven.Core.Models.AdvancedSearch;
+using System.Linq;
 
 namespace MapMaven.Core.Services
 {
@@ -63,17 +64,11 @@ namespace MapMaven.Core.Services
 
                 await _applicationSettingService.LoadAsync();
 
-                var playlists = await _beatSaberDataService.GetAllPlaylists();
-
-                var dynamicPlaylists = playlists
-                    .Select(p => new
-                    {
-                        Playlist = new Playlist(p),
-                        PlaylistInfo = p
-                    })
-                    .Where(x => x.Playlist.IsDynamicPlaylist);
-
                 await _mapService.RefreshDataAsync(reloadMapAndLeaderboardInfo: true);
+
+                var playlists = await _playlistService.Playlists.FirstAsync();
+
+                var dynamicPlaylists = playlists.Where(p => p.IsDynamicPlaylist);
 
                 if (!dynamicPlaylists.Any())
                     return;
@@ -120,12 +115,12 @@ namespace MapMaven.Core.Services
                 {
                     try
                     {
-                        var configuration = playlist.Playlist.DynamicPlaylistConfiguration;
+                        var configuration = playlist.DynamicPlaylistConfiguration;
 
                         var rankedMapsForLeaderboard = Enumerable.Empty<DynamicPlaylistMapPair>();
 
                         if (configuration.LeaderboardProvider is not null && rankedMapsPerLeaderboardProvider.ContainsKey(configuration.LeaderboardProvider))
-                            rankedMapsForLeaderboard = rankedMapsPerLeaderboardProvider[playlist.Playlist.DynamicPlaylistConfiguration.LeaderboardProvider];
+                            rankedMapsForLeaderboard = rankedMapsPerLeaderboardProvider[playlist.DynamicPlaylistConfiguration.LeaderboardProvider];
 
                         var playlistMaps = configuration.MapPool switch
                         {
@@ -145,11 +140,11 @@ namespace MapMaven.Core.Services
 
                         await _playlistService.DownloadPlaylistMapsIfNotExist(resultPlaylistMaps, loadMapInfo: false);
 
-                        await _playlistService.ReplaceMapsInPlaylist(resultPlaylistMaps, playlist.Playlist, loadPlaylists: false);
+                        await _playlistService.ReplaceMapsInPlaylist(resultPlaylistMaps, playlist, loadPlaylists: false);
                     }
                     catch (Exception ex)
                     {
-                        _logger.LogError(ex, $"Error arranging dynamic playlist: {playlist.PlaylistInfo?.Title}");
+                        _logger.LogError(ex, $"Error arranging dynamic playlist: {playlist?.Title}");
                     }
                 }
 
