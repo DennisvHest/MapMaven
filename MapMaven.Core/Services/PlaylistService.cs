@@ -74,7 +74,7 @@ namespace MapMaven.Services
 
             foreach (var playlistNode in playlistNodes)
             {
-                playlistFolder.ChildItems.Add(new PlaylistTreeNode<Playlist>(new Playlist(playlistNode.Playlist), folder.PlaylistManager));
+                playlistFolder.ChildItems.Add(new PlaylistTreeNode<Playlist>(new Playlist(playlistNode.Playlist, folder.PlaylistManager), folder.PlaylistManager));
             }
 
             return playlistFolder;
@@ -101,7 +101,7 @@ namespace MapMaven.Services
 
             _beatSaberDataService.PlaylistManager.SavePlaylist(addedPlaylist);
 
-            var playlist = new Playlist(addedPlaylist);
+            var playlist = new Playlist(addedPlaylist, _beatSaberDataService.PlaylistManager);
 
             return playlist;
         }
@@ -120,7 +120,7 @@ namespace MapMaven.Services
 
             _beatSaberDataService.PlaylistManager.SavePlaylist(addedPlaylist);
 
-            var playlist = new Playlist(addedPlaylist);
+            var playlist = new Playlist(addedPlaylist, _beatSaberDataService.PlaylistManager);
 
             return playlist;
         }
@@ -142,7 +142,7 @@ namespace MapMaven.Services
 
             await _beatSaberDataService.LoadAllPlaylists();
 
-            return new Playlist(playlistToModify);
+            return new Playlist(playlistToModify, _beatSaberDataService.PlaylistManager);
         }
 
         public async Task AddPlaylistFolder(string folderName, PlaylistManager? parentPlaylistManager = null)
@@ -294,12 +294,12 @@ namespace MapMaven.Services
 
             await _beatSaberDataService.LoadAllPlaylists();
 
-            return new Playlist(playlistToModify);
+            return new Playlist(playlistToModify, _beatSaberDataService.PlaylistManager);
         }
 
         public async Task AddMapToPlaylist(Map map, Playlist playlist, bool loadPlaylists = true)
         {
-            await AddMapsToPlaylist(new Map[] { map }, playlist, loadPlaylists);
+            await AddMapsToPlaylist([map], playlist, loadPlaylists);
         }
 
         public async Task AddMapsToPlaylist(IEnumerable<Map> maps, Playlist playlist, bool loadPlaylists = true)
@@ -336,7 +336,7 @@ namespace MapMaven.Services
             await AddMapsToPlaylist(maps, playlistToModify, loadPlaylists);
         }
 
-        public async Task RemoveMapFromPlaylist(Map map, Playlist playlist) => await RemoveMapsFromPlaylist(new Map[] { map }, playlist);
+        public async Task RemoveMapFromPlaylist(Map map, Playlist playlist) => await RemoveMapsFromPlaylist([map], playlist);
 
         public async Task RemoveMapsFromPlaylist(IEnumerable<Map> maps, Playlist playlist)
         {
@@ -349,6 +349,22 @@ namespace MapMaven.Services
             _beatSaberDataService.PlaylistManager.SavePlaylist(playlistToModify);
 
             await _beatSaberDataService.LoadAllPlaylists();
+        }
+
+        public PlaylistManager GetRootPlaylistManager() => _beatSaberDataService.PlaylistManager;
+
+        public IEnumerable<PlaylistManager> GetAllPlaylistManagers()
+        {
+            return new[] { _beatSaberDataService.PlaylistManager }
+                .Union(GetAllPlaylistManagers(_beatSaberDataService.PlaylistManager)
+                .OrderBy(m => m.PlaylistPath));
+        }
+
+        private IEnumerable<PlaylistManager> GetAllPlaylistManagers(PlaylistManager playlistManager)
+        {
+            var childManagers = playlistManager.GetChildManagers();
+
+            return childManagers.Union(childManagers.SelectMany(GetAllPlaylistManagers));
         }
 
         private string GetUniqueFileName(EditPlaylistModel editPlaylistModel)

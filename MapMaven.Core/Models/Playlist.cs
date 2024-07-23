@@ -1,4 +1,5 @@
-﻿using BeatSaberPlaylistsLib.Types;
+﻿using BeatSaberPlaylistsLib;
+using BeatSaberPlaylistsLib.Types;
 using MapMaven.Core.Models.DynamicPlaylists;
 using MapMaven.Extensions;
 using Newtonsoft.Json.Linq;
@@ -21,11 +22,14 @@ namespace MapMaven.Models
         public Lazy<string?> CoverImageSmall { get; private set; }
         public bool HasCover => _playlist.HasCover;
 
+        public PlaylistManager PlaylistManager { get; private set; }
+
         private IPlaylist _playlist;
 
-        public Playlist(IPlaylist playlist)
+        public Playlist(IPlaylist playlist, PlaylistManager playlistManager)
         {
             _playlist = playlist;
+            PlaylistManager = playlistManager;
             FileName = playlist.Filename;
             Title = playlist.Title;
             Description = playlist.Description;

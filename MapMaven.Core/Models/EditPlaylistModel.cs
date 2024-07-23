@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using BeatSaberPlaylistsLib;
+using System.ComponentModel.DataAnnotations;
 
 namespace MapMaven.Models
 {
@@ -10,6 +11,8 @@ namespace MapMaven.Models
         public string Description { get; set; }
         public string CoverImage { get; set; }
 
+        public PlaylistManager PlaylistManager { get; set; }
+
         public EditPlaylistModel() { }
 
         public EditPlaylistModel(Playlist playlist)
@@ -18,6 +21,7 @@ namespace MapMaven.Models
             Name = playlist.Title;
             Description = playlist.Description;
             CoverImage = playlist.CoverImage.Value;
+            PlaylistManager = playlist.PlaylistManager;
         }
     }
 }
