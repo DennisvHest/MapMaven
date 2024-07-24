@@ -21,11 +21,9 @@ namespace MapMaven.Services
         private readonly IBeatSaberDataService _beatSaberDataService;
         private readonly IMapService _mapService;
 
-        private readonly BehaviorSubject<string> _selectedPlaylistFileName = new(null);
-
         public IObservable<PlaylistTree<Playlist>> PlaylistTree { get; private set; }
         public IObservable<IEnumerable<Playlist>> Playlists { get; private set; }
-        public BehaviorSubject<Playlist> SelectedPlaylist { get; private set; } = new(null);
+        public BehaviorSubject<Playlist?> SelectedPlaylist { get; private set; } = new(null);
 
         private readonly BehaviorSubject<bool> _creatingPlaylist = new(false);
         public IObservable<bool> CreatingPlaylist => _creatingPlaylist;
@@ -49,16 +47,6 @@ namespace MapMaven.Services
             PlaylistTree = playlistTree;
 
             Playlists = playlistTree.Select(tree => tree.AllPlaylists().ToList());
-
-            Observable.CombineLatest(Playlists, _selectedPlaylistFileName, (playlists, selectedPlaylistFileName) => (playlists, selectedPlaylistFileName))
-                .Select(x =>
-                {
-                    if (string.IsNullOrEmpty(x.selectedPlaylistFileName))
-                        return null;
-
-                    return x.playlists.FirstOrDefault(p => p.FileName == x.selectedPlaylistFileName);
-                })
-                .Subscribe(SelectedPlaylist.OnNext); // Subscribing here because of weird behavior with multiple subscriptions triggering multiple reruns of this observable.
         }
 
         private PlaylistFolder<Playlist> MapIPlaylistsToPlaylistsInFolder(PlaylistFolder<IPlaylist> folder)
@@ -82,7 +70,7 @@ namespace MapMaven.Services
 
         public void SetSelectedPlaylist(Playlist playlist)
         {
-            _selectedPlaylistFileName.OnNext(playlist?.FileName);
+            SelectedPlaylist.OnNext(playlist);
         }
 
         public async Task<Playlist> AddPlaylist(EditPlaylistModel editPlaylistModel, IEnumerable<Map>? playlistMaps = null, bool loadPlaylists = true)
@@ -275,8 +263,8 @@ namespace MapMaven.Services
 
             playlistManager.DeletePlaylist(playlistToDelete);
 
-            if (playlist.FileName == _selectedPlaylistFileName.Value)
-                _selectedPlaylistFileName.OnNext(null); // Playlist should not be selected if deleted.
+            if (playlist == SelectedPlaylist.Value)
+                SelectedPlaylist.OnNext(null); // Playlist should not be selected if deleted.
 
             if (deleteMaps)
                 await _mapService.DeleteMaps(playlist.Maps.Select(m => m.Hash));

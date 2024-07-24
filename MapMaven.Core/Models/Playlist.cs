@@ -83,5 +83,20 @@ namespace MapMaven.Models
         {
             return _playlist.GetCoverStream();
         }
+
+        public override bool Equals(object? obj)
+        {
+            var otherPlaylist = obj as Playlist;
+
+            if (otherPlaylist == null)
+                return false;
+
+            return FileName == otherPlaylist.FileName && PlaylistManager?.PlaylistPath == otherPlaylist.PlaylistManager?.PlaylistPath;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(FileName, PlaylistManager?.PlaylistPath);
+        }
     }
 }
