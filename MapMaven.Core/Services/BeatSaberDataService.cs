@@ -176,8 +176,6 @@ namespace MapMaven.Services
 
         public async Task<PlaylistTree<IPlaylist>> GetPlaylistTree()
         {
-            PlaylistManager.RefreshPlaylists(true);
-
             var tree = new PlaylistTree<IPlaylist>(PlaylistManager);
 
             AddPlaylistManagerPlaylistsToFolder(tree.RootPlaylistFolder);
@@ -189,19 +187,20 @@ namespace MapMaven.Services
 
         private void AddPlaylistManagerPlaylistsToFolder(PlaylistFolder<IPlaylist> folder)
         {
+            folder.PlaylistManager.RefreshPlaylists(false);
+            var playlists = folder.PlaylistManager.GetAllPlaylists(includeChildren: false);
+
+            foreach (var playlist in playlists)
+            {
+                folder.ChildItems.Add(new PlaylistTreeNode<IPlaylist>(playlist, folder.PlaylistManager));
+            }
+
             foreach (var childPlaylistManager in folder.PlaylistManager.GetChildManagers())
             {
                 var childFolder = new PlaylistFolder<IPlaylist>(childPlaylistManager);
                 folder.ChildItems.Add(childFolder);
 
                 AddPlaylistManagerPlaylistsToFolder(childFolder);
-            }
-
-            var playlists = folder.PlaylistManager.GetAllPlaylists();
-
-            foreach (var playlist in playlists)
-            {
-                folder.ChildItems.Add(new PlaylistTreeNode<IPlaylist>(playlist, folder.PlaylistManager));
             }
         }
 
