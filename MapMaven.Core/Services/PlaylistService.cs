@@ -21,6 +21,8 @@ namespace MapMaven.Services
         private readonly IBeatSaberDataService _beatSaberDataService;
         private readonly IMapService _mapService;
 
+        private readonly BehaviorSubject<string?> _selectedPlaylistFilePath = new(null);
+
         public IObservable<PlaylistTree<Playlist>> PlaylistTree { get; private set; }
         public IObservable<IEnumerable<Playlist>> Playlists { get; private set; }
         public BehaviorSubject<Playlist?> SelectedPlaylist { get; private set; } = new(null);
@@ -47,6 +49,16 @@ namespace MapMaven.Services
             PlaylistTree = playlistTree;
 
             Playlists = playlistTree.Select(tree => tree.AllPlaylists().ToList());
+
+            Observable.CombineLatest(Playlists, _selectedPlaylistFilePath, (playlists, selectedPlaylistFilePath) => (playlists, selectedPlaylistFilePath))
+                .Select(x =>
+                {
+                    if (string.IsNullOrEmpty(x.selectedPlaylistFilePath))
+                        return null;
+
+                    return x.playlists.FirstOrDefault(p => p.PlaylistFilePath == x.selectedPlaylistFilePath);
+                })
+                .Subscribe(SelectedPlaylist.OnNext); // Subscribing here because of weird behavior with multiple subscriptions triggering multiple reruns of this observable.
         }
 
         private PlaylistFolder<Playlist> MapIPlaylistsToPlaylistsInFolder(PlaylistFolder<IPlaylist> folder)
@@ -70,7 +82,7 @@ namespace MapMaven.Services
 
         public void SetSelectedPlaylist(Playlist playlist)
         {
-            SelectedPlaylist.OnNext(playlist);
+            _selectedPlaylistFilePath.OnNext(playlist?.PlaylistFilePath);
         }
 
         public async Task<Playlist> AddPlaylist(EditPlaylistModel editPlaylistModel, IEnumerable<Map>? playlistMaps = null, bool loadPlaylists = true)
@@ -138,6 +150,20 @@ namespace MapMaven.Services
             var playlistManager = parentPlaylistManager ?? _beatSaberDataService.PlaylistManager;
 
             playlistManager.CreateChildManager(folderName);
+
+            await _beatSaberDataService.LoadAllPlaylists();
+        }
+
+        public async Task RenamePlaylistFolder(PlaylistManager playlistManager, string newFolderName)
+        {
+            playlistManager.RenameManager(newFolderName);
+
+            await _beatSaberDataService.LoadAllPlaylists();
+        }
+
+        public async Task DeletePlaylistFolder(PlaylistManager playlistManager)
+        {
+            playlistManager.Parent.DeleteChildManager(playlistManager);
 
             await _beatSaberDataService.LoadAllPlaylists();
         }

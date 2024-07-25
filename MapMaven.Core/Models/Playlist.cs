@@ -2,6 +2,7 @@
 using BeatSaberPlaylistsLib.Types;
 using MapMaven.Core.Models.DynamicPlaylists;
 using MapMaven.Extensions;
+using Microsoft.VisualStudio.PlatformUI;
 using Newtonsoft.Json.Linq;
 using Image = System.Drawing.Image;
 
@@ -22,6 +23,8 @@ namespace MapMaven.Models
         public Lazy<string?> CoverImageSmall { get; private set; }
         public bool HasCover => _playlist.HasCover;
 
+        public string PlaylistFilePath { get; private set; }
+
         public PlaylistManager PlaylistManager { get; private set; }
 
         private IPlaylist _playlist;
@@ -31,6 +34,9 @@ namespace MapMaven.Models
             _playlist = playlist;
             PlaylistManager = playlistManager;
             FileName = playlist.Filename;
+
+            PlaylistFilePath = Path.Join(PlaylistManager?.PlaylistPath, FileName).NormalizePath();
+
             Title = playlist.Title;
             Description = playlist.Description;
 

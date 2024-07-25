@@ -62,10 +62,7 @@ namespace MapMaven.Services
             _logger = logger;
             _fileSystem = fileSystem;
 
-            _fileService.PlaylistsLocationObservable.Subscribe(playlistsLocation =>
-            {
-                PlaylistManager = new PlaylistManager(_fileService.PlaylistsLocation, new LegacyPlaylistHandler());
-            });
+            _fileService.PlaylistsLocationObservable.Subscribe(playlistsLocation => RefreshPlaylistManager());
 
             _fileService.BeatSaberInstallLocationObservable
                 .DistinctUntilChanged()
@@ -74,6 +71,11 @@ namespace MapMaven.Services
                 .Subscribe();
 
             PlaylistInfo = _playlistTree.Select(tree => tree?.AllPlaylists().ToList() ?? []);
+        }
+
+        private void RefreshPlaylistManager()
+        {
+            PlaylistManager = new PlaylistManager(_fileService.PlaylistsLocation, new LegacyPlaylistHandler());
         }
 
         public async Task LoadAllMapInfo()
@@ -157,6 +159,8 @@ namespace MapMaven.Services
 
             try
             {
+                RefreshPlaylistManager();
+
                 var playlistTree = await GetPlaylistTree();
 
                 _playlistTree.OnNext(playlistTree);

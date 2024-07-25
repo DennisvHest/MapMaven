@@ -29,9 +29,12 @@ namespace MapMaven.Components.Playlists
         public bool Expanded { get; set; }
 
         Playlist? PlaylistToDelete = null;
-        bool DeleteDialogVisible = false;
+        bool DeletePlaylistDialogVisible = false;
         bool DeletingPlaylist = false;
         bool DeleteMaps = false;
+
+        PlaylistFolder<Playlist>? PlaylistFolderToDelete = null;
+        bool DeletePlaylistFolderDialogVisible = false;
 
         void OpenEditPlaylistDialog(Playlist playlist)
         {
@@ -50,13 +53,13 @@ namespace MapMaven.Components.Playlists
         void OpenDeletePlaylistDialog(Playlist playlistToDelete)
         {
             PlaylistToDelete = playlistToDelete;
-            DeleteDialogVisible = true;
+            DeletePlaylistDialogVisible = true;
         }
 
         void ClosePlaylistDelete()
         {
             PlaylistToDelete = null;
-            DeleteDialogVisible = false;
+            DeletePlaylistDialogVisible = false;
             DeleteMaps = false;
         }
 
@@ -118,6 +121,42 @@ namespace MapMaven.Components.Playlists
                     FullWidth = true
                 }
             );
+        }
+
+        void OpenEditPlaylistFolderDialog(PlaylistFolder<Playlist> playlistFolder)
+        {
+            DialogService.Show<EditPlaylistFolderDialog>("Add playlist folder", new DialogParameters
+                {
+                    { nameof(EditPlaylistFolderDialog.ParentPlaylistManager), Folder.PlaylistManager },
+                    { nameof(EditPlaylistFolderDialog.PlaylistManager), playlistFolder.PlaylistManager }
+                },
+                new DialogOptions
+                {
+                    MaxWidth = MaxWidth.Small,
+                    FullWidth = true
+                }
+            );
+        }
+
+        void OpenDeletePlaylistFolderDialog(PlaylistFolder<Playlist> playlistFolder)
+        {
+            PlaylistFolderToDelete = playlistFolder;
+            DeletePlaylistFolderDialogVisible = true;
+        }
+
+        async Task DeletePlaylistFolder()
+        {
+            await PlaylistService.DeletePlaylistFolder(PlaylistFolderToDelete!.PlaylistManager);
+
+            Snackbar.Add($"Deleted playlist folder \"{PlaylistFolderToDelete.FolderName}\"", Severity.Normal, config => config.Icon = Icons.Material.Filled.Check);
+
+            ClosePlaylistFolderDelete();
+        }
+
+        void ClosePlaylistFolderDelete()
+        {
+            PlaylistFolderToDelete = null;
+            DeletePlaylistFolderDialogVisible = false;
         }
 
         int GetLoadedMapsCount(Playlist playlist)

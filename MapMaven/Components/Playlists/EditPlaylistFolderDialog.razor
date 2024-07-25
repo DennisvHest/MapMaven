@@ -1,7 +1,7 @@
 ﻿@using BeatSaberPlaylistsLib
 @using MapMaven.Core.Models
 
-<EditForm Model="Folder" OnValidSubmit="AddFolder">
+<EditForm Model="Folder" OnValidSubmit="SaveChanges">
     <DataAnnotationsValidator />
     <MudDialog>
         <DialogContent>
@@ -34,9 +34,22 @@
 
     bool NewFolder => PlaylistManager is null;
 
-    async Task AddFolder()
+    protected override void OnParametersSet()
     {
-        await PlaylistService.AddPlaylistFolder(Folder.Name, ParentPlaylistManager);
+        if (!string.IsNullOrEmpty(PlaylistManager?.PlaylistPath))
+            Folder.Name = Path.GetFileName(PlaylistManager.PlaylistPath);
+    }
+
+    async Task SaveChanges()
+    {
+        if (NewFolder)
+        {
+            await PlaylistService.AddPlaylistFolder(Folder.Name, ParentPlaylistManager);
+        }
+        else
+        {
+            await PlaylistService.RenamePlaylistFolder(PlaylistManager, Folder.Name);
+        }
 
         MudDialog.Close();
     }

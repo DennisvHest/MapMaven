@@ -22,6 +22,7 @@ namespace MapMaven.Core.Services.Interfaces
         Task<Playlist?> AddPlaylistAndDownloadMaps(Playlist playlist, IEnumerable<Map> playlistMaps, bool loadPlaylists = true, IProgress<ItemProgress<Map>>? progress = null, CancellationToken cancellationToken = default);
         Task AddPlaylistFolder(string folderName, PlaylistManager? parentPlaylistManager = null);
         Task DeletePlaylist(Playlist playlist, bool deleteMaps = false);
+        Task DeletePlaylistFolder(PlaylistManager playlistManager);
         Task<IEnumerable<Map>> DownloadPlaylistMapsIfNotExist(IEnumerable<Map> playlistMaps, IProgress<ItemProgress<Map>>? progress = null, bool loadMapInfo = true, CancellationToken cancellationToken = default);
         Task<Playlist> EditDynamicPlaylist(EditDynamicPlaylistModel editPlaylistModel);
         Task<Playlist> EditPlaylist(EditPlaylistModel editPlaylistModel);
@@ -29,6 +30,7 @@ namespace MapMaven.Core.Services.Interfaces
         PlaylistManager GetRootPlaylistManager();
         Task RemoveMapFromPlaylist(Map map, Playlist playlist);
         Task RemoveMapsFromPlaylist(IEnumerable<Map> maps, Playlist playlist);
+        Task RenamePlaylistFolder(PlaylistManager playlistManager, string newFolderName);
         Task ReplaceMapsInPlaylist(IEnumerable<Map> maps, Playlist playlist, bool loadPlaylists = true);
         void SetSelectedPlaylist(Playlist playlist);
     }
