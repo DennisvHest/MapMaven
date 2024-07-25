@@ -7,7 +7,10 @@ namespace MapMaven.Core.Models.DynamicPlaylists
     public class EditDynamicPlaylistModel : EditPlaylistModel
     {
         [ValidateComplexType]
-        public DynamicPlaylistConfiguration DynamicPlaylistConfiguration { get; set; }
+        public DynamicPlaylistConfiguration DynamicPlaylistConfiguration { get; set; } = new()
+        {
+            MapCount = 20
+        };
 
         public EditDynamicPlaylistModel() { }
 

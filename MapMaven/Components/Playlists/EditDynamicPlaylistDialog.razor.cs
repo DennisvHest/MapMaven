@@ -1,3 +1,4 @@
+using BeatSaberPlaylistsLib;
 using FastDeepCloner;
 using MapMaven.Core.Models.AdvancedSearch;
 using MapMaven.Core.Models.DynamicPlaylists;
@@ -35,6 +36,9 @@ namespace MapMaven.Components.Playlists
         public EditDynamicPlaylistModel SelectedPlaylist { get; set; }
 
         [Parameter]
+        public PlaylistManager PlaylistManager { get; set; }
+
+        [Parameter]
         public bool NewPlaylist { get; set; } = true;
 
         bool LeaderboardAvailable = false;
@@ -47,12 +51,14 @@ namespace MapMaven.Components.Playlists
         void ConfigureDynamicPlaylist(EditDynamicPlaylistModel dynamicPlaylist)
         {
             SelectedPlaylist = DeepCloner.Clone(dynamicPlaylist);
+            SelectedPlaylist.PlaylistManager = PlaylistManager;
         }
 
         void ConfigureCustomDynamicPlaylist()
         {
             SelectedPlaylist = new()
             {
+                PlaylistManager = PlaylistManager,
                 DynamicPlaylistConfiguration = new()
                 {
                     MapCount = 20

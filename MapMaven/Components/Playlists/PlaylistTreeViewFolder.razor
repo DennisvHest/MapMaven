@@ -7,7 +7,16 @@
     {
         <MudTreeViewItem T="Playlist" Expanded="Expanded">
             <BodyContent>
-                @playlistFolder.FolderName
+                <div class="d-flex align-center justify-space-between full-width">
+                    <span>@playlistFolder.FolderName</span>
+                    <div>
+                        <MudMenu Icon="@Icons.Material.Filled.Add" Size="Size.Small">
+                            <MudMenuItem Icon="@Icons.Material.Filled.PlaylistAdd" OnClick="() => OpenAddPlaylistDialog(playlistFolder)">Add playlist</MudMenuItem>
+                            <MudMenuItem Icon="@Icons.Material.Filled.PlaylistAdd" OnClick="() => OpenAddDynamicPlaylistDialog(playlistFolder)">Add dynamic playlist</MudMenuItem>
+                            <MudMenuItem Icon="@Icons.Material.Filled.CreateNewFolder" OnClick="() => OpenAddPlaylistFolderDialog(playlistFolder)">Add playlist folder</MudMenuItem>
+                        </MudMenu>
+                    </div>
+                </div>
             </BodyContent>
             <ChildContent>
                 <PlaylistTreeViewFolder Folder="playlistFolder" Expanded="Expanded"></PlaylistTreeViewFolder>
@@ -62,81 +71,3 @@
         </MudButton>
     </DialogActions>
 </MudDialog>
-
-@code {
-    [Inject]
-    IDialogService DialogService { get; set; }
-
-    [Inject]
-    ISnackbar Snackbar { get; set; }
-
-    [Inject]
-    IPlaylistService PlaylistService { get; set; }
-
-    [Inject]
-    IBeatSaberDataService BeatSaberDataService { get; set; }
-
-    [Parameter]
-    public PlaylistFolder<Playlist> Folder { get; set; }
-
-    [Parameter]
-    public bool Expanded { get; set; }
-
-    Playlist? PlaylistToDelete = null;
-    bool DeleteDialogVisible = false;
-    bool DeletingPlaylist = false;
-    bool DeleteMaps = false;
-
-    void OpenEditPlaylistDialog(Playlist playlist)
-    {
-        var parameters = new DialogParameters
-        {
-            { "EditPlaylistModel", new EditPlaylistModel(playlist) }
-        };
-
-        DialogService.Show<EditPlaylistDialog>("Edit playlist", parameters, new DialogOptions
-        {
-            MaxWidth = MaxWidth.Small,
-            FullWidth = true
-        });
-    }
-
-    void OpenDeletePlaylistDialog(Playlist playlistToDelete)
-    {
-        PlaylistToDelete = playlistToDelete;
-        DeleteDialogVisible = true;
-    }
-
-    void ClosePlaylistDelete()
-    {
-        PlaylistToDelete = null;
-        DeleteDialogVisible = false;
-        DeleteMaps = false;
-    }
-
-    async Task DeletePlaylist()
-    {
-        DeletingPlaylist = true;
-
-        try
-        {
-            await PlaylistService.DeletePlaylist(PlaylistToDelete, DeleteMaps);
-
-            Snackbar.Add($"Removed playlist \"{PlaylistToDelete.Title}\"", Severity.Normal, config => config.Icon = Icons.Material.Filled.Check);
-
-            ClosePlaylistDelete();
-        }
-        finally
-        {
-            DeletingPlaylist = false;
-        }
-    }
-
-    int GetLoadedMapsCount(Playlist playlist)
-    {
-        return playlist.Maps
-            .Where(m => BeatSaberDataService.MapIsLoaded(m.Hash))
-            .Count();
-    }
-}
-
