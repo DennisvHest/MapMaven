@@ -75,15 +75,3 @@
         </MudButton>
     </DialogActions>
 </MudDialog>
-
-<MudDialog @bind-Visible="DeletePlaylistFolderDialogVisible" Options="new() { BackdropClick = false }">
-    <DialogContent>
-        <MudText Typo="Typo.body1" Class="mb-3">Are you sure you want to delete the "@PlaylistFolderToDelete.FolderName" playlist folder? All playlists and folders within this folder will be deleted.</MudText>
-    </DialogContent>
-    <DialogActions>
-        <MudButton OnClick="ClosePlaylistFolderDelete">Cancel</MudButton>
-        <MudButton Color="@Color.Error" Variant="Variant.Filled" OnClick="DeletePlaylistFolder">
-            Delete
-        </MudButton>
-    </DialogActions>
-</MudDialog>

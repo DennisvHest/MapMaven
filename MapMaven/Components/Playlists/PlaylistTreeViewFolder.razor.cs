@@ -1,4 +1,5 @@
 using BeatSaberPlaylistsLib;
+using MapMaven.Components.Shared;
 using MapMaven.Core.Models.Data.Playlists;
 using MapMaven.Core.Models.DynamicPlaylists;
 using MapMaven.Core.Services.Interfaces;
@@ -32,9 +33,6 @@ namespace MapMaven.Components.Playlists
         bool DeletePlaylistDialogVisible = false;
         bool DeletingPlaylist = false;
         bool DeleteMaps = false;
-
-        PlaylistFolder<Playlist>? PlaylistFolderToDelete = null;
-        bool DeletePlaylistFolderDialogVisible = false;
 
         void OpenEditPlaylistDialog(Playlist playlist)
         {
@@ -138,25 +136,22 @@ namespace MapMaven.Components.Playlists
             );
         }
 
-        void OpenDeletePlaylistFolderDialog(PlaylistFolder<Playlist> playlistFolder)
+        async Task OpenDeletePlaylistFolderDialog(PlaylistFolder<Playlist> playlistFolder)
         {
-            PlaylistFolderToDelete = playlistFolder;
-            DeletePlaylistFolderDialogVisible = true;
-        }
+            var dialog = await DialogService.ShowAsync<ConfirmationDialog>(null, new DialogParameters
+            {
+                { nameof(ConfirmationDialog.DialogText), $"Are you sure you want to delete the \"{playlistFolder.FolderName}\" playlist folder? All playlists and folders within this folder will be deleted." },
+                { nameof(ConfirmationDialog.ConfirmText), "Delete" }
+            });
 
-        async Task DeletePlaylistFolder()
-        {
-            await PlaylistService.DeletePlaylistFolder(PlaylistFolderToDelete!.PlaylistManager);
+            var result = await dialog.Result;
 
-            Snackbar.Add($"Deleted playlist folder \"{PlaylistFolderToDelete.FolderName}\"", Severity.Normal, config => config.Icon = Icons.Material.Filled.Check);
+            if (result.Canceled)
+                return;
 
-            ClosePlaylistFolderDelete();
-        }
+            await PlaylistService.DeletePlaylistFolder(playlistFolder!.PlaylistManager);
 
-        void ClosePlaylistFolderDelete()
-        {
-            PlaylistFolderToDelete = null;
-            DeletePlaylistFolderDialogVisible = false;
+            Snackbar.Add($"Deleted playlist folder \"{playlistFolder.FolderName}\"", Severity.Normal, config => config.Icon = Icons.Material.Filled.Check);
         }
 
         int GetLoadedMapsCount(Playlist playlist)

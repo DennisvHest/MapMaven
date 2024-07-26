@@ -110,7 +110,9 @@ namespace MapMaven.Components.Playlists
 
         bool PlaylistTreeItemContainsItem(PlaylistTreeItem<Playlist> item, string searchText, PlaylistType? playlistType) => item switch
         {
-            PlaylistFolder<Playlist> childFolder => childFolder.ChildItems.Any(item => PlaylistTreeItemContainsItem(item, searchText, playlistType)),
+            PlaylistFolder<Playlist> childFolder =>
+                !string.IsNullOrEmpty(searchText) && childFolder.FolderName.Contains(searchText, StringComparison.OrdinalIgnoreCase)
+                || childFolder.ChildItems.Any(item => PlaylistTreeItemContainsItem(item, searchText, playlistType)),
             PlaylistTreeNode<Playlist> playlist =>
                 (string.IsNullOrEmpty(searchText) ||  playlist.Playlist.Title.Contains(searchText, StringComparison.OrdinalIgnoreCase))
                 && (
