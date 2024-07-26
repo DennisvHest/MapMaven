@@ -11,6 +11,7 @@ namespace MapMaven.Models
         public string Description { get; set; }
         public string CoverImage { get; set; }
 
+        public PlaylistManager OriginalPlaylistManager { get; set; }
         public PlaylistManager PlaylistManager { get; set; }
 
         public EditPlaylistModel() { }
@@ -22,6 +23,7 @@ namespace MapMaven.Models
             Description = playlist.Description;
             CoverImage = playlist.CoverImage.Value;
             PlaylistManager = playlist.PlaylistManager;
+            OriginalPlaylistManager = playlist.PlaylistManager;
         }
     }
 }

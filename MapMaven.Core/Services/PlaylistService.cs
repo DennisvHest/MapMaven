@@ -99,7 +99,7 @@ namespace MapMaven.Services
         {
             IPlaylist addedPlaylist = CreateIPlaylist(editPlaylistModel, playlistMaps);
 
-            editPlaylistModel.PlaylistManager.SavePlaylist(addedPlaylist);
+            editPlaylistModel.PlaylistManager.StorePlaylist(addedPlaylist);
 
             var playlist = new Playlist(addedPlaylist, editPlaylistModel.PlaylistManager);
 
@@ -118,7 +118,7 @@ namespace MapMaven.Services
                 dynamicPlaylistConfiguration = editDynamicPlaylistModel.DynamicPlaylistConfiguration
             });
 
-            editDynamicPlaylistModel.PlaylistManager.SavePlaylist(addedPlaylist);
+            editDynamicPlaylistModel.PlaylistManager.StorePlaylist(addedPlaylist);
 
             var playlist = new Playlist(addedPlaylist, editDynamicPlaylistModel.PlaylistManager);
 
@@ -130,7 +130,6 @@ namespace MapMaven.Services
             var playlistToModify = editPlaylistModel.PlaylistManager.GetPlaylist(editPlaylistModel.FileName);
 
             CreateValidConfiguration(editPlaylistModel);
-            UpdatePlaylist(editPlaylistModel, playlistToModify);
 
             playlistToModify.SetCustomData("mapMaven", new
             {
@@ -138,7 +137,7 @@ namespace MapMaven.Services
                 dynamicPlaylistConfiguration = editPlaylistModel.DynamicPlaylistConfiguration
             });
 
-            editPlaylistModel.PlaylistManager.SavePlaylist(playlistToModify);
+            UpdatePlaylist(editPlaylistModel, playlistToModify);
 
             await _beatSaberDataService.LoadAllPlaylists();
 
@@ -176,11 +175,24 @@ namespace MapMaven.Services
                 configuration.LeaderboardProvider = null;
         }
 
-        private static void UpdatePlaylist(EditPlaylistModel editPlaylistModel, IPlaylist? playlistToModify)
+        private void UpdatePlaylist(EditPlaylistModel editPlaylistModel, IPlaylist? playlistToModify)
         {
             playlistToModify.Title = editPlaylistModel.Name;
             playlistToModify.Description = editPlaylistModel.Description;
             playlistToModify.SetCover(editPlaylistModel.CoverImage);
+
+            var movedToOtherFolder = editPlaylistModel.PlaylistManager != editPlaylistModel.OriginalPlaylistManager;
+
+            if (movedToOtherFolder)
+            {
+                var playlistFileName = GetUniqueFileName(editPlaylistModel); // Prevent overwriting existing playlists with same filename in other folder.
+
+                editPlaylistModel.OriginalPlaylistManager.DeletePlaylist(playlistToModify);
+
+                playlistToModify.Filename = playlistFileName;
+            }
+
+            editPlaylistModel.PlaylistManager.StorePlaylist(playlistToModify);
         }
 
         private IPlaylist CreateIPlaylist(EditPlaylistModel editPlaylistModel, IEnumerable<Map>? playlistMaps)
@@ -300,11 +312,9 @@ namespace MapMaven.Services
 
         public async Task<Playlist> EditPlaylist(EditPlaylistModel editPlaylistModel)
         {
-            var playlistToModify = editPlaylistModel.PlaylistManager.GetPlaylist(editPlaylistModel.FileName);
+            var playlistToModify = editPlaylistModel.OriginalPlaylistManager.GetPlaylist(editPlaylistModel.FileName);
 
             UpdatePlaylist(editPlaylistModel, playlistToModify);
-
-            editPlaylistModel.PlaylistManager.SavePlaylist(playlistToModify);
 
             await _beatSaberDataService.LoadAllPlaylists();
 
@@ -337,7 +347,7 @@ namespace MapMaven.Services
 
             var playlistManager = _beatSaberDataService.PlaylistManager.GetManagerForPlaylist(playlistToModify);
 
-            playlistManager.SavePlaylist(playlistToModify);
+            playlistManager.StorePlaylist(playlistToModify);
 
             if (loadPlaylists)
                 await _beatSaberDataService.LoadAllPlaylists();
@@ -362,7 +372,7 @@ namespace MapMaven.Services
 
             playlistToModify.RemoveAll(m => mapHashes.Contains(m.Hash));
 
-            playlist.PlaylistManager.SavePlaylist(playlistToModify);
+            playlist.PlaylistManager.StorePlaylist(playlistToModify);
 
             await _beatSaberDataService.LoadAllPlaylists();
         }
@@ -391,7 +401,7 @@ namespace MapMaven.Services
             string uniqueFileName = fileName;
             int count = 1;
 
-            while (File.Exists(Path.Join(_beatSaverFileService.PlaylistsLocation, $"{uniqueFileName}.bplist")))
+            while (File.Exists(Path.Join(editPlaylistModel.PlaylistManager.PlaylistPath, $"{uniqueFileName}.bplist")))
             {
                 uniqueFileName = $"{fileName}({count})";
                 count++;
