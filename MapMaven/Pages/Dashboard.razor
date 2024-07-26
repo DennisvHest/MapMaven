@@ -192,9 +192,9 @@
                                                 <MudChipSet T="DateRange" SelectedValue="DashboardDateRange"
                                                             SelectedValueChanged="(value) => OnDateRangeChanged(value as DateRange)"
                                                             SelectionMode="SelectionMode.SingleSelection">
-                                                    <MudChip Value="PastFiftyDays" Label="true" Variant="Variant.Filled" Color="MudBlazor.Color.Default" SelectedColor="MudBlazor.Color.Default">50 Days</MudChip>
-                                                    <MudChip Value="PastMonth" Label="true" Variant="Variant.Filled" Color="MudBlazor.Color.Default" SelectedColor="MudBlazor.Color.Default">Month</MudChip>
-                                                    <MudChip Value="PastWeek" Label="true" Variant="Variant.Filled" Color="MudBlazor.Color.Default" SelectedColor="MudBlazor.Color.Default">Week</MudChip>
+                                                    <MudChip Value="PastFiftyDays" Label="true" Variant="Variant.Filled" Color="MudBlazor.Color.Default" SelectedColor="MudBlazor.Color.Info">50 Days</MudChip>
+                                                    <MudChip Value="PastMonth" Label="true" Variant="Variant.Filled" Color="MudBlazor.Color.Default" SelectedColor="MudBlazor.Color.Info">Month</MudChip>
+                                                    <MudChip Value="PastWeek" Label="true" Variant="Variant.Filled" Color="MudBlazor.Color.Default" SelectedColor="MudBlazor.Color.Info">Week</MudChip>
                                                 </MudChipSet>
                                                 <MudDateRangePicker @bind-DateRange="DashboardDateRange"
                                                                     @bind-DateRange:after="OnDateRangeChanged"

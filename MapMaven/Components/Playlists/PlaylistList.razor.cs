@@ -1,3 +1,4 @@
+using MapMaven.Core.Models;
 using MapMaven.Core.Models.Data.Playlists;
 using MapMaven.Core.Services.Interfaces;
 using Microsoft.AspNetCore.Components;
@@ -40,18 +41,36 @@ namespace MapMaven.Components.Playlists
             set => _playlistSearchText.OnNext(value);
         }
 
+        BehaviorSubject<PlaylistType?> _playlistTypeFilter = new(null);
+
+        PlaylistType? PlaylistTypeFilter
+        {
+            get => _playlistTypeFilter.Value;
+            set => _playlistTypeFilter.OnNext(value);
+        }
+
         Playlist? PlaylistToDelete = null;
         bool DeleteDialogVisible = false;
         bool DeletingPlaylist = false;
 
         protected override void OnInitialized()
         {
-            var playlistTree = Observable.CombineLatest(PlaylistService.PlaylistTree, _playlistSearchText, (playlistTree, searchText) => (playlistTree, searchText));
+            var playlistTree = Observable.CombineLatest(
+                PlaylistService.PlaylistTree,
+                _playlistSearchText,
+                _playlistTypeFilter,
+                (playlistTree, searchText, playlistTypeFilter) => (playlistTree, searchText, playlistTypeFilter)
+            );
 
             SubscribeAndBind(playlistTree, x =>
             {
                 var filteredPlaylistTree = new PlaylistTree<Playlist>();
-                filteredPlaylistTree.RootPlaylistFolder = FilterPlaylistFolder((PlaylistFolder<Playlist>)x.playlistTree.RootPlaylistFolder.Copy(), x.searchText);
+
+                filteredPlaylistTree.RootPlaylistFolder = FilterPlaylistFolder(
+                    playlistFolder: (PlaylistFolder<Playlist>)x.playlistTree.RootPlaylistFolder.Copy(),
+                    searchText: x.searchText,
+                    playlistType: x.playlistTypeFilter
+                );
 
                 PlaylistTree = filteredPlaylistTree;
             });
@@ -69,30 +88,36 @@ namespace MapMaven.Components.Playlists
             });
         }
 
-        PlaylistFolder<Playlist> FilterPlaylistFolder(PlaylistFolder<Playlist> playlistFolder, string searchText)
+        PlaylistFolder<Playlist> FilterPlaylistFolder(PlaylistFolder<Playlist> playlistFolder, string searchText, PlaylistType? playlistType)
         {
-            if (string.IsNullOrEmpty(searchText))
+            if (string.IsNullOrEmpty(searchText) && playlistType is null)
                 return playlistFolder;
 
             playlistFolder.ChildItems = playlistFolder.ChildItems
-                .Where(item => PlaylistTreeItemContainsItem(item, searchText))
+                .Where(item => PlaylistTreeItemContainsItem(item, searchText, playlistType))
                 .ToList();
 
             foreach (var item in playlistFolder.ChildItems)
             {
                 if (item is PlaylistFolder<Playlist> childFolder)
                 {
-                    childFolder = FilterPlaylistFolder(childFolder, searchText);
+                    childFolder = FilterPlaylistFolder(childFolder, searchText, playlistType);
                 }
             }
 
             return playlistFolder;
         }
 
-        bool PlaylistTreeItemContainsItem(PlaylistTreeItem<Playlist> item, string searchText) => item switch
+        bool PlaylistTreeItemContainsItem(PlaylistTreeItem<Playlist> item, string searchText, PlaylistType? playlistType) => item switch
         {
-            PlaylistFolder<Playlist> childFolder => childFolder.ChildItems.Any(item => PlaylistTreeItemContainsItem(item, searchText)),
-            PlaylistTreeNode<Playlist> playlist => playlist.Playlist.Title.Contains(searchText, StringComparison.OrdinalIgnoreCase),
+            PlaylistFolder<Playlist> childFolder => childFolder.ChildItems.Any(item => PlaylistTreeItemContainsItem(item, searchText, playlistType)),
+            PlaylistTreeNode<Playlist> playlist =>
+                (string.IsNullOrEmpty(searchText) ||  playlist.Playlist.Title.Contains(searchText, StringComparison.OrdinalIgnoreCase))
+                && (
+                    playlistType is null
+                    || playlistType == PlaylistType.Playlist && !playlist.Playlist.IsDynamicPlaylist
+                    || playlistType == PlaylistType.DynamicPlaylist && playlist.Playlist.IsDynamicPlaylist
+                ),
             _ => false
         };
 

@@ -1,4 +1,5 @@
-﻿@using MapMaven.Core.Models.Data.Playlists
+﻿@using MapMaven.Core.Models
+@using MapMaven.Core.Models.Data.Playlists
 @using MapMaven.Models.Data.Playlists
 
 @inherits ReactiveComponent
@@ -23,8 +24,16 @@
                       Adornment="Adornment.Start"
                       AdornmentIcon="@Icons.Material.Filled.Search"
                       IconSize="Size.Small"
-                      Class="mx-4 mb-4 small-input">
+                      Class="mx-4 mb-2 small-input">
         </MudTextField>
+        <MudChipSet T="PlaylistType?"
+                    @bind-SelectedValue="PlaylistTypeFilter"
+                    SelectionMode="SelectionMode.ToggleSelection"
+                    Size="Size.Small"
+                    Class="mx-4 mb-2">
+            <MudChip T="PlaylistType?" Value="@PlaylistType.Playlist" SelectedColor="Color.Info">Playlists</MudChip>
+            <MudChip T="PlaylistType?" Value="@PlaylistType.DynamicPlaylist" SelectedColor="Color.Info">Dynamic playlists</MudChip>
+        </MudChipSet>
         @if (LoadingPlaylists)
         {
             <MudProgressCircular Color="Color.Info" Size="Size.Small" Indeterminate="true" Class="align-self-center" />
