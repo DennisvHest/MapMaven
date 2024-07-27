@@ -1,5 +1,6 @@
 ﻿@using BeatSaberPlaylistsLib
 @using MapMaven.Core.Models
+@using MapMaven.Core.Services
 
 <EditForm Model="Folder" OnValidSubmit="SaveChanges">
     <DataAnnotationsValidator />
@@ -8,7 +9,9 @@
             <MudTextField @bind-Value="Folder.Name"
                           For="() => Folder.Name"
                           Label="Folder name"
-                          Variant="Variant.Outlined" />
+                          Variant="Variant.Outlined"
+                          Adornment="Adornment.Start"
+                          AdornmentText="@(ParentPlaylistManager is not null ? $"{BeatSaberFileService.GetRelativePlaylistPath(ParentPlaylistManager.PlaylistPath)}/" : string.Empty)" />
         </DialogContent>
         <DialogActions>
             <MudButton OnClick="Cancel">Cancel</MudButton>
@@ -20,6 +23,9 @@
 @code {
     [Inject]
     IPlaylistService PlaylistService { get; set; }
+
+    [Inject]
+    BeatSaberFileService BeatSaberFileService { get; set; }
 
     [CascadingParameter]
     MudDialogInstance MudDialog { get; set; }
