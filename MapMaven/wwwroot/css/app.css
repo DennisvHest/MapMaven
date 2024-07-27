@@ -237,3 +237,7 @@ a:hover {
 .not-expandable .mud-treeview-item-arrow {
     display: none;
 }
+
+.mud-treeview.mud-treeview-selected-primary .mud-treeview-item-content.mud-treeview-item-selected {
+    color: var(--mud-palette-info);
+}

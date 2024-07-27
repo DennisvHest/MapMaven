@@ -41,13 +41,13 @@
         <div class="full-height" style="overflow-y: auto;">
             @if (string.IsNullOrEmpty(PlaylistSearchText))
             {
-                <MudTreeView T="Playlist" SelectedValue="SelectedPlaylist" SelectedValueChanged="OnPlaylistSelect" ExpandOnClick="true" AutoExpand="true">
+                <MudTreeView T="Playlist" SelectedValue="SelectedPlaylist" SelectedValueChanged="OnPlaylistSelect" Color="Color.Primary" ExpandOnClick="true" AutoExpand="true">
                     <PlaylistTreeViewFolder Folder="PlaylistTree.RootPlaylistFolder" />
                 </MudTreeView>
             }
             else
             {
-                <MudTreeView T="Playlist" SelectedValue="SelectedPlaylist" SelectedValueChanged="OnPlaylistSelect" ExpandOnClick="true">
+                <MudTreeView T="Playlist" SelectedValue="SelectedPlaylist" SelectedValueChanged="OnPlaylistSelect" Color="Color.Primary" ExpandOnClick="true">
                     <PlaylistTreeViewFolder Folder="PlaylistTree.RootPlaylistFolder" Expanded="true" />
                 </MudTreeView>
             }
