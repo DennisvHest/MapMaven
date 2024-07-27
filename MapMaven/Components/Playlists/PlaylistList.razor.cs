@@ -53,6 +53,8 @@ namespace MapMaven.Components.Playlists
         bool DeleteDialogVisible = false;
         bool DeletingPlaylist = false;
 
+        MudTreeView<Playlist> PlaylistTreeView;
+
         protected override void OnInitialized()
         {
             var playlistTree = Observable.CombineLatest(

@@ -10,9 +10,17 @@
             <div class="d-flex align-center">
                 <MudIcon Icon="@Icons.Material.Filled.PlaylistPlay"></MudIcon> Playlists
             </div>
+            <div>
+                <MudTooltip Text="Collapse all folders">
+                    <MudIconButton Icon="@Icons.Material.Outlined.IndeterminateCheckBox" Size="Size.Small" OnClick="PlaylistTreeView.CollapseAllAsync" />
+                </MudTooltip>
+                <MudTooltip Text="Expand all folders">
+                    <MudIconButton Icon="@Icons.Material.Outlined.AddBox" Size="Size.Small" OnClick="PlaylistTreeView.ExpandAllAsync" />
+                </MudTooltip>
+            </div>
             <MudMenu Icon="@Icons.Material.Filled.Add" Size="Size.Small">
                 <MudMenuItem Icon="@Icons.Material.Filled.PlaylistAdd" OnClick="OpenAddPlaylistDialog">Add playlist</MudMenuItem>
-                <MudMenuItem Icon="@Icons.Material.Filled.PlaylistAdd" OnClick="OpenAddDynamicPlaylistDialog">Add dynamic playlist</MudMenuItem>
+                <MudMenuItem Icon="@Icons.Material.Filled.ElectricBolt" IconColor="Color.Info" OnClick="OpenAddDynamicPlaylistDialog">Add dynamic playlist</MudMenuItem>
                 <MudMenuItem Icon="@Icons.Material.Filled.CreateNewFolder" OnClick="OpenAddPlaylistFolderDialog">Add playlist folder</MudMenuItem>
             </MudMenu>
         </MudListSubheader>
@@ -41,7 +49,7 @@
         <div class="full-height" style="overflow-y: auto;">
             @if (string.IsNullOrEmpty(PlaylistSearchText))
             {
-                <MudTreeView T="Playlist" SelectedValue="SelectedPlaylist" SelectedValueChanged="OnPlaylistSelect" Color="Color.Primary" ExpandOnClick="true" AutoExpand="true">
+                <MudTreeView T="Playlist" @ref="PlaylistTreeView" SelectedValue="SelectedPlaylist" SelectedValueChanged="OnPlaylistSelect" Color="Color.Primary" ExpandOnClick="true" AutoExpand="true">
                     <PlaylistTreeViewFolder Folder="PlaylistTree.RootPlaylistFolder" />
                 </MudTreeView>
             }
