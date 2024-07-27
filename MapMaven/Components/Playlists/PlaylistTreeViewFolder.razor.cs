@@ -36,16 +36,33 @@ namespace MapMaven.Components.Playlists
 
         void OpenEditPlaylistDialog(Playlist playlist)
         {
-            var parameters = new DialogParameters
+            if (playlist.IsDynamicPlaylist)
             {
-                { "EditPlaylistModel", new EditPlaylistModel(playlist) }
-            };
+                var parameters = new DialogParameters
+                {
+                    { "SelectedPlaylist", new EditDynamicPlaylistModel(playlist) },
+                    { "NewPlaylist", false }
+                };
 
-            DialogService.Show<EditPlaylistDialog>("Edit playlist", parameters, new DialogOptions
+                DialogService.Show<EditDynamicPlaylistDialog>("Edit playlist", parameters, new DialogOptions
+                {
+                    MaxWidth = MaxWidth.Small,
+                    FullWidth = true
+                });
+            }
+            else
             {
-                MaxWidth = MaxWidth.Small,
-                FullWidth = true
-            });
+                var parameters = new DialogParameters
+                {
+                    { "EditPlaylistModel", new EditPlaylistModel(playlist) }
+                };
+
+                DialogService.Show<EditPlaylistDialog>("Edit playlist", parameters, new DialogOptions
+                {
+                    MaxWidth = MaxWidth.Small,
+                    FullWidth = true
+                });
+            }
         }
 
         void OpenDeletePlaylistDialog(Playlist playlistToDelete)
