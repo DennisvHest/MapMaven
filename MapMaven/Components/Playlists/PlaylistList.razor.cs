@@ -68,7 +68,7 @@ namespace MapMaven.Components.Playlists
             {
                 var filteredPlaylistTree = new PlaylistTree<Playlist>();
 
-                filteredPlaylistTree.RootPlaylistFolder = FilterPlaylistFolder(
+                filteredPlaylistTree.RootPlaylistFolder = Services.PlaylistService.FilterPlaylistFolder(
                     playlistFolder: (PlaylistFolder<Playlist>)x.playlistTree.RootPlaylistFolder.Copy(),
                     searchText: x.searchText,
                     playlistType: x.playlistTypeFilter
@@ -89,41 +89,6 @@ namespace MapMaven.Components.Playlists
                 InvokeAsync(StateHasChanged);
             });
         }
-
-        PlaylistFolder<Playlist> FilterPlaylistFolder(PlaylistFolder<Playlist> playlistFolder, string searchText, PlaylistType? playlistType)
-        {
-            if (string.IsNullOrEmpty(searchText) && playlistType is null)
-                return playlistFolder;
-
-            playlistFolder.ChildItems = playlistFolder.ChildItems
-                .Where(item => PlaylistTreeItemContainsItem(item, searchText, playlistType))
-                .ToList();
-
-            foreach (var item in playlistFolder.ChildItems)
-            {
-                if (item is PlaylistFolder<Playlist> childFolder)
-                {
-                    childFolder = FilterPlaylistFolder(childFolder, searchText, playlistType);
-                }
-            }
-
-            return playlistFolder;
-        }
-
-        bool PlaylistTreeItemContainsItem(PlaylistTreeItem<Playlist> item, string searchText, PlaylistType? playlistType) => item switch
-        {
-            PlaylistFolder<Playlist> childFolder =>
-                !string.IsNullOrEmpty(searchText) && childFolder.FolderName.Contains(searchText, StringComparison.OrdinalIgnoreCase)
-                || childFolder.ChildItems.Any(item => PlaylistTreeItemContainsItem(item, searchText, playlistType)),
-            PlaylistTreeNode<Playlist> playlist =>
-                (string.IsNullOrEmpty(searchText) ||  playlist.Playlist.Title.Contains(searchText, StringComparison.OrdinalIgnoreCase))
-                && (
-                    playlistType is null
-                    || playlistType == PlaylistType.Playlist && !playlist.Playlist.IsDynamicPlaylist
-                    || playlistType == PlaylistType.DynamicPlaylist && playlist.Playlist.IsDynamicPlaylist
-                ),
-            _ => false
-        };
 
         void OnPlaylistSelect(Playlist playlist)
         {

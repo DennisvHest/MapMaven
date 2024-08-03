@@ -1,4 +1,5 @@
 ﻿using BeatSaberPlaylistsLib;
+using MapMaven.Core.Models;
 using MapMaven.Core.Models.Data;
 using MapMaven.Core.Models.Data.Playlists;
 using MapMaven.Core.Models.DynamicPlaylists;

@@ -14,17 +14,9 @@
                           Class="mx-4 mb-4 small-input">
             </MudTextField>
         </div>
-        <MudList T="string" Class="d-flex flex-column fill-remaining-space" Style="overflow-y: auto;" ReadOnly="false">
-            @foreach (var playlist in Playlists)
-            {
-                <MudListItem title="@playlist.Title" OnClick="() => OnPlaylistSelect(playlist)" Value="playlist" Class="py-1 px-2" Style="min-height: 46px;">
-                    <div class="playlist-list-item">
-                        <PlaylistCover Playlist="playlist" Class="ml-3 mr-3" Style="width: 30px; height: 30px"></PlaylistCover>
-                        <span>@playlist.Title</span>
-                    </div>
-                </MudListItem>
-            }
-        </MudList>
+        <MudTreeView T="Playlist" @ref="PlaylistTreeView" SelectedValueChanged="OnPlaylistSelect" Color="Color.Primary" ExpandOnClick="true" AutoExpand="true">
+            <PlaylistTreeViewFolder Folder="PlaylistTree.RootPlaylistFolder" />
+        </MudTreeView>
         <MudButton
             OnClick="CreateNewPlaylist"
             Variant="Variant.Outlined"

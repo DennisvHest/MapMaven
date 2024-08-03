@@ -11,6 +11,7 @@ using MapMaven.Core.Services.Interfaces;
 using MapMaven.Core.Extensions;
 using MapMaven.Core.Models.Data.Playlists;
 using BeatSaberPlaylistsLib;
+using MapMaven.Core.Models;
 
 namespace MapMaven.Services
 {
@@ -376,6 +377,41 @@ namespace MapMaven.Services
 
             await _beatSaberDataService.LoadAllPlaylists();
         }
+
+        public static PlaylistFolder<Playlist> FilterPlaylistFolder(PlaylistFolder<Playlist> playlistFolder, string searchText, PlaylistType? playlistType = null)
+        {
+            if (string.IsNullOrEmpty(searchText) && playlistType is null)
+                return playlistFolder;
+
+            playlistFolder.ChildItems = playlistFolder.ChildItems
+                .Where(item => PlaylistTreeItemContainsItem(item, searchText, playlistType))
+                .ToList();
+
+            foreach (var item in playlistFolder.ChildItems)
+            {
+                if (item is PlaylistFolder<Playlist> childFolder)
+                {
+                    childFolder = FilterPlaylistFolder(childFolder, searchText, playlistType);
+                }
+            }
+
+            return playlistFolder;
+        }
+
+        public static bool PlaylistTreeItemContainsItem(PlaylistTreeItem<Playlist> item, string searchText, PlaylistType? playlistType) => item switch
+        {
+            PlaylistFolder<Playlist> childFolder =>
+                !string.IsNullOrEmpty(searchText) && childFolder.FolderName.Contains(searchText, StringComparison.OrdinalIgnoreCase)
+                || childFolder.ChildItems.Any(item => PlaylistTreeItemContainsItem(item, searchText, playlistType)),
+            PlaylistTreeNode<Playlist> playlist =>
+                (string.IsNullOrEmpty(searchText) || playlist.Playlist.Title.Contains(searchText, StringComparison.OrdinalIgnoreCase))
+                && (
+                    playlistType is null
+                    || playlistType == PlaylistType.Playlist && !playlist.Playlist.IsDynamicPlaylist
+                    || playlistType == PlaylistType.DynamicPlaylist && playlist.Playlist.IsDynamicPlaylist
+                ),
+            _ => false
+        };
 
         public PlaylistManager GetRootPlaylistManager() => _beatSaberDataService.PlaylistManager;
 

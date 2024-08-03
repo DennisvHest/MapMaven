@@ -1,3 +1,5 @@
+using MapMaven.Core.Models;
+using MapMaven.Core.Models.Data.Playlists;
 using MapMaven.Core.Services.Interfaces;
 using MapMaven.Models;
 using Microsoft.AspNetCore.Components;
@@ -16,14 +18,16 @@ namespace MapMaven.Components.Playlists
         public bool SaveNewPlaylistOnSubmit { get; set; } = true;
 
         [Inject]
-        protected IPlaylistService PlaylistService { get; set; }
+        IPlaylistService PlaylistService { get; set; }
 
         [Inject]
-        protected IDialogService DialogService { get; set; }
+        IDialogService DialogService { get; set; }
 
-        private IEnumerable<Playlist> Playlists = Array.Empty<Playlist>();
+        PlaylistTree<Playlist> PlaylistTree = new();
 
-        private BehaviorSubject<string> _playlistSearchText = new(string.Empty);
+        BehaviorSubject<string> _playlistSearchText = new(string.Empty);
+
+        MudTreeView<Playlist> PlaylistTreeView;
 
         private string PlaylistSearchText
         {
@@ -33,17 +37,24 @@ namespace MapMaven.Components.Playlists
 
         protected override void OnInitialized()
         {
-            var playlists = PlaylistService.Playlists
-                .Select(playlists => playlists.Where(p => !p.IsDynamicPlaylist));
+            var playlistTree = Observable.CombineLatest(
+                PlaylistService.PlaylistTree,
+                _playlistSearchText,
+                (playlistTree, searchText) => (playlistTree, searchText)
+            );
 
-            SubscribeAndBind(Observable.CombineLatest(playlists, _playlistSearchText, (playlists, searchText) =>
+            SubscribeAndBind(playlistTree, x =>
             {
-                if (string.IsNullOrWhiteSpace(searchText))
-                    return playlists;
+                var filteredPlaylistTree = new PlaylistTree<Playlist>();
 
-                return playlists
-                    .Where(p => p.Title.Contains(searchText, StringComparison.OrdinalIgnoreCase));
-            }), playlists => Playlists = playlists);
+                filteredPlaylistTree.RootPlaylistFolder = Services.PlaylistService.FilterPlaylistFolder(
+                    playlistFolder: (PlaylistFolder<Playlist>)x.playlistTree.RootPlaylistFolder.Copy(),
+                    searchText: x.searchText,
+                    playlistType: PlaylistType.Playlist
+                );
+
+                PlaylistTree = filteredPlaylistTree;
+            });
         }
 
         protected void OnPlaylistSelect(Playlist? playlist)
