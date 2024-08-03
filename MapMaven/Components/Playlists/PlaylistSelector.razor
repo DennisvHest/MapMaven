@@ -14,15 +14,22 @@
                           Class="mx-4 mb-4 small-input">
             </MudTextField>
         </div>
+        <div class="d-flex align-center justify-space-between px-4 pb-4">
+            <div>
+                <MudTooltip Text="Collapse all folders">
+                    <MudIconButton Icon="@Icons.Material.Outlined.IndeterminateCheckBox" Size="Size.Small" OnClick="PlaylistTreeView.CollapseAllAsync" />
+                </MudTooltip>
+                <MudTooltip Text="Expand all folders">
+                    <MudIconButton Icon="@Icons.Material.Outlined.AddBox" Size="Size.Small" OnClick="PlaylistTreeView.ExpandAllAsync" />
+                </MudTooltip>
+            </div>
+            <MudMenu Icon="@Icons.Material.Filled.Add" Size="Size.Small">
+                <MudMenuItem Icon="@Icons.Material.Filled.PlaylistAdd" OnClick="OpenAddPlaylistDialog">Add playlist</MudMenuItem>
+                <MudMenuItem Icon="@Icons.Material.Filled.CreateNewFolder" OnClick="OpenAddPlaylistFolderDialog">Add playlist folder</MudMenuItem>
+            </MudMenu>
+        </div>
         <MudTreeView T="Playlist" @ref="PlaylistTreeView" SelectedValueChanged="OnPlaylistSelect" Color="Color.Primary" ExpandOnClick="true" AutoExpand="true">
-            <PlaylistTreeViewFolder Folder="PlaylistTree.RootPlaylistFolder" />
+            <PlaylistTreeViewFolder Folder="PlaylistTree.RootPlaylistFolder" Expanded="!string.IsNullOrEmpty(PlaylistSearchText)" />
         </MudTreeView>
-        <MudButton
-            OnClick="CreateNewPlaylist"
-            Variant="Variant.Outlined"
-            Class="ma-5"
-            StartIcon="@Icons.Material.Filled.Add">
-            New playlist
-        </MudButton>
     </DialogContent>
 </MudDialog>

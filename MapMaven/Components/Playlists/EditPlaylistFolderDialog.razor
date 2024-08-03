@@ -11,7 +11,7 @@
                           Label="Folder name"
                           Variant="Variant.Outlined"
                           Adornment="Adornment.Start"
-                          AdornmentText="@(ParentPlaylistManager is not null ? $"{BeatSaberFileService.GetRelativePlaylistPath(ParentPlaylistManager.PlaylistPath)}/" : string.Empty)" />
+                          AdornmentText="@ParentPath" />
         </DialogContent>
         <DialogActions>
             <MudButton OnClick="Cancel">Cancel</MudButton>
@@ -40,10 +40,19 @@
 
     bool NewFolder => PlaylistManager is null;
 
+    string ParentPath { get; set; } = string.Empty;
+
     protected override void OnParametersSet()
     {
         if (!string.IsNullOrEmpty(PlaylistManager?.PlaylistPath))
+        {
             Folder.Name = Path.GetFileName(PlaylistManager.PlaylistPath);
+
+            ParentPath = BeatSaberFileService.GetRelativePlaylistPath(ParentPlaylistManager.PlaylistPath);
+
+            if (ParentPath != "/")
+                ParentPath = $"{ParentPath}/";
+        }
     }
 
     async Task SaveChanges()

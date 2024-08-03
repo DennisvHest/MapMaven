@@ -50,7 +50,8 @@ namespace MapMaven.Components.Playlists
                 filteredPlaylistTree.RootPlaylistFolder = Services.PlaylistService.FilterPlaylistFolder(
                     playlistFolder: (PlaylistFolder<Playlist>)x.playlistTree.RootPlaylistFolder.Copy(),
                     searchText: x.searchText,
-                    playlistType: PlaylistType.Playlist
+                    playlistType: PlaylistType.Playlist,
+                    includeEmptyFolders: true
                 );
 
                 PlaylistTree = filteredPlaylistTree;
@@ -62,22 +63,22 @@ namespace MapMaven.Components.Playlists
             MudDialog.Close(DialogResult.Ok(playlist));
         }
 
-        protected async Task CreateNewPlaylist()
+        void OpenAddPlaylistDialog()
         {
-            var editPlaylistDialog = DialogService.Show<EditPlaylistDialog>("Add playlist", new DialogParameters
-            {
-                { nameof(EditPlaylistDialog.SavePlaylistOnSubmit), SaveNewPlaylistOnSubmit }
-            },
-            new DialogOptions
+            DialogService.Show<EditPlaylistDialog>("Add playlist", new DialogOptions
             {
                 MaxWidth = MaxWidth.Small,
                 FullWidth = true
             });
+        }
 
-            var result = await editPlaylistDialog.Result;
-
-            if (!result.Canceled)
-                MudDialog.Close(DialogResult.Ok(result.Data));
+        void OpenAddPlaylistFolderDialog()
+        {
+            DialogService.Show<EditPlaylistFolderDialog>("Add playlist folder", new DialogOptions
+            {
+                MaxWidth = MaxWidth.Small,
+                FullWidth = true
+            });
         }
     }
 }

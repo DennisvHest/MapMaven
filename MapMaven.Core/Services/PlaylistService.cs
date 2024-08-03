@@ -378,31 +378,32 @@ namespace MapMaven.Services
             await _beatSaberDataService.LoadAllPlaylists();
         }
 
-        public static PlaylistFolder<Playlist> FilterPlaylistFolder(PlaylistFolder<Playlist> playlistFolder, string searchText, PlaylistType? playlistType = null)
+        public static PlaylistFolder<Playlist> FilterPlaylistFolder(PlaylistFolder<Playlist> playlistFolder, string searchText, PlaylistType? playlistType = null, bool includeEmptyFolders = false)
         {
             if (string.IsNullOrEmpty(searchText) && playlistType is null)
                 return playlistFolder;
 
             playlistFolder.ChildItems = playlistFolder.ChildItems
-                .Where(item => PlaylistTreeItemContainsItem(item, searchText, playlistType))
+                .Where(item => PlaylistTreeItemContainsItem(item, searchText, playlistType, includeEmptyFolders))
                 .ToList();
 
             foreach (var item in playlistFolder.ChildItems)
             {
                 if (item is PlaylistFolder<Playlist> childFolder)
                 {
-                    childFolder = FilterPlaylistFolder(childFolder, searchText, playlistType);
+                    childFolder = FilterPlaylistFolder(childFolder, searchText, playlistType, includeEmptyFolders);
                 }
             }
 
             return playlistFolder;
         }
 
-        public static bool PlaylistTreeItemContainsItem(PlaylistTreeItem<Playlist> item, string searchText, PlaylistType? playlistType) => item switch
+        public static bool PlaylistTreeItemContainsItem(PlaylistTreeItem<Playlist> item, string searchText, PlaylistType? playlistType, bool includeEmptyFolders = false) => item switch
         {
             PlaylistFolder<Playlist> childFolder =>
                 !string.IsNullOrEmpty(searchText) && childFolder.FolderName.Contains(searchText, StringComparison.OrdinalIgnoreCase)
-                || childFolder.ChildItems.Any(item => PlaylistTreeItemContainsItem(item, searchText, playlistType)),
+                || childFolder.ChildItems.Any(item => PlaylistTreeItemContainsItem(item, searchText, playlistType, includeEmptyFolders))
+                || includeEmptyFolders && string.IsNullOrEmpty(searchText) && !childFolder.ChildItems.Any(),
             PlaylistTreeNode<Playlist> playlist =>
                 (string.IsNullOrEmpty(searchText) || playlist.Playlist.Title.Contains(searchText, StringComparison.OrdinalIgnoreCase))
                 && (
