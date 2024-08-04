@@ -34,7 +34,13 @@
             <BodyContent>
                 <div class="playlist-list-item">
                     <PlaylistCover Playlist="playlistNode.Playlist" Class="mr-3" Style="width: 30px"></PlaylistCover>
-                    <span>@playlistNode.Playlist.Title</span>
+
+                    <MudTooltip Text="@playlistNode.Playlist.Title" RootStyle="display: grid">
+                        <span>
+                            @playlistNode.Playlist.Title
+                        </span>
+                    </MudTooltip>
+
 
                     <div class="d-flex align-center ml-auto">
                         @if (playlistNode.Playlist.IsDynamicPlaylist)
