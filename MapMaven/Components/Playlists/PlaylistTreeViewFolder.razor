@@ -12,7 +12,7 @@
                     <div class="d-flex">
                         <MudMenu Icon="@Icons.Material.Filled.Add" Size="Size.Small">
                             <MudMenuItem Icon="@Icons.Material.Filled.PlaylistAdd" OnClick="() => OpenAddPlaylistDialog(playlistFolder)">Add playlist</MudMenuItem>
-                            <MudMenuItem Icon="@Icons.Material.Filled.ElectricBolt" IconColor="Color.Info" OnClick="() => OpenAddDynamicPlaylistDialog(playlistFolder)">Add dynamic playlist</MudMenuItem>
+                            <MudMenuItem Icon="@Icons.Material.Filled.ElectricBolt" IconColor="Color.Info" OnClick="() => OpenAddDynamicPlaylistDialog(playlistFolder)">Add live playlist</MudMenuItem>
                             <MudMenuItem Icon="@Icons.Material.Filled.CreateNewFolder" OnClick="() => OpenAddPlaylistFolderDialog(playlistFolder)">Add playlist folder</MudMenuItem>
                         </MudMenu>
                         <MudMenu Icon="@Icons.Material.Filled.MoreVert" Size="Size.Small">
@@ -45,7 +45,7 @@
                     <div class="d-flex align-center ml-auto">
                         @if (playlistNode.Playlist.IsDynamicPlaylist)
                         {
-                            <MudTooltip Text="Dynamic playlist" Color="Color.Info" RootClass="d-flex">
+                            <MudTooltip Text="Live playlist" Color="Color.Info" RootClass="d-flex">
                                 <MudIcon Icon="@Icons.Material.Filled.ElectricBolt" Size="Size.Small" Color="Color.Info" />
                             </MudTooltip>
                         }

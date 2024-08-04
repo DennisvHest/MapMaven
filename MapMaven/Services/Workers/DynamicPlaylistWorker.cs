@@ -25,7 +25,7 @@ namespace MapMaven.Services.Workers
             {
                 try
                 {
-                    _logger.LogInformation("Arranging dynamic playlists...");
+                    _logger.LogInformation("Arranging live playlists...");
 
                     using (var scope = _serviceProvider.CreateScope())
                     {
@@ -34,7 +34,7 @@ namespace MapMaven.Services.Workers
                         await dynamicPlaylistArrangementService.ArrangeDynamicPlaylists();
                     }
 
-                    _logger.LogInformation("Done arranging dynamic playlists!");
+                    _logger.LogInformation("Done arranging live playlists!");
                 }
                 catch (Exception ex)
                 {
