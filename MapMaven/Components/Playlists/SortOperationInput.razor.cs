@@ -1,5 +1,5 @@
 using MapMaven.Core.Models.AdvancedSearch;
-using MapMaven.Core.Models.DynamicPlaylists;
+using MapMaven.Core.Models.LivePlaylists;
 using MapMaven.Utility;
 using Microsoft.AspNetCore.Components;
 
@@ -19,15 +19,15 @@ namespace MapMaven.Components.Playlists
         [Parameter]
         public EventCallback OnRemove { get; set; }
 
-        DynamicPlaylistFieldOption SelectedFieldOption { get; set; }
+        LivePlaylistFieldOption SelectedFieldOption { get; set; }
 
         protected override void OnParametersSet()
         {
             if (SortOperation.Field != null)
-                SelectedFieldOption = DynamicPlaylistFields.FieldOptions(MapPool).FirstOrDefault(field => field.Value == SortOperation.Field);
+                SelectedFieldOption = LivePlaylistFields.FieldOptions(MapPool).FirstOrDefault(field => field.Value == SortOperation.Field);
         }
 
-        void OnFieldChanged(DynamicPlaylistFieldOption selectedField)
+        void OnFieldChanged(LivePlaylistFieldOption selectedField)
         {
             SelectedFieldOption = selectedField;
             SortOperation.Field = SelectedFieldOption.Value;

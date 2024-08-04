@@ -1,0 +1,73 @@
+﻿@using BeatSaberPlaylistsLib
+@using MapMaven.Core.Models
+@using MapMaven.Core.Services
+
+<EditForm Model="Folder" OnValidSubmit="SaveChanges">
+    <DataAnnotationsValidator />
+    <MudDialog>
+        <DialogContent>
+            <MudTextField @bind-Value="Folder.Name"
+                          For="() => Folder.Name"
+                          Label="Folder name"
+                          Variant="Variant.Outlined"
+                          Adornment="Adornment.Start"
+                          AdornmentText="@ParentPath" />
+        </DialogContent>
+        <DialogActions>
+            <MudButton OnClick="Cancel">Cancel</MudButton>
+            <MudButton ButtonType="ButtonType.Submit">@(NewFolder ? "Add" : "Save changes")</MudButton>
+        </DialogActions>
+    </MudDialog>
+</EditForm>
+
+@code {
+    [Inject]
+    IPlaylistService PlaylistService { get; set; }
+
+    [Inject]
+    BeatSaberFileService BeatSaberFileService { get; set; }
+
+    [CascadingParameter]
+    MudDialogInstance MudDialog { get; set; }
+
+    [Parameter]
+    public PlaylistManager PlaylistManager { get; set; }
+
+    [Parameter]
+    public PlaylistManager ParentPlaylistManager { get; set; }
+
+    EditPlaylistFolderModel Folder { get; set; } = new();
+
+    bool NewFolder => PlaylistManager is null;
+
+    string ParentPath { get; set; } = string.Empty;
+
+    protected override void OnParametersSet()
+    {
+        if (!string.IsNullOrEmpty(PlaylistManager?.PlaylistPath))
+        {
+            Folder.Name = Path.GetFileName(PlaylistManager.PlaylistPath);
+
+            ParentPath = BeatSaberFileService.GetRelativePlaylistPath(ParentPlaylistManager.PlaylistPath);
+
+            if (ParentPath != "/")
+                ParentPath = $"{ParentPath}/";
+        }
+    }
+
+    async Task SaveChanges()
+    {
+        if (NewFolder)
+        {
+            await PlaylistService.AddPlaylistFolder(Folder.Name, ParentPlaylistManager);
+        }
+        else
+        {
+            await PlaylistService.RenamePlaylistFolder(PlaylistManager, Folder.Name);
+        }
+
+        MudDialog.Close();
+    }
+
+    void Cancel() => MudDialog.Cancel();
+}

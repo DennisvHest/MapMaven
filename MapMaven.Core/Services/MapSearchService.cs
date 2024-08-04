@@ -1,6 +1,6 @@
 ﻿using MapMaven.Core.Models.AdvancedSearch;
-using MapMaven.Core.Models.DynamicPlaylists;
-using MapMaven.Core.Models.DynamicPlaylists.MapInfo;
+using MapMaven.Core.Models.LivePlaylists;
+using MapMaven.Core.Models.LivePlaylists.MapInfo;
 using Pather.CSharp;
 using System.Globalization;
 

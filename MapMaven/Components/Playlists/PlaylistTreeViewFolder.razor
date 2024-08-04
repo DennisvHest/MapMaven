@@ -1,0 +1,93 @@
+﻿@using MapMaven.Core.Models.Data.Playlists
+@using MapMaven.Core.Models.LivePlaylists
+
+@foreach (var item in Folder.ChildItems)
+{
+    @if (item is PlaylistFolder<Playlist> playlistFolder)
+    {
+        <MudTreeViewItem T="Playlist" Expanded="Expanded">
+            <BodyContent>
+                <div class="d-flex align-center justify-space-between full-width">
+                    <span>@playlistFolder.FolderName</span>
+                    <div class="d-flex">
+                        <MudMenu Icon="@Icons.Material.Filled.Add" Size="Size.Small">
+                            <MudMenuItem Icon="@Icons.Material.Filled.PlaylistAdd" OnClick="() => OpenAddPlaylistDialog(playlistFolder)">Add playlist</MudMenuItem>
+                            <MudMenuItem Icon="@Icons.Material.Filled.ElectricBolt" IconColor="Color.Info" OnClick="() => OpenAddLivePlaylistDialog(playlistFolder)">Add live playlist</MudMenuItem>
+                            <MudMenuItem Icon="@Icons.Material.Filled.CreateNewFolder" OnClick="() => OpenAddPlaylistFolderDialog(playlistFolder)">Add playlist folder</MudMenuItem>
+                        </MudMenu>
+                        <MudMenu Icon="@Icons.Material.Filled.MoreVert" Size="Size.Small">
+                            <MudMenuItem Icon="@Icons.Material.Filled.Edit" OnClick="() => OpenEditPlaylistFolderDialog(playlistFolder)">Rename</MudMenuItem>
+                            <MudMenuItem Icon="@Icons.Material.Filled.Delete" OnClick="() => OpenDeletePlaylistFolderDialog(playlistFolder)">Delete</MudMenuItem>
+                        </MudMenu>
+                    </div>
+                </div>
+            </BodyContent>
+            <ChildContent>
+                <PlaylistTreeViewFolder Folder="playlistFolder" Expanded="Expanded"></PlaylistTreeViewFolder>
+            </ChildContent>
+        </MudTreeViewItem>
+    }
+
+    @if (item is PlaylistTreeNode<Playlist> playlistNode)
+    {
+        <MudTreeViewItem Value="playlistNode.Playlist" Class="not-expandable" CanExpand="false">
+            <BodyContent>
+                <div class="playlist-list-item">
+                    <PlaylistCover Playlist="playlistNode.Playlist" Class="mr-3" Style="width: 30px"></PlaylistCover>
+
+                    <MudTooltip Text="@playlistNode.Playlist.Title" RootStyle="display: grid">
+                        <span>
+                            @playlistNode.Playlist.Title
+                        </span>
+                    </MudTooltip>
+
+
+                    <div class="d-flex align-center ml-auto">
+                        @if (playlistNode.Playlist.IsLivePlaylist)
+                        {
+                            <MudTooltip Text="Live playlist" Color="Color.Info" RootClass="d-flex">
+                                <MudIcon Icon="@Icons.Material.Filled.ElectricBolt" Size="Size.Small" Color="Color.Info" />
+                            </MudTooltip>
+                        }
+
+                        <MudMenu Icon="@Icons.Material.Filled.MoreVert" Size="Size.Small">
+                            <MudMenuItem OnClick="() => OpenEditPlaylistDialog(playlistNode.Playlist)">
+                                <div class="d-flex">
+                                    <MudIcon Icon="@Icons.Material.Filled.Edit" Size="Size.Small" Class="mr-1" /> Edit
+                                </div>
+                            </MudMenuItem>
+                            <MudMenuItem OnClick="() => OpenDeletePlaylistDialog(playlistNode.Playlist)">
+                                <div class="d-flex">
+                                    <MudIcon Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Class="mr-1" /> Delete
+                                </div>
+                            </MudMenuItem>
+                        </MudMenu>
+                    </div>
+                </div>
+            </BodyContent>
+        </MudTreeViewItem>
+    }
+}
+
+<MudDialog @bind-Visible="DeletePlaylistDialogVisible" Options="new() { BackdropClick = false }">
+    <DialogContent>
+        <MudText Typo="Typo.body1" Class="mb-3">Are you sure you want to delete the "@PlaylistToDelete.Title" playlist?</MudText>
+    </DialogContent>
+    <DialogActions>
+        @{
+            var deleteMapsLabel = $"Also delete all {GetLoadedMapsCount(PlaylistToDelete)} maps from the game";
+        }
+        <MudCheckBox @bind-Value="DeleteMaps" Label="@deleteMapsLabel" Class="mr-10" Style="opacity: 0.8;"></MudCheckBox>
+        <MudButton OnClick="ClosePlaylistDelete">Cancel</MudButton>
+        <MudButton Color="@Color.Error" Variant="Variant.Filled" OnClick="DeletePlaylist">
+            @if (DeletingPlaylist)
+            {
+                <MudProgressCircular Size="Size.Small" Indeterminate="true" Style="color: white;" />
+            }
+            else
+            {
+                @:Delete
+            }
+        </MudButton>
+    </DialogActions>
+</MudDialog>

@@ -1,12 +1,12 @@
 using Microsoft.AspNetCore.Components;
-using MapMaven.Core.Models.DynamicPlaylists;
+using MapMaven.Core.Models.LivePlaylists;
 using MapMaven.Utility;
 using System.Globalization;
-using MapMaven.Core.Models.DynamicPlaylists.MapInfo;
+using MapMaven.Core.Models.LivePlaylists.MapInfo;
 using MapMaven.Core.Services.Interfaces;
 using MapMaven.Core.Services;
 using System.Reflection;
-using MapMaven.Core.Utilities.DynamicPlaylists;
+using MapMaven.Core.Utilities.LivePlaylists;
 using MapMaven.Core.Utilities;
 using MapMaven.Core.Models.AdvancedSearch;
 
@@ -26,15 +26,15 @@ namespace MapMaven.Components.Playlists
         [Parameter]
         public EventCallback OnRemove { get; set; }
 
-        DynamicPlaylistFieldOption SelectedFieldOption { get; set; }
+        LivePlaylistFieldOption SelectedFieldOption { get; set; }
 
         protected override void OnParametersSet()
         {
             if (FilterOperation.Field != null)
-                SelectedFieldOption = DynamicPlaylistFields.FieldOptions(MapPool).FirstOrDefault(field => field.Value == FilterOperation.Field);
+                SelectedFieldOption = LivePlaylistFields.FieldOptions(MapPool).FirstOrDefault(field => field.Value == FilterOperation.Field);
         }
 
-        void OnFieldChanged(DynamicPlaylistFieldOption selectedField)
+        void OnFieldChanged(LivePlaylistFieldOption selectedField)
         {
             if (SelectedFieldOption?.Value == selectedField.Value)
                 return;
@@ -44,7 +44,7 @@ namespace MapMaven.Components.Playlists
             FilterOperation.Operator = default;
             FilterOperation.Value = null;
 
-            FilterOperation.Operator = DynamicPlaylistArrangementService.FilterOperatorsForType[SelectedFieldOption.Type].First();
+            FilterOperation.Operator = LivePlaylistArrangementService.FilterOperatorsForType[SelectedFieldOption.Type].First();
 
             if (SelectedFieldOption.Type == typeof(bool))
                 BooleanValueChanged(false);

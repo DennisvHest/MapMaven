@@ -3,9 +3,9 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System.ComponentModel.DataAnnotations;
 
-namespace MapMaven.Core.Models.DynamicPlaylists
+namespace MapMaven.Core.Models.LivePlaylists
 {
-    public class DynamicPlaylistConfiguration
+    public class LivePlaylistConfiguration
     {
         [JsonConverter(typeof(StringEnumConverter))]
         public MapPool MapPool { get; set; } = MapPool.Standard;

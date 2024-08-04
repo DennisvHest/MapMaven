@@ -1,18 +1,18 @@
-﻿using MapMaven.Core.Models.DynamicPlaylists.MapInfo;
-using MapMaven.Core.Models.DynamicPlaylists;
+﻿using MapMaven.Core.Models.LivePlaylists.MapInfo;
+using MapMaven.Core.Models.LivePlaylists;
 using System.Reflection;
 using System.ComponentModel;
-using MapMaven.Utilities.DynamicPlaylists;
-using MapMaven.Core.Utilities.DynamicPlaylists;
+using MapMaven.Utilities.LivePlaylists;
+using MapMaven.Core.Utilities.LivePlaylists;
 using System.Collections;
 
 namespace MapMaven.Utility
 {
-    public static class DynamicPlaylistFields
+    public static class LivePlaylistFields
     {
-        public static IEnumerable<DynamicPlaylistFieldOption> FieldOptions(MapPool mapPool) => GetFieldOptionsForType(typeof(AdvancedSearchMap), mapPool);
+        public static IEnumerable<LivePlaylistFieldOption> FieldOptions(MapPool mapPool) => GetFieldOptionsForType(typeof(AdvancedSearchMap), mapPool);
 
-        private static IEnumerable<DynamicPlaylistFieldOption> GetFieldOptionsForType(Type type, MapPool mapPool, string? parentObjectName = null)
+        private static IEnumerable<LivePlaylistFieldOption> GetFieldOptionsForType(Type type, MapPool mapPool, string? parentObjectName = null)
         {
             return type.GetProperties().SelectMany(property =>
             {
@@ -22,7 +22,7 @@ namespace MapMaven.Utility
                 var applicableForMapPoolAttribute = property.GetCustomAttribute<ApplicableForMapPoolAttribute>();
 
                 if (applicableForMapPoolAttribute != null && !applicableForMapPoolAttribute.MapPools.Contains(mapPool))
-                    return Array.Empty<DynamicPlaylistFieldOption>();
+                    return Array.Empty<LivePlaylistFieldOption>();
 
                 var value = parentObjectName != null ? $"{parentObjectName}.{property.Name}" : property.Name;
 
@@ -32,7 +32,7 @@ namespace MapMaven.Utility
 
                 return new[]
                 {
-                    new DynamicPlaylistFieldOption
+                    new LivePlaylistFieldOption
                     {
                         Value = value,
                         Name = name,

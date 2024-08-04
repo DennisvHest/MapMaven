@@ -1,6 +1,6 @@
 ﻿@inherits ReactiveComponent
 
-@using MapMaven.Core.Models.DynamicPlaylists;
+@using MapMaven.Core.Models.LivePlaylists;
 @using MapMaven.Extensions;
 @using MapMaven.Components.Playlists;
 
@@ -9,9 +9,9 @@
     <MudDialog>
         <DialogContent>
             <div id="preset-dynamic-playlists">
-                @foreach (var playlist in PresetDynamicPlaylists.Playlists.Where(p => p.DynamicPlaylistConfiguration.MapPool == MapPool.Standard || LeaderboardAvailable))
+                @foreach (var playlist in PresetLivePlaylists.Playlists.Where(p => p.LivePlaylistConfiguration.MapPool == MapPool.Standard || LeaderboardAvailable))
                 {
-                    <MudButton OnClick="() => ConfigureDynamicPlaylist(playlist)" Variant="Variant.Filled" Class="pa-0 mx-2" Style="background-color: var(--mud-palette-drawer-background);">
+                    <MudButton OnClick="() => ConfigureLivePlaylist(playlist)" Variant="Variant.Filled" Class="pa-0 mx-2" Style="background-color: var(--mud-palette-drawer-background);">
                         <div class="d-flex flex-column align-center justify-center dynamic-playlist-add">
                             <img src="@playlist.CoverImage" class="mb-1" />
                             <MudText Typo="Typo.body2" Class="pa-1">@playlist.Name</MudText>
@@ -20,7 +20,7 @@
                 }
             </div>
             <div id="custom-dynamic-playlist" class="pt-4 mt-4 d-flex flex-column flex-center">
-                <MudButton OnClick="ConfigureCustomDynamicPlaylist" Variant="Variant.Outlined">
+                <MudButton OnClick="ConfigureCustomLivePlaylist" Variant="Variant.Outlined">
                     <div class="d-flex flex-column align-center justify-center dynamic-playlist-add">
                         <MudIcon Icon="@Icons.Material.Filled.Settings" Size="Size.Large" Class="mb-2"></MudIcon> Custom
                     </div>
@@ -34,7 +34,7 @@
 }
 else
 {
-    var configuration = SelectedPlaylist.DynamicPlaylistConfiguration;
+    var configuration = SelectedPlaylist.LivePlaylistConfiguration;
 
     <EditForm Model="@SelectedPlaylist" OnValidSubmit="OnValidSubmit">
         <ObjectGraphDataAnnotationsValidator />
@@ -52,7 +52,7 @@ else
                                     </ChildContent>
                                     <TooltipContent>
                                         <p style="text-align: left; max-width: 300px;">
-                                            The pool of maps the dynamic playlist should pull maps from.<br />
+                                            The pool of maps the live playlist should pull maps from.<br />
                                             <br />
                                             <b>Downloaded maps:</b> Includes all downloaded maps.<br />
                                             <b>Improvement maps:</b> Includes all ranked maps. Ranked maps can, in addition to the standard map filters/sortings, be filtered on/sorted by estimated scores.
@@ -87,7 +87,7 @@ else
                                 <div class="d-flex flex-row align-center">
                                     <b class="mud-list-subheader pa-0 mr-1">Leaderboard</b>
                                     <div class="ml-auto">
-                                        <LeaderboardSelector @bind-SelectedLeaderboardProvider="SelectedPlaylist.DynamicPlaylistConfiguration.LeaderboardProvider" NewLeaderboardSelection="NewPlaylist"></LeaderboardSelector>
+                                        <LeaderboardSelector @bind-SelectedLeaderboardProvider="SelectedPlaylist.LivePlaylistConfiguration.LeaderboardProvider" NewLeaderboardSelection="NewPlaylist"></LeaderboardSelector>
                                     </div>
                                 </div>
                             </MudListItem>
@@ -126,8 +126,8 @@ else
                         }
                     </MudList>
                 </MudPaper>
-                <MudNumericField @bind-Value="SelectedPlaylist.DynamicPlaylistConfiguration.MapCount"
-                                 For="() => SelectedPlaylist.DynamicPlaylistConfiguration.MapCount"
+                <MudNumericField @bind-Value="SelectedPlaylist.LivePlaylistConfiguration.MapCount"
+                                 For="() => SelectedPlaylist.LivePlaylistConfiguration.MapCount"
                                  Label="Map count"
                                  Variant="Variant.Outlined"
                                  Min="1"

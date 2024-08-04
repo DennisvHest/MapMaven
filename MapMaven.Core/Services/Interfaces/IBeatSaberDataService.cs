@@ -1,5 +1,6 @@
 ﻿using BeatSaberPlaylistsLib;
 using BeatSaberPlaylistsLib.Types;
+using MapMaven.Core.Models.Data.Playlists;
 using MapMaven.Models.Data;
 using System.Drawing;
 
@@ -14,6 +15,7 @@ namespace MapMaven.Core.Services.Interfaces
         IObservable<Dictionary<string, MapInfo>> MapInfoByHash { get; }
         IObservable<IEnumerable<IPlaylist>> PlaylistInfo { get; }
         PlaylistManager PlaylistManager { get; }
+        IObservable<PlaylistTree<IPlaylist>> PlaylistTree { get; }
 
         Task ClearMapCache();
         Task DeleteMap(string mapHash);

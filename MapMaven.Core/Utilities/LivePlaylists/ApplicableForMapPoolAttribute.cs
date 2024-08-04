@@ -1,6 +1,6 @@
-﻿using MapMaven.Core.Models.DynamicPlaylists;
+﻿using MapMaven.Core.Models.LivePlaylists;
 
-namespace MapMaven.Utilities.DynamicPlaylists
+namespace MapMaven.Utilities.LivePlaylists
 {
     [AttributeUsage(AttributeTargets.Property)]
     public class ApplicableForMapPoolAttribute : Attribute

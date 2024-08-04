@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel;
 
-namespace MapMaven.Core.Models.DynamicPlaylists.MapInfo
+namespace MapMaven.Core.Models.LivePlaylists.MapInfo
 {
-    public class DynamicPlaylistScore
+    public class LivePlaylistScore
     {
         public double Rank { get; set; }
 
@@ -38,9 +38,9 @@ namespace MapMaven.Core.Models.DynamicPlaylists.MapInfo
         [DisplayName("Score: Time set")]
         public DateTime TimeSet { get; set; }
 
-        public DynamicPlaylistScore() { }
+        public LivePlaylistScore() { }
 
-        public DynamicPlaylistScore(PlayerScore score)
+        public LivePlaylistScore(PlayerScore score)
         {
             Rank = score.Score.Rank;
             BaseScore = score.Score.BaseScore;

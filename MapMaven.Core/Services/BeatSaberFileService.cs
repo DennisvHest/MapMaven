@@ -1,4 +1,5 @@
 ﻿using MapMaven.Core.Services.Interfaces;
+using Microsoft.VisualStudio.PlatformUI;
 using System.Reactive.Linq;
 
 namespace MapMaven.Core.Services
@@ -44,6 +45,18 @@ namespace MapMaven.Core.Services
             path = path.Replace('\\', '/');
 
             await _applicationSettingService.AddOrUpdateAsync(BeatSaberInstallLocationKey, path);
+        }
+
+        public string GetRelativePlaylistPath(string playlistPath)
+        {
+            var path = Path.GetRelativePath(PlaylistsLocation, playlistPath);
+
+            if (path == ".")
+                path = string.Empty;
+
+            path = path.Replace('\\', '/');
+
+            return $"/{path}";
         }
     }
 }

@@ -1,6 +1,7 @@
+using BeatSaberPlaylistsLib;
 using FastDeepCloner;
 using MapMaven.Core.Models.AdvancedSearch;
-using MapMaven.Core.Models.DynamicPlaylists;
+using MapMaven.Core.Models.LivePlaylists;
 using MapMaven.Core.Services;
 using MapMaven.Core.Services.Interfaces;
 using MapMaven.Core.Services.Leaderboards;
@@ -10,12 +11,12 @@ using MudBlazor;
 
 namespace MapMaven.Components.Playlists
 {
-    public partial class EditDynamicPlaylistDialog
+    public partial class EditLivePlaylistDialog
     {
         [Inject]
         protected IPlaylistService PlaylistService { get; set; }
         [Inject]
-        protected DynamicPlaylistArrangementService DynamicPlaylistArrangementService { get; set; }
+        protected LivePlaylistArrangementService LivePlaylistArrangementService { get; set; }
         [Inject]
         protected ILeaderboardService LeaderboardService { get; set; }
 
@@ -32,7 +33,10 @@ namespace MapMaven.Components.Playlists
         MudDialogInstance MudDialog { get; set; }
 
         [Parameter]
-        public EditDynamicPlaylistModel SelectedPlaylist { get; set; }
+        public EditLivePlaylistModel SelectedPlaylist { get; set; }
+
+        [Parameter]
+        public PlaylistManager PlaylistManager { get; set; }
 
         [Parameter]
         public bool NewPlaylist { get; set; } = true;
@@ -44,16 +48,18 @@ namespace MapMaven.Components.Playlists
             SubscribeAndBind(LeaderboardService.AvailableLeaderboardProviderServices, leaderboards => LeaderboardAvailable = leaderboards.Any());
         }
 
-        void ConfigureDynamicPlaylist(EditDynamicPlaylistModel dynamicPlaylist)
+        void ConfigureLivePlaylist(EditLivePlaylistModel LivePlaylist)
         {
-            SelectedPlaylist = DeepCloner.Clone(dynamicPlaylist);
+            SelectedPlaylist = DeepCloner.Clone(LivePlaylist);
+            SelectedPlaylist.PlaylistManager = PlaylistManager;
         }
 
-        void ConfigureCustomDynamicPlaylist()
+        void ConfigureCustomLivePlaylist()
         {
             SelectedPlaylist = new()
             {
-                DynamicPlaylistConfiguration = new()
+                PlaylistManager = PlaylistManager,
+                LivePlaylistConfiguration = new()
                 {
                     MapCount = 20
                 },
@@ -62,30 +68,30 @@ namespace MapMaven.Components.Playlists
 
         void AddFilterOperation()
         {
-            SelectedPlaylist.DynamicPlaylistConfiguration.FilterOperations.Add(new());
+            SelectedPlaylist.LivePlaylistConfiguration.FilterOperations.Add(new());
         }
 
         void AddSortOperation()
         {
-            SelectedPlaylist.DynamicPlaylistConfiguration.SortOperations.Add(new());
+            SelectedPlaylist.LivePlaylistConfiguration.SortOperations.Add(new());
         }
 
         void RemoveFilterOperation(FilterOperation filterOperation)
         {
-            SelectedPlaylist.DynamicPlaylistConfiguration.FilterOperations.Remove(filterOperation);
+            SelectedPlaylist.LivePlaylistConfiguration.FilterOperations.Remove(filterOperation);
         }
 
         void RemoveSortOperation(SortOperation sortOperation)
         {
-            SelectedPlaylist.DynamicPlaylistConfiguration.SortOperations.Remove(sortOperation);
+            SelectedPlaylist.LivePlaylistConfiguration.SortOperations.Remove(sortOperation);
         }
 
         async Task ChangeMapPool(MapPool mapPool)
         {
-            if (mapPool == SelectedPlaylist.DynamicPlaylistConfiguration.MapPool)
+            if (mapPool == SelectedPlaylist.LivePlaylistConfiguration.MapPool)
                 return;
 
-            var configuration = SelectedPlaylist.DynamicPlaylistConfiguration;
+            var configuration = SelectedPlaylist.LivePlaylistConfiguration;
 
             if (configuration.FilterOperations.Any() || configuration.SortOperations.Any())
             {
@@ -116,7 +122,7 @@ namespace MapMaven.Components.Playlists
 
             if (NewPlaylist)
             {
-                playlist = await PlaylistService.AddDynamicPlaylist(SelectedPlaylist);
+                playlist = await PlaylistService.AddLivePlaylist(SelectedPlaylist);
                 Snackbar.Add($"Added playlist \"{SelectedPlaylist.Name}\"", Severity.Normal, config =>
                 {
                     config.Icon = Icons.Material.Filled.Check;
@@ -133,7 +139,7 @@ namespace MapMaven.Components.Playlists
             }
             else
             {
-                playlist = await PlaylistService.EditDynamicPlaylist(SelectedPlaylist);
+                playlist = await PlaylistService.EditLivePlaylist(SelectedPlaylist);
                 Snackbar.Add($"Saved playlist \"{SelectedPlaylist.Name}\"", Severity.Normal, config =>
                 {
                     config.Icon = Icons.Material.Filled.Check;
@@ -149,7 +155,7 @@ namespace MapMaven.Components.Playlists
                 });
             }
             
-            Task.Run(DynamicPlaylistArrangementService.ArrangeDynamicPlaylists);
+            Task.Run(LivePlaylistArrangementService.ArrangeLivePlaylists);
 
             MudDialog.Close(DialogResult.Ok(playlist));
         }
