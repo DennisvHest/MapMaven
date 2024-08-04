@@ -1,5 +1,5 @@
 ﻿@using MapMaven.Core.Models.Data.Playlists
-@using MapMaven.Core.Models.DynamicPlaylists
+@using MapMaven.Core.Models.LivePlaylists
 
 @foreach (var item in Folder.ChildItems)
 {
@@ -12,7 +12,7 @@
                     <div class="d-flex">
                         <MudMenu Icon="@Icons.Material.Filled.Add" Size="Size.Small">
                             <MudMenuItem Icon="@Icons.Material.Filled.PlaylistAdd" OnClick="() => OpenAddPlaylistDialog(playlistFolder)">Add playlist</MudMenuItem>
-                            <MudMenuItem Icon="@Icons.Material.Filled.ElectricBolt" IconColor="Color.Info" OnClick="() => OpenAddDynamicPlaylistDialog(playlistFolder)">Add live playlist</MudMenuItem>
+                            <MudMenuItem Icon="@Icons.Material.Filled.ElectricBolt" IconColor="Color.Info" OnClick="() => OpenAddLivePlaylistDialog(playlistFolder)">Add live playlist</MudMenuItem>
                             <MudMenuItem Icon="@Icons.Material.Filled.CreateNewFolder" OnClick="() => OpenAddPlaylistFolderDialog(playlistFolder)">Add playlist folder</MudMenuItem>
                         </MudMenu>
                         <MudMenu Icon="@Icons.Material.Filled.MoreVert" Size="Size.Small">
@@ -43,7 +43,7 @@
 
 
                     <div class="d-flex align-center ml-auto">
-                        @if (playlistNode.Playlist.IsDynamicPlaylist)
+                        @if (playlistNode.Playlist.IsLivePlaylist)
                         {
                             <MudTooltip Text="Live playlist" Color="Color.Info" RootClass="d-flex">
                                 <MudIcon Icon="@Icons.Material.Filled.ElectricBolt" Size="Size.Small" Color="Color.Info" />

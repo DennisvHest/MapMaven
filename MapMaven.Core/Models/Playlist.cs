@@ -1,6 +1,6 @@
 ﻿using BeatSaberPlaylistsLib;
 using BeatSaberPlaylistsLib.Types;
-using MapMaven.Core.Models.DynamicPlaylists;
+using MapMaven.Core.Models.LivePlaylists;
 using MapMaven.Extensions;
 using Microsoft.VisualStudio.PlatformUI;
 using Newtonsoft.Json.Linq;
@@ -15,9 +15,9 @@ namespace MapMaven.Models
         public string Description { get; set; }
         public IEnumerable<PlaylistMap> Maps { get; set; }
 
-        public DynamicPlaylistConfiguration DynamicPlaylistConfiguration { get; set; }
+        public LivePlaylistConfiguration LivePlaylistConfiguration { get; set; }
 
-        public bool IsDynamicPlaylist => DynamicPlaylistConfiguration != null;
+        public bool IsLivePlaylist => LivePlaylistConfiguration != null;
 
         public Lazy<string?> CoverImage { get; private set; }
         public Lazy<string?> CoverImageSmall { get; private set; }
@@ -47,13 +47,13 @@ namespace MapMaven.Models
 
             if (playlist.TryGetCustomData("mapMaven", out dynamic customData))
             {
-                if (customData.dynamicPlaylistConfiguration is DynamicPlaylistConfiguration dynamicPlaylistConfiguration)
+                if (customData.dynamicPlaylistConfiguration is LivePlaylistConfiguration livePlaylistConfiguration)
                 {
-                    DynamicPlaylistConfiguration = dynamicPlaylistConfiguration;
+                    LivePlaylistConfiguration = livePlaylistConfiguration;
                 }
                 else if (customData.dynamicPlaylistConfiguration is JObject configuration)
                 {
-                    DynamicPlaylistConfiguration = configuration.ToObject<DynamicPlaylistConfiguration>();
+                    LivePlaylistConfiguration = configuration.ToObject<LivePlaylistConfiguration>();
                 }
             }
         }

@@ -4,16 +4,16 @@ using Microsoft.Extensions.Logging;
 
 namespace MapMaven.Services.Workers
 {
-    public class DynamicPlaylistWorker : BackgroundService
+    public class LivePlaylistWorker : BackgroundService
     {
         private readonly PeriodicTimer _timer = new PeriodicTimer(TimeSpan.FromMinutes(5));
 
         private readonly IServiceProvider _serviceProvider;
 
-        private readonly ILogger<DynamicPlaylistWorker> _logger;
+        private readonly ILogger<LivePlaylistWorker> _logger;
 
 
-        public DynamicPlaylistWorker(ILogger<DynamicPlaylistWorker> logger, IServiceProvider serviceProvider)
+        public LivePlaylistWorker(ILogger<LivePlaylistWorker> logger, IServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider;
             _logger = logger;
@@ -29,9 +29,9 @@ namespace MapMaven.Services.Workers
 
                     using (var scope = _serviceProvider.CreateScope())
                     {
-                        var dynamicPlaylistArrangementService = scope.ServiceProvider.GetRequiredService<DynamicPlaylistArrangementService>();
+                        var LivePlaylistArrangementService = scope.ServiceProvider.GetRequiredService<LivePlaylistArrangementService>();
 
-                        await dynamicPlaylistArrangementService.ArrangeDynamicPlaylists();
+                        await LivePlaylistArrangementService.ArrangeLivePlaylists();
                     }
 
                     _logger.LogInformation("Done arranging live playlists!");

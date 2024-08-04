@@ -1,4 +1,4 @@
-﻿@using MapMaven.Core.Models.DynamicPlaylists;
+﻿@using MapMaven.Core.Models.LivePlaylists;
 
 <div class="d-flex align-center justify-space-between">
     @if (FirstSortOperation)
@@ -9,8 +9,8 @@
     {
         <MudText Typo="Typo.caption" Style="width: 60px">Then by</MudText>
     }
-    <MudSelect T="DynamicPlaylistFieldOption" Value="SelectedFieldOption" ToStringFunc="field => field?.Name" Label="Field" title="@SelectedFieldOption?.Name" ValueChanged="OnFieldChanged" Variant="Variant.Outlined" Margin="Margin.Dense">
-        @foreach (var field in DynamicPlaylistFields.FieldOptions(MapPool).Where(f => f.Sortable))
+    <MudSelect T="LivePlaylistFieldOption" Value="SelectedFieldOption" ToStringFunc="field => field?.Name" Label="Field" title="@SelectedFieldOption?.Name" ValueChanged="OnFieldChanged" Variant="Variant.Outlined" Margin="Margin.Dense">
+        @foreach (var field in LivePlaylistFields.FieldOptions(MapPool).Where(f => f.Sortable))
         {
             <MudSelectItem Value="field">
                 @field.Name
@@ -18,7 +18,7 @@
         }
     </MudSelect>
     <MudSelect @bind-Value="SortOperation.Direction" Label="Direction" Variant="Variant.Outlined" Margin="Margin.Dense">
-        @foreach (var sortOperator in Enum.GetValues<MapMaven.Core.Models.DynamicPlaylists.SortDirection>())
+        @foreach (var sortOperator in Enum.GetValues<MapMaven.Core.Models.LivePlaylists.SortDirection>())
         {
             <MudSelectItem Value="sortOperator">
                 @sortOperator.ToString()

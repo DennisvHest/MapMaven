@@ -20,7 +20,7 @@
             </div>
             <MudMenu Icon="@Icons.Material.Filled.Add" Size="Size.Small">
                 <MudMenuItem Icon="@Icons.Material.Filled.PlaylistAdd" OnClick="OpenAddPlaylistDialog">Add playlist</MudMenuItem>
-                <MudMenuItem Icon="@Icons.Material.Filled.ElectricBolt" IconColor="Color.Info" OnClick="OpenAddDynamicPlaylistDialog">Add live playlist</MudMenuItem>
+                <MudMenuItem Icon="@Icons.Material.Filled.ElectricBolt" IconColor="Color.Info" OnClick="OpenAddLivePlaylistDialog">Add live playlist</MudMenuItem>
                 <MudMenuItem Icon="@Icons.Material.Filled.CreateNewFolder" OnClick="OpenAddPlaylistFolderDialog">Add playlist folder</MudMenuItem>
             </MudMenu>
         </MudListSubheader>
@@ -44,7 +44,7 @@
                         SelectionMode="SelectionMode.ToggleSelection"
                         Size="Size.Small">
                 <MudChip T="PlaylistType?" Value="@PlaylistType.Playlist" SelectedColor="Color.Info" Style="margin: 1px">Playlists</MudChip>
-                <MudChip T="PlaylistType?" Value="@PlaylistType.DynamicPlaylist" SelectedColor="Color.Info" Style="margin: 1px">Live playlists</MudChip>
+                <MudChip T="PlaylistType?" Value="@PlaylistType.LivePlaylist" SelectedColor="Color.Info" Style="margin: 1px">Live playlists</MudChip>
             </MudChipSet>
         </div>
         @if (LoadingPlaylists)

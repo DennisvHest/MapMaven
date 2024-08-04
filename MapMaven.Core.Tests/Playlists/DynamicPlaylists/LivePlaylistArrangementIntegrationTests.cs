@@ -3,8 +3,8 @@ using MapMaven.Core.Services;
 using Microsoft.Extensions.Logging;
 using Moq;
 using BeatSaberPlaylistsLib.Types;
-using MapMaven.Core.Models.DynamicPlaylists.MapInfo;
-using MapMaven.Core.Models.DynamicPlaylists;
+using MapMaven.Core.Models.LivePlaylists.MapInfo;
+using MapMaven.Core.Models.LivePlaylists;
 using Newtonsoft.Json.Linq;
 using MapMaven.Models;
 using Playlist = MapMaven.Models.Playlist;
@@ -23,16 +23,16 @@ using MapMaven.Core.Models.Data.Leaderboards;
 using MapMaven.Core.Services.Leaderboards.ScoreEstimation;
 using MapMaven.Core.Models.AdvancedSearch;
 
-namespace MapMaven.Core.Tests.Playlists.DynamicPlaylists;
+namespace MapMaven.Core.Tests.Playlists.LivePlaylists;
 
-public class DynamicPlaylistArrangementIntegrationTests
+public class LivePlaylistArrangementIntegrationTests
 {
     private readonly Mock<IApplicationSettingService> _applicationSettingServiceMock = new();
     private readonly Mock<IPlaylistService> _playlistServiceMock = new();
     private readonly Mock<IBeatSaberDataService> _beatSaberDataServiceMock = new();
     private readonly Mock<ILeaderboardService> _leaderboardService = new();
     private readonly Mock<IMapService> _mapServiceMock = new();
-    private readonly Mock<ILogger<DynamicPlaylistArrangementService>> _dynamicPlaylistArrangementServiceLoggerMock = new();
+    private readonly Mock<ILogger<LivePlaylistArrangementService>> _dynamicPlaylistArrangementServiceLoggerMock = new();
     private readonly Mock<ILogger<BeatSaberDataService>> _beatSaberDataServiceLoggerMock = new();
     private readonly Mock<IServiceProvider> _serviceProviderMock = new();
     private readonly Mock<IBeatmapHasher> _hasherMock = new();
@@ -45,9 +45,9 @@ public class DynamicPlaylistArrangementIntegrationTests
     private readonly SongPlayerService _songPlayerService;
     private readonly MapService _mapService;
 
-    private readonly DynamicPlaylistArrangementService _sut;
+    private readonly LivePlaylistArrangementService _sut;
 
-    public DynamicPlaylistArrangementIntegrationTests()
+    public LivePlaylistArrangementIntegrationTests()
     {
         _applicationSettingServiceMock
             .SetupGet(x => x.ApplicationSettings)
@@ -141,7 +141,7 @@ public class DynamicPlaylistArrangementIntegrationTests
                 return _mapService.RefreshDataAsync(true, true);
             });
 
-        _sut = new DynamicPlaylistArrangementService(
+        _sut = new LivePlaylistArrangementService(
             _beatSaberDataServiceMock.Object,
             _mapServiceMock.Object,
             _playlistServiceMock.Object,
@@ -329,17 +329,17 @@ public class DynamicPlaylistArrangementIntegrationTests
     }
 
     [Fact]
-    public async Task ArrangeDynamicPlaylists_ArrangesPlaylistBasedOnConfig()
+    public async Task ArrangeLivePlaylists_ArrangesPlaylistBasedOnConfig()
     {
         AddMockPlaylistWithConfig(new JObject
         {
             {
                 "dynamicPlaylistConfiguration", new JObject
                 {
-                    { nameof(DynamicPlaylistConfiguration.MapPool), nameof(MapPool.Improvement) },
-                    { nameof(DynamicPlaylistConfiguration.MapCount), 20 },
+                    { nameof(LivePlaylistConfiguration.MapPool), nameof(MapPool.Improvement) },
+                    { nameof(LivePlaylistConfiguration.MapCount), 20 },
                     {
-                        nameof(DynamicPlaylistConfiguration.FilterOperations), new JArray
+                        nameof(LivePlaylistConfiguration.FilterOperations), new JArray
                         {
                             new JObject
                             {
@@ -350,7 +350,7 @@ public class DynamicPlaylistArrangementIntegrationTests
                         }
                     },
                     {
-                        nameof(DynamicPlaylistConfiguration.SortOperations), new JArray
+                        nameof(LivePlaylistConfiguration.SortOperations), new JArray
                         {
                             new JObject
                             {
@@ -369,7 +369,7 @@ public class DynamicPlaylistArrangementIntegrationTests
             .Setup(x => x.ReplaceMapsInPlaylist(It.IsAny<IEnumerable<Map>>(), It.IsAny<Playlist>(), It.IsAny<bool>()))
             .Callback((IEnumerable<Map> maps, Playlist playlist, bool loadPlaylist) => resultMaps = maps);
 
-        await _sut.ArrangeDynamicPlaylists();
+        await _sut.ArrangeLivePlaylists();
 
         Assert.Equal(2, resultMaps.Count());
 
@@ -381,17 +381,17 @@ public class DynamicPlaylistArrangementIntegrationTests
     }
 
     [Fact]
-    public async Task ArrangeDynamicPlaylists_FetchesMapsFromCache_IfHashIsFoundInCache()
+    public async Task ArrangeLivePlaylists_FetchesMapsFromCache_IfHashIsFoundInCache()
     {
         AddMockPlaylistWithConfig(new JObject
         {
             {
                 "dynamicPlaylistConfiguration", new JObject
                 {
-                    { nameof(DynamicPlaylistConfiguration.MapPool), nameof(MapPool.Standard) },
-                    { nameof(DynamicPlaylistConfiguration.MapCount), 20 },
+                    { nameof(LivePlaylistConfiguration.MapPool), nameof(MapPool.Standard) },
+                    { nameof(LivePlaylistConfiguration.MapCount), 20 },
                     {
-                        nameof(DynamicPlaylistConfiguration.FilterOperations), new JArray
+                        nameof(LivePlaylistConfiguration.FilterOperations), new JArray
                         {
                             new JObject
                             {
@@ -411,7 +411,7 @@ public class DynamicPlaylistArrangementIntegrationTests
             .Setup(x => x.ReplaceMapsInPlaylist(It.IsAny<IEnumerable<Map>>(), It.IsAny<Playlist>(), It.IsAny<bool>()))
             .Callback((IEnumerable<Map> maps, Playlist playlist, bool loadPlaylist) => resultMaps = maps);
 
-        await _sut.ArrangeDynamicPlaylists();
+        await _sut.ArrangeLivePlaylists();
 
         Assert.Single(resultMaps);
 
@@ -422,17 +422,17 @@ public class DynamicPlaylistArrangementIntegrationTests
     }
 
     [Fact]
-    public async Task ArrangeDynamicPlaylists_HashesDirectory_IfHashWasNotFoundSongCoreHash()
+    public async Task ArrangeLivePlaylists_HashesDirectory_IfHashWasNotFoundSongCoreHash()
     {
         AddMockPlaylistWithConfig(new JObject
         {
             {
                 "dynamicPlaylistConfiguration", new JObject
                 {
-                    { nameof(DynamicPlaylistConfiguration.MapPool), nameof(MapPool.Standard) },
-                    { nameof(DynamicPlaylistConfiguration.MapCount), 20 },
+                    { nameof(LivePlaylistConfiguration.MapPool), nameof(MapPool.Standard) },
+                    { nameof(LivePlaylistConfiguration.MapCount), 20 },
                     {
-                        nameof(DynamicPlaylistConfiguration.FilterOperations), new JArray
+                        nameof(LivePlaylistConfiguration.FilterOperations), new JArray
                         {
                             new JObject
                             {
@@ -458,7 +458,7 @@ public class DynamicPlaylistArrangementIntegrationTests
             .Setup(x => x.ReplaceMapsInPlaylist(It.IsAny<IEnumerable<Map>>(), It.IsAny<Playlist>(), It.IsAny<bool>()))
             .Callback((IEnumerable<Map> maps, Playlist playlist, bool loadPlaylist) => resultMaps = maps);
 
-        await _sut.ArrangeDynamicPlaylists();
+        await _sut.ArrangeLivePlaylists();
 
         _hasherMock.Verify(x => x.HashDirectoryAsync(songDirectory, It.IsAny<CancellationToken>()), Times.AtLeastOnce());
 
@@ -471,17 +471,17 @@ public class DynamicPlaylistArrangementIntegrationTests
     }
 
     [Fact]
-    public async Task ArrangeDynamicPlaylists_AddsLatestAddedMap_IfContainsMapsWithDuplicateIds()
+    public async Task ArrangeLivePlaylists_AddsLatestAddedMap_IfContainsMapsWithDuplicateIds()
     {
         AddMockPlaylistWithConfig(new JObject
         {
             {
                 "dynamicPlaylistConfiguration", new JObject
                 {
-                    { nameof(DynamicPlaylistConfiguration.MapPool), nameof(MapPool.Standard) },
-                    { nameof(DynamicPlaylistConfiguration.MapCount), 20 },
+                    { nameof(LivePlaylistConfiguration.MapPool), nameof(MapPool.Standard) },
+                    { nameof(LivePlaylistConfiguration.MapCount), 20 },
                     {
-                        nameof(DynamicPlaylistConfiguration.FilterOperations), new JArray
+                        nameof(LivePlaylistConfiguration.FilterOperations), new JArray
                         {
                             new JObject
                             {
@@ -501,7 +501,7 @@ public class DynamicPlaylistArrangementIntegrationTests
             .Setup(x => x.ReplaceMapsInPlaylist(It.IsAny<IEnumerable<Map>>(), It.IsAny<Playlist>(), It.IsAny<bool>()))
             .Callback((IEnumerable<Map> maps, Playlist playlist, bool loadPlaylist) => resultMaps = maps);
 
-        await _sut.ArrangeDynamicPlaylists();
+        await _sut.ArrangeLivePlaylists();
 
         Assert.Single(resultMaps);
 
@@ -511,21 +511,21 @@ public class DynamicPlaylistArrangementIntegrationTests
     }
 
     [Fact]
-    public async Task ArrangeDynamicPlaylists_ArrangesRankedMaps_IfImprovementMapPoolIsConfigured()
+    public async Task ArrangeLivePlaylists_ArrangesRankedMaps_IfImprovementMapPoolIsConfigured()
     {
         AddMockPlaylistWithConfig(new JObject
         {
             {
                 "dynamicPlaylistConfiguration", new JObject
                 {
-                    { nameof(DynamicPlaylistConfiguration.MapPool), nameof(MapPool.Improvement) },
-                    { nameof(DynamicPlaylistConfiguration.MapCount), 20 },
+                    { nameof(LivePlaylistConfiguration.MapPool), nameof(MapPool.Improvement) },
+                    { nameof(LivePlaylistConfiguration.MapCount), 20 },
                     {
-                        nameof(DynamicPlaylistConfiguration.SortOperations), new JArray
+                        nameof(LivePlaylistConfiguration.SortOperations), new JArray
                         {
                             new JObject
                             {
-                                { nameof(SortOperation.Field), $"{nameof(AdvancedSearchMap.ScoreEstimate)}.{nameof(DynamicPlaylistScoreEstimate.PPIncrease)}" },
+                                { nameof(SortOperation.Field), $"{nameof(AdvancedSearchMap.ScoreEstimate)}.{nameof(LivePlaylistScoreEstimate.PPIncrease)}" },
                                 { nameof(SortOperation.Direction), nameof(SortDirection.Descending) },
                             }
                         }
@@ -540,7 +540,7 @@ public class DynamicPlaylistArrangementIntegrationTests
             .Setup(x => x.ReplaceMapsInPlaylist(It.IsAny<IEnumerable<Map>>(), It.IsAny<Playlist>(), It.IsAny<bool>()))
             .Callback((IEnumerable<Map> maps, Playlist playlist, bool loadPlaylist) => resultMaps = maps);
 
-        await _sut.ArrangeDynamicPlaylists();
+        await _sut.ArrangeLivePlaylists();
 
         Assert.Equal(2, resultMaps.Count());
 

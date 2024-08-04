@@ -1,8 +1,8 @@
 using BeatSaberPlaylistsLib.Types;
 using MapMaven.Core.Models;
 using MapMaven.Core.Models.AdvancedSearch;
-using MapMaven.Core.Models.DynamicPlaylists;
-using MapMaven.Core.Models.DynamicPlaylists.MapInfo;
+using MapMaven.Core.Models.LivePlaylists;
+using MapMaven.Core.Models.LivePlaylists.MapInfo;
 using MapMaven.Core.Services;
 using MapMaven.Core.Services.Interfaces;
 using MapMaven.Core.Services.Leaderboards;
@@ -15,22 +15,22 @@ using System.Globalization;
 using System.Reactive.Linq;
 using Playlist = MapMaven.Models.Playlist;
 
-namespace MapMaven.Core.Tests.Playlists.DynamicPlaylists;
+namespace MapMaven.Core.Tests.Playlists.LivePlaylists;
 
-public class DynamicPlaylistArrangementServiceTests
+public class LivePlaylistArrangementServiceTests
 {
     private readonly Mock<IApplicationSettingService> _applicationSettingServiceMock = new();
     private readonly Mock<IPlaylistService> _playlistServiceMock = new();
     private readonly Mock<IBeatSaberDataService> _beatSaberDataServiceMock = new();
     private readonly Mock<ILeaderboardService> _leaderboardServiceMock = new();
     private readonly Mock<IMapService> _mapServiceMock = new();
-    private readonly Mock<ILogger<DynamicPlaylistArrangementService>> _loggerMock = new();
+    private readonly Mock<ILogger<LivePlaylistArrangementService>> _loggerMock = new();
 
-    private readonly DynamicPlaylistArrangementService _sut;
+    private readonly LivePlaylistArrangementService _sut;
 
-    public DynamicPlaylistArrangementServiceTests()
+    public LivePlaylistArrangementServiceTests()
     {
-        _sut = new DynamicPlaylistArrangementService(
+        _sut = new LivePlaylistArrangementService(
             _beatSaberDataServiceMock.Object,
             _mapServiceMock.Object,
             _playlistServiceMock.Object,
@@ -40,7 +40,7 @@ public class DynamicPlaylistArrangementServiceTests
     }
 
     [Fact]
-    public async Task ArrangeDynamicPlaylists_NoDynamicPlaylists_DoesNothing()
+    public async Task ArrangeLivePlaylists_NoLivePlaylists_DoesNothing()
     {
         // Arrange
         _beatSaberDataServiceMock
@@ -48,14 +48,14 @@ public class DynamicPlaylistArrangementServiceTests
             .ReturnsAsync(new List<IPlaylist>());
 
         // Act
-        await _sut.ArrangeDynamicPlaylists();
+        await _sut.ArrangeLivePlaylists();
 
         // Assert
         _playlistServiceMock.Verify(x => x.ReplaceMapsInPlaylist(It.IsAny<IEnumerable<Map>>(), It.IsAny<Playlist>(), It.IsAny<bool>()), Times.Never);
     }
 
     [Fact]
-    public async Task ArrangeDynamicPlaylists_DynamicPlaylistWithMapPool_UsesCorrectMapPool()
+    public async Task ArrangeLivePlaylists_DynamicPlaylistWithMapPool_UsesCorrectMapPool()
     {
         var resultMaps = await CallArrangeDynamicPlaylistWith(new JObject
         {
@@ -73,17 +73,17 @@ public class DynamicPlaylistArrangementServiceTests
 
 
     [Fact]
-    public async Task ArrangeDynamicPlaylists_DynamicPlaylistWithStringFilters_FiltersStringValue()
+    public async Task ArrangeLivePlaylists_DynamicPlaylistWithStringFilters_FiltersStringValue()
     {
         var resultMaps = await CallArrangeDynamicPlaylistWith(new JObject
         {
             {
                 "dynamicPlaylistConfiguration", new JObject
                 {
-                    { nameof(DynamicPlaylistConfiguration.MapPool), nameof(MapPool.Standard) },
-                    { nameof(DynamicPlaylistConfiguration.MapCount), 100 },
+                    { nameof(LivePlaylistConfiguration.MapPool), nameof(MapPool.Standard) },
+                    { nameof(LivePlaylistConfiguration.MapCount), 100 },
                     {
-                        nameof(DynamicPlaylistConfiguration.FilterOperations), new JArray
+                        nameof(LivePlaylistConfiguration.FilterOperations), new JArray
                         {
                             new JObject
                             {
@@ -108,17 +108,17 @@ public class DynamicPlaylistArrangementServiceTests
     }
 
     [Fact]
-    public async Task ArrangeDynamicPlaylists_DynamicPlaylistWithDoubleFilters_FiltersDoubleRange()
+    public async Task ArrangeLivePlaylists_DynamicPlaylistWithDoubleFilters_FiltersDoubleRange()
     {
         var resultMaps = await CallArrangeDynamicPlaylistWith(new JObject
         {
             {
                 "dynamicPlaylistConfiguration", new JObject
                 {
-                    { nameof(DynamicPlaylistConfiguration.MapPool), nameof(MapPool.Standard) },
-                    { nameof(DynamicPlaylistConfiguration.MapCount), 100 },
+                    { nameof(LivePlaylistConfiguration.MapPool), nameof(MapPool.Standard) },
+                    { nameof(LivePlaylistConfiguration.MapCount), 100 },
                     {
-                        nameof(DynamicPlaylistConfiguration.FilterOperations), new JArray
+                        nameof(LivePlaylistConfiguration.FilterOperations), new JArray
                         {
                             new JObject
                             {
@@ -155,17 +155,17 @@ public class DynamicPlaylistArrangementServiceTests
     }
 
     [Fact]
-    public async Task ArrangeDynamicPlaylists_DynamicPlaylistWithDoubleFilters_FiltersDoubleEqual()
+    public async Task ArrangeLivePlaylists_DynamicPlaylistWithDoubleFilters_FiltersDoubleEqual()
     {
         var resultMaps = await CallArrangeDynamicPlaylistWith(new JObject
         {
             {
                 "dynamicPlaylistConfiguration", new JObject
                 {
-                    { nameof(DynamicPlaylistConfiguration.MapPool), nameof(MapPool.Standard) },
-                    { nameof(DynamicPlaylistConfiguration.MapCount), 100 },
+                    { nameof(LivePlaylistConfiguration.MapPool), nameof(MapPool.Standard) },
+                    { nameof(LivePlaylistConfiguration.MapCount), 100 },
                     {
-                        nameof(DynamicPlaylistConfiguration.FilterOperations), new JArray
+                        nameof(LivePlaylistConfiguration.FilterOperations), new JArray
                         {
                             new JObject
                             {
@@ -190,39 +190,39 @@ public class DynamicPlaylistArrangementServiceTests
     }
 
     [Fact]
-    public async Task ArrangeDynamicPlaylists_DynamicPlaylistWithDateTimeFilters_FiltersDateTimeRange()
+    public async Task ArrangeLivePlaylists_DynamicPlaylistWithDateTimeFilters_FiltersDateTimeRange()
     {
         var resultMaps = await CallArrangeDynamicPlaylistWith(new JObject
         {
             {
                 "dynamicPlaylistConfiguration", new JObject
                 {
-                    { nameof(DynamicPlaylistConfiguration.MapPool), nameof(MapPool.Standard) },
-                    { nameof(DynamicPlaylistConfiguration.MapCount), 100 },
+                    { nameof(LivePlaylistConfiguration.MapPool), nameof(MapPool.Standard) },
+                    { nameof(LivePlaylistConfiguration.MapCount), 100 },
                     {
-                        nameof(DynamicPlaylistConfiguration.FilterOperations), new JArray
+                        nameof(LivePlaylistConfiguration.FilterOperations), new JArray
                         {
                             new JObject
                             {
-                                { nameof(FilterOperation.Field), $"{nameof(AdvancedSearchMap.Score)}.{nameof(DynamicPlaylistScore.TimeSet)}" },
+                                { nameof(FilterOperation.Field), $"{nameof(AdvancedSearchMap.Score)}.{nameof(LivePlaylistScore.TimeSet)}" },
                                 { nameof(FilterOperation.Value), new DateTime(2022, 1, 1).ToString(CultureInfo.InvariantCulture) },
                                 { nameof(FilterOperation.Operator), nameof(FilterOperator.GreaterThan) }
                             },
                             new JObject
                             {
-                                { nameof(FilterOperation.Field), $"{nameof(AdvancedSearchMap.Score)}.{nameof(DynamicPlaylistScore.TimeSet)}" },
+                                { nameof(FilterOperation.Field), $"{nameof(AdvancedSearchMap.Score)}.{nameof(LivePlaylistScore.TimeSet)}" },
                                 { nameof(FilterOperation.Value), new DateTime(2022, 3, 25).ToString(CultureInfo.InvariantCulture) },
                                 { nameof(FilterOperation.Operator), nameof(FilterOperator.GreaterThanOrEqual) }
                             },
                             new JObject
                             {
-                                { nameof(FilterOperation.Field), $"{nameof(AdvancedSearchMap.Score)}.{nameof(DynamicPlaylistScore.TimeSet)}" },
+                                { nameof(FilterOperation.Field), $"{nameof(AdvancedSearchMap.Score)}.{nameof(LivePlaylistScore.TimeSet)}" },
                                 { nameof(FilterOperation.Value), new DateTime(2023, 1, 1).ToString(CultureInfo.InvariantCulture) },
                                 { nameof(FilterOperation.Operator), nameof(FilterOperator.LessThan) }
                             },
                             new JObject
                             {
-                                { nameof(FilterOperation.Field), $"{nameof(AdvancedSearchMap.Score)}.{nameof(DynamicPlaylistScore.TimeSet)}" },
+                                { nameof(FilterOperation.Field), $"{nameof(AdvancedSearchMap.Score)}.{nameof(LivePlaylistScore.TimeSet)}" },
                                 { nameof(FilterOperation.Value), new DateTime(2022, 3, 25).ToString(CultureInfo.InvariantCulture) },
                                 { nameof(FilterOperation.Operator), nameof(FilterOperator.LessThanOrEqual) }
                             }
@@ -237,27 +237,27 @@ public class DynamicPlaylistArrangementServiceTests
     }
 
     [Fact]
-    public async Task ArrangeDynamicPlaylists_DynamicPlaylistWithDateTimeFilters_FiltersDateTimeEqual()
+    public async Task ArrangeLivePlaylists_DynamicPlaylistWithDateTimeFilters_FiltersDateTimeEqual()
     {
         var resultMaps = await CallArrangeDynamicPlaylistWith(new JObject
         {
             {
                 "dynamicPlaylistConfiguration", new JObject
                 {
-                    { nameof(DynamicPlaylistConfiguration.MapPool), nameof(MapPool.Standard) },
-                    { nameof(DynamicPlaylistConfiguration.MapCount), 100 },
+                    { nameof(LivePlaylistConfiguration.MapPool), nameof(MapPool.Standard) },
+                    { nameof(LivePlaylistConfiguration.MapCount), 100 },
                     {
-                        nameof(DynamicPlaylistConfiguration.FilterOperations), new JArray
+                        nameof(LivePlaylistConfiguration.FilterOperations), new JArray
                         {
                             new JObject
                             {
-                                { nameof(FilterOperation.Field), $"{nameof(AdvancedSearchMap.Score)}.{nameof(DynamicPlaylistScore.TimeSet)}" },
+                                { nameof(FilterOperation.Field), $"{nameof(AdvancedSearchMap.Score)}.{nameof(LivePlaylistScore.TimeSet)}" },
                                 { nameof(FilterOperation.Value), new DateTime(2022, 3, 25).ToString(CultureInfo.InvariantCulture) },
                                 { nameof(FilterOperation.Operator), nameof(FilterOperator.Equals) }
                             },
                             new JObject
                             {
-                                { nameof(FilterOperation.Field), $"{nameof(AdvancedSearchMap.Score)}.{nameof(DynamicPlaylistScore.TimeSet)}" },
+                                { nameof(FilterOperation.Field), $"{nameof(AdvancedSearchMap.Score)}.{nameof(LivePlaylistScore.TimeSet)}" },
                                 { nameof(FilterOperation.Value), new DateTime(2023, 1, 12).ToString(CultureInfo.InvariantCulture) },
                                 { nameof(FilterOperation.Operator), nameof(FilterOperator.NotEquals) }
                             },
@@ -272,17 +272,17 @@ public class DynamicPlaylistArrangementServiceTests
     }
 
     [Fact]
-    public async Task ArrangeDynamicPlaylists_DynamicPlaylistWithBooleanFilters_FiltersBoolean()
+    public async Task ArrangeLivePlaylists_DynamicPlaylistWithBooleanFilters_FiltersBoolean()
     {
         var resultMaps = await CallArrangeDynamicPlaylistWith(new JObject
         {
             {
                 "dynamicPlaylistConfiguration", new JObject
                 {
-                    { nameof(DynamicPlaylistConfiguration.MapPool), nameof(MapPool.Standard) },
-                    { nameof(DynamicPlaylistConfiguration.MapCount), 100 },
+                    { nameof(LivePlaylistConfiguration.MapPool), nameof(MapPool.Standard) },
+                    { nameof(LivePlaylistConfiguration.MapCount), 100 },
                     {
-                        nameof(DynamicPlaylistConfiguration.FilterOperations), new JArray
+                        nameof(LivePlaylistConfiguration.FilterOperations), new JArray
                         {
                             new JObject
                             {
@@ -302,17 +302,17 @@ public class DynamicPlaylistArrangementServiceTests
     }
 
     [Fact]
-    public async Task ArrangeDynamicPlaylists_DynamicPlaylistWithStringSort_SortsByString()
+    public async Task ArrangeLivePlaylists_DynamicPlaylistWithStringSort_SortsByString()
     {
         var resultMaps = await CallArrangeDynamicPlaylistWith(new JObject
         {
             {
                 "dynamicPlaylistConfiguration", new JObject
                 {
-                    { nameof(DynamicPlaylistConfiguration.MapPool), nameof(MapPool.Standard) },
-                    { nameof(DynamicPlaylistConfiguration.MapCount), 100 },
+                    { nameof(LivePlaylistConfiguration.MapPool), nameof(MapPool.Standard) },
+                    { nameof(LivePlaylistConfiguration.MapCount), 100 },
                     {
-                        nameof(DynamicPlaylistConfiguration.SortOperations), new JArray
+                        nameof(LivePlaylistConfiguration.SortOperations), new JArray
                         {
                             new JObject
                             {
@@ -334,17 +334,17 @@ public class DynamicPlaylistArrangementServiceTests
     }
 
     [Fact]
-    public async Task ArrangeDynamicPlaylists_DynamicPlaylistWithMultipleSorts_SortsByAllSorts()
+    public async Task ArrangeLivePlaylists_DynamicPlaylistWithMultipleSorts_SortsByAllSorts()
     {
         var resultMaps = await CallArrangeDynamicPlaylistWith(new JObject
         {
             {
                 "dynamicPlaylistConfiguration", new JObject
                 {
-                    { nameof(DynamicPlaylistConfiguration.MapPool), nameof(MapPool.Standard) },
-                    { nameof(DynamicPlaylistConfiguration.MapCount), 100 },
+                    { nameof(LivePlaylistConfiguration.MapPool), nameof(MapPool.Standard) },
+                    { nameof(LivePlaylistConfiguration.MapCount), 100 },
                     {
-                        nameof(DynamicPlaylistConfiguration.SortOperations), new JArray
+                        nameof(LivePlaylistConfiguration.SortOperations), new JArray
                         {
                             new JObject
                             {
@@ -371,17 +371,17 @@ public class DynamicPlaylistArrangementServiceTests
     }
 
     [Fact]
-    public async Task ArrangeDynamicPlaylists_DynamicPlaylistWithDoubleSort_SortsByDouble()
+    public async Task ArrangeLivePlaylists_DynamicPlaylistWithDoubleSort_SortsByDouble()
     {
         var resultMaps = await CallArrangeDynamicPlaylistWith(new JObject
         {
             {
                 "dynamicPlaylistConfiguration", new JObject
                 {
-                    { nameof(DynamicPlaylistConfiguration.MapPool), nameof(MapPool.Standard) },
-                    { nameof(DynamicPlaylistConfiguration.MapCount), 100 },
+                    { nameof(LivePlaylistConfiguration.MapPool), nameof(MapPool.Standard) },
+                    { nameof(LivePlaylistConfiguration.MapCount), 100 },
                     {
-                        nameof(DynamicPlaylistConfiguration.SortOperations), new JArray
+                        nameof(LivePlaylistConfiguration.SortOperations), new JArray
                         {
                             new JObject
                             {
@@ -403,21 +403,21 @@ public class DynamicPlaylistArrangementServiceTests
     }
 
     [Fact]
-    public async Task ArrangeDynamicPlaylists_DynamicPlaylistWithDateTimeSort_SortsByDateTime()
+    public async Task ArrangeLivePlaylists_DynamicPlaylistWithDateTimeSort_SortsByDateTime()
     {
         var resultMaps = await CallArrangeDynamicPlaylistWith(new JObject
         {
             {
                 "dynamicPlaylistConfiguration", new JObject
                 {
-                    { nameof(DynamicPlaylistConfiguration.MapPool), nameof(MapPool.Standard) },
-                    { nameof(DynamicPlaylistConfiguration.MapCount), 100 },
+                    { nameof(LivePlaylistConfiguration.MapPool), nameof(MapPool.Standard) },
+                    { nameof(LivePlaylistConfiguration.MapCount), 100 },
                     {
-                        nameof(DynamicPlaylistConfiguration.SortOperations), new JArray
+                        nameof(LivePlaylistConfiguration.SortOperations), new JArray
                         {
                             new JObject
                             {
-                                { nameof(SortOperation.Field), $"{nameof(AdvancedSearchMap.Score)}.{nameof(DynamicPlaylistScore.TimeSet)}" },
+                                { nameof(SortOperation.Field), $"{nameof(AdvancedSearchMap.Score)}.{nameof(LivePlaylistScore.TimeSet)}" },
                                 { nameof(SortOperation.Direction), nameof(SortDirection.Descending) }
                             }
                         }
@@ -435,17 +435,17 @@ public class DynamicPlaylistArrangementServiceTests
     }
 
     [Fact]
-    public async Task ArrangeDynamicPlaylists_DynamicPlaylistWithBooleanSort_SortsByBoolean()
+    public async Task ArrangeLivePlaylists_DynamicPlaylistWithBooleanSort_SortsByBoolean()
     {
         var resultMaps = await CallArrangeDynamicPlaylistWith(new JObject
         {
             {
                 "dynamicPlaylistConfiguration", new JObject
                 {
-                    { nameof(DynamicPlaylistConfiguration.MapPool), nameof(MapPool.Standard) },
-                    { nameof(DynamicPlaylistConfiguration.MapCount), 100 },
+                    { nameof(LivePlaylistConfiguration.MapPool), nameof(MapPool.Standard) },
+                    { nameof(LivePlaylistConfiguration.MapCount), 100 },
                     {
-                        nameof(DynamicPlaylistConfiguration.SortOperations), new JArray
+                        nameof(LivePlaylistConfiguration.SortOperations), new JArray
                         {
                             new JObject
                             {
@@ -476,14 +476,14 @@ public class DynamicPlaylistArrangementServiceTests
             {
                 "dynamicPlaylistConfiguration", new JObject
                 {
-                    { nameof(DynamicPlaylistConfiguration.MapPool), nameof(MapPool.Standard) },
-                    { nameof(DynamicPlaylistConfiguration.MapCount), 100 },
+                    { nameof(LivePlaylistConfiguration.MapPool), nameof(MapPool.Standard) },
+                    { nameof(LivePlaylistConfiguration.MapCount), 100 },
                     {
-                        nameof(DynamicPlaylistConfiguration.FilterOperations), new JArray
+                        nameof(LivePlaylistConfiguration.FilterOperations), new JArray
                         {
                             new JObject
                             {
-                                { nameof(FilterOperation.Field), $"{nameof(AdvancedSearchMap.Score)}.{nameof(DynamicPlaylistScore.TimeSet)}" },
+                                { nameof(FilterOperation.Field), $"{nameof(AdvancedSearchMap.Score)}.{nameof(LivePlaylistScore.TimeSet)}" },
                                 { nameof(FilterOperation.Value), "99-99-9999 99:99:99" }, // Invalid DateTime
                                 { nameof(FilterOperation.Operator), nameof(FilterOperator.Equals) }
                             }
@@ -506,10 +506,10 @@ public class DynamicPlaylistArrangementServiceTests
             {
                 "dynamicPlaylistConfiguration", new JObject
                 {
-                    { nameof(DynamicPlaylistConfiguration.MapPool), nameof(MapPool.Standard) },
-                    { nameof(DynamicPlaylistConfiguration.MapCount), 100 },
+                    { nameof(LivePlaylistConfiguration.MapPool), nameof(MapPool.Standard) },
+                    { nameof(LivePlaylistConfiguration.MapCount), 100 },
                     {
-                        nameof(DynamicPlaylistConfiguration.FilterOperations), new JArray
+                        nameof(LivePlaylistConfiguration.FilterOperations), new JArray
                         {
                             new JObject
                             {
@@ -541,7 +541,7 @@ public class DynamicPlaylistArrangementServiceTests
                     resultMaps = maps;
             });
 
-        await _sut.ArrangeDynamicPlaylists();
+        await _sut.ArrangeLivePlaylists();
 
         _loggerMock.Verify(logger => logger.Log(
             It.Is<LogLevel>(logLevel => logLevel == LogLevel.Error),
@@ -573,7 +573,7 @@ public class DynamicPlaylistArrangementServiceTests
             .Setup(x => x.ReplaceMapsInPlaylist(It.IsAny<IEnumerable<Map>>(), It.IsAny<Playlist>(), It.IsAny<bool>()))
             .Callback((IEnumerable<Map> maps, Playlist playlist, bool loadPlaylist) => resultMaps = maps);
 
-        await _sut.ArrangeDynamicPlaylists();
+        await _sut.ArrangeLivePlaylists();
 
         return resultMaps;
     }

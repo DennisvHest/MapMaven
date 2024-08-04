@@ -1,4 +1,4 @@
-﻿using MapMaven.Core.Models.DynamicPlaylists;
+﻿using MapMaven.Core.Models.LivePlaylists;
 
 namespace MapMaven.Extensions
 {

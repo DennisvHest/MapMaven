@@ -1,7 +1,7 @@
 ﻿@inherits ReactiveComponent
 
 @using MapMaven.Core.Utilities.Scoresaber
-@using MapMaven.Core.Models.DynamicPlaylists
+@using MapMaven.Core.Models.LivePlaylists
 
 <div @ref="TableWrapperRef" @onkeydown="OnKeyDown" class="d-inline full-width" tabindex="-1" style="@(RankedMaps ? "width: calc(100% - var(--mud-drawer-width, var(--mud-drawer-width-left))); !important" : "")">
     <MudDataGrid @ref="TableRef"
@@ -27,9 +27,9 @@
                     @if (SelectedPlaylist != null)
                     {
                         <MudChip T="string" Variant="Variant.Outlined">
-                            @if (SelectedPlaylist.DynamicPlaylistConfiguration?.MapPool == MapPool.Improvement && SelectedPlaylist.DynamicPlaylistConfiguration?.LeaderboardProvider is not null)
+                            @if (SelectedPlaylist.LivePlaylistConfiguration?.MapPool == MapPool.Improvement && SelectedPlaylist.LivePlaylistConfiguration?.LeaderboardProvider is not null)
                             {
-                                <img src="@LeaderboardUtility.GetLogoPath(SelectedPlaylist.DynamicPlaylistConfiguration.LeaderboardProvider.Value)" class="mr-1" style="width: 24px;" />
+                                <img src="@LeaderboardUtility.GetLogoPath(SelectedPlaylist.LivePlaylistConfiguration.LeaderboardProvider.Value)" class="mr-1" style="width: 24px;" />
                             }
                             @SelectedPlaylist.Title
                         </MudChip>
@@ -81,7 +81,7 @@
                 <MudProgressLinear Color="Color.Primary" Indeterminate="true" Style="position: absolute; top: 0;" />
                 <MudIcon Icon="@Icons.Material.Filled.ManageSearch" Style="vertical-align: middle; margin-bottom: 4px;"></MudIcon> @:Loading maps for first use. Depending on the number of maps, this might take a minute.
             }
-            else if (TableRef.GetFilteredItemsCount() == 0 && SelectedPlaylist?.IsDynamicPlaylist == true && string.IsNullOrEmpty(SearchString))
+            else if (TableRef.GetFilteredItemsCount() == 0 && SelectedPlaylist?.IsLivePlaylist == true && string.IsNullOrEmpty(SearchString))
             {
                 <MudProgressLinear Color="Color.Primary" Indeterminate="true" Style="position: absolute; top: 0;" />
                 <MudIcon Icon="@Icons.Material.Filled.ManageSearch" Style="vertical-align: middle; margin-bottom: 4px;"></MudIcon> @:Nothing yet. Live playlist is still being generated. Maps will appear once all the maps have been downloaded.
@@ -122,13 +122,13 @@
                         <MudButton Variant="Variant.Text" DropShadow="false" Class="px-5 full-height" StartIcon="@Icons.Material.Filled.PlaylistAdd" Disabled="!SelectedMaps.Any()" OnClick="AddSelectedMapsToPlaylist">
                             Add to playlist
                         </MudButton>
-                        @if (SelectedPlaylist is not null && !SelectedPlaylist.IsDynamicPlaylist)
+                        @if (SelectedPlaylist is not null && !SelectedPlaylist.IsLivePlaylist)
                         {
                             <MudButton Variant="Variant.Text" DropShadow="false" Class="px-5 full-height" StartIcon="@Icons.Material.Filled.PlaylistRemove" Disabled="!SelectedMaps.Any()" OnClick="RemoveSelectedMapsFromSelectedPlaylist">
                                 Remove from playlist
                             </MudButton>
                         }
-                        @if (SelectedPlaylist is null || !SelectedPlaylist.IsDynamicPlaylist)
+                        @if (SelectedPlaylist is null || !SelectedPlaylist.IsLivePlaylist)
                         {
                             <MudButton Variant="Variant.Text" Color="Color.Secondary" Class="px-5 full-height" DropShadow="false" StartIcon="@Icons.Material.Filled.Delete" Disabled="!SelectedMaps.Any()" OnClick="DeleteSelectedMaps">
                                 Delete

@@ -32,7 +32,7 @@ namespace MapMaven.Components.Maps
         ISnackbar Snackbar { get; set; }
 
         [Inject]
-        protected DynamicPlaylistArrangementService DynamicPlaylistArrangementService { get; set; }
+        protected LivePlaylistArrangementService LivePlaylistArrangementService { get; set; }
 
         [Inject]
         protected IEnumerable<IScoreEstimationService> ScoreEstimationServices { get; set; }
@@ -88,12 +88,12 @@ namespace MapMaven.Components.Maps
 
             var loadingObservable = Observable.CombineLatest(
                 BeatSaberDataService.LoadingMapInfo,
-                DynamicPlaylistArrangementService.ArrangingDynamicPlaylists,
+                LivePlaylistArrangementService.ArrangingLivePlaylists,
                 estimatingScoresObservable,
                 PlaylistService.SelectedPlaylist,
-                (loadingMapInfo, arrangingDynamicPlaylists, estimatingScores, selectedPlaylist) =>
+                (loadingMapInfo, arrangingLivePlaylists, estimatingScores, selectedPlaylist) =>
                     loadingMapInfo
-                    || arrangingDynamicPlaylists && selectedPlaylist?.IsDynamicPlaylist == true
+                    || arrangingLivePlaylists && selectedPlaylist?.IsLivePlaylist == true
                     || estimatingScores
             );
 

@@ -3,6 +3,6 @@
     public enum PlaylistType
     {
         Playlist,
-        DynamicPlaylist
+        LivePlaylist
     }
 }

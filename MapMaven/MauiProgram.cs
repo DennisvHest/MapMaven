@@ -66,7 +66,7 @@ public static class MauiProgram
 
             builder.Services.AddSingleton<UpdateService>();
             builder.Services.AddSingleton<IHostedService, UpdateWorker>();
-            builder.Services.AddSingleton<IHostedService, DynamicPlaylistWorker>();
+            builder.Services.AddSingleton<IHostedService, LivePlaylistWorker>();
             builder.Services.AddSingleton<IHostedService, MemoryCleaningWorker>();
             builder.Services.AddSingleton<HostedServiceExecutor>();
             builder.Services.AddSingleton<PlaylistCoverService>();

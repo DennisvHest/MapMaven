@@ -5,7 +5,7 @@ using Playlist = MapMaven.Models.Playlist;
 using Map = MapMaven.Models.Map;
 using MapMaven.Core.Services;
 using BeatSaberPlaylistsLib.Types;
-using MapMaven.Core.Models.DynamicPlaylists;
+using MapMaven.Core.Models.LivePlaylists;
 using MapMaven.Core.Models.Data;
 using MapMaven.Core.Services.Interfaces;
 using MapMaven.Core.Extensions;
@@ -107,26 +107,26 @@ namespace MapMaven.Services
             return playlist;
         }
 
-        public async Task<Playlist> AddDynamicPlaylist(EditDynamicPlaylistModel editDynamicPlaylistModel)
+        public async Task<Playlist> AddLivePlaylist(EditLivePlaylistModel editLivePlaylistModel)
         {
-            IPlaylist addedPlaylist = CreateIPlaylist(editDynamicPlaylistModel, null);
+            IPlaylist addedPlaylist = CreateIPlaylist(editLivePlaylistModel, null);
 
-            CreateValidConfiguration(editDynamicPlaylistModel);
+            CreateValidConfiguration(editLivePlaylistModel);
 
             addedPlaylist.SetCustomData("mapMaven", new
             {
-                isDynamicPlaylist = true,
-                dynamicPlaylistConfiguration = editDynamicPlaylistModel.DynamicPlaylistConfiguration
+                isLivePlaylist = true,
+                dynamicPlaylistConfiguration = editLivePlaylistModel.LivePlaylistConfiguration
             });
 
-            editDynamicPlaylistModel.PlaylistManager.StorePlaylist(addedPlaylist);
+            editLivePlaylistModel.PlaylistManager.StorePlaylist(addedPlaylist);
 
-            var playlist = new Playlist(addedPlaylist, editDynamicPlaylistModel.PlaylistManager);
+            var playlist = new Playlist(addedPlaylist, editLivePlaylistModel.PlaylistManager);
 
             return playlist;
         }
 
-        public async Task<Playlist> EditDynamicPlaylist(EditDynamicPlaylistModel editPlaylistModel)
+        public async Task<Playlist> EditLivePlaylist(EditLivePlaylistModel editPlaylistModel)
         {
             var playlistToModify = editPlaylistModel.PlaylistManager.GetPlaylist(editPlaylistModel.FileName);
 
@@ -134,8 +134,8 @@ namespace MapMaven.Services
 
             playlistToModify.SetCustomData("mapMaven", new
             {
-                isDynamicPlaylist = true,
-                dynamicPlaylistConfiguration = editPlaylistModel.DynamicPlaylistConfiguration
+                isLivePlaylist = true,
+                dynamicPlaylistConfiguration = editPlaylistModel.LivePlaylistConfiguration
             });
 
             UpdatePlaylist(editPlaylistModel, playlistToModify);
@@ -168,9 +168,9 @@ namespace MapMaven.Services
             await _beatSaberDataService.LoadAllPlaylists();
         }
 
-        private static void CreateValidConfiguration(EditDynamicPlaylistModel editDynamicPlaylistModel)
+        private static void CreateValidConfiguration(EditLivePlaylistModel editLivePlaylistModel)
         {
-            var configuration = editDynamicPlaylistModel.DynamicPlaylistConfiguration;
+            var configuration = editLivePlaylistModel.LivePlaylistConfiguration;
 
             if (configuration.MapPool == MapPool.Standard)
                 configuration.LeaderboardProvider = null;
@@ -408,8 +408,8 @@ namespace MapMaven.Services
                 (string.IsNullOrEmpty(searchText) || playlist.Playlist.Title.Contains(searchText, StringComparison.OrdinalIgnoreCase))
                 && (
                     playlistType is null
-                    || playlistType == PlaylistType.Playlist && !playlist.Playlist.IsDynamicPlaylist
-                    || playlistType == PlaylistType.DynamicPlaylist && playlist.Playlist.IsDynamicPlaylist
+                    || playlistType == PlaylistType.Playlist && !playlist.Playlist.IsLivePlaylist
+                    || playlistType == PlaylistType.LivePlaylist && playlist.Playlist.IsLivePlaylist
                 ),
             _ => false
         };

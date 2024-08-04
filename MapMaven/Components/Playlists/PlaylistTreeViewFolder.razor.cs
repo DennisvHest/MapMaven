@@ -1,7 +1,7 @@
 using BeatSaberPlaylistsLib;
 using MapMaven.Components.Shared;
 using MapMaven.Core.Models.Data.Playlists;
-using MapMaven.Core.Models.DynamicPlaylists;
+using MapMaven.Core.Models.LivePlaylists;
 using MapMaven.Core.Services.Interfaces;
 using MapMaven.Models;
 using Microsoft.AspNetCore.Components;
@@ -36,15 +36,15 @@ namespace MapMaven.Components.Playlists
 
         void OpenEditPlaylistDialog(Playlist playlist)
         {
-            if (playlist.IsDynamicPlaylist)
+            if (playlist.IsLivePlaylist)
             {
                 var parameters = new DialogParameters
                 {
-                    { "SelectedPlaylist", new EditDynamicPlaylistModel(playlist) },
+                    { "SelectedPlaylist", new EditLivePlaylistModel(playlist) },
                     { "NewPlaylist", false }
                 };
 
-                DialogService.Show<EditDynamicPlaylistDialog>("Edit playlist", parameters, new DialogOptions
+                DialogService.Show<EditLivePlaylistDialog>("Edit playlist", parameters, new DialogOptions
                 {
                     MaxWidth = MaxWidth.Small,
                     FullWidth = true
@@ -110,11 +110,11 @@ namespace MapMaven.Components.Playlists
             );
         }
 
-        void OpenAddDynamicPlaylistDialog(PlaylistFolder<Playlist> playlistFolder)
+        void OpenAddLivePlaylistDialog(PlaylistFolder<Playlist> playlistFolder)
         {
-            DialogService.Show<EditDynamicPlaylistDialog>("Add playlist", new DialogParameters
+            DialogService.Show<EditLivePlaylistDialog>("Add playlist", new DialogParameters
                 {
-                    { nameof(EditDynamicPlaylistDialog.PlaylistManager), playlistFolder.PlaylistManager }
+                    { nameof(EditLivePlaylistDialog.PlaylistManager), playlistFolder.PlaylistManager }
                 },
                 new DialogOptions
                 {

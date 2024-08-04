@@ -118,9 +118,9 @@ namespace MapMaven.Components.Playlists
             });
         }
 
-        void OpenAddDynamicPlaylistDialog()
+        void OpenAddLivePlaylistDialog()
         {
-            DialogService.Show<EditDynamicPlaylistDialog>("Add playlist", new DialogOptions
+            DialogService.Show<EditLivePlaylistDialog>("Add playlist", new DialogOptions
             {
                 MaxWidth = MaxWidth.Small,
                 FullWidth = true
