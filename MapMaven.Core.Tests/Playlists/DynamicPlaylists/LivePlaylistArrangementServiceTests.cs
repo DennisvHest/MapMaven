@@ -43,9 +43,9 @@ public class LivePlaylistArrangementServiceTests
     public async Task ArrangeLivePlaylists_NoLivePlaylists_DoesNothing()
     {
         // Arrange
-        _beatSaberDataServiceMock
-            .Setup(x => x.GetAllPlaylists())
-            .ReturnsAsync(new List<IPlaylist>());
+        _playlistServiceMock
+            .SetupGet(x => x.Playlists)
+            .Returns(Observable.Return(Enumerable.Empty<Playlist>()));
 
         // Act
         await _sut.ArrangeLivePlaylists();
@@ -585,6 +585,10 @@ public class LivePlaylistArrangementServiceTests
 
     private void SetupMocksAndData(Mock<IPlaylist>[] playlistMocks)
     {
+        _playlistServiceMock
+            .SetupGet(x => x.Playlists)
+            .Returns(() => Observable.Return(playlistMocks.Select(m => new Playlist(m.Object, null!))));
+
         _beatSaberDataServiceMock
             .Setup(x => x.GetAllPlaylists())
             .ReturnsAsync(playlistMocks.Select(m => m.Object));

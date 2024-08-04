@@ -559,6 +559,10 @@ public class LivePlaylistArrangementIntegrationTests
             .Setup(x => x.TryGetCustomData("mapMaven", out customData))
             .Returns(true);
 
+        _playlistServiceMock
+            .SetupGet(x => x.Playlists)
+            .Returns(() => Observable.Return<IEnumerable<Playlist>>([new Playlist(playlistMock.Object, null!)]));
+
         _beatSaberDataServiceMock
             .Setup(x => x.GetAllPlaylists())
             .ReturnsAsync(new[] { playlistMock.Object });
