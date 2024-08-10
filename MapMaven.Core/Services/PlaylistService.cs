@@ -128,7 +128,7 @@ namespace MapMaven.Services
 
         public async Task<Playlist> EditLivePlaylist(EditLivePlaylistModel editPlaylistModel)
         {
-            var playlistToModify = editPlaylistModel.PlaylistManager.GetPlaylist(editPlaylistModel.FileName);
+            var playlistToModify = editPlaylistModel.OriginalPlaylistManager.GetPlaylist(editPlaylistModel.FileName);
 
             CreateValidConfiguration(editPlaylistModel);
 

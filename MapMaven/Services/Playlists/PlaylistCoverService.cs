@@ -61,7 +61,14 @@ namespace MapMaven.Services.Playlists
                             return image.ToDataUrl();
                         });
 
-                        _cachedCoverImages.Add(playlist, coverImage);
+                        if (_cachedCoverImages.ContainsKey(playlist))
+                        {
+                            _cachedCoverImages[playlist] = coverImage;
+                        }
+                        else
+                        {
+                            _cachedCoverImages.Add(playlist, coverImage);
+                        }
                     }
                 });
         }
