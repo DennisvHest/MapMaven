@@ -8,7 +8,7 @@
   <br>
 </h1>
 
-Map Maven is an application for managing Beat Saber playlists, discovering new maps to play and to improve your Beat Saber skills. With features such as dynamic playlists and a map recommendation system, you will always have great new maps to play in your next Beat Saber session.
+Map Maven is an application for managing Beat Saber playlists, discovering new maps to play and to improve your Beat Saber skills. With features such as live playlists and a map recommendation system, you will always have great new maps to play in your next Beat Saber session.
 
 You can link Map Maven to ScoreSaber and/or BeatLeader to get recommended ranked maps and see your scores and replays.
 
@@ -20,12 +20,12 @@ Easily create and manage your Beat Saber playlists. You can add, edit, and delet
 
 https://github.com/DennisvHest/MapMaven/assets/18610083/882a06dc-0858-4878-ad00-a69e460fab91
 
-## Dynamic playlists
-Dynamic playlists are playlists that are periodically updated with new maps. For example: the "Recently added maps" playlist always contains the most recently added maps. The "Improvement maps" playlist always contains the latest maps from the improvement page (see "Map recommendation" below).
+## Live playlists
+Live playlists are playlists that are periodically updated with new maps. For example: the "Recently added maps" playlist always contains the most recently added maps. The "Improvement maps" playlist always contains the latest maps from the improvement page (see "Map recommendation" below).
 
 https://github.com/DennisvHest/MapMaven/assets/18610083/56fd3498-1764-434e-b95c-119984d98684
 
-Dynamic playlists can be completely customized by creating a custom dynamic playlist. The custom dynamic playlist will be periodically updated with maps based on filters and sortings you configure. For example, you can create a dynamic playlists that will always contain maps from your favourite mapper, by adding a filter for the map author. Then you can sort by the added date, so the latest map is always at the top of the playlist! Custom dynamic playlists can be created from maps that you have downloaded, or from improvement (ranked) maps.
+Live playlists can be completely customized by creating a custom live playlist. The custom live playlist will be periodically updated with maps based on filters and sortings you configure. For example, you can create a live playlists that will always contain maps from your favourite mapper, by adding a filter for the map author. Then you can sort by the added date, so the latest map is always at the top of the playlist! Custom live playlists can be created from maps that you have downloaded, or from improvement (ranked) maps.
 
 https://github.com/DennisvHest/MapMaven/assets/18610083/ba3ce28a-8f07-4c54-86c0-85ef081f4e01
 
