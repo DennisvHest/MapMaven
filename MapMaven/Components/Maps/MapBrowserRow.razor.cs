@@ -54,7 +54,7 @@ namespace MapMaven.Components.Maps
 
             var result = await dialog.Result;
 
-            if (!result.Cancelled)
+            if (!result.Canceled)
             {
                 var playlist = (Playlist)result.Data;
 
@@ -65,7 +65,7 @@ namespace MapMaven.Components.Maps
                     severity: Severity.Normal,
                     config =>
                     {
-                        config.Icon = Icons.Filled.Check;
+                        config.Icon = Icons.Material.Filled.Check;
 
                         config.Action = "Open";
                         config.ActionColor = MudBlazor.Color.Primary;
@@ -89,7 +89,7 @@ namespace MapMaven.Components.Maps
 
             var result = await dialog.Result;
 
-            if (!result.Cancelled)
+            if (!result.Canceled)
                 await RemoveFromPlaylist(map);
         }
 
@@ -97,7 +97,7 @@ namespace MapMaven.Components.Maps
         {
             await PlaylistService.RemoveMapFromPlaylist(map, SelectedPlaylist);
 
-            Snackbar.Add($"Removed map \"{map.Name}\" from playlist \"{SelectedPlaylist.Title}\"", Severity.Normal, config => config.Icon = Icons.Filled.Check);
+            Snackbar.Add($"Removed map \"{map.Name}\" from playlist \"{SelectedPlaylist.Title}\"", Severity.Normal, config => config.Icon = Icons.Material.Filled.Check);
         }
 
         void OpenReplay(Map map, PlayerScore playerScore)
@@ -158,7 +158,7 @@ namespace MapMaven.Components.Maps
 
             var result = await dialog.Result;
 
-            if (result.Cancelled)
+            if (result.Canceled)
                 return;
 
             await MapService.DeleteMap(map.Hash);

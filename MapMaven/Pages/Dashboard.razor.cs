@@ -3,8 +3,8 @@ using FastDeepCloner;
 using MapMaven.Components.Playlists;
 using MapMaven.Core.Models;
 using MapMaven.Core.Models.AdvancedSearch;
-using MapMaven.Core.Models.DynamicPlaylists;
-using MapMaven.Core.Models.DynamicPlaylists.MapInfo;
+using MapMaven.Core.Models.LivePlaylists;
+using MapMaven.Core.Models.LivePlaylists.MapInfo;
 using MapMaven.Core.Services;
 using MapMaven.Core.Services.Interfaces;
 using MapMaven.Core.Services.Leaderboards;
@@ -62,7 +62,7 @@ namespace MapMaven.Pages
             Chart = new()
             {
                 Background = "transparent",
-                ForeColor = MapMavenTheme.Theme.Palette.TextPrimary.SetAlpha(0.3).ToString(MudColorOutputFormats.RGBA),
+                ForeColor = MapMavenTheme.Theme.PaletteDark.TextPrimary.SetAlpha(0.3).ToString(MudColorOutputFormats.RGBA),
                 Toolbar = new()
                 {
                     Show = false
@@ -85,7 +85,7 @@ namespace MapMaven.Pages
             },
             Grid = new()
             {
-                BorderColor = MapMavenTheme.Theme.Palette.TextPrimary.SetAlpha(0.3).ToString(MudColorOutputFormats.RGBA),
+                BorderColor = MapMavenTheme.Theme.PaletteDark.TextPrimary.SetAlpha(0.3).ToString(MudColorOutputFormats.RGBA),
             },
             Theme = new()
             {
@@ -115,7 +115,7 @@ namespace MapMaven.Pages
         IEnumerable<Map> RecentHighPpGainMaps { get; set; } = [];
         IEnumerable<Map> RecommendedMaps { get; set; } = [];
 
-        DynamicPlaylistConfiguration? RecommendedMapsDynamicPlaylistConfiguration { get; set; }
+        LivePlaylistConfiguration? RecommendedMapsLivePlaylistConfiguration { get; set; }
 
         bool ShowHighPpGainAnnotations { get; set; } = false;
 
@@ -287,7 +287,7 @@ namespace MapMaven.Pages
                     .OrderByDescending(g => g.Count())
                     .FirstOrDefault()?.Key;
 
-                RecommendedMapsDynamicPlaylistConfiguration = new DynamicPlaylistConfiguration
+                RecommendedMapsLivePlaylistConfiguration = new LivePlaylistConfiguration
                 {
                     MapCount = 20,
                     MapPool = MapPool.Improvement,
@@ -296,37 +296,37 @@ namespace MapMaven.Pages
                         new FilterOperation
                         {
                             Field = nameof(AdvancedSearchMap.Stars),
-                            Operator = Core.Models.DynamicPlaylists.FilterOperator.GreaterThanOrEqual,
+                            Operator = Core.Models.LivePlaylists.FilterOperator.GreaterThanOrEqual,
                             Value = RecentAverageStarDifficulty?.ToString(CultureInfo.InvariantCulture) ?? "0"
                         },
                         new FilterOperation
                         {
                             Field = nameof(AdvancedSearchMap.Tags),
-                            Operator = Core.Models.DynamicPlaylists.FilterOperator.Contains,
+                            Operator = Core.Models.LivePlaylists.FilterOperator.Contains,
                             Value = RecentBestScoredMapTag
                         },
                         new FilterOperation
                         {
                             Field = nameof(AdvancedSearchMap.Hidden),
-                            Operator = Core.Models.DynamicPlaylists.FilterOperator.Equals,
+                            Operator = Core.Models.LivePlaylists.FilterOperator.Equals,
                             Value = "false"
                         },
                         new FilterOperation
                         {
                             Field = nameof(AdvancedSearchMap.Played),
-                            Operator = Core.Models.DynamicPlaylists.FilterOperator.Equals,
+                            Operator = Core.Models.LivePlaylists.FilterOperator.Equals,
                             Value = "false"
                         },
                         new FilterOperation
                         {
                             Field = $"{nameof(AdvancedSearchMap.ScoreEstimate)}.{nameof(AdvancedSearchMap.ScoreEstimate.PPIncrease)}",
-                            Operator = Core.Models.DynamicPlaylists.FilterOperator.GreaterThanOrEqual,
+                            Operator = Core.Models.LivePlaylists.FilterOperator.GreaterThanOrEqual,
                             Value = "0"
                         },
                         new FilterOperation
                         {
                             Field = $"{nameof(AdvancedSearchMap.ScoreEstimate)}.{nameof(AdvancedSearchMap.ScoreEstimate.Accuracy)}",
-                            Operator = Core.Models.DynamicPlaylists.FilterOperator.GreaterThanOrEqual,
+                            Operator = Core.Models.LivePlaylists.FilterOperator.GreaterThanOrEqual,
                             Value = 80.ToString()
                         }
                     },
@@ -335,19 +335,19 @@ namespace MapMaven.Pages
                         new SortOperation
                         {
                             Field = $"{nameof(AdvancedSearchMap.ScoreEstimate)}.{nameof(AdvancedSearchMap.ScoreEstimate.PPIncrease)}",
-                            Direction = Core.Models.DynamicPlaylists.SortDirection.Descending
+                            Direction = Core.Models.LivePlaylists.SortDirection.Descending
                         }
                     }
                 };
 
                 RecommendedMaps = x.rankedMaps;
 
-                foreach (var filterOperation in RecommendedMapsDynamicPlaylistConfiguration.FilterOperations)
+                foreach (var filterOperation in RecommendedMapsLivePlaylistConfiguration.FilterOperations)
                 {
                     RecommendedMaps = RecommendedMaps.Where(map => MapSearchService.FilterOperationMatches(new AdvancedSearchMap(map), filterOperation));
                 }
 
-                RecommendedMaps = MapSearchService.SortMaps(RecommendedMaps, RecommendedMapsDynamicPlaylistConfiguration.SortOperations, x => new AdvancedSearchMap(x));
+                RecommendedMaps = MapSearchService.SortMaps(RecommendedMaps, RecommendedMapsLivePlaylistConfiguration.SortOperations, x => new AdvancedSearchMap(x));
 
                 RecommendedMaps = RecommendedMaps.Take(20);
 
@@ -377,14 +377,14 @@ namespace MapMaven.Pages
                 {
                     X = r.Key.ToString("yyyy-MM-dd"),
                     StrokeDashArray = 0,
-                    BorderColor = MapMavenTheme.Theme.Palette.TextPrimary.SetAlpha(0.3).ToString(MudColorOutputFormats.RGBA),
+                    BorderColor = MapMavenTheme.Theme.PaletteDark.TextPrimary.SetAlpha(0.3).ToString(MudColorOutputFormats.RGBA),
                     Label = new()
                     {
                         Orientation = ApexCharts.Orientation.Horizontal,
                         BorderWidth = 0,
                         Style = new()
                         {
-                            Background = MapMavenTheme.Theme.Palette.Primary.ColorLighten(0.2).ToString(MudColorOutputFormats.Hex),
+                            Background = MapMavenTheme.Theme.PaletteDark.Primary.ColorLighten(0.2).ToString(MudColorOutputFormats.Hex),
                             Color = "#FFF"
                         },
                         Text = "+pp"
@@ -465,18 +465,18 @@ namespace MapMaven.Pages
             }
             else
             {
-                Snackbar.Add($"Cancelled creating playlist.", Severity.Normal, config => config.Icon = Icons.Material.Filled.Cancel);
+                Snackbar.Add($"Canceled creating playlist.", Severity.Normal, config => config.Icon = Icons.Material.Filled.Cancel);
             }
         }
 
-        async Task AddRecommendedMapsDynamicPlaylist()
+        async Task AddRecommendedMapsLivePlaylist()
         {
             var parameters = new DialogParameters
             {
-                { "SelectedPlaylist", new EditDynamicPlaylistModel { DynamicPlaylistConfiguration = DeepCloner.Clone(RecommendedMapsDynamicPlaylistConfiguration)} }
+                { "SelectedPlaylist", new EditLivePlaylistModel { LivePlaylistConfiguration = DeepCloner.Clone(RecommendedMapsLivePlaylistConfiguration)} }
             };
 
-            DialogService.Show<EditDynamicPlaylistDialog>("Add playlist", parameters, new DialogOptions
+            DialogService.Show<EditLivePlaylistDialog>("Add playlist", parameters, new DialogOptions
             {
                 MaxWidth = MaxWidth.Small,
                 FullWidth = true

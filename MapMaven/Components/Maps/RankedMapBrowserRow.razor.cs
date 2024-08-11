@@ -81,7 +81,7 @@ namespace MapMaven.Components.Maps
             }
             else
             {
-                Snackbar.Add($"Cancelled downloading map.", Severity.Normal, config => config.Icon = Icons.Material.Filled.Cancel);
+                Snackbar.Add($"Canceled downloading map.", Severity.Normal, config => config.Icon = Icons.Material.Filled.Cancel);
             }
 
             MapService.ResetSelectedMaps();

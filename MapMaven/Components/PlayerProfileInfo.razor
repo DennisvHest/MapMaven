@@ -10,7 +10,9 @@
     <div class="d-flex pa-2 profile full-width">
         <img src="@Player.ProfilePictureUrl" class="profile-background-image" />
         <a href="@profileUrl" class="d-flex align-center">
-            <MudAvatar Image="@Player.ProfilePictureUrl" />
+            <MudAvatar>
+                <MudImage Src="@Player.ProfilePictureUrl"></MudImage>
+            </MudAvatar>
         </a>
         <div class="pl-2 full-width">
             <a href="@profileUrl"><h3>@Player.Name</h3></a>

@@ -9,7 +9,7 @@
 }
 else
 {
-    <MudIcon Icon="@Icons.Filled.PlaylistPlay" Class="@Class" Style="@Style"></MudIcon>
+    <MudIcon Icon="@Icons.Material.Filled.PlaylistPlay" Class="@Class" Style="@Style"></MudIcon>
 }
 
 @code {
@@ -18,9 +18,6 @@ else
 
     [Parameter]
     public Playlist Playlist { get; set; }
-
-    [Parameter]
-    public bool Small { get; set; } = false;
 
     [Parameter]
     public string Class { get; set; }

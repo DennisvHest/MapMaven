@@ -19,6 +19,7 @@ using MapMaven.Core.Models.Data;
 using System.Runtime;
 using MapMaven.Core.Services.Interfaces;
 using System.IO.Abstractions;
+using MapMaven.Core.Models.Data.Playlists;
 
 namespace MapMaven.Services
 {
@@ -41,7 +42,7 @@ namespace MapMaven.Services
         private readonly BehaviorSubject<bool> _loadingMapInfo = new(false);
         private readonly BehaviorSubject<bool> _initialMapLoad = new(false);
 
-        private readonly BehaviorSubject<IEnumerable<IPlaylist>> _playlistInfo = new(Array.Empty<IPlaylist>());
+        private readonly BehaviorSubject<PlaylistTree<IPlaylist>> _playlistTree = new(new());
         private readonly BehaviorSubject<bool> _loadingPlaylistInfo = new(false);
 
         public IObservable<Dictionary<string, MapInfo>> MapInfoByHash => _mapInfo;
@@ -49,7 +50,8 @@ namespace MapMaven.Services
         public IObservable<bool> LoadingMapInfo => _loadingMapInfo;
         public IObservable<bool> InitialMapLoad => _initialMapLoad;
 
-        public IObservable<IEnumerable<IPlaylist>> PlaylistInfo => _playlistInfo;
+        public IObservable<PlaylistTree<IPlaylist>> PlaylistTree => _playlistTree;
+        public IObservable<IEnumerable<IPlaylist>> PlaylistInfo { get; private set; }
         public IObservable<bool> LoadingPlaylistInfo => _loadingPlaylistInfo;
 
         public BeatSaberDataService(IBeatmapHasher beatmapHasher, BeatSaberFileService fileService, IServiceProvider serviceProvider, ILogger<BeatSaberDataService> logger, IFileSystem fileSystem)
@@ -60,16 +62,20 @@ namespace MapMaven.Services
             _logger = logger;
             _fileSystem = fileSystem;
 
-            _fileService.PlaylistsLocationObservable.Subscribe(playlistsLocation =>
-            {
-                PlaylistManager = new PlaylistManager(_fileService.PlaylistsLocation, new LegacyPlaylistHandler());
-            });
+            _fileService.PlaylistsLocationObservable.Subscribe(playlistsLocation => RefreshPlaylistManager());
 
             _fileService.BeatSaberInstallLocationObservable
                 .DistinctUntilChanged()
                 .Select(_ => Observable.FromAsync(LoadAllMapInfo))
                 .Concat()
                 .Subscribe();
+
+            PlaylistInfo = _playlistTree.Select(tree => tree?.AllPlaylists().ToList() ?? []);
+        }
+
+        private void RefreshPlaylistManager()
+        {
+            PlaylistManager = new PlaylistManager(_fileService.PlaylistsLocation, new LegacyPlaylistHandler());
         }
 
         public async Task LoadAllMapInfo()
@@ -153,9 +159,11 @@ namespace MapMaven.Services
 
             try
             {
-                var playlists = await GetAllPlaylists();
+                RefreshPlaylistManager();
 
-                _playlistInfo.OnNext(playlists);
+                var playlistTree = await GetPlaylistTree();
+
+                _playlistTree.OnNext(playlistTree);
             }
             finally
             {
@@ -165,13 +173,39 @@ namespace MapMaven.Services
 
         public async Task<IEnumerable<IPlaylist>> GetAllPlaylists()
         {
-            PlaylistManager.RefreshPlaylists(true);
+            var playlistTree = await GetPlaylistTree();
 
-            var playlists = PlaylistManager.GetAllPlaylists(true);
+            return playlistTree.AllPlaylists();
+        }
+
+        public async Task<PlaylistTree<IPlaylist>> GetPlaylistTree()
+        {
+            var tree = new PlaylistTree<IPlaylist>(PlaylistManager);
+
+            AddPlaylistManagerPlaylistsToFolder(tree.RootPlaylistFolder);
 
             CleanLargeObjectHeap();
 
-            return playlists;
+            return tree;
+        }
+
+        private void AddPlaylistManagerPlaylistsToFolder(PlaylistFolder<IPlaylist> folder)
+        {
+            folder.PlaylistManager.RefreshPlaylists(false);
+            var playlists = folder.PlaylistManager.GetAllPlaylists(includeChildren: false);
+
+            foreach (var playlist in playlists)
+            {
+                folder.ChildItems.Add(new PlaylistTreeNode<IPlaylist>(playlist, folder.PlaylistManager));
+            }
+
+            foreach (var childPlaylistManager in folder.PlaylistManager.GetChildManagers())
+            {
+                var childFolder = new PlaylistFolder<IPlaylist>(childPlaylistManager);
+                folder.ChildItems.Add(childFolder);
+
+                AddPlaylistManagerPlaylistsToFolder(childFolder);
+            }
         }
 
         /// <summary>

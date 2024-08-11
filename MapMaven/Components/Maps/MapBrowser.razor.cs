@@ -32,7 +32,7 @@ namespace MapMaven.Components.Maps
         ISnackbar Snackbar { get; set; }
 
         [Inject]
-        protected DynamicPlaylistArrangementService DynamicPlaylistArrangementService { get; set; }
+        protected LivePlaylistArrangementService LivePlaylistArrangementService { get; set; }
 
         [Inject]
         protected IEnumerable<IScoreEstimationService> ScoreEstimationServices { get; set; }
@@ -88,12 +88,12 @@ namespace MapMaven.Components.Maps
 
             var loadingObservable = Observable.CombineLatest(
                 BeatSaberDataService.LoadingMapInfo,
-                DynamicPlaylistArrangementService.ArrangingDynamicPlaylists,
+                LivePlaylistArrangementService.ArrangingLivePlaylists,
                 estimatingScoresObservable,
                 PlaylistService.SelectedPlaylist,
-                (loadingMapInfo, arrangingDynamicPlaylists, estimatingScores, selectedPlaylist) =>
+                (loadingMapInfo, arrangingLivePlaylists, estimatingScores, selectedPlaylist) =>
                     loadingMapInfo
-                    || arrangingDynamicPlaylists && selectedPlaylist?.IsDynamicPlaylist == true
+                    || arrangingLivePlaylists && selectedPlaylist?.IsLivePlaylist == true
                     || estimatingScores
             );
 
@@ -233,14 +233,14 @@ namespace MapMaven.Components.Maps
 
             var result = await dialog.Result;
 
-            if (result.Cancelled)
+            if (result.Canceled)
                 return;
 
             await MapService.DeleteMaps(SelectedMaps.Select(m => m.Hash));
 
             await CancelSelectionAsync();
 
-            Snackbar.Add($"Succesfully deleted selected maps", Severity.Normal, config => config.Icon = Icons.Filled.Check);
+            Snackbar.Add($"Succesfully deleted selected maps", Severity.Normal, config => config.Icon = Icons.Material.Filled.Check);
         }
 
         async Task AddSelectedMapsToPlaylist()
@@ -262,7 +262,7 @@ namespace MapMaven.Components.Maps
 
                 Snackbar.Add($"Added selected maps to \"{playlist.Title}\"", Severity.Normal, config =>
                 {
-                    config.Icon = Icons.Filled.Check;
+                    config.Icon = Icons.Material.Filled.Check;
 
                     config.Action = "Open";
                     config.ActionColor = MudBlazor.Color.Primary;
@@ -285,14 +285,14 @@ namespace MapMaven.Components.Maps
 
             var result = await dialog.Result;
 
-            if (result.Cancelled)
+            if (result.Canceled)
                 return;
 
             await PlaylistService.RemoveMapsFromPlaylist(SelectedMaps, SelectedPlaylist);
 
             await CancelSelectionAsync();
 
-            Snackbar.Add($"Removed selected maps from \"{SelectedPlaylist.Title}\"", Severity.Normal, config => config.Icon = Icons.Filled.Check);
+            Snackbar.Add($"Removed selected maps from \"{SelectedPlaylist.Title}\"", Severity.Normal, config => config.Icon = Icons.Material.Filled.Check);
         }
 
         public void ToggleSelectable() => MapService.SetSelectable(!Selectable);

@@ -20,7 +20,7 @@
     <PackageReference Include="TestableIO.System.IO.Abstractions" Version="21.0.22" />
     <PackageReference Include="TestableIO.System.IO.Abstractions.Wrappers" Version="21.0.22" />
     <PackageReference Include="xunit" Version="2.8.1" />
-    <PackageReference Include="Xunit.Microsoft.DependencyInjection" Version="8.1.0" />
+    <PackageReference Include="Xunit.Microsoft.DependencyInjection" Version="8.1.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.8.1">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>

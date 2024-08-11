@@ -2,8 +2,8 @@
 
 @using MapMaven.Core.Models
 @using MapMaven.Core.Models.AdvancedSearch
-@using MapMaven.Core.Models.DynamicPlaylists
-@using MapMaven.Core.Models.DynamicPlaylists.MapInfo
+@using MapMaven.Core.Models.LivePlaylists
+@using MapMaven.Core.Models.LivePlaylists.MapInfo
 @using MapMaven.Core.Services
 
 <EditForm Model="@Configuration" OnValidSubmit="SetMapFilters">
@@ -11,10 +11,10 @@
     <MudDialog Class="no-title">
         <DialogContent>
             <MudPaper Class="my-4" Style="background-color: var(--mud-palette-drawer-background);">
-                <MudList>
+                <MudList ReadOnly="true" T="string">
                     <MudListSubheader Class="d-flex align-center justify-space-between">
                         Filters
-                        <MudIconButton Icon="@Icons.Filled.Add" Variant="Variant.Outlined" Size="Size.Small" OnClick="AddFilterOperation" />
+                        <MudIconButton Icon="@Icons.Material.Filled.Add" Variant="Variant.Outlined" Size="Size.Small" OnClick="AddFilterOperation" />
                     </MudListSubheader>
                     @foreach (var filterOperation in Configuration.FilterOperations)
                     {
@@ -26,10 +26,10 @@
             </MudPaper>
 
             <MudPaper Style="background-color: var(--mud-palette-drawer-background);">
-                <MudList>
+                <MudList ReadOnly="true" T="string">
                     <MudListSubheader Class="d-flex align-center justify-space-between">
                         Sorting
-                        <MudIconButton Icon="@Icons.Filled.Add" Variant="Variant.Outlined" Size="Size.Small" OnClick="AddSortOperation" />
+                        <MudIconButton Icon="@Icons.Material.Filled.Add" Variant="Variant.Outlined" Size="Size.Small" OnClick="AddSortOperation" />
                     </MudListSubheader>
                     @for (var i = 0; i < Configuration.SortOperations.Count; i++)
                     {
@@ -111,7 +111,7 @@
 
     void SetMapFilters()
     {
-        var fieldOptions = DynamicPlaylistFields.FieldOptions(MapPool.Standard);
+        var fieldOptions = LivePlaylistFields.FieldOptions(MapPool.Standard);
 
         var mapFiltersToAdd = new List<MapFilter>();
 
@@ -148,7 +148,7 @@
             {
                 var fieldOption = fieldOptions.FirstOrDefault(f => f.Value == s.Field);
 
-                return $"{fieldOption?.Name} {(s.Direction == Core.Models.DynamicPlaylists.SortDirection.Ascending ? "↑" : "↓")}";
+                return $"{fieldOption?.Name} {(s.Direction == Core.Models.LivePlaylists.SortDirection.Ascending ? "↑" : "↓")}";
             });
 
             MapService.SetMapSort(new()

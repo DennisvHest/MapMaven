@@ -1,4 +1,4 @@
-﻿namespace MapMaven.Core.Models.DynamicPlaylists
+﻿namespace MapMaven.Core.Models.LivePlaylists
 {
     public enum SortDirection
     {

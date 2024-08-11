@@ -6,13 +6,13 @@ namespace MapMaven
     {
         public static readonly MudTheme Theme = new MudTheme()
         {
-            Palette = new PaletteDark()
+            PaletteDark = new PaletteDark()
             {
                 Primary = "#174167",
                 Secondary = "#8A0000",
                 Black = "#27272f",
                 Background = "#0f0f0f",
-                BackgroundGrey = "#27272f",
+                BackgroundGray = "#27272f",
                 Surface = "#171717",
                 DrawerBackground = "#1c1c1c",
                 DrawerText = "rgba(255,255,255, 0.50)",

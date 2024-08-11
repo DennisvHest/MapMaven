@@ -247,7 +247,7 @@ namespace MapMaven.Components.Maps
             {
                 Snackbar.Add($"Created playlist: {playlistModel.Name}", Severity.Normal, config =>
                 {
-                    config.Icon = Icons.Filled.Check;
+                    config.Icon = Icons.Material.Filled.Check;
 
                     config.Action = "Open";
                     config.ActionColor = MudBlazor.Color.Primary;
@@ -261,7 +261,7 @@ namespace MapMaven.Components.Maps
             }
             else
             {
-                Snackbar.Add($"Cancelled creating playlist.", Severity.Normal, config => config.Icon = Icons.Material.Filled.Cancel);
+                Snackbar.Add($"Canceled creating playlist.", Severity.Normal, config => config.Icon = Icons.Material.Filled.Cancel);
             }
         }
 
@@ -289,7 +289,7 @@ namespace MapMaven.Components.Maps
 
             var result = await dialog.Result;
 
-            if (result.Cancelled)
+            if (result.Canceled)
                 return;
 
             await MapService.HideUnhideMap(SelectedMaps, hide);

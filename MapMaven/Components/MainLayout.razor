@@ -8,7 +8,8 @@
 @inject IDialogService DialogService
 @inject IServiceProvider ServiceProvider
 
-<MudThemeProvider Theme="MapMavenTheme.Theme" />
+<MudThemeProvider Theme="MapMavenTheme.Theme" IsDarkMode="true" />
+<MudPopoverProvider />
 <MudDialogProvider />
 <MudSnackbarProvider />
 
@@ -82,7 +83,7 @@
                 },
                 options: new()
                 {
-                    DisableBackdropClick = true,
+                    BackdropClick = false
                 }
             ).Result.ContinueWith(_ =>
             {

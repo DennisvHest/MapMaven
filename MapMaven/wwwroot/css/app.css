@@ -40,7 +40,7 @@
 
 .blurred-background-image {
     opacity: 0.1;
-    position: absolute;
+    position: fixed;
     left: 0;
     top: 0;
     width: 100%;
@@ -228,4 +228,16 @@ a:hover {
 
 .mud-icon-button.no-hover-background:hover {
     background-color: initial !important;
+}
+
+.mud-picker-paper {
+    max-width: initial !important;
+}
+
+.not-expandable .mud-treeview-item-arrow {
+    display: none;
+}
+
+.mud-treeview.mud-treeview-selected-primary .mud-treeview-item-content.mud-treeview-item-selected {
+    color: var(--mud-palette-info);
 }

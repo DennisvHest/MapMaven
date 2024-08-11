@@ -31,16 +31,16 @@
             var difficulty = context.Item.Difficulty?.Difficulty;
             var chipStyle = $"border: 1px solid {DifficultyDisplayUtils.GetColor(difficulty)}";
         }
-        <MudChip Size="Size.Small" Variant="Variant.Outlined" Style="@chipStyle">@DifficultyDisplayUtils.GetDisplayName(difficulty)</MudChip>
+        <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Style="@chipStyle">@DifficultyDisplayUtils.GetDisplayName(difficulty)</MudChip>
     </CellTemplate>
 </TemplateColumn>
 <TemplateColumn T="Map" Sortable="false">
     <HeaderTemplate>
-        <MudIcon Icon="@Icons.Filled.Star"></MudIcon>
+        <MudIcon Icon="@Icons.Material.Filled.Star"></MudIcon>
     </HeaderTemplate>
     <CellTemplate>
-        <MudChip Size="Size.Small">
-            @context.Item.Difficulty?.Stars.ToString("0.##") <MudIcon Icon="@Icons.Filled.Star" Size="Size.Small"></MudIcon>
+        <MudChip T="string" Size="Size.Small">
+            @context.Item.Difficulty?.Stars.ToString("0.##") <MudIcon Icon="@Icons.Material.Filled.Star" Size="Size.Small"></MudIcon>
         </MudChip>
     </CellTemplate>
 </TemplateColumn>
@@ -50,7 +50,7 @@
         {
             <MudTooltip RootClass="d-flex">
                 <ChildContent>
-                    <MudChip Size="Size.Small">@context.Item.HighestPlayerScore.Score.AccuracyWithMods.ToString("#0.##") %</MudChip>
+                    <MudChip T="string" Size="Size.Small">@context.Item.HighestPlayerScore.Score.AccuracyWithMods.ToString("#0.##") %</MudChip>
                 </ChildContent>
                 <TooltipContent>
                     <p style="text-align: left; max-width: 300px;">
@@ -60,13 +60,13 @@
                     </p>
                 </TooltipContent>
             </MudTooltip>
-            <MudChip Size="Size.Small">@context.Item.HighestPlayerScore.Score.Pp.ToString("#0.##") pp</MudChip>
+            <MudChip T="string" Size="Size.Small">@context.Item.HighestPlayerScore.Score.Pp.ToString("#0.##") pp</MudChip>
         }
     </CellTemplate>
 </TemplateColumn>
 <TemplateColumn T="Map" Sortable="false" Style="width: 130px" HeaderStyle="justify-content: flex-start">
     <HeaderTemplate>
-        <MudIcon Icon="@Icons.Filled.KeyboardDoubleArrowUp"></MudIcon>pp
+        <MudIcon Icon="@Icons.Material.Filled.KeyboardDoubleArrowUp"></MudIcon>pp
     </HeaderTemplate>
     <CellTemplate>
         @if (context.Item.ScoreEstimates != null)
@@ -75,7 +75,7 @@
             {
                 <MudTooltip RootClass="d-flex">
                     <ChildContent>
-                        <MudChip Color="Color.Primary" Size="Size.Small">
+                        <MudChip T="string" Color="Color.Primary" Size="Size.Small">
                             @scoreEstimate.Accuracy.ToString("#0.##")% |
                             +@scoreEstimate.PPIncrease.ToString("#0.##") pp
                         </MudChip>
@@ -97,7 +97,7 @@
         {
             <MudTooltip Text="Download">
                 <MudIconButton
-                    Icon="@Icons.Filled.Download"
+                    Icon="@Icons.Material.Filled.Download"
                     Style="pointer-events: all;"
                     OnClick="() => DownloadMap(context.Item)">
                 </MudIconButton>
@@ -109,7 +109,7 @@
     <CellTemplate>
         <MudTooltip Text="@(context.Item.Hidden ? "Un-hide map" : "Hide map")">
             <MudIconButton
-                Icon="@(context.Item.Hidden ? Icons.Filled.RemoveRedEye : Icons.Filled.DisabledVisible)"
+                Icon="@(context.Item.Hidden ? Icons.Material.Filled.RemoveRedEye : Icons.Material.Filled.DisabledVisible)"
                 Style="pointer-events: all;"
                 OnClick="() => HideUnhideMap(context.Item)">
             </MudIconButton>

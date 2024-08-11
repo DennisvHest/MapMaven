@@ -12,7 +12,7 @@
            ValueLabel="true"
            Color="Color.Info" />
 
-<MudChip Size="Size.Small" Class="mx-0">Difficulty: @(DifficultyModifier >= 0 ? "+" : string.Empty)@DifficultyModifier%</MudChip>
+<MudChip T="string" Size="Size.Small" Class="mx-0">Difficulty: @(DifficultyModifier >= 0 ? "+" : string.Empty)@DifficultyModifier%</MudChip>
 
 @code {
     int DifficultyModifier = 0;
