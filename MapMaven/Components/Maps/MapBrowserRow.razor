@@ -173,13 +173,13 @@
             <MudTooltip Text="Add map to playlist" ShowOnFocus="false">
                 <MudIconButton Icon="@Icons.Material.Filled.PlaylistAdd" Variant="Variant.Text" Size="Size.Medium" OnClick="() => OpenAddMapToPlaylistDialog(context.Item)" />
             </MudTooltip>
-            @if (SelectedPlaylist != null && !SelectedPlaylist.IsDynamicPlaylist)
+            @if (SelectedPlaylist != null && !SelectedPlaylist.IsLivePlaylist)
             {
                 <MudTooltip Text="Remove map from playlist" ShowOnFocus="false">
                     <MudIconButton Icon="@Icons.Material.Filled.PlaylistRemove" Variant="Variant.Text" Size="Size.Medium" OnClick="() => OpenDeleteFromPlaylistDialog(context.Item)" />
                 </MudTooltip>
             }
-            @if (SelectedPlaylist == null || !SelectedPlaylist.IsDynamicPlaylist)
+            @if (SelectedPlaylist == null || !SelectedPlaylist.IsLivePlaylist)
             {
                 <MudMenu Icon="@Icons.Material.Filled.MoreVert">
                     <MudMenuItem OnClick="() => DeleteMap(context.Item)">

@@ -1,4 +1,4 @@
-﻿using MapMaven.Core.Models.DynamicPlaylists;
+﻿using MapMaven.Core.Models.LivePlaylists;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System.ComponentModel.DataAnnotations;

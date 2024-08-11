@@ -1,6 +1,7 @@
 ﻿.playlist-list-item {
     display: flex;
     align-items: center;
+    width: 100%;
 }
 
     .playlist-list-item img {

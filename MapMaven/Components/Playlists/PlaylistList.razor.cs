@@ -1,6 +1,6 @@
-using MapMaven.Core.Models.DynamicPlaylists;
+using MapMaven.Core.Models;
+using MapMaven.Core.Models.Data.Playlists;
 using MapMaven.Core.Services.Interfaces;
-using MapMaven.Models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Routing;
 using MudBlazor;
@@ -13,73 +13,69 @@ namespace MapMaven.Components.Playlists
     public partial class PlaylistList
     {
         [Inject]
-        protected IPlaylistService PlaylistService { get; set; }
+        IPlaylistService PlaylistService { get; set; }
 
         [Inject]
-        protected IBeatSaberDataService BeatSaberDataService { get; set; }
+        IBeatSaberDataService BeatSaberDataService { get; set; }
 
         [Inject]
-        protected IDialogService DialogService { get; set; }
+        IDialogService DialogService { get; set; }
 
         [Inject]
         ISnackbar Snackbar { get; set; }
 
         [Inject]
-        public NavigationManager NavigationManager { get; set; }
+        NavigationManager NavigationManager { get; set; }
 
-        private IEnumerable<Playlist> Playlists = Array.Empty<Playlist>();
-        private IEnumerable<Playlist> DynamicPlaylists = Array.Empty<Playlist>();
-        private bool LoadingPlaylists = false;
+        PlaylistTree<Playlist> PlaylistTree = new();
+        bool LoadingPlaylists = false;
 
-        private Playlist SelectedPlaylist;
-        private bool DeleteMaps = false;
+        Playlist SelectedPlaylist;
+        bool DeleteMaps = false;
 
-        private BehaviorSubject<string> _playlistSearchText = new(string.Empty);
-        private BehaviorSubject<string> _dynamicPlaylistSearchText = new(string.Empty);
+        BehaviorSubject<string> _playlistSearchText = new(string.Empty);
 
-        private string PlaylistSearchText
+        string PlaylistSearchText
         {
             get => _playlistSearchText.Value;
             set => _playlistSearchText.OnNext(value);
         }
 
-        private string DynamicPlaylistSearchText
+        BehaviorSubject<PlaylistType?> _playlistTypeFilter = new(null);
+
+        PlaylistType? PlaylistTypeFilter
         {
-            get => _dynamicPlaylistSearchText.Value;
-            set => _dynamicPlaylistSearchText.OnNext(value);
+            get => _playlistTypeFilter.Value;
+            set => _playlistTypeFilter.OnNext(value);
         }
 
-        private Playlist? PlaylistToDelete = null;
-        private bool DeleteDialogVisible = false;
-        private bool DeletingPlaylist = false;
+        Playlist? PlaylistToDelete = null;
+        bool DeleteDialogVisible = false;
+        bool DeletingPlaylist = false;
+
+        MudTreeView<Playlist> PlaylistTreeView;
 
         protected override void OnInitialized()
         {
-            var allPlaylists = PlaylistService.Playlists;
+            var playlistTree = Observable.CombineLatest(
+                PlaylistService.PlaylistTree,
+                _playlistSearchText,
+                _playlistTypeFilter,
+                (playlistTree, searchText, playlistTypeFilter) => (playlistTree, searchText, playlistTypeFilter)
+            );
 
-            var playlists = allPlaylists
-                .Select(playlists => playlists.Where(p => !p.IsDynamicPlaylist));
-
-            var dynamicPlaylists = allPlaylists
-                .Select(playlists => playlists.Where(p => p.IsDynamicPlaylist));
-
-            SubscribeAndBind(Observable.CombineLatest(playlists, _playlistSearchText, (playlists, searchText) =>
+            SubscribeAndBind(playlistTree, x =>
             {
-                if (string.IsNullOrWhiteSpace(searchText))
-                    return playlists;
+                var filteredPlaylistTree = new PlaylistTree<Playlist>();
 
-                return playlists
-                    .Where(p => p.Title.Contains(searchText, StringComparison.OrdinalIgnoreCase));
-            }), playlists => Playlists = playlists);
+                filteredPlaylistTree.RootPlaylistFolder = Services.PlaylistService.FilterPlaylistFolder(
+                    playlistFolder: (PlaylistFolder<Playlist>)x.playlistTree.RootPlaylistFolder.Copy(),
+                    searchText: x.searchText,
+                    playlistType: x.playlistTypeFilter
+                );
 
-            SubscribeAndBind(Observable.CombineLatest(dynamicPlaylists, _dynamicPlaylistSearchText, (dynamicPlaylists, searchText) =>
-            {
-                if (string.IsNullOrWhiteSpace(searchText))
-                    return dynamicPlaylists;
-
-                return dynamicPlaylists
-                    .Where(p => p.Title.Contains(searchText, StringComparison.OrdinalIgnoreCase));
-            }), dynamicPlaylists => DynamicPlaylists = dynamicPlaylists);
+                PlaylistTree = filteredPlaylistTree;
+            });
 
             BeatSaberDataService.LoadingPlaylistInfo.Subscribe(loading =>
             {
@@ -94,8 +90,11 @@ namespace MapMaven.Components.Playlists
             });
         }
 
-        protected void OnPlaylistSelect(Playlist playlist)
+        void OnPlaylistSelect(Playlist playlist)
         {
+            if (playlist is null)
+                return;
+
             NavigationManager.NavigateTo("/maps");
 
             SelectedPlaylist = playlist;
@@ -104,13 +103,13 @@ namespace MapMaven.Components.Playlists
             NavigationManager.LocationChanged += SetSelectedPlaylistAfterNavigation;
         }
 
-        private void SetSelectedPlaylistAfterNavigation(object sender, LocationChangedEventArgs e)
+        void SetSelectedPlaylistAfterNavigation(object sender, LocationChangedEventArgs e)
         {
             PlaylistService.SetSelectedPlaylist(SelectedPlaylist);
             NavigationManager.LocationChanged -= SetSelectedPlaylistAfterNavigation;
         }
 
-        protected void OpenAddPlaylistDialog()
+        void OpenAddPlaylistDialog()
         {
             DialogService.Show<EditPlaylistDialog>("Add playlist", new DialogOptions
             {
@@ -119,80 +118,22 @@ namespace MapMaven.Components.Playlists
             });
         }
 
-        protected void OpenAddDynamicPlaylistDialog()
+        void OpenAddLivePlaylistDialog()
         {
-            DialogService.Show<EditDynamicPlaylistDialog>("Add playlist", new DialogOptions
+            DialogService.Show<EditLivePlaylistDialog>("Add playlist", new DialogOptions
             {
                 MaxWidth = MaxWidth.Small,
                 FullWidth = true
             });
         }
 
-        protected void OpenEditPlaylistDialog(Playlist playlist)
+        void OpenAddPlaylistFolderDialog()
         {
-            var parameters = new DialogParameters
-            {
-                { "EditPlaylistModel", new EditPlaylistModel(playlist) }
-            };
-
-            DialogService.Show<EditPlaylistDialog>("Edit playlist", parameters, new DialogOptions
+            DialogService.Show<EditPlaylistFolderDialog>("Add playlist folder", new DialogOptions
             {
                 MaxWidth = MaxWidth.Small,
                 FullWidth = true
             });
-        }
-
-        protected void OpenEditDynamicPlaylistDialog(Playlist playlist)
-        {
-            var parameters = new DialogParameters
-            {
-                { "SelectedPlaylist", new EditDynamicPlaylistModel(playlist) },
-                { "NewPlaylist", false }
-            };
-
-            DialogService.Show<EditDynamicPlaylistDialog>("Edit playlist", parameters, new DialogOptions
-            {
-                MaxWidth = MaxWidth.Small,
-                FullWidth = true
-            });
-        }
-
-        protected void OpenDeletePlaylistDialog(Playlist playlistToDelete)
-        {
-            PlaylistToDelete = playlistToDelete;
-            DeleteDialogVisible = true;
-        }
-
-        protected void ClosePlaylistDelete()
-        {
-            PlaylistToDelete = null;
-            DeleteDialogVisible = false;
-            DeleteMaps = false;
-        }
-
-        protected async Task DeletePlaylist()
-        {
-            DeletingPlaylist = true;
-
-            try
-            {
-                await PlaylistService.DeletePlaylist(PlaylistToDelete, DeleteMaps);
-
-                Snackbar.Add($"Removed playlist \"{PlaylistToDelete.Title}\"", Severity.Normal, config => config.Icon = Icons.Material.Filled.Check);
-
-                ClosePlaylistDelete();
-            }
-            finally
-            {
-                DeletingPlaylist = false;
-            }
-        }
-
-        protected int GetLoadedMapsCount(Playlist playlist)
-        {
-            return playlist.Maps
-                .Where(m => BeatSaberDataService.MapIsLoaded(m.Hash))
-                .Count();
         }
     }
 }

@@ -1,12 +1,12 @@
-﻿@using MapMaven.Core.Models.DynamicPlaylists;
-@using MapMaven.Core.Models.DynamicPlaylists.MapInfo;
+﻿@using MapMaven.Core.Models.LivePlaylists;
+@using MapMaven.Core.Models.LivePlaylists.MapInfo;
 @using MapMaven.Core.Services;
 @using MapMaven.Core.Utilities;
 @using System.Globalization;
 
 <div class="d-flex align-center justify-space-between">
     <MudSelect
-        T="DynamicPlaylistFieldOption"
+        T="LivePlaylistFieldOption"
         Value="SelectedFieldOption"
         ToStringFunc="field => field?.Name"
         Label="Field"
@@ -15,7 +15,7 @@
         Margin="Margin.Dense"
         title="@SelectedFieldOption?.Name"
         Class="pr-2 d-block" Style="max-width: 168px;">
-        @foreach (var field in DynamicPlaylistFields.FieldOptions(MapPool))
+        @foreach (var field in LivePlaylistFields.FieldOptions(MapPool))
         {
             <MudSelectItem Value="field" >
                 @field.Name
@@ -32,7 +32,7 @@
             Class="px-2" Style="width: 135px;">
             @if (SelectedFieldOption != null)
             {
-                foreach (var filterOperator in DynamicPlaylistArrangementService.FilterOperatorsForType[SelectedFieldOption.Type])
+                foreach (var filterOperator in LivePlaylistArrangementService.FilterOperatorsForType[SelectedFieldOption.Type])
                 {
                     <MudSelectItem Value="filterOperator">
                         @filterOperator.DisplayName()

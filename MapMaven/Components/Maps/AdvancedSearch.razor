@@ -2,8 +2,8 @@
 
 @using MapMaven.Core.Models
 @using MapMaven.Core.Models.AdvancedSearch
-@using MapMaven.Core.Models.DynamicPlaylists
-@using MapMaven.Core.Models.DynamicPlaylists.MapInfo
+@using MapMaven.Core.Models.LivePlaylists
+@using MapMaven.Core.Models.LivePlaylists.MapInfo
 @using MapMaven.Core.Services
 
 <EditForm Model="@Configuration" OnValidSubmit="SetMapFilters">
@@ -111,7 +111,7 @@
 
     void SetMapFilters()
     {
-        var fieldOptions = DynamicPlaylistFields.FieldOptions(MapPool.Standard);
+        var fieldOptions = LivePlaylistFields.FieldOptions(MapPool.Standard);
 
         var mapFiltersToAdd = new List<MapFilter>();
 
@@ -148,7 +148,7 @@
             {
                 var fieldOption = fieldOptions.FirstOrDefault(f => f.Value == s.Field);
 
-                return $"{fieldOption?.Name} {(s.Direction == Core.Models.DynamicPlaylists.SortDirection.Ascending ? "↑" : "↓")}";
+                return $"{fieldOption?.Name} {(s.Direction == Core.Models.LivePlaylists.SortDirection.Ascending ? "↑" : "↓")}";
             });
 
             MapService.SetMapSort(new()

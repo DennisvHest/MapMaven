@@ -1,6 +1,6 @@
-﻿using MapMaven.Core.Models.DynamicPlaylists;
+﻿using MapMaven.Core.Models.LivePlaylists;
 using MapMaven.Core.Services.Interfaces;
-using MapMaven.Core.Models.DynamicPlaylists.MapInfo;
+using MapMaven.Core.Models.LivePlaylists.MapInfo;
 using MapMaven.Models;
 using Pather.CSharp;
 using System.Reactive.Linq;
@@ -9,10 +9,11 @@ using Microsoft.Extensions.Logging;
 using System.Reactive.Subjects;
 using MapMaven.Core.Services.Leaderboards;
 using MapMaven.Core.Models.AdvancedSearch;
+using System.Linq;
 
 namespace MapMaven.Core.Services
 {
-    public class DynamicPlaylistArrangementService
+    public class LivePlaylistArrangementService
     {
         private readonly IBeatSaberDataService _beatSaberDataService;
         private readonly IMapService _mapService;
@@ -20,12 +21,12 @@ namespace MapMaven.Core.Services
         private readonly ILeaderboardService _leaderboardService;
         private readonly IApplicationSettingService _applicationSettingService;
 
-        private readonly ILogger<DynamicPlaylistArrangementService> _logger;
+        private readonly ILogger<LivePlaylistArrangementService> _logger;
 
         private readonly IResolver _resolver;
 
         private readonly BehaviorSubject<bool> _loadingMapInfo = new(false);
-        public IObservable<bool> ArrangingDynamicPlaylists => _loadingMapInfo;
+        public IObservable<bool> ArrangingLivePlaylists => _loadingMapInfo;
 
         public static readonly Dictionary<Type, IEnumerable<FilterOperator>> FilterOperatorsForType = new()
         {
@@ -36,13 +37,13 @@ namespace MapMaven.Core.Services
             { typeof(IEnumerable<string>), new[] { FilterOperator.Contains, FilterOperator.NotContains } },
         };
 
-        public DynamicPlaylistArrangementService(
+        public LivePlaylistArrangementService(
             IBeatSaberDataService beatSaberDataService,
             IMapService mapService,
             IPlaylistService playlistService,
             ILeaderboardService scoreSaberService,
             IApplicationSettingService applicationSettingService,
-            ILogger<DynamicPlaylistArrangementService> logger)
+            ILogger<LivePlaylistArrangementService> logger)
         {
             _beatSaberDataService = beatSaberDataService;
             _mapService = mapService;
@@ -55,7 +56,7 @@ namespace MapMaven.Core.Services
             _applicationSettingService = applicationSettingService;
         }
 
-        public async Task ArrangeDynamicPlaylists()
+        public async Task ArrangeLivePlaylists()
         {
             try
             {
@@ -63,35 +64,29 @@ namespace MapMaven.Core.Services
 
                 await _applicationSettingService.LoadAsync();
 
-                var playlists = await _beatSaberDataService.GetAllPlaylists();
-
-                var dynamicPlaylists = playlists
-                    .Select(p => new
-                    {
-                        Playlist = new Playlist(p),
-                        PlaylistInfo = p
-                    })
-                    .Where(x => x.Playlist.IsDynamicPlaylist);
-
                 await _mapService.RefreshDataAsync(reloadMapAndLeaderboardInfo: true);
 
-                if (!dynamicPlaylists.Any())
+                var playlists = await _playlistService.Playlists.FirstAsync();
+
+                var LivePlaylists = playlists.Where(p => p.IsLivePlaylist);
+
+                if (!LivePlaylists.Any())
                     return;
 
                 var mapData = await _mapService.CompleteMapData.FirstAsync();
 
                 var rankedMapsTasks = _leaderboardService.LeaderboardProviders.Select(async leaderboard =>
                 {
-                    IEnumerable<DynamicPlaylistMapPair>? rankedMaps = null;
+                    IEnumerable<LivePlaylistMapPair>? rankedMaps = null;
 
                     if (leaderboard.Key is not null)
                     {
                         try
                         {
                             var rankedMapsData = await _mapService.GetCompleteRankedMapDataForLeaderboardProvider(leaderboard.Key.Value);
-                            rankedMaps = rankedMapsData.Select(m => new DynamicPlaylistMapPair
+                            rankedMaps = rankedMapsData.Select(m => new LivePlaylistMapPair
                             {
-                                DynamicPlaylistMap = new AdvancedSearchMap(m),
+                                LivePlaylistMap = new AdvancedSearchMap(m),
                                 Map = m
                             });
                         }
@@ -102,7 +97,7 @@ namespace MapMaven.Core.Services
                     }
 
                     if (rankedMaps is null)
-                        rankedMaps = Enumerable.Empty<DynamicPlaylistMapPair>();
+                        rankedMaps = Enumerable.Empty<LivePlaylistMapPair>();
 
                     return (leaderboardProvider: leaderboard.Key, rankedMaps);
                 });
@@ -110,22 +105,22 @@ namespace MapMaven.Core.Services
                 var rankedMaps = await Task.WhenAll(rankedMapsTasks);
                 var rankedMapsPerLeaderboardProvider = rankedMaps.ToDictionary(x => x.leaderboardProvider, x => x.rankedMaps);
 
-                var maps = mapData.Select(m => new DynamicPlaylistMapPair
+                var maps = mapData.Select(m => new LivePlaylistMapPair
                 {
-                    DynamicPlaylistMap = new AdvancedSearchMap(m),
+                    LivePlaylistMap = new AdvancedSearchMap(m),
                     Map = m
                 });
 
-                foreach (var playlist in dynamicPlaylists)
+                foreach (var playlist in LivePlaylists)
                 {
                     try
                     {
-                        var configuration = playlist.Playlist.DynamicPlaylistConfiguration;
+                        var configuration = playlist.LivePlaylistConfiguration;
 
-                        var rankedMapsForLeaderboard = Enumerable.Empty<DynamicPlaylistMapPair>();
+                        var rankedMapsForLeaderboard = Enumerable.Empty<LivePlaylistMapPair>();
 
                         if (configuration.LeaderboardProvider is not null && rankedMapsPerLeaderboardProvider.ContainsKey(configuration.LeaderboardProvider))
-                            rankedMapsForLeaderboard = rankedMapsPerLeaderboardProvider[playlist.Playlist.DynamicPlaylistConfiguration.LeaderboardProvider];
+                            rankedMapsForLeaderboard = rankedMapsPerLeaderboardProvider[playlist.LivePlaylistConfiguration.LeaderboardProvider];
 
                         var playlistMaps = configuration.MapPool switch
                         {
@@ -135,7 +130,7 @@ namespace MapMaven.Core.Services
                         };
 
                         playlistMaps = FilterMaps(playlistMaps, configuration);
-                        playlistMaps = MapSearchService.SortMaps(playlistMaps, configuration.SortOperations, x => x.DynamicPlaylistMap);
+                        playlistMaps = MapSearchService.SortMaps(playlistMaps, configuration.SortOperations, x => x.LivePlaylistMap);
 
                         var resultPlaylistMaps = playlistMaps
                             .Select(m => m.Map)
@@ -145,11 +140,11 @@ namespace MapMaven.Core.Services
 
                         await _playlistService.DownloadPlaylistMapsIfNotExist(resultPlaylistMaps, loadMapInfo: false);
 
-                        await _playlistService.ReplaceMapsInPlaylist(resultPlaylistMaps, playlist.Playlist, loadPlaylists: false);
+                        await _playlistService.ReplaceMapsInPlaylist(resultPlaylistMaps, playlist, loadPlaylists: false);
                     }
                     catch (Exception ex)
                     {
-                        _logger.LogError(ex, $"Error arranging dynamic playlist: {playlist.PlaylistInfo?.Title}");
+                        _logger.LogError(ex, $"Error arranging dynamic playlist: {playlist?.Title}");
                     }
                 }
 
@@ -169,20 +164,20 @@ namespace MapMaven.Core.Services
             }
         }
 
-        private IEnumerable<DynamicPlaylistMapPair> FilterMaps(IEnumerable<DynamicPlaylistMapPair> maps, DynamicPlaylistConfiguration configuration)
+        private IEnumerable<LivePlaylistMapPair> FilterMaps(IEnumerable<LivePlaylistMapPair> maps, LivePlaylistConfiguration configuration)
         {
             foreach (var filterOperation in configuration.FilterOperations)
             {
-                maps = maps.Where(map => MapSearchService.FilterOperationMatches(map.DynamicPlaylistMap, filterOperation));
+                maps = maps.Where(map => MapSearchService.FilterOperationMatches(map.LivePlaylistMap, filterOperation));
             }
 
             return maps;
         }
 
-        private class DynamicPlaylistMapPair
+        private class LivePlaylistMapPair
         {
             public Map Map { get; set; }
-            public AdvancedSearchMap DynamicPlaylistMap { get; set; }
+            public AdvancedSearchMap LivePlaylistMap { get; set; }
         }
     }
 }
