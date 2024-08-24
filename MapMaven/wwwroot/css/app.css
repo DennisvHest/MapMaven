@@ -89,6 +89,19 @@
     width: 100%;
 }
 
+.resizer-handle {
+    position: absolute;
+    right: 0;
+    height: 100%;
+    width: 8px;
+    z-index: 9999999;
+}
+
+.resizer-handle:hover, .resizer-handle:active {
+    background-color: rgba(255, 255, 255, 0.3);
+    cursor: e-resize;
+}
+
 /* MudBlazor overrides */
 .mud-main-content {
     height: 100vh;
@@ -240,4 +253,8 @@ a:hover {
 
 .mud-treeview.mud-treeview-selected-primary .mud-treeview-item-content.mud-treeview-item-selected {
     color: var(--mud-palette-info);
+}
+
+.mud-drawer-content {
+    background-color: var(--mud-palette-drawer-background);
 }

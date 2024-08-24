@@ -1,8 +1,8 @@
 window.sideNavResizer = (function () {
-    const minSideNavWidth = 240;
+    const minSideNavWidth = 250;
     const maxSideNavWidth = 700;
 
-    let sideNavWidth = localStorage.getItem("sideNavWidth") ?? 240;
+    let sideNavWidth = localStorage.getItem("sideNavWidth") ?? minSideNavWidth;
 
     setDrawerWidthNoThrottle(sideNavWidth);
 

@@ -1,7 +1,7 @@
 ﻿@inherits ReactiveComponent
 
-<MudDrawer Open="true" Elevation="1" Class="sidenav">
-    <div class="resizer-handle" style="position: absolute;right: 0;height: 100%;background-color: red;width: 5px; z-index: 9999999;"></div>
+<MudDrawer Open="true" Elevation="1" Class="sidenav" Style="padding-right: 8px; background-color: var(--mud-palette-background);">
+    <div class="resizer-handle"></div>
     <PlayerProfile></PlayerProfile>
     <MudNavMenu Color="Color.Primary" Bordered="true" Class="full-height d-flex flex-column fill-remaining-space">
         @if (!string.IsNullOrEmpty(PlayerId))
