@@ -49,7 +49,7 @@
         </div>
         @if (LoadingPlaylists)
         {
-            <MudProgressCircular Color="Color.Info" Size="Size.Small" Indeterminate="true" Class="align-self-center" />
+            <MudProgressLinear Color="Color.Info" Indeterminate="true" />
         }
         <div class="full-height" style="overflow-y: auto; margin-right: 8px;">
             @if (string.IsNullOrEmpty(PlaylistSearchText))
