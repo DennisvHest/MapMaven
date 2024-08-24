@@ -11,7 +11,7 @@ window.sideNavResizer = (function () {
     function setDrawerWidthNoThrottle(width) {
         // Set the side nav width to the current mouse position
         sideNavWidth = width;
-        document.documentElement.style.setProperty("--mud-drawer-width-left", `${width}px`);
+        document.documentElement.style.setProperty("--main-drawer-width-left", `${width}px`);
     }
 
     function startSideNavResize(event) {

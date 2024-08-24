@@ -1,4 +1,8 @@
-﻿body {
+﻿html {
+    --main-drawer-width-left: 250px;
+}
+
+body {
     user-select: none;
 }
 
@@ -87,6 +91,10 @@
 
 .markdown img {
     width: 100%;
+}
+
+.mud-main-content {
+    margin-left: var(--main-drawer-width-left) !important;
 }
 
 .resizer-handle {
