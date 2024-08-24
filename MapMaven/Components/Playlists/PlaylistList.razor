@@ -55,13 +55,13 @@
             @if (string.IsNullOrEmpty(PlaylistSearchText))
             {
                 <MudTreeView T="Playlist" @ref="PlaylistTreeView" SelectedValue="SelectedPlaylist" SelectedValueChanged="OnPlaylistSelect" Color="Color.Primary" ExpandOnClick="true" AutoExpand="true">
-                    <PlaylistTreeViewFolder Folder="PlaylistTree.RootPlaylistFolder" />
+                    <PlaylistTreeViewFolder Folder="PlaylistTree.RootPlaylistFolder" Loading="LoadingPlaylists" />
                 </MudTreeView>
             }
             else
             {
                 <MudTreeView T="Playlist" SelectedValue="SelectedPlaylist" SelectedValueChanged="OnPlaylistSelect" Color="Color.Primary" ExpandOnClick="true">
-                    <PlaylistTreeViewFolder Folder="PlaylistTree.RootPlaylistFolder" Expanded="true" />
+                    <PlaylistTreeViewFolder Folder="PlaylistTree.RootPlaylistFolder" Loading="LoadingPlaylists" Expanded="true" />
                 </MudTreeView>
             }
         </div>

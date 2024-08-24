@@ -29,6 +29,9 @@ namespace MapMaven.Components.Playlists
         [Parameter]
         public bool Expanded { get; set; }
 
+        [Parameter]
+        public bool Loading { get; set; }
+
         Playlist? PlaylistToDelete = null;
         bool DeletePlaylistDialogVisible = false;
         bool DeletingPlaylist = false;
