@@ -254,7 +254,3 @@ a:hover {
 .mud-treeview.mud-treeview-selected-primary .mud-treeview-item-content.mud-treeview-item-selected {
     color: var(--mud-palette-info);
 }
-
-.mud-drawer-content {
-    background-color: var(--mud-palette-drawer-background);
-}
