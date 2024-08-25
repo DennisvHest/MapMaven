@@ -49,19 +49,19 @@
         </div>
         @if (LoadingPlaylists)
         {
-            <MudProgressCircular Color="Color.Info" Size="Size.Small" Indeterminate="true" Class="align-self-center" />
+            <MudProgressLinear Color="Color.Info" Indeterminate="true" />
         }
-        <div class="full-height" style="overflow-y: auto;">
+        <div class="full-height" style="overflow-y: auto; margin-right: 8px;">
             @if (string.IsNullOrEmpty(PlaylistSearchText))
             {
                 <MudTreeView T="Playlist" @ref="PlaylistTreeView" SelectedValue="SelectedPlaylist" SelectedValueChanged="OnPlaylistSelect" Color="Color.Primary" ExpandOnClick="true" AutoExpand="true">
-                    <PlaylistTreeViewFolder Folder="PlaylistTree.RootPlaylistFolder" />
+                    <PlaylistTreeViewFolder Folder="PlaylistTree.RootPlaylistFolder" Loading="LoadingPlaylists" />
                 </MudTreeView>
             }
             else
             {
                 <MudTreeView T="Playlist" SelectedValue="SelectedPlaylist" SelectedValueChanged="OnPlaylistSelect" Color="Color.Primary" ExpandOnClick="true">
-                    <PlaylistTreeViewFolder Folder="PlaylistTree.RootPlaylistFolder" Expanded="true" />
+                    <PlaylistTreeViewFolder Folder="PlaylistTree.RootPlaylistFolder" Loading="LoadingPlaylists" Expanded="true" />
                 </MudTreeView>
             }
         </div>

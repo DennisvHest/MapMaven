@@ -69,6 +69,13 @@
     }
 }
 
+@if (!Loading && !Folder.ChildItems.Any())
+{
+    <div class="d-flex align-center justify-center full-width pa-2">
+        <MudIcon Icon="@Icons.Material.Filled.PlaylistRemove" Class="mr-2" /> <soan>No playlists found</soan>
+    </div>
+}
+
 <MudDialog @bind-Visible="DeletePlaylistDialogVisible" Options="new() { BackdropClick = false }">
     <DialogContent>
         <MudText Typo="Typo.body1" Class="mb-3">Are you sure you want to delete the "@PlaylistToDelete.Title" playlist?</MudText>
