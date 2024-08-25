@@ -19,9 +19,9 @@
         }
     </CellTemplate>
 </TemplateColumn>
-<TemplateColumn T="Map" Sortable="false" CellClass="pl-0" CellStyle="width: 50px; position: relative;">
+<TemplateColumn T="Map" Sortable="false" CellClass="px-0" CellStyle="width: 50px; position: relative;">
     <CellTemplate>
-        <div>
+        <div class="d-flex">
             <div class="d-flex flex-column">
                 <MudTooltip Text="Play song preview" ShowOnFocus="false">
                     <SongPlaybackButton Map="context.Item"></SongPlaybackButton>
@@ -29,6 +29,9 @@
                 <MudTooltip Text="Open map details" ShowOnFocus="false">
                     <MudIconButton Icon="@Icons.Material.Filled.Info" Class="pb-0 pt-1 no-hover-background" Variant="Variant.Text" Size="Size.Medium" OnClick="() => OpenDetails(context.Item)" />
                 </MudTooltip>
+            </div>
+            <div class="d-flex flex-column justify-center">
+                <MapInPlaylistIndicator MapHash="@context.Item.Hash"></MapInPlaylistIndicator>
             </div>
         </div>
     </CellTemplate>

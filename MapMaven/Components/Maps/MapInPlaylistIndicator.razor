@@ -1,0 +1,31 @@
+﻿@inherits ReactiveComponent
+
+@if (PlaylistsContainingMapHash.Any())
+{
+    var tooltip = $"In playlists:  {string.Join(", ", PlaylistsContainingMapHash.Select(p => p.Title))}";
+
+    <MudTooltip Text="@tooltip">
+        <MudIcon Icon="@Icons.Material.Filled.PlaylistAddCheckCircle" Style="opacity: 0.4" />
+    </MudTooltip>
+}
+
+@code {
+    [Inject]
+    IPlaylistService PlaylistService { get; set; }
+
+    [Parameter]
+    public string MapHash { get; set; }
+
+    Playlist[] PlaylistsContainingMapHash = [];
+
+    protected override void OnInitialized()
+    {
+        SubscribeAndBind(PlaylistService.MapsInPlaylistsByHash, mapsInPlaylistsByHash =>
+        {
+            if (!mapsInPlaylistsByHash.ContainsKey(MapHash))
+                return;
+
+            PlaylistsContainingMapHash = mapsInPlaylistsByHash[MapHash];
+        });
+    }
+}

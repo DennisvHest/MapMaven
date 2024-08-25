@@ -14,6 +14,7 @@ namespace MapMaven.Core.Services.Interfaces
         IObservable<IEnumerable<Playlist>> Playlists { get; }
         BehaviorSubject<Playlist> SelectedPlaylist { get; }
         IObservable<PlaylistTree<Playlist>> PlaylistTree { get; }
+        IObservable<Dictionary<string, Playlist[]>> MapsInPlaylistsByHash { get; }
 
         Task<Playlist> AddLivePlaylist(EditLivePlaylistModel editPlaylistModel);
         Task AddMapsToPlaylist(IEnumerable<Map> maps, Playlist playlist, bool loadPlaylists = true);
