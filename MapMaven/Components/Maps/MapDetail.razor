@@ -82,7 +82,13 @@
                                     <h3 class="mb-2">In playlists:</h3>
                                     @foreach (var playlist in PlaylistsContainingMapHash)
                                     {
-                                        <MudChip T="string" Color="Color.Default" Variant="Variant.Outlined" Label="true" Class="pl-2">
+                                        <MudChip T="string"
+                                                 Color="Color.Default"
+                                                 Variant="Variant.Outlined"
+                                                 Label="true"
+                                                 Class="pl-2"
+                                                 OnClick="() => GoToPlaylist(playlist)"
+                                                 OnClose="() => OpenDeleteFromPlaylistDialog(playlist)">
                                             <PlaylistCover Playlist="playlist" Class="mr-2" Style="width: 20px"></PlaylistCover> @playlist.Title
                                         </MudChip>
                                     }
@@ -164,83 +170,83 @@
                                         if (playerScore != null)
                                         {
                                             <div class="score" style="display: contents">
-                                                <tr>
-                                                    <td colspan="2" style="border-bottom: 1px solid gray;">
-                                                        <MudIcon Icon="@Icons.Material.Filled.Leaderboard" Size="Size.Small"></MudIcon>
-                                                        <MudText Typo="Typo.overline">Score</MudText>
+                                            <tr>
+                                                <td colspan="2" style="border-bottom: 1px solid gray;">
+                                                    <MudIcon Icon="@Icons.Material.Filled.Leaderboard" Size="Size.Small"></MudIcon>
+                                                    <MudText Typo="Typo.overline">Score</MudText>
                                                         @if (playerScore.Score.HasReplay)
                                                         {
-                                                            <MudTooltip Text="Open replay">
-                                                                <MudButton Class="replay-button pa-0 ml-2" OnClick="() => OpenReplay(playerScore)" Style="min-width: 0; border-radius: 100%;">
-                                                                    <MudChip T="string" Size="Size.Small" Variant="Variant.Text" Style="@($"{chipStyle}; cursor: pointer;")">
-                                                                        <img src="images/replay-icon.png" style="width: 18px" />
-                                                                    </MudChip>
-                                                                </MudButton>
-                                                            </MudTooltip>
+                                                        <MudTooltip Text="Open replay">
+                                                            <MudButton Class="replay-button pa-0 ml-2" OnClick="() => OpenReplay(playerScore)" Style="min-width: 0; border-radius: 100%;">
+                                                                <MudChip T="string" Size="Size.Small" Variant="Variant.Text" Style="@($"{chipStyle}; cursor: pointer;")">
+                                                                    <img src="images/replay-icon.png" style="width: 18px" />
+                                                                </MudChip>
+                                                            </MudButton>
+                                                        </MudTooltip>
                                                         }
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td><b>Time set</b></td>
-                                                    <td>@playerScore.Score.TimeSet.LocalDateTime.ToString("G")</td>
-                                                </tr>
-                                                <tr>
-                                                    <td><b>Base score</b></td>
-                                                    <td>@playerScore.Score.BaseScore</td>
-                                                </tr>
-                                                <tr>
-                                                    <td><b>Modified score</b></td>
-                                                    <td>@playerScore.Score.ModifiedScore</td>
-                                                </tr>
-                                                <tr>
-                                                    <td><b>Accuracy</b></td>
-                                                    <td>@playerScore.Score.Accuracy.ToString("#0.##")%</td>
-                                                </tr>
-                                                <tr>
-                                                    <td><b>Accuracy with modifiers</b></td>
-                                                    <td>@playerScore.Score.AccuracyWithMods.ToString("#0.##")%</td>
-                                                </tr>
-                                                <tr>
-                                                    <td><b>Modifiers</b></td>
-                                                    <td>
-                                                            @foreach (var modifier in playerScore.Score.Modifiers)
-                                                            {
-                                                            <MudChip T="string" Size="Size.Small">@modifier</MudChip>
-                                                            }
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td><b>Rank</b></td>
-                                                    <td>@playerScore.Score.Rank</td>
-                                                </tr>
-                                                <tr>
-                                                    <td><b>Bad cuts</b></td>
-                                                    <td>@playerScore.Score.BadCuts</td>
-                                                </tr>
-                                                <tr>
-                                                    <td><b>Missed notes</b></td>
-                                                    <td>@playerScore.Score.MissedNotes</td>
-                                                </tr>
-                                                <tr>
-                                                    <td><b>Max combo</b></td>
-                                                    <td>
-                                                            @playerScore.Score.MaxCombo
-                                                            @if (playerScore.Score.FullCombo)
-                                                            {
-                                                            <MudChip T="string" Color="Color.Primary" Size="Size.Small" Class="ml-2">FC <MudIcon Icon="@Icons.Material.Filled.Check" Size="Size.Small" Class="ml-1"></MudIcon></MudChip>
-                                                            }
-                                                    </td>
-                                                </tr>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td><b>Time set</b></td>
+                                                <td>@playerScore.Score.TimeSet.LocalDateTime.ToString("G")</td>
+                                            </tr>
+                                            <tr>
+                                                <td><b>Base score</b></td>
+                                                <td>@playerScore.Score.BaseScore</td>
+                                            </tr>
+                                            <tr>
+                                                <td><b>Modified score</b></td>
+                                                <td>@playerScore.Score.ModifiedScore</td>
+                                            </tr>
+                                            <tr>
+                                                <td><b>Accuracy</b></td>
+                                                <td>@playerScore.Score.Accuracy.ToString("#0.##")%</td>
+                                            </tr>
+                                            <tr>
+                                                <td><b>Accuracy with modifiers</b></td>
+                                                <td>@playerScore.Score.AccuracyWithMods.ToString("#0.##")%</td>
+                                            </tr>
+                                            <tr>
+                                                <td><b>Modifiers</b></td>
+                                                <td>
+                                                        @foreach (var modifier in playerScore.Score.Modifiers)
+                                                        {
+                                                        <MudChip T="string" Size="Size.Small">@modifier</MudChip>
+                                                        }
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td><b>Rank</b></td>
+                                                <td>@playerScore.Score.Rank</td>
+                                            </tr>
+                                            <tr>
+                                                <td><b>Bad cuts</b></td>
+                                                <td>@playerScore.Score.BadCuts</td>
+                                            </tr>
+                                            <tr>
+                                                <td><b>Missed notes</b></td>
+                                                <td>@playerScore.Score.MissedNotes</td>
+                                            </tr>
+                                            <tr>
+                                                <td><b>Max combo</b></td>
+                                                <td>
+                                                        @playerScore.Score.MaxCombo
+                                                        @if (playerScore.Score.FullCombo)
+                                                        {
+                                                        <MudChip T="string" Color="Color.Primary" Size="Size.Small" Class="ml-2">FC <MudIcon Icon="@Icons.Material.Filled.Check" Size="Size.Small" Class="ml-1"></MudIcon></MudChip>
+                                                        }
+                                                </td>
+                                            </tr>
                                                 @if (Map.Ranked)
                                                 {
-                                                    <tr>
-                                                        <td><b>PP</b></td>
-                                                        <td>@playerScore.Score.Pp.ToString("#0.##")</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td><b>Weighted PP</b></td>
-                                                        <td>@((playerScore.Score.Pp * playerScore.Score.Weight).ToString("#0.##"))</td>
-                                                    </tr>
+                                                <tr>
+                                                    <td><b>PP</b></td>
+                                                    <td>@playerScore.Score.Pp.ToString("#0.##")</td>
+                                                </tr>
+                                                <tr>
+                                                    <td><b>Weighted PP</b></td>
+                                                    <td>@((playerScore.Score.Pp * playerScore.Score.Weight).ToString("#0.##"))</td>
+                                                </tr>
                                                 }
                                             </div>
                                         }
@@ -267,6 +273,12 @@
 
     [Inject]
     IDialogService DialogService { get; set; }
+
+    [Inject]
+    ISnackbar Snackbar { get; set; }
+
+    [Inject]
+    NavigationManager NavigationManager { get; set; }
 
     [Parameter]
     public Map? Map { get; set; }
@@ -301,10 +313,48 @@
         SubscribeAndBind(PlaylistService.MapsInPlaylistsByHash, mapsInPlaylistsByHash =>
         {
             if (!mapsInPlaylistsByHash.ContainsKey(Map.Hash))
+            {
+                PlaylistsContainingMapHash = Array.Empty<Playlist>();
                 return;
+            }
 
             PlaylistsContainingMapHash = mapsInPlaylistsByHash[Map.Hash];
         });
+    }
+
+    void GoToPlaylist(Playlist playlist)
+    {
+        if (playlist is null)
+            return;
+
+        NavigationManager.NavigateTo("/maps");
+
+        void SetSelectedPlaylistAfterNavigation(object sender, LocationChangedEventArgs e)
+        {
+            PlaylistService.SetSelectedPlaylist(playlist);
+            NavigationManager.LocationChanged -= SetSelectedPlaylistAfterNavigation;
+        }
+
+        // Set the selected playlist once the navigation to maps page completes (one time event callback) (prevents costly filter execution on current page)
+        NavigationManager.LocationChanged += SetSelectedPlaylistAfterNavigation;
+    }
+
+    async Task OpenDeleteFromPlaylistDialog(Playlist playlist)
+    {
+        var dialog = DialogService.Show<ConfirmationDialog>(null, new DialogParameters
+            {
+                { nameof(ConfirmationDialog.DialogText), $"Are you sure you want to remove \"{Map.Name}\" from the \"{playlist.Title}\" playlist?" },
+                { nameof(ConfirmationDialog.ConfirmText), $"Remove" }
+            });
+
+        var result = await dialog.Result;
+
+        if (result.Canceled)
+            return;
+
+        await PlaylistService.RemoveMapFromPlaylist(Map, playlist);
+
+        Snackbar.Add($"Removed map \"{Map.Name}\" from playlist \"{playlist.Title}\"", Severity.Normal, config => config.Icon = Icons.Material.Filled.Check);
     }
 
     void OpenReplay(PlayerScore playerScore)
@@ -316,10 +366,10 @@
         };
 
         DialogService.Show<Replay>(null, parameters, new DialogOptions
-        {
-            MaxWidth = MaxWidth.ExtraExtraLarge,
-            FullWidth = true,
-            CloseButton = true
-        });
+            {
+                MaxWidth = MaxWidth.ExtraExtraLarge,
+                FullWidth = true,
+                CloseButton = true
+            });
     }
 }

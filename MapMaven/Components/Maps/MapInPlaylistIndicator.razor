@@ -23,7 +23,10 @@
         SubscribeAndBind(PlaylistService.MapsInPlaylistsByHash, mapsInPlaylistsByHash =>
         {
             if (!mapsInPlaylistsByHash.ContainsKey(MapHash))
+            {
+                PlaylistsContainingMapHash = Array.Empty<Playlist>();
                 return;
+            }
 
             PlaylistsContainingMapHash = mapsInPlaylistsByHash[MapHash];
         });
