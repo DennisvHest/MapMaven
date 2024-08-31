@@ -1,12 +1,26 @@
 ﻿@inherits ReactiveComponent
 
-@if (PlaylistsContainingMapHash.Any())
-{
-    var tooltip = $"In playlists:  {string.Join(", ", PlaylistsContainingMapHash.Select(p => p.Title))}";
+@{
+    var specificPlaylistContainsMap = PlaylistsContainingMapHash.Contains(SpecificPlaylist);
+    var showIcon = SpecificPlaylist is null && PlaylistsContainingMapHash.Any() || specificPlaylistContainsMap;
 
-    <MudTooltip Text="@tooltip">
-        <MudIcon Icon="@Icons.Material.Filled.PlaylistAddCheckCircle" Style="opacity: 0.4" />
-    </MudTooltip>
+    if (showIcon)
+    {
+        string tooltip;
+
+        if (specificPlaylistContainsMap)
+        {
+            tooltip = "Playlist already contains this map";
+        }
+        else
+        {
+            tooltip = $"In playlists:  {string.Join(", ", PlaylistsContainingMapHash.Select(p => p.Title))}";
+        }
+
+        <MudTooltip Text="@tooltip" RootClass="d-flex">
+            <MudIcon Icon="@Icons.Material.Filled.PlaylistAddCheckCircle" Style="opacity: 0.4" />
+        </MudTooltip>
+    }
 }
 
 @code {
@@ -16,13 +30,16 @@
     [Parameter]
     public string MapHash { get; set; }
 
+    [Parameter]
+    public Playlist? SpecificPlaylist { get; set; }
+
     Playlist[] PlaylistsContainingMapHash = [];
 
     protected override void OnInitialized()
     {
         SubscribeAndBind(PlaylistService.MapsInPlaylistsByHash, mapsInPlaylistsByHash =>
         {
-            if (!mapsInPlaylistsByHash.ContainsKey(MapHash))
+            if (MapHash is null || !mapsInPlaylistsByHash.ContainsKey(MapHash))
             {
                 PlaylistsContainingMapHash = Array.Empty<Playlist>();
                 return;

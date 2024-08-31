@@ -312,7 +312,7 @@
 
         SubscribeAndBind(PlaylistService.MapsInPlaylistsByHash, mapsInPlaylistsByHash =>
         {
-            if (!mapsInPlaylistsByHash.ContainsKey(Map.Hash))
+            if (Map?.Hash is null || !mapsInPlaylistsByHash.ContainsKey(Map.Hash))
             {
                 PlaylistsContainingMapHash = Array.Empty<Playlist>();
                 return;

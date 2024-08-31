@@ -17,6 +17,9 @@ namespace MapMaven.Components.Playlists
         [Parameter]
         public bool SaveNewPlaylistOnSubmit { get; set; } = true;
 
+        [Parameter]
+        public string MapToAddHash { get; set; }
+
         [Inject]
         IPlaylistService PlaylistService { get; set; }
 
