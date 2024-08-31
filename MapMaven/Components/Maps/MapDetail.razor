@@ -1,4 +1,6 @@
-﻿@using MapMaven.Core.Models;
+﻿@inherits ReactiveComponent
+
+@using MapMaven.Core.Models;
 @using MapMaven.Core.Utilities;
 @using MapMaven.Core.Utilities.Scoresaber
 
@@ -71,6 +73,24 @@
                         </MudGrid>
                     </MudPaper>
                 </MudItem>
+                @if (PlaylistsContainingMapHash.Any())
+                {
+                    <MudItem xs="12">
+                        <MudPaper Class="pa-4" Style="background-color: var(--mud-palette-drawer-background);">
+                            <MudGrid>
+                                <MudItem xs="12">
+                                    <h3 class="mb-2">In playlists:</h3>
+                                    @foreach (var playlist in PlaylistsContainingMapHash)
+                                    {
+                                        <MudChip T="string" Color="Color.Default" Variant="Variant.Outlined" Label="true" Class="pl-2">
+                                            <PlaylistCover Playlist="playlist" Class="mr-2" Style="width: 20px"></PlaylistCover> @playlist.Title
+                                        </MudChip>
+                                    }
+                                </MudItem>
+                            </MudGrid>
+                        </MudPaper>
+                    </MudItem>
+                }
                 <MudItem xs="12">
                     @foreach (var difficulty in Map.Difficulties.OrderByDescending(m => DifficultyUtils.GetOrder(m.Difficulty)))
                     {
@@ -237,19 +257,24 @@
 
 @code {
     [Inject]
-    private IMapService MapService { get; set; }
+    IMapService MapService { get; set; }
 
     [Inject]
-    private IApplicationEventService ApplicationEventService { get; set; }
+    IPlaylistService PlaylistService { get; set; }
 
     [Inject]
-    protected IDialogService DialogService { get; set; }
+    IApplicationEventService ApplicationEventService { get; set; }
+
+    [Inject]
+    IDialogService DialogService { get; set; }
 
     [Parameter]
     public Map? Map { get; set; }
 
     [Parameter]
     public string? MapHash { get; set; }
+
+    Playlist[] PlaylistsContainingMapHash = [];
 
     protected override async Task OnInitializedAsync()
     {
@@ -263,7 +288,6 @@
             {
                 Map = await MapService.GetMapDetails(MapHash);
             }
-
         }
         catch (Exception ex)
         {
@@ -273,6 +297,14 @@
                     Message = "Failed to load map details from BeatSaver."
                 });
         }
+
+        SubscribeAndBind(PlaylistService.MapsInPlaylistsByHash, mapsInPlaylistsByHash =>
+        {
+            if (!mapsInPlaylistsByHash.ContainsKey(Map.Hash))
+                return;
+
+            PlaylistsContainingMapHash = mapsInPlaylistsByHash[Map.Hash];
+        });
     }
 
     void OpenReplay(PlayerScore playerScore)
