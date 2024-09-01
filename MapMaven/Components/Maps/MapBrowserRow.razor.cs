@@ -45,7 +45,11 @@ namespace MapMaven.Components.Maps
 
         async Task OpenAddMapToPlaylistDialog(Map map)
         {
-            var dialog = await DialogService.ShowAsync<PlaylistSelector>("Add map to playlist", new DialogOptions
+            var dialog = await DialogService.ShowAsync<PlaylistSelector>("Add map to playlist", new DialogParameters
+            {
+                { nameof(PlaylistSelector.MapToAddHash), map.Hash }
+            },
+            new DialogOptions
             {
                 MaxWidth = MaxWidth.ExtraSmall,
                 FullWidth = true,

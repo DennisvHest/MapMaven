@@ -27,6 +27,9 @@ namespace MapMaven.Components.Playlists
         public PlaylistFolder<Playlist> Folder { get; set; }
 
         [Parameter]
+        public string MapToAddHash { get; set; }
+
+        [Parameter]
         public bool Expanded { get; set; }
 
         [Parameter]

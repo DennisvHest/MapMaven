@@ -29,7 +29,7 @@
             </MudMenu>
         </div>
         <MudTreeView T="Playlist" @ref="PlaylistTreeView" SelectedValueChanged="OnPlaylistSelect" Color="Color.Primary" ExpandOnClick="true" AutoExpand="true">
-            <PlaylistTreeViewFolder Folder="PlaylistTree.RootPlaylistFolder" Expanded="!string.IsNullOrEmpty(PlaylistSearchText)" />
+            <PlaylistTreeViewFolder Folder="PlaylistTree.RootPlaylistFolder" Expanded="!string.IsNullOrEmpty(PlaylistSearchText)" MapToAddHash="@MapToAddHash" />
         </MudTreeView>
     </DialogContent>
 </MudDialog>

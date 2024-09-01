@@ -8,7 +8,6 @@ using BeatSaberPlaylistsLib.Types;
 using MapMaven.Core.Models.LivePlaylists;
 using MapMaven.Core.Models.Data;
 using MapMaven.Core.Services.Interfaces;
-using MapMaven.Core.Extensions;
 using MapMaven.Core.Models.Data.Playlists;
 using BeatSaberPlaylistsLib;
 using MapMaven.Core.Models;
@@ -26,6 +25,10 @@ namespace MapMaven.Services
 
         public IObservable<PlaylistTree<Playlist>> PlaylistTree { get; private set; }
         public IObservable<IEnumerable<Playlist>> Playlists { get; private set; }
+
+        public readonly BehaviorSubject<Dictionary<string, Playlist[]>> _mapsInPlaylistsByHash = new(new());
+        public IObservable<Dictionary<string, Playlist[]>> MapsInPlaylistsByHash => _mapsInPlaylistsByHash;
+
         public BehaviorSubject<Playlist?> SelectedPlaylist { get; private set; } = new(null);
 
         private readonly BehaviorSubject<bool> _creatingPlaylist = new(false);
@@ -60,6 +63,16 @@ namespace MapMaven.Services
                     return x.playlists.FirstOrDefault(p => p.PlaylistFilePath == x.selectedPlaylistFilePath);
                 })
                 .Subscribe(SelectedPlaylist.OnNext); // Subscribing here because of weird behavior with multiple subscriptions triggering multiple reruns of this observable.
+
+            Playlists.Subscribe(playlists =>
+            {
+                var mapsInPlaylistsByHash = playlists.SelectMany(p => p.Maps.Select(m => new { Map = m, Playlist = p }))
+                    .Where(x => x.Map.Hash is not null)
+                    .GroupBy(x => x.Map.Hash)
+                    .ToDictionary(g => g.Key, g => g.Select(x => x.Playlist).Distinct().ToArray());
+
+                _mapsInPlaylistsByHash.OnNext(mapsInPlaylistsByHash);
+            });
         }
 
         private PlaylistFolder<Playlist> MapIPlaylistsToPlaylistsInFolder(PlaylistFolder<IPlaylist> folder)
