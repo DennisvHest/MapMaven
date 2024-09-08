@@ -23,7 +23,7 @@
                 </div>
             </BodyContent>
             <ChildContent>
-                <PlaylistTreeViewFolder Folder="playlistFolder" Expanded="Expanded"></PlaylistTreeViewFolder>
+                <PlaylistTreeViewFolder Folder="playlistFolder" Expanded="Expanded" MapToAddHash="@MapToAddHash"></PlaylistTreeViewFolder>
             </ChildContent>
         </MudTreeViewItem>
     }
@@ -41,8 +41,9 @@
                         </span>
                     </MudTooltip>
 
-
                     <div class="d-flex align-center ml-auto">
+                        <MapInPlaylistIndicator MapHash="@MapToAddHash" SpecificPlaylist="playlistNode.Playlist" />
+
                         @if (playlistNode.Playlist.IsLivePlaylist)
                         {
                             <MudTooltip Text="Live playlist" Color="Color.Info" RootClass="d-flex">
