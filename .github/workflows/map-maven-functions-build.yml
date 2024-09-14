@@ -26,3 +26,5 @@ jobs:
       with:
         name: functionapp
         path: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
+        if-no-files-found: error
+        include-hidden-files: true
