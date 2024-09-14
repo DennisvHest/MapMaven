@@ -299,6 +299,8 @@ namespace MapMaven.Components.Maps
 
         public void OnRowClick(DataGridRowClickEventArgs<Map> args)
         {
+            var mapIndex = TableRef.CurrentPage * TableRef.RowsPerPage + args.RowIndex;
+
             if (args.MouseEventArgs.CtrlKey || args.MouseEventArgs.ShiftKey)
             {
                 if (!Selectable)
@@ -309,11 +311,11 @@ namespace MapMaven.Components.Maps
 
                 if (args.MouseEventArgs.ShiftKey)
                 {
-                    var lastSelectedRowIndex = LastSelectedRowIndex ?? args.RowIndex;
+                    var lastSelectedRowIndex = LastSelectedRowIndex ?? mapIndex;
 
                     var mapsToSelect = TableRef.FilteredItems
-                        .Skip(Math.Min(lastSelectedRowIndex, args.RowIndex))
-                        .Take(Math.Abs(args.RowIndex - lastSelectedRowIndex) + 1)
+                        .Skip(Math.Min(lastSelectedRowIndex, mapIndex))
+                        .Take(Math.Abs(mapIndex - lastSelectedRowIndex) + 1)
                         .ToList();
 
                     MapService.SelectMaps(mapsToSelect);
@@ -321,7 +323,7 @@ namespace MapMaven.Components.Maps
             }
 
             if (Selectable)
-                LastSelectedRowIndex = args.RowIndex;
+                LastSelectedRowIndex = mapIndex;
         }
 
         /// <summary>
@@ -346,12 +348,14 @@ namespace MapMaven.Components.Maps
             if (!Selectable)
                 return string.Empty;
 
+            var mapIndex = TableRef.CurrentPage * TableRef.RowsPerPage + index;
+
             string classes = string.Empty;
 
             if (MapService.MapIsSelected(map))
                 classes += "row-selected";
 
-            if (index == LastSelectedRowIndex)
+            if (mapIndex == LastSelectedRowIndex)
                 classes += " row-selected-active";
 
             return classes;
