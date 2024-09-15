@@ -1,5 +1,4 @@
 ﻿using MapMaven.Core.Services.Interfaces;
-using Microsoft.VisualStudio.PlatformUI;
 using System.Reactive.Linq;
 
 namespace MapMaven.Core.Services
@@ -23,8 +22,12 @@ namespace MapMaven.Core.Services
         public virtual IObservable<string> PlaylistsLocationObservable => BeatSaberInstallLocationObservable.Select(location => $"{location}/Playlists");
         public virtual IObservable<string> UserDataLocationObservable => BeatSaberInstallLocationObservable.Select(location => $"{location}/UserData");
 
+        public static BeatSaberFileService Instance { get; private set; }
+
         public BeatSaberFileService(IApplicationSettingService applicationSettingService)
         {
+            Instance = this;
+
             _applicationSettingService = applicationSettingService;
 
             BeatSaberInstallLocationObservable = _applicationSettingService.ApplicationSettings.Select(applicationSettings =>

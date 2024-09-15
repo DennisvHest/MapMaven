@@ -6,11 +6,11 @@
              x:Class="MapMaven.MainPage"
              BackgroundColor="{DynamicResource PageBackgroundColor}">
 
-    <BlazorWebView HostPage="wwwroot/index.html">
-        <BlazorWebView.RootComponents>
+    <local:MapMavenBlazorWebView HostPage="wwwroot/index.html">
+        <local:MapMavenBlazorWebView.RootComponents>
             <RootComponent Selector="head::after" ComponentType="{x:Type blazorweb:HeadOutlet}" />
             <RootComponent Selector="#app" ComponentType="{x:Type local:Main}" />
-        </BlazorWebView.RootComponents>
-    </BlazorWebView>
+        </local:MapMavenBlazorWebView.RootComponents>
+    </local:MapMavenBlazorWebView>
 
 </ContentPage>

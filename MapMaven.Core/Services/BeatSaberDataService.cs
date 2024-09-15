@@ -54,8 +54,12 @@ namespace MapMaven.Services
         public IObservable<IEnumerable<IPlaylist>> PlaylistInfo { get; private set; }
         public IObservable<bool> LoadingPlaylistInfo => _loadingPlaylistInfo;
 
+        public static BeatSaberDataService? Instance { get; private set; }
+
         public BeatSaberDataService(IBeatmapHasher beatmapHasher, BeatSaberFileService fileService, IServiceProvider serviceProvider, ILogger<BeatSaberDataService> logger, IFileSystem fileSystem)
         {
+            Instance = this;
+
             _fileService = fileService;
             _beatmapHasher = beatmapHasher;
             _serviceProvider = serviceProvider;
@@ -426,23 +430,30 @@ namespace MapMaven.Services
             }
         }
 
-        public Image GetMapCoverImage(string mapId)
+        public Image? GetMapCoverImage(string mapId)
         {
             var imageFilePath = GetMapCoverImageFilePath(mapId);
+
+            if (imageFilePath == null)
+                return null;
 
             return Image.FromFile(imageFilePath);
         }
 
-        public Stream GetMapCoverImageStream(string mapId)
+        public Stream? GetMapCoverImageStream(string mapId)
         {
             var imageFilePath = GetMapCoverImageFilePath(mapId);
+
+            if (imageFilePath == null)
+                return null;
 
             return File.OpenRead(imageFilePath);
         }
 
-        public string GetMapCoverImageFilePath(string mapId)
+        public string? GetMapCoverImageFilePath(string mapId)
         {
-            var mapInfo = _mapInfo.Value[mapId];
+            if (!_mapInfo.Value.TryGetValue(mapId, out var mapInfo))
+                return null;
 
             return _fileSystem.Path.Combine(mapInfo.DirectoryPath, mapInfo.CoverImageFilename);
         }

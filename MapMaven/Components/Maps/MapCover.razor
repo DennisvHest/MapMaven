@@ -42,24 +42,7 @@
     {
         if (string.IsNullOrEmpty(Map.CoverImageUrl))
         {
-            Task.Run(() =>
-            {
-                try
-                {
-                    using (var coverImage = BeatSaberDataService.GetMapCoverImage(Map.Hash))
-                    {
-                        var resizedImage = coverImage;
-
-                        if (Size.HasValue)
-                            resizedImage = coverImage.GetResizedImage(Size.Value, Size.Value);
-
-                        CoverImageUrl = resizedImage.ToDataUrl();
-                    }
-
-                    InvokeAsync(StateHasChanged);
-                }
-                catch { /* Ignore invalid cover image */ }
-            });
+            CoverImageUrl = $"/__MAPIMAGES__/{Map.Hash}";
         }
         else
         {
