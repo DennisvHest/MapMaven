@@ -150,7 +150,7 @@ namespace MapMaven.Functions.Services
 
             _logger.LogInformation("{count} Maps do not yet have any map details from Beat Saver.", count);
 
-            var rateLimit = TimeLimiter.GetFromMaxCountByInterval(8, TimeSpan.FromSeconds(1));
+            var rateLimit = TimeLimiter.GetFromMaxCountByInterval(4, TimeSpan.FromSeconds(1));
 
             foreach (var (mapInfo, index) in mapInfoWithoutDetails.Select((mapInfo, index) => (mapInfo, index)))
             {
