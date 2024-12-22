@@ -4,14 +4,12 @@ using MapMaven.Models;
 using Microsoft.VisualStudio.Threading;
 using System.Reactive.Linq;
 using MapMaven.Extensions;
-using System.Diagnostics.CodeAnalysis;
-using System.Runtime.CompilerServices;
 
 namespace MapMaven.Services.Playlists
 {
     public class PlaylistCoverService
     {
-        private Dictionary<Playlist, AsyncLazy<string>> _cachedCoverImages = new(new CachedPlaylistEqualityComparer());
+        private Dictionary<Playlist, AsyncLazy<string>> _cachedCoverImages = new();
 
         public PlaylistCoverService(IMapService mapService, IPlaylistService playlistService, IBeatSaberDataService beatSaberDataService)
         {
@@ -80,12 +78,5 @@ namespace MapMaven.Services.Playlists
 
             return null;
         }
-    }
-
-    public class CachedPlaylistEqualityComparer : IEqualityComparer<Playlist>
-    {
-        public bool Equals(Playlist x, Playlist y) => ReferenceEquals(x, y);
-
-        public int GetHashCode([DisallowNull] Playlist obj) => RuntimeHelpers.GetHashCode(obj);
     }
 }
