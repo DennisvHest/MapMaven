@@ -41,7 +41,7 @@ namespace MapMaven.Infrastructure
             services.AddScoped(_ => new BeatSaver("MapMaven", new Version(1, 0)));
 
             services.AddHttpClient<ScoreSaberApiClient>(client => client.BaseAddress = new Uri("https://scoresaber.com"));
-            services.AddHttpClient<BeatLeaderApiClient>(client => client.BaseAddress = new Uri("https://api.beatleader.xyz"));
+            services.AddHttpClient<BeatLeaderApiClient>(client => client.BaseAddress = new Uri("https://api.beatleader.com"));
             services.AddHttpClient<BeatSaverApiClient>(client => client.BaseAddress = new Uri("https://api.beatsaver.com"));
             services.AddHttpClient("GithubApi", client =>
             {

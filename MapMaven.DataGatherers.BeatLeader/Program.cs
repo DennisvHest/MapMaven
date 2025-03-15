@@ -12,7 +12,7 @@ IHost host = Host.CreateDefaultBuilder(args)
             contextLifetime: ServiceLifetime.Singleton
         );
 
-        services.AddHttpClient<BeatLeaderApiClient>(client => client.BaseAddress = new Uri("https://api.beatleader.xyz"));
+        services.AddHttpClient<BeatLeaderApiClient>(client => client.BaseAddress = new Uri("https://api.beatleader.com"));
     })
     .Build();
 
