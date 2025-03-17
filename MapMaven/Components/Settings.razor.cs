@@ -16,7 +16,7 @@ namespace MapMaven.Components
     public partial class Settings
     {
         private static readonly Regex _scoreSaberPlayerIdUrlRegex = new Regex(@"scoresaber.com\/u\/(?<playerId>[^\/\?]+)");
-        private static readonly Regex _beatLeaderPlayerIdUrlRegex = new Regex(@"beatleader.xyz\/u\/(?<playerId>[^\/\?]+)");
+        private static readonly Regex _beatLeaderPlayerIdUrlRegex = new Regex(@"beatleader.com\/u\/(?<playerId>[^\/\?]+)");
 
         [Inject]
         protected IFolderPicker FolderPicker { get; set; }
