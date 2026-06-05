@@ -30,7 +30,7 @@ namespace MapMaven.Functions.Services
             var page = 1;
             _logger.LogInformation("Fetching ranked maps from ScoreSaber...");
 
-            var rateLimit = TimeLimiter.GetFromMaxCountByInterval(380, TimeSpan.FromMinutes(1));
+            var rateLimit = TimeLimiter.GetFromMaxCountByInterval(1, TimeSpan.FromSeconds(1));
 
             do
             {
